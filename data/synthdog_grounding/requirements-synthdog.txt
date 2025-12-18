@@ -1,0 +1,5 @@
+--no-binary pillow
+pillow<10
+synthtiger
+numpy<2
+datasets
