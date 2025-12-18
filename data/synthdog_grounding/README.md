@@ -2,6 +2,8 @@
 
 This module provides a complete pipeline for generating, processing, and analyzing synthetic document data using SynthDoG (Synthetic Document Generator) for visual document understanding (VDU) with grounding annotations.
 
+> **Attribution**: This module is a fork of [SynthDoG](https://github.com/clovaai/donut/tree/master/synthdog) from the [Donut](https://github.com/clovaai/donut) project by NAVER Corp., released under the MIT License. We've extended it with grounding annotations, coherent text generation, and additional tooling.
+
 ## Overview
 
 The SynthDoG Grounding pipeline consists of several key components:
@@ -53,9 +55,7 @@ synthdog_grounding/
 │   ├── check_sample.py         # Extract and visualize samples
 │   └── extract_finepdfs.py     # Extract text from FinePDFs dataset
 │
-└── check_sample/               # Sample outputs for inspection
-    ├── *.jpg                   # Original sample images
-    └── *_annotated.jpg         # Annotated sample images
+└── outputs/                    # Generated data (gitignored)
 ```
 
 ## Prerequisites
@@ -154,11 +154,10 @@ synthtiger -o ./outputs/SynthDoG_ko -c 50 -w 4 -v template.py SynthDoG config/co
 
 ```bash
 # Create a tar archive from a data directory
-uv run build_tar.py /path/to/data/directory -o output.tar
+python data_packaging/build_tar.py /path/to/data/directory -o output.tar
 
 # Options:
-# --output, -o: Output tar file path
-# --compression: Compression level (0-9, default: 6)
+# -o, --output: Output tar file path (defaults to <directory>.tar)
 ```
 
 #### Parallel Archive Creation
@@ -179,7 +178,7 @@ python data_packaging/build_tars_parallel.py --core-dir /path/to/data
 
 ```bash
 # Generate comprehensive statistics for a tar file
-uv run generate_stats.py /path/to/data.tar
+python data_analysis/generate_stats.py /path/to/data.tar
 
 # Output: Creates data.stats.csv with detailed metrics
 ```
@@ -194,12 +193,15 @@ uv run generate_stats.py /path/to/data.tar
 #### Aggregate Statistics
 
 ```bash
-# Combine statistics from multiple tar files
-uv run aggregate_stats.py /path/to/directory/with/tar/files
+# Combine statistics from multiple tar files in a directory
+python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
+
+# Or specify tar files directly
+python data_analysis/aggregate_stats.py file1.tar file2.tar -o aggregated_stats
 
 # Options:
-# --output: Output file for aggregated statistics
-# --format: Output format (csv, json)
+# -d, --directory: Directory to scan for tar files with .stats.csv files
+# -o, --output: Output path prefix (creates .csv and .json files)
 ```
 
 ### Data Inspection and Validation
@@ -227,8 +229,9 @@ CLI options:
 #### Extract Text Corpus
 
 ```bash
-# Extract text from FinePDFs dataset for training
-uv run extract_finepdfs.py
+# Extract text from FinePDFs dataset for training corpus
+# Note: This script streams from HuggingFace and extracts 1M ASCII samples
+python data_extraction/extract_finepdfs.py
 ```
 
 ## Configuration Files
