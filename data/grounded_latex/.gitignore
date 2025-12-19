@@ -1,0 +1,21 @@
+# Dataset outputs
+dataset/
+output/
+shards/
+
+# Logs
+*.log
+equation_errors.log
+
+# Temporary files
+*.tmp
+blank.pdf
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
+
+# System files
+.DS_Store
