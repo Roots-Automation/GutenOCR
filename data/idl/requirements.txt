@@ -1,0 +1,6 @@
+# Core dependencies
+pymupdf>=1.23.0
+tqdm>=4.65.0
+
+# Optional: for text processing and token counting
+# transformers>=4.35.0
