@@ -1,0 +1,11 @@
+# Core dependencies
+pillow>=9.0.0
+tqdm>=4.65.0
+pandas>=1.5.0
+pyarrow>=12.0.0
+
+# Optional: for text processing and token counting
+# transformers>=4.35.0
+
+# Optional: for fast HuggingFace downloads
+# huggingface_hub[cli,hf_transfer]>=0.20.0
