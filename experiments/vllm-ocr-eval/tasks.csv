@@ -1,0 +1,78 @@
+task,input_type,output_type,question
+conditional_detection,"[lines, image]",box,Where is {text} in {image}?
+conditional_detection,"[lines, image]",box,Find occurrences of {text} in {image} and return the bounding boxes as a JSON array (empty if none).
+conditional_detection,"[lines, image]",box,"Locate {text} within {image} and output only its bounding boxes as JSON, all instances included."
+conditional_detection,"[lines, image]",box,"Search for the exact string {text} in {image}; respond with [x1,y1,x2,y2] boxes for each match."
+conditional_detection,"[lines, image]",box,"Identify the bounding box of the text:\n""{text}""\nin {image} and return it as a JSON."
+conditional_detection,"[lines, image]",box,Show me where {image} says {text}.
+conditional_detection,"[lines, image]",box,Read the phrase {text} from {image} and then tell me where it is.
+conditional_detection,"[lines, image]",box,Ground {text} in {image}.
+conditional_detection,"[lines, image]",box,Refer me to where {text} lives in {image}.
+detection,"[lines, image]",box,"Without returning the text, where are all the LINES in {image}? Respond with a JSON array of bounding boxes only."
+detection,"[lines, image]",box,Detect LINE-level text in {image}; respond with a JSON array of bounding boxes only.
+detection,"[lines, image]",box,"From {image}, output boxes for each line of text (no transcription), ordered as read."
+detection,"[lines, image]",box,"Identify all LINE regions in {image} and return their [x1,y1,x2,y2] boxes as JSON."
+detection,"[lines, image]",box,Identify the bounding boxes of all LINES in {image} and return them as a JSON array.
+detection,"[lines, image]",box,Highlight all LINES in {image} by returning their bounding boxes as a JSON array.
+detection,"[paragraphs, image]",box,"Without returning the text, where are all the PARAGRAPHS in {image}? Respond with a JSON array of bounding boxes only."
+detection,"[paragraphs, image]",box,Detect paragraph-level text in {image}; respond with a JSON array of bounding boxes only.
+detection,"[paragraphs, image]",box,"From {image}, output boxes for each paragraph of text (no transcription), ordered as read."
+detection,"[paragraphs, image]",box,"Identify all PARAGRAPH regions in {image} and return their [x1,y1,x2,y2] boxes as JSON."
+detection,"[paragraphs, image]",box,Identify the bounding boxes of all paragraphs in {image} and return them as a JSON array.
+detection,"[paragraphs, image]",box,Highlight all PARAGRAPHS in {image} by returning their bounding boxes as a JSON array.
+detection,"[latex, image]",box,"Without returning the text, where are all the math equations in {image}? Respond with a JSON array of bounding boxes only."
+detection,"[latex, image]",box,Detect math-level text in {image}; respond with a JSON array of bounding boxes only.
+detection,"[latex, image]",box,"From {image}, output boxes for each line of math (no transcription), ordered as read."
+detection,"[latex, image]",box,"Identify all math regions in {image} and return their [x1,y1,x2,y2] boxes as JSON."
+detection,"[latex, image]",box,Identify the bounding boxes of all math in {image} and return them as a JSON array.
+detection,"[latex, image]",box,Highlight all math in {image} by returning their bounding boxes as a JSON array.
+localized_reading,"[box, image]",lines,What does it say in {box} of {image}?
+localized_reading,"[box, image]",lines,Can you read the text inside {box} on {image}?
+localized_reading,"[box, image]",lines,Extract the lines of text inside the bounding box {box} from {image}.
+localized_reading,"[box, image]",lines,Find the text in {image} within this bounding box: {box}.
+localized_reading,"[box, image]",lines,From {image} capture textual content at {box} focusing on whole lines.
+localized_reading,"[box, image]",lines,Locate {box} on {image} and read the lines found there.
+localized_reading,"[box, image]",lines,Read line level OCR inside {box} for {image}.
+localized_reading,"[box, image]",lines,Within {image} read only the lines of text located in region {box}.
+localized_reading,"[box, image]",lines,Tell me the line-level text in here {box} from {image}.
+localized_reading,"[box, image]",paragraphs,What does it say in {box} of {image}?
+localized_reading,"[box, image]",paragraphs,Can you read the text inside {box} on {image}?
+localized_reading,"[box, image]",paragraphs,Extract the paragraph of text inside the bounding box {box} from {image}.
+localized_reading,"[box, image]",paragraphs,Find the text in {image} within this bounding box: {box}.
+localized_reading,"[box, image]",paragraphs,From {image} capture textual content at {box} focusing on whole paragraphs.
+localized_reading,"[box, image]",paragraphs,Locate {box} on {image} and read the paragraph found there.
+localized_reading,"[box, image]",paragraphs,Read paragraph level OCR inside {box} for {image}.
+localized_reading,"[box, image]",paragraphs,Within {image} read only the paragraph of text located in region {box}.
+localized_reading,"[box, image]",paragraphs,Tell me the paragraph-level text in here {box} from {image}.
+reading,image,"[lines, box]","Extract coherent LINES from {image}; respond with JSON objects containing 'text' and their [x1,y1,x2,y2] boxes."
+reading,image,"[lines, box]","From {image}, detect each line of text and output JSON with 'text' plus its bounding 'bbox', ordered top-to-bottom, left-to-right."
+reading,image,"[lines, box]",Recognize all text in {image} and return it as a JSON array of LINES and their bounding boxes.
+reading,image,"[lines, box]","Transcribe {image} into LINE units and return a JSON array of {'text', 'bbox'} entries in reading sequence."
+reading,image,"[paragraphs, box]","Extract coherent PARAGRAPHS from {image}; respond with JSON objects containing 'text' and their [x1,y1,x2,y2] boxes."
+reading,image,"[paragraphs, box]","From {image}, detect each paragraph of text and output JSON with 'text' plus its bounding 'bbox', ordered top-to-bottom, left-to-right."
+reading,image,"[paragraphs, box]",Recognize all text in {image} and return it as a JSON array of PARAGRAPHS and their bounding boxes.
+reading,image,"[paragraphs, box]","Transcribe {image} into paragraph units and return a JSON array of {'text', 'bbox'} entries in reading sequence."
+reading,image,"[latex, box]","Extract all equations from {image} and output [{'text': <string>, 'bbox': [x1,y1,x2,y2]}]."
+reading,image,"[latex, box]",Find mathematical expressions in {image} and return their LaTeX along with bounding 'bbox' coordinates.
+reading,image,"[latex, box]",Inspect the mathematical expression in {image} and return it as a JSON object of its LaTeX representation along with its bounding box.
+reading,image,"[latex, box]","Locate math in {image}; provide LaTeX transcriptions plus [x1,y1,x2,y2] boxes as JSON."
+reading,image,"[latex, box]","Where in {image} are the equations and what do they say? Return a JSON array with 'text' and bounding 'bbox'."
+reading,image,text,Provide the raw TEXT transcription of {image}; output only the plain string without JSON.
+reading,image,text,"Read all text in {image} and return a single TEXT string, linearized left-to-right/top-to-bottom."
+reading,image,text,Recognize all text in {image} and return it as a JSON object in TEXT format.
+reading,image,text,Return the document TEXT from {image} as TEXT with line breaks preserved.
+reading,image,text2d,"Extract a TEXT2D view from {image}, modeling blocks→lines→spans with white-space and newlines."
+reading,image,text2d,Produce a TEXT2D string for {image} that captures layout (blocks/lines/spans with boxes).
+reading,image,text2d,Recognize all text in {image} and return it as a string in TEXT2D format
+reading,image,text2d,Return a layout-sensitive TEXT2D representation of {image}.
+reading,image,"[lines, box]","Extract line-level data from {image}; respond with JSON objects containing lines of text and their locations."
+reading,image,"[lines, box]","From {image}, detect each line and output a JSON with 'text' plus its bounding 'bbox', ordered top-to-bottom, left-to-right."
+reading,image,"[lines, box]",Recognize all text in {image} and return it as a JSON array of lines data (include bbox).
+reading,image,"[lines, box]","Transcribe {image} into line units (text and box) and return a JSON array in reading sequence."
+reading,image,"[lines, box]","Where are the lines in this {image}? Return both text and bbox for all lines."
+reading,image,"[latex, box]","Extract each latex equation from {image} and output [{'text': <string>, 'bbox': [x1,y1,x2,y2]}]."
+reading,image,"[latex, box]",Find mathematical expressions in {image} and return their tex and grounding data.
+reading,image,text,Create a textual transcription of {image}; output only plain strings and no JSON.
+reading,image,text,Recognize all text in {image} and return it as a JSON object in TEXT format.
+reading,image,text,Return the document TEXT from {image} as TEXT with line breaks preserved.
+reading,image,text2d,Recognize all text in {image} and return it as a string in formatted to preserve whitespace and page layout.
