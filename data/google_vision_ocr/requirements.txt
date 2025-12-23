@@ -1,0 +1,4 @@
+# Core dependencies
+google-cloud-vision>=3.0.0
+google-cloud-storage>=2.0.0
+Pillow>=9.0.0
