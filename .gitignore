@@ -206,6 +206,14 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
+# macOS
+.DS_Store
+
+# Data artifacts and predictions
+*.tar
+predictions/
+results/
+logs/
 
 google-serviceauth.json
 oa_non_comm_use_pdf.csv
