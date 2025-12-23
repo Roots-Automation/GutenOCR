@@ -5,9 +5,10 @@ Tools for converting and compressing Industry Document Library (IDL) datase into
 ## Overview
 
 This package provides utilities to:
-- Convert IDL document directories into standardized tar shards with consistent JSON format
-- Batch process multiple IDL directories in parallel
-- Compress raw IDL directories into `.tar.gz` archives
+
+-   Convert IDL document directories into standardized tar shards with consistent JSON format
+-   Batch process multiple IDL directories in parallel
+-   Compress raw IDL directories into `.tar.gz` archives
 
 ## Installation
 
@@ -16,6 +17,7 @@ pip install -r requirements.txt
 ```
 
 For optional text processing and token counting (Qwen model):
+
 ```bash
 pip install transformers
 ```
@@ -76,16 +78,14 @@ PREFIX=/path/to/idl-train MAX_JOBS=16 ./compress_parallel.sh 1 100
 
 IDL directories are expected to have the following structure:
 
-```
-idl-train-00001/
-├── document_id_1/
-│   ├── document_id_1.pdf
-│   └── document_id_1.json
-├── document_id_2/
-│   ├── document_id_2.pdf
-│   └── document_id_2.json
-└── ...
-```
+    idl-train-00001/
+    ├── document_id_1/
+    │   ├── document_id_1.pdf
+    │   └── document_id_1.json
+    ├── document_id_2/
+    │   ├── document_id_2.pdf
+    │   └── document_id_2.json
+    └── ...
 
 Each document JSON contains page-level OCR data:
 
@@ -105,9 +105,10 @@ Each document JSON contains page-level OCR data:
 ## Output Format
 
 The output tar shards contain:
-- `{document_id}.pdf` - Original PDF
-- `{document_id}_{page_id}.png` - Rasterized page images (72 DPI by default)
-- `{document_id}_{page_id}.json` - Standardized per-page JSON
+
+-   `{document_id}.pdf` - Original PDF
+-   `{document_id}_{page_id}.png` - Rasterized page images (72 DPI by default)
+-   `{document_id}_{page_id}.json` - Standardized per-page JSON
 
 ### Standard Per-Page JSON Schema
 
@@ -139,54 +140,52 @@ The output tar shards contain:
 
 ### standardize.py
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--input-dir` | *required* | Path to IDL directory (e.g., `idl-train-00001`) |
-| `--output` | *required* | Output tar file path |
-| `--dpi` | 72 | Rasterization DPI |
-| `--image-ext` | png | Image format: `png`, `jpg`, `tif` |
-| `--page-base` | 0 | Page index base (0 or 1) |
-| `--bbox-format` | xywh | Source bbox format: `xywh` or `x1y1x2y2` |
-| `--bbox-space` | as_is | Bbox scaling: `as_is` or `pdf_to_pixel` |
-| `--dry-run` | false | Validate only, no output |
-| `--no-text-processing` | false | Skip text processing (faster) |
-| `--model-id` | Qwen/Qwen2.5-VL-7B-Instruct | Model for tokenization |
-| `--no-local-files-only` | false | Allow downloading model from HuggingFace |
+| Argument                | Default                     | Description                                     |
+| ----------------------- | --------------------------- | ----------------------------------------------- |
+| `--input-dir`           | _required_                  | Path to IDL directory (e.g., `idl-train-00001`) |
+| `--output`              | _required_                  | Output tar file path                            |
+| `--dpi`                 | 72                          | Rasterization DPI                               |
+| `--image-ext`           | png                         | Image format: `png`, `jpg`, `tif`               |
+| `--page-base`           | 0                           | Page index base (0 or 1)                        |
+| `--bbox-format`         | xywh                        | Source bbox format: `xywh` or `x1y1x2y2`        |
+| `--bbox-space`          | as_is                       | Bbox scaling: `as_is` or `pdf_to_pixel`         |
+| `--dry-run`             | false                       | Validate only, no output                        |
+| `--no-text-processing`  | false                       | Skip text processing (faster)                   |
+| `--model-id`            | Qwen/Qwen2.5-VL-7B-Instruct | Model for tokenization                          |
+| `--no-local-files-only` | false                       | Allow downloading model from HuggingFace        |
 
 ### batch_standardize.py
 
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--input-base` | *required* | Base path containing IDL directories |
-| `--output-base` | *required* | Output directory for tar files |
-| `--pattern` | *required* | Glob pattern (e.g., `idl-train-*`) |
-| `--max-workers` | CPU count | Number of parallel workers |
-| `--dpi` | 72 | Rasterization DPI |
-| `--image-ext` | png | Image format |
+| Argument        | Default    | Description                          |
+| --------------- | ---------- | ------------------------------------ |
+| `--input-base`  | _required_ | Base path containing IDL directories |
+| `--output-base` | _required_ | Output directory for tar files       |
+| `--pattern`     | _required_ | Glob pattern (e.g., `idl-train-*`)   |
+| `--max-workers` | CPU count  | Number of parallel workers           |
+| `--dpi`         | 72         | Rasterization DPI                    |
+| `--image-ext`   | png        | Image format                         |
 
 ### Shell Scripts
 
 Both `compress.sh` and `compress_parallel.sh` accept environment variables:
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PREFIX` | *required* | Path prefix for directories (e.g., `/path/to/idl-train`) |
-| `WIDTH` | 5 | Zero-padding width for directory numbers |
-| `MAX_JOBS` | 80 | Max parallel jobs (parallel script only) |
+| Variable   | Default    | Description                                              |
+| ---------- | ---------- | -------------------------------------------------------- |
+| `PREFIX`   | _required_ | Path prefix for directories (e.g., `/path/to/idl-train`) |
+| `WIDTH`    | 5          | Zero-padding width for directory numbers                 |
+| `MAX_JOBS` | 80         | Max parallel jobs (parallel script only)                 |
 
 **⚠️ Warning**: The compression scripts delete original directories after successful compression. Set `DELETE_AFTER_COMPRESS=false` to disable this behavior.
 
 ## Dependencies
 
 ### Required
-- Python 3.8+
-- PyMuPDF (`pymupdf`)
-- tqdm
+
+-   Python 3.8+
+-   PyMuPDF (`pymupdf`)
+-   tqdm
 
 ### Optional
-- transformers (for token counting)
-- GNU parallel (for `compress_parallel.sh`)
 
-## License
-
-MIT License - See [LICENSE](LICENSE) for details.
+-   transformers (for token counting)
+-   GNU parallel (for `compress_parallel.sh`)
