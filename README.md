@@ -106,6 +106,11 @@ accelerate launch --config_file acc.yaml sft_clean.py \
 
 Batch OCR evaluation using vLLM for fast inference across multiple GPUs.
 
+| Framework                                       | Description                                                                   |
+| ----------------------------------------------- | ----------------------------------------------------------------------------- |
+| [**vLLM OCR Eval**](experiments/vllm-ocr-eval/) | General OCR benchmarking (CER, WER, detection)                                |
+| [**vLLM Fox**](experiments/vllm-fox/)           | [Fox benchmark](https://github.com/ucaslcl/Fox) for fine-grained document OCR |
+
 **Location:** [`experiments/vllm-ocr-eval/`](experiments/vllm-ocr-eval/)
 
 ### Metrics
@@ -163,11 +168,28 @@ cd experiments/vllm-ocr-eval && uv sync
 ## Citation
 
 ```bibtex
-@article{gutenocr2025,
-  title={GutenOCR: [Title Coming Soon]},
-  author={[Authors]},
-  journal={arXiv preprint},
-  year={2025}
+@misc{heidenreich2025gutenocr,
+  title         = {GutenOCR: A Grounded Vision--Language Front-End for Documents},
+  author        = {Heidenreich, Hunter and Elliott, Ben and Dinica, Olivia and Getachew, Yosheb},
+  year          = {2025},
+  eprint        = {XXXXX.XXXXX},        % <-- arXiv ID
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},              % or cs.CL / cs.IR as appropriate
+  version       = {vX},                 % <-- arXiv version when available
+  url           = {https://arxiv.org/abs/XXXXX.XXXXX},
+  note          = {Preprint}
+}
+
+@misc{heidenreich2025pubmedocr,
+  title         = {PubMed-OCR: PMC Open Access OCR Annotations},
+  author        = {Heidenreich, Hunter and Getachew, Yosheb and Dinica, Olivia and Elliott, Ben},
+  year          = {2025},
+  eprint        = {XXXXX.XXXXX},        % <-- arXiv ID
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.CV},              % or cs.CL / cs.IR as appropriate
+  version       = {vX},                 % <-- arXiv version when available
+  url           = {https://arxiv.org/abs/XXXXX.XXXXX},
+  note          = {Preprint}
 }
 ```
 

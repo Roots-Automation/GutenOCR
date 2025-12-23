@@ -1,0 +1,26 @@
+# Requirements for Fox benchmark evaluation with vLLM
+
+# Core ML libraries
+torch>=2.0.0
+transformers>=4.40.0
+accelerate
+
+# vLLM for optimized inference
+vllm>=0.6.0
+
+# Image processing
+Pillow>=9.0.0
+
+# Utilities
+tqdm
+numpy
+
+# Evaluation metrics
+rouge              # ROUGE-L for summary evaluation
+python-Levenshtein # Edit distance for OCR evaluation
+beautifulsoup4     # HTML parsing in eval_ocr_test
+markdown2          # Markdown parsing in eval_ocr_test
+
+# Optional: faster tokenization
+rapidfuzz          # Soft token matching (optional, graceful fallback)
+regex              # Unicode-aware tokenization (optional, graceful fallback)
