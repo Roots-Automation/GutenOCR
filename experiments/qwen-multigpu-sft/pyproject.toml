@@ -1,0 +1,27 @@
+[project]
+name = "grpo-vlm-test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "deepspeed==0.15.3",
+    "json-repair>=0.51.0",
+    "matplotlib>=3.10.6",
+    "notebook>=7.4.5",
+    "peft>=0.17.1",
+    "pillow>=11.3.0",
+    "psutil>=7.1.0", # Required for flash-attn build
+    "qwen-vl-utils[decord]>=0.0.11",
+    "tensorboardx>=2.6.4",
+    "torch==2.6.0", # Pinned version for flash-attn compatibility
+    "torch-tb-profiler>=0.4.3",
+    "torchao>=0.13.0",
+    "torchvision==0.21.0", # Compatible with torch 2.6.0
+    "transformers>=4.40.0",
+    "trl>=0.23.0",
+    "webdataset>=1.0.2",
+]
+
+# Note: flash-attn 2.6.3 is installed separately for torch 2.6.0 compatibility
+# Install with: uv pip install "flash-attn>=2.6.0,<2.7.0" --no-build-isolation
