@@ -199,6 +199,7 @@ _Paper coming soon on arXiv._
 
 ## Acknowledgments
 
+-   [Fox](https://github.com/ucaslcl/Fox) from UCAS --- fine-grained document understanding benchmark
 -   [SynthDoG](https://github.com/clovaai/donut/tree/master/synthdog) from NAVER Corp (MIT License) --- basis for our synthetic document generation
 -   Built with [Qwen2.5-VL](https://github.com/QwenLM/Qwen2.5-VL), [vLLM](https://github.com/vllm-project/vllm), [DeepSpeed](https://github.com/microsoft/DeepSpeed)
 
