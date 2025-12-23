@@ -1,0 +1,8 @@
+# Core dependencies
+google-cloud-vision>=3.0.0
+google-cloud-storage>=2.0.0
+Pillow>=9.0.0
+PyMuPDF>=1.20.0
+
+# Optional: for visualization
+matplotlib>=3.5.0
