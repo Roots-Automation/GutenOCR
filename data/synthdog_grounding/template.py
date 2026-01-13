@@ -3,6 +3,16 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+# Ensure Pillow compatibility patch is loaded before anything else
+try:
+    import pillow_compat
+except ImportError:
+    # If running as part of the package vs script, try relative import or assume it's already patched
+    try:
+        from . import pillow_compat
+    except ImportError:
+        pass
+
 import json
 import os
 import re
