@@ -28,7 +28,7 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "pillow<10",
+    "pillow>=10.2.0",
     "synthtiger",
     "numpy<2",
     "datasets",
