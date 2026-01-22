@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
-  <a href="https://huggingface.co/collections/GutenOCR"><img src="https://img.shields.io/badge/🤗-Models-yellow.svg" alt="HuggingFace"></a>
+    <a href="https://huggingface.co/collections/rootsautomation/gutenocr"><img src="https://img.shields.io/badge/🤗-Models-yellow.svg" alt="HuggingFace"></a>
   <a href="https://arxiv.org/abs/2601.14490"><img src="https://img.shields.io/badge/Paper-ArXiv-red.svg" alt="Paper"></a>
   <a href="https://ocr.roots.ai/"><img src="https://img.shields.io/badge/Demo-Live-green.svg" alt="Demo"></a>
 </p>
