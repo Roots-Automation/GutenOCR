@@ -11,7 +11,8 @@
 <p align="center">
   <a href="https://opensource.org/licenses/Apache-2.0"><img src="https://img.shields.io/badge/License-Apache_2.0-blue.svg" alt="License"></a>
   <a href="https://huggingface.co/collections/GutenOCR"><img src="https://img.shields.io/badge/🤗-Models-yellow.svg" alt="HuggingFace"></a>
-  <a href="#citation"><img src="https://img.shields.io/badge/Paper-Coming%20Soon-orange.svg" alt="Paper"></a>
+  <a href="https://arxiv.org/abs/2601.14490"><img src="https://img.shields.io/badge/Paper-ArXiv-red.svg" alt="Paper"></a>
+  <a href="https://ocr.roots.ai/"><img src="https://img.shields.io/badge/Demo-Live-green.svg" alt="Demo"></a>
 </p>
 
 * * *
@@ -31,6 +32,21 @@ GutenOCR provides a complete toolkit for building OCR systems powered by Vision 
 | **[Data Pipelines](#data-pipelines)** | Data utilities for 6+ document sources            |
 | **[Multi-GPU Training](#training)**   | Full-weight VLM fine-tuning with DeepSpeed ZeRO-3 |
 | **[vLLM Evaluation](#evaluation)**    | OCR benchmarking framework                        |
+
+* * *
+
+## Models
+
+We release state-of-the-art OCR models trained using this toolkit:
+
+| Model | Parameters | Link |
+| :--- | :--- | :--- |
+| **GutenOCR-3B** | 3B | [🤗 rootsautomation/GutenOCR-3B](https://huggingface.co/rootsautomation/GutenOCR-3B) |
+| **GutenOCR-7B** | 7B | [🤗 rootsautomation/GutenOCR-7B](https://huggingface.co/rootsautomation/GutenOCR-7B) |
+
+> **Note:** These model weights are released under the **CC-BY-NC** license.
+
+Try our **[Live Demo](https://ocr.roots.ai/)** to see them in action.
 
 * * *
 
@@ -168,32 +184,26 @@ cd experiments/vllm-ocr-eval && uv sync
 ## Citation
 
 ```bibtex
-@misc{heidenreich2025gutenocr,
-  title         = {GutenOCR: A Grounded Vision--Language Front-End for Documents},
-  author        = {Heidenreich, Hunter and Elliott, Ben and Dinica, Olivia and Getachew, Yosheb},
-  year          = {2025},
-  eprint        = {XXXXX.XXXXX},        % <-- arXiv ID
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CV},              % or cs.CL / cs.IR as appropriate
-  version       = {vX},                 % <-- arXiv version when available
-  url           = {https://arxiv.org/abs/XXXXX.XXXXX},
-  note          = {Preprint}
+@misc{heidenreich2026gutenocrgroundedvisionlanguagefrontend,
+      title={GutenOCR: A Grounded Vision-Language Front-End for Documents}, 
+      author={Hunter Heidenreich and Ben Elliott and Olivia Dinica and Yosheb Getachew},
+      year={2026},
+      eprint={2601.14490},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2601.14490}, 
 }
 
-@misc{heidenreich2025pubmedocr,
-  title         = {PubMed-OCR: PMC Open Access OCR Annotations},
-  author        = {Heidenreich, Hunter and Getachew, Yosheb and Dinica, Olivia and Elliott, Ben},
-  year          = {2025},
-  eprint        = {XXXXX.XXXXX},        % <-- arXiv ID
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.CV},              % or cs.CL / cs.IR as appropriate
-  version       = {vX},                 % <-- arXiv version when available
-  url           = {https://arxiv.org/abs/XXXXX.XXXXX},
-  note          = {Preprint}
+@misc{heidenreich2026pubmedocrpmcopenaccess,
+      title={PubMed-OCR: PMC Open Access OCR Annotations}, 
+      author={Hunter Heidenreich and Yosheb Getachew and Olivia Dinica and Ben Elliott},
+      year={2026},
+      eprint={2601.11425},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2601.11425}, 
 }
 ```
-
-_Paper coming soon on arXiv._
 
 * * *
 
@@ -207,7 +217,7 @@ _Paper coming soon on arXiv._
 
 ## License
 
-This project is licensed under the [Apache License 2.0](LICENSE).
+The code in this repository is licensed under the [Apache License 2.0](LICENSE). The released model weights are licensed under **CC-BY-NC**.
 
 * * *
 
