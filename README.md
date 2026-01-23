@@ -50,6 +50,155 @@ Try our **[Live Demo](https://ocr.roots.ai/)** to see them in action.
 
 * * *
 
+## Model Usage
+
+You can easily use the released models with the `transformers` library.
+
+### Quick Start
+
+```python
+import torch
+from transformers import Qwen2_5_VLForConditionalGeneration, AutoProcessor
+from qwen_vl_utils import process_vision_info
+from PIL import Image
+
+# 1. Load model and processor
+model_id = "rootsautomation/GutenOCR-3B"
+model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    model_id, 
+    torch_dtype=torch.bfloat16, 
+    device_map="auto"
+)
+processor = AutoProcessor.from_pretrained(model_id)
+
+# 2. Prepare inputs
+image = Image.open("document.png")
+
+# Example: Read all text
+prompt = "Read all text in {image} and return a single TEXT string, linearized left-to-right/top-to-bottom."
+
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {"type": "image", "image": image},
+            {"type": "text", "text": prompt},
+        ],
+    }
+]
+
+# 3. Process and Generate
+text = processor.apply_chat_template(
+    messages, tokenize=False, add_generation_prompt=True
+)
+image_inputs, video_inputs = process_vision_info(messages)
+inputs = processor(
+    text=[text],
+    images=image_inputs,
+    videos=video_inputs,
+    padding=True,
+    return_tensors="pt",
+)
+inputs = inputs.to("cuda")
+
+generated_ids = model.generate(**inputs, max_new_tokens=4096)
+generated_ids_trimmed = [
+    out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+]
+output_text = processor.batch_decode(
+    generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
+)
+
+print(output_text[0])
+```
+
+### Task Gallery
+
+GutenOCR is steered by specific prompt templates. Below are common tasks:
+
+#### Full OCR Reading
+Extract text from the entire page.
+
+**Prompt:** `Return a layout-sensitive TEXT2D representation of the image.`
+
+**Output:**
+```text
+This is the text found in the document.
+It preserves line breaks.
+```
+
+#### Text Detection
+Locate regions of text (lines, paragraphs, math) without transcribing them.
+
+**Prompt:** `Highlight all math in the image by returning their bounding boxes as a JSON array.`
+
+**Output:**
+```json
+[[100, 200, 400, 250], [500, 600, 800, 650]]
+```
+
+#### Localized Reading
+Read the text contained strictly within a specific bounding box.
+
+**Prompt:** `What does it say in [100, 200, 500, 600] of the image?`
+
+**Output:**
+```text
+Content of the specific box.
+```
+
+#### Conditional Detection (Search)
+Find the bounding box locations of a specific query string.
+
+**Prompt:** `Ground "Invoice #12345" in the image.`
+
+**Output:**
+```json
+[[100, 200, 400, 250]]
+```
+
+### System Prompt
+
+The model relies on a specific system prompt to enforce output formats (JSON, bounding box normalization, etc.). This is **automatically injected by the chat template**, but included below for reference.
+
+<details>
+<summary>Click to view the full System Prompt</summary>
+
+```text
+Your task is to read and localize text data from documents and images.
+
+GEOMETRY:
+    - Coordinates: integer pixels; origin (0,0) top-left; [x1,y1,x2,y2] with x1<x2, y1<y2.
+    - Clip all boxes to the image bounds; drop boxes with zero/negative area.
+    - Reading order: read text in natural reading order: top-to-bottom, left-to-right.
+    - Rotated/angled text: return the axis-aligned bounding box of the minimal enclosing rectangle (no rotated boxes).
+
+TASK TYPES:
+    - reading: a full-text reading task on the entire image.
+    - localized_reading: read text within a specified bounding box in the image.
+    - detection: detect text regions in the image without transcription.
+    - conditional_detection: detect text regions in the image based on a provided text query.
+
+OUTPUT TYPES:
+    - TEXT: one plain string; collapse multiple spaces to one; preserve line breaks. Non-grounded output only.
+    - TEXT2D: one plain string; preserve whitespace as layout cue (spaces + `\n` only; no coordinates). Non-grounded output only.
+    - LINES: JSON array of objects, corresponding to line-by-line OCR: `{"text": string, "bbox": [x1,y1,x2,y2]}`. When locally reading, only return the text: `string`.
+    - WORDS: JSON array of objects, corresponding to word-by-word OCR: `{"text": string, "bbox": [x1,y1,x2,y2]}`.
+    - PARAGRAPHS: JSON array of objects, corresponding to paragraph-wise OCR: `{"text": string, "bbox": [x1,y1,x2,y2]}`. When locally reading, only return the text: `string`.
+    - LATEX: JSON array of objects, corresponding to LaTeX expressions: `{"text": string, "bbox": [x1,y1,x2,y2]}`. When locally reading, only return the latex: `string`.
+    - BOX: JSON array of bounding boxes only: `[ [x1,y1,x2,y2], ... ]`. For detection and conditional_detection tasks only.
+
+OUTPUT FORMAT
+    - For non-grounded outputs, return a string.
+    - For grounded outputs, return a JSON array of objects when performing reading tasks.
+    - For detection tasks, return a JSON array of bounding boxes only.
+    - For localized reading tasks, return the recognized text within the specified bounding box.
+```
+
+</details>
+
+* * *
+
 ## Data Pipelines
 
 Standardized data processing pipelines that output a unified format with bounding boxes and text at word, line, and paragraph levels.
