@@ -136,8 +136,3 @@ uv run python run_evaluation.py \
 uv run python score_lines_reading.py predictions.csv --overwrite
 ```
 
----
-
-## Internal Tools
-
-`diversity/prepare_upload.py` is included in this directory but is **not part of the standard benchmark creation pipeline**. It is a helper tool for uploading selected images to [Label Studio](https://labelstud.io/) as annotation tasks (for Roots' internal annotation workflow). It is not needed to reproduce or use the benchmark.
