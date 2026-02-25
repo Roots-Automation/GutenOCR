@@ -1,0 +1,19 @@
+[project]
+name = "grounding-bench"
+version = "0.1.0"
+description = "Unified diversity sampling for text and vision"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "accelerate>=1.12.0",
+    "pillow>=12.1.0",
+    "protobuf>=6.33.4",
+    "numpy",
+    "torch",
+    "torchvision",
+    "tqdm",
+    "transformers",
+    "sentencepiece",
+    "pandas",
+    "pyarrow",
+]
