@@ -85,7 +85,7 @@ Benchmark samples are selected by visual diversity rather than random sampling, 
 2. The k-center greedy algorithm iteratively picks the image most distant from all previously selected images (measured by cosine distance in embedding space).
 3. The result is ranked by decreasing diversity contribution.
 
-**`v1/rankings.csv` is the single source of truth for the v1 benchmark.** It encodes both the diversity order (the `rank` column) and the task assignment (the `task` column, values 1–4). Task assignments were made once with a fixed random seed (42):
+**`$WORK_DIR/grounding-bench/v1/rankings.csv` is the single source of truth for the v1 benchmark.** It encodes both the diversity order (the `rank` column) and the task assignment (the `task` column, values 1–4). Task assignments were made once with a fixed random seed (42):
 
 - Scan rankings in rank order; pre-validate each sample (check `text.lines` is non-empty).
 - Collect the first 400 valid samples (4 tasks × 100).
