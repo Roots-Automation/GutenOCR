@@ -85,7 +85,7 @@ Benchmark samples are selected by visual diversity rather than random sampling, 
 2. The k-center greedy algorithm iteratively picks the image most distant from all previously selected images (measured by cosine distance in embedding space).
 3. The result is ranked by decreasing diversity contribution.
 
-**`diversity/rankings.csv` is the single source of truth.** It encodes both the diversity order (the `rank` column) and the task assignment (the `task` column, values 1–4). Task assignments were made once with a fixed random seed (42):
+**`v1/rankings.csv` is the single source of truth for the v1 benchmark.** It encodes both the diversity order (the `rank` column) and the task assignment (the `task` column, values 1–4). Task assignments were made once with a fixed random seed (42):
 
 - Scan rankings in rank order; pre-validate each sample (check `text.lines` is non-empty).
 - Collect the first 400 valid samples (4 tasks × 100).
@@ -101,15 +101,22 @@ The benchmark data is not hosted in this repository. Run `runs/v1-pubmed.sh` to 
 
 ```bash
 # From the repo root:
-bash benchmarks/grounding-bench/runs/v1-pubmed.sh /mnt/research
+WORK_DIR=/mnt/research bash benchmarks/grounding-bench/runs/v1-pubmed.sh
+```
+
+You can also override the tar path explicitly:
+
+```bash
+WORK_DIR=/mnt/research PUBMED_TAR=/path/to/pubmed.tar bash benchmarks/grounding-bench/runs/v1-pubmed.sh
 ```
 
 The script:
-1. Extracts `pubmed.tar` from `$WORK_DIR/data/public/gutenocr-test/` into a staging directory.
-2. Skips re-ranking and task assignment — both are already committed to `diversity/rankings.csv` for v1, so re-running produces the exact same dataset.
-3. Copies the 100 task-1 image+JSON pairs to `$WORK_DIR/grounding-bench/v1/t1-pubmed-100/`.
+1. Extracts `pubmed.tar` from `$PUBMED_TAR` into a staging directory.
+2. Ranks all staged images by visual diversity and writes `v1/rankings.csv`.
+3. Assigns each of the 400 top-ranked samples to one of four tasks (seed 42).
+4. Copies the 100 image+JSON pairs for each task to `$WORK_DIR/grounding-bench/v1/t{N}-pubmed-100/`.
 
-To install dependencies for the diversity scripts (only needed if re-ranking):
+Install dependencies for the diversity ranking step before running:
 
 ```bash
 cd benchmarks/grounding-bench/diversity
