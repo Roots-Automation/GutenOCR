@@ -330,6 +330,12 @@ cd experiments/vllm-ocr-eval && uv sync
 
 * * *
 
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, proposing features, and submitting pull requests.
+
+* * *
+
 ## Citation
 
 ```bibtex
