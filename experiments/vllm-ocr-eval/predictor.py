@@ -1,30 +1,19 @@
 """vLLM-based inference module for OCR Vision Language Models."""
 
-import json
 import logging
 import os
-import tempfile
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
-import pandas as pd
 from PIL import Image
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
-
-from dataset import OCREntry, TarShardDataset
 
 logger = logging.getLogger(__name__)
 
 
 def _is_deepseek_ocr(model_name: str) -> bool:
     m = (model_name or "").lower()
-    return (
-        "deepseek-ocr" in m
-        or "deepseek_ai/deepseek-ocr" in m
-        or "deepseek-ai/deepseek-ocr" in m
-    )
+    return "deepseek-ocr" in m or "deepseek_ai/deepseek-ocr" in m or "deepseek-ai/deepseek-ocr" in m
 
 
 def _format_prompt_for_deepseek(text_prompt: str, system_prompt: str) -> str:
@@ -81,14 +70,14 @@ class OCRVLMPredictor:
 
         # Load system prompt
         if os.path.exists(system_prompt_path):
-            with open(system_prompt_path, "r") as f:
+            with open(system_prompt_path) as f:
                 self.system_prompt = f.read().strip()
             logger.info(f"Loaded system prompt from {system_prompt_path}")
         else:
-            self.system_prompt = "You are an expert OCR assistant. Please read and analyze the provided images accurately."
-            logger.warning(
-                f"System prompt file not found at {system_prompt_path}, using default"
+            self.system_prompt = (
+                "You are an expert OCR assistant. Please read and analyze the provided images accurately."
             )
+            logger.warning(f"System prompt file not found at {system_prompt_path}, using default")
 
         logger.info(f"Initializing vLLM with model: {model_name}")
         logger.info(f"Max model length: {max_model_len}")
@@ -124,9 +113,7 @@ class OCRVLMPredictor:
                 llm_kwargs["logits_processors"] = [NGramPerReqLogitsProcessor]
                 logger.info("Enabled DeepSeek-OCR NGramPerReqLogitsProcessor.")
             except Exception as e:
-                logger.warning(
-                    f"Could not enable DeepSeek-OCR logits processor (continuing): {e}"
-                )
+                logger.warning(f"Could not enable DeepSeek-OCR logits processor (continuing): {e}")
 
             # IMPORTANT: do NOT pass limit_mm_per_prompt here; your vLLM will reject it
             # if the model isn't recognized as multimodal (or uses different MM config path).
@@ -157,9 +144,7 @@ class OCRVLMPredictor:
 
         logger.info("vLLM initialization complete")
 
-    def format_prompt_for_qwen(
-        self, image_path: str, text_prompt: str, system_prompt: Optional[str] = None
-    ) -> str:
+    def format_prompt_for_qwen(self, image_path: str, text_prompt: str, system_prompt: str | None = None) -> str:
         """
         Format the prompt for Qwen2.5-VL models with correct vision tokens.
 
@@ -182,12 +167,12 @@ class OCRVLMPredictor:
 
     def predict_batch(
         self,
-        prompts: List[Dict[str, Any]],
+        prompts: list[dict[str, Any]],
         temperature: float = 0.0,
         max_tokens: int = 2048,
         top_p: float = 1.0,
         **sampling_kwargs,
-    ) -> List[str]:
+    ) -> list[str]:
         """
         Perform batch prediction on a list of prompts.
 
@@ -279,7 +264,7 @@ class OCRVLMPredictor:
         self,
         image_path: str,
         text_prompt: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
         temperature: float = 0.0,
         max_tokens: int = 2048,
         **sampling_kwargs,
@@ -304,7 +289,5 @@ class OCRVLMPredictor:
             "system_prompt": system_prompt,
         }
 
-        results = self.predict_batch(
-            [prompt], temperature=temperature, max_tokens=max_tokens, **sampling_kwargs
-        )
+        results = self.predict_batch([prompt], temperature=temperature, max_tokens=max_tokens, **sampling_kwargs)
         return results[0] if results else ""

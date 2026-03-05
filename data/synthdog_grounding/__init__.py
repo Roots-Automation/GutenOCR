@@ -9,10 +9,12 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-from . import pillow_compat  # noqa: F401
+from template import SynthDoG
+
 from elements import Background, Content, Document, Paper, TextBox
 from layouts import Grid, GridStack
-from template import SynthDoG
+
+from . import pillow_compat  # noqa: F401
 
 __version__ = "0.1.0"
 __all__ = [

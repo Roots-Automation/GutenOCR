@@ -3,7 +3,8 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
-import re 
+
+import re
 
 import numpy as np
 from synthtiger import layers
@@ -12,23 +13,23 @@ from synthtiger import layers
 class TextBox:
     """
     Generates a single line of text rendered as an image layer.
-    
+
     The TextBox handles character-by-character rendering with proper spacing,
     ensuring words are not split across lines (coherent text generation).
-    
+
     Attributes:
         fill: Tuple of [min, max] fill ratios controlling how much of the
               available width the text should occupy.
-    
+
     Example:
         >>> textbox = TextBox({"fill": [0.8, 1.0]})
         >>> layer, text = textbox.generate((400, 50), corpus_reader, font_config)
     """
-    
+
     def __init__(self, config):
         """
         Initialize a TextBox with the given configuration.
-        
+
         Args:
             config: Dictionary with optional keys:
                 - fill: [min, max] fill ratio range (default: [1, 1])
@@ -38,12 +39,12 @@ class TextBox:
     def generate(self, size, text, font):
         """
         Generate a text layer for a single line.
-        
+
         Args:
             size: Tuple of (width, height) for the text box area
             text: Text iterator/reader that provides characters
             font: Font configuration dictionary with keys like 'path', 'size', etc.
-        
+
         Returns:
             Tuple of (text_layer, text_string) where:
                 - text_layer: A merged synthtiger Layer containing the rendered text

@@ -19,7 +19,6 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 
-
 IMAGE_EXTS = (".png", ".jpg", ".jpeg")
 
 
@@ -44,13 +43,9 @@ def has_lines(json_path: str) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Extract top-k diverse samples from a flat image/JSON directory."
-    )
+    parser = argparse.ArgumentParser(description="Extract top-k diverse samples from a flat image/JSON directory.")
     parser.add_argument("data_dir", help="Directory containing image and JSON pairs")
-    parser.add_argument(
-        "ranked_csv", help="Rankings CSV produced by diversity/rank.py"
-    )
+    parser.add_argument("ranked_csv", help="Rankings CSV produced by diversity/rank.py")
     parser.add_argument("output_dir", help="Directory to write selected samples")
     parser.add_argument(
         "--top-k",
@@ -110,7 +105,7 @@ def main():
         shutil.copy2(json_path, os.path.join(args.output_dir, stem + ".json"))
         selected += 1
 
-    print(f"\nDone.")
+    print("\nDone.")
     print(f"  Selected : {selected}")
     print(f"  Skipped (missing files)    : {skipped_missing}")
     print(f"  Skipped (no text.lines)    : {skipped_no_lines}")
@@ -118,8 +113,7 @@ def main():
 
     if selected < args.top_k:
         print(
-            f"\nWarning: only {selected} valid samples found "
-            f"(requested {args.top_k}).",
+            f"\nWarning: only {selected} valid samples found (requested {args.top_k}).",
             file=sys.stderr,
         )
 

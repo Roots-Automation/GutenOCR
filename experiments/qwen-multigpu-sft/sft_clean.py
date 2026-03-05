@@ -1,20 +1,20 @@
 #!/usr/bin/env python
-"""Standardized OCR/VL SFT script with WebDataset streaming and --dry-run.
-"""
+"""Standardized OCR/VL SFT script with WebDataset streaming and --dry-run."""
+
 from __future__ import annotations
 
-import os
-import sys
 import glob
 import io
-import re
 import json
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Dict, List, Optional
 
 # --- Standard logging -------------------------------------------------------
 import logging
+import os
+import re
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
 
 LOGGER = logging.getLogger("sft")
 _handler = logging.StreamHandler(sys.stdout)
@@ -24,7 +24,13 @@ LOGGER.setLevel(logging.INFO)
 
 # --- Hugging Face / Torch ---------------------------------------------------
 import torch
+
+# --- WebDataset -------------------------------------------------------------
+import webdataset as wds
+from accelerate import PartialState
+from accelerate.data_loader import prepare_data_loader as accel_prepare
 from PIL import Image
+from torch.utils.data import DataLoader
 from transformers import (
     AutoProcessor,
     Qwen2_5_VLForConditionalGeneration,
@@ -32,13 +38,6 @@ from transformers import (
     TrainingArguments,
     set_seed,
 )
-from torch.utils.data import DataLoader
-from accelerate.data_loader import prepare_data_loader as accel_prepare
-from accelerate import PartialState
-from tqdm.auto import tqdm
-
-# --- WebDataset -------------------------------------------------------------
-import webdataset as wds
 
 # --- Project-local imports --------------------------------------------------
 from args import parse_sft_args
@@ -46,12 +45,13 @@ from prompt_builder import generate_prompt
 
 # --- Constants --------------------------------------------------------------
 IGNORE_INDEX = -100
-with open("system_prompt.txt", "r") as f:
+with open("system_prompt.txt") as f:
     SYSTEM_PROMPT = f.read()
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _ensure_rgb(img: Image.Image) -> Image.Image:
     if not isinstance(img, Image.Image):
@@ -59,6 +59,7 @@ def _ensure_rgb(img: Image.Image) -> Image.Image:
     if img.mode != "RGB":
         img = img.convert("RGB")
     return img
+
 
 def get_world_size_and_rank():
     try:
@@ -70,6 +71,7 @@ def get_world_size_and_rank():
         if torch.distributed.is_available() and torch.distributed.is_initialized():
             return torch.distributed.get_world_size(), torch.distributed.get_rank()
         return torch.cuda.device_count(), 0
+
 
 def is_main_process() -> bool:
     try:
@@ -86,13 +88,14 @@ def is_main_process() -> bool:
 
 # ------------------ WebDataset streaming -----------------------------------
 
-def _expand_shards(pattern: str) -> List[str]:
+
+def _expand_shards(pattern: str) -> list[str]:
     """Expand a user-provided pattern into a list of shard files.
 
     Supports comma/semicolon/colon-separated lists of globs.
     """
     parts = [p.strip() for p in re.split(r"[,;:]\s*", pattern) if p.strip()]
-    files: List[str] = []
+    files: list[str] = []
     for part in parts:
         expanded = os.path.expanduser(part)
         matches = sorted(p for p in glob.glob(expanded) if Path(p).is_file())
@@ -106,30 +109,32 @@ def _remap_and_parse(sample):
     # Find JSON data - look for any key ending with .json
     meta = None
     for key, value in sample.items():
-        if key.endswith('.json'):
+        if key.endswith(".json"):
             meta = value
             break
-    
+
     # Fallback to simple 'json' key
     if meta is None and "json" in sample:
         meta = sample["json"]
-    
+
     if meta is None:
-        raise KeyError(f"Sample missing JSON data: expected key ending with '.json' or 'json', got keys: {list(sample.keys())}")
-    
+        raise KeyError(
+            f"Sample missing JSON data: expected key ending with '.json' or 'json', got keys: {list(sample.keys())}"
+        )
+
     if isinstance(meta, (bytes, bytearray)):
         meta = json.loads(meta)
-    
+
     # Find image data - look for any key ending with image extensions
     image_bytes = None
     for key, value in sample.items():
-        if key.endswith('.jpg') or key.endswith('.jpeg'):
+        if key.endswith(".jpg") or key.endswith(".jpeg"):
             image_bytes = value
             break
-        elif key.endswith('.png'):
+        elif key.endswith(".png"):
             image_bytes = value
             break
-    
+
     # Fallback to simple extension keys
     if image_bytes is None:
         if "jpg" in sample:
@@ -138,10 +143,12 @@ def _remap_and_parse(sample):
             image_bytes = sample["jpeg"]
         elif "png" in sample:
             image_bytes = sample["png"]
-    
+
     if image_bytes is None:
-        raise KeyError(f"Sample missing image data: expected key ending with '.jpg', '.jpeg', '.png', or simple 'jpg'/'png', got keys: {list(sample.keys())}")
-    
+        raise KeyError(
+            f"Sample missing image data: expected key ending with '.jpg', '.jpeg', '.png', or simple 'jpg'/'png', got keys: {list(sample.keys())}"
+        )
+
     return {
         "image_bytes": image_bytes,
         "json_data": meta,
@@ -154,11 +161,17 @@ def round_down_multiple(x: int, m: int) -> int:
 
 
 def build_wds_iterable(
-    patterns, *, per_proc_epoch_size: int, shuffle_shards: int = 1000, shuffle_samples: int = 2000, seed: int = 42, resampled: bool = True,
+    patterns,
+    *,
+    per_proc_epoch_size: int,
+    shuffle_shards: int = 1000,
+    shuffle_samples: int = 2000,
+    seed: int = 42,
+    resampled: bool = True,
 ):
     if isinstance(patterns, str):
         patterns = [patterns]
-    all_urls: List[str] = []
+    all_urls: list[str] = []
     for pat in patterns:
         all_urls.extend(_expand_shards(pat))
     all_urls = sorted(all_urls)
@@ -183,15 +196,16 @@ def build_wds_iterable(
 
 # ------------------ Collator ------------------------------------------------
 
+
 @dataclass
 class QwenVLCollator:
     processor: Any
     max_length: int
     ignore_index: int = IGNORE_INDEX
-    allowed_tasks: Optional[List[str]] = None
-    allowed_output_types: Optional[List[str]] = None
+    allowed_tasks: list[str] | None = None
+    allowed_output_types: list[str] | None = None
 
-    def __call__(self, features: List[Dict[str, Any]]) -> Dict[str, torch.Tensor]:
+    def __call__(self, features: list[dict[str, Any]]) -> dict[str, torch.Tensor]:
         images, full_texts, prompt_texts = [], [], []
         for ex in features:
             # Decode image from whichever representation is present
@@ -221,8 +235,12 @@ class QwenVLCollator:
             ]
             prompt_only = conversation[:-1]
 
-            full_texts.append(self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=False))
-            prompt_texts.append(self.processor.apply_chat_template(prompt_only, tokenize=False, add_generation_prompt=True))
+            full_texts.append(
+                self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=False)
+            )
+            prompt_texts.append(
+                self.processor.apply_chat_template(prompt_only, tokenize=False, add_generation_prompt=True)
+            )
             images.append(img)
 
         # Tokenize with the SAME processor/images/max_length for BOTH batches
@@ -263,6 +281,7 @@ class QwenVLCollator:
 
 # ------------------ Trainer with iterable-safe dataloader -------------------
 
+
 class NoDispatchTrainer(Trainer):
     def get_train_dataloader(self):
         if self.train_dataset is None:
@@ -276,8 +295,8 @@ class NoDispatchTrainer(Trainer):
             drop_last=self.args.dataloader_drop_last,
             num_workers=self.args.dataloader_num_workers,
             pin_memory=self.args.dataloader_pin_memory,
-            #prefetch_factor=(self.args.dataloader_prefetch_factor if self.args.dataloader_prefetch_factor > 0 else None), NOTE: no prefetching for stability
-            #persistent_workers=self.args.dataloader_persistent_workers, NOTE: without prefetch, this arg can't be used
+            # prefetch_factor=(self.args.dataloader_prefetch_factor if self.args.dataloader_prefetch_factor > 0 else None), NOTE: no prefetching for stability
+            # persistent_workers=self.args.dataloader_persistent_workers, NOTE: without prefetch, this arg can't be used
         )
         st = getattr(self.accelerator, "state", None)
         return accel_prepare(
@@ -317,21 +336,27 @@ class NoDispatchTrainer(Trainer):
             non_blocking=True,
         )
 
+
 # ------------------ Utility: save run config --------------------------------
+
 
 def _save_run_config(args) -> None:
     try:
         os.makedirs(args.output_dir, exist_ok=True)
         # strip non-serializable bits
-        serializable = {k: (str(v) if not isinstance(v, (int, float, str, bool, list, dict, type(None))) else v)
-                        for k, v in vars(args).items()}
+        serializable = {
+            k: (str(v) if not isinstance(v, (int, float, str, bool, list, dict, type(None))) else v)
+            for k, v in vars(args).items()
+        }
         with open(os.path.join(args.output_dir, "run_args.json"), "w") as f:
             json.dump(serializable, f, indent=2, sort_keys=True)
     except Exception as e:
         if is_main_process():
             LOGGER.warning("Failed to save run_args.json: %s", e)
 
+
 # ------------------ Dry-run helpers -----------------------------------------
+
 
 def _format_preview(text: str, n: int = 1024) -> str:
     t = text.replace("\n", " ")
@@ -343,14 +368,14 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
     n = getattr(args, "dry_run_samples", 32) or 32
 
     # We don't need the full collator for printing prompts; but for generation we do.
-    collator = QwenVLCollator(
+    QwenVLCollator(
         processor=processor,
         max_length=args.max_length,
         allowed_tasks=args.tasks,
         allowed_output_types=args.output_types,
     )
 
-    picked: List[Dict[str, Any]] = []
+    picked: list[dict[str, Any]] = []
     it = iter(dataset_iter)
     # Just take the first N yielded (stream is already shuffled); robust to StopIteration
     while len(picked) < n:
@@ -365,9 +390,9 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
         return
 
     # Build minimal per-sample prompt text (and optional generation inputs)
-    images: List[Image.Image] = []
-    prompt_texts: List[str] = []
-    targets: List[str] = []
+    images: list[Image.Image] = []
+    prompt_texts: list[str] = []
+    targets: list[str] = []
     for ex in picked:
         # image
         if "image_bytes" in ex:
@@ -404,7 +429,9 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
         LOGGER.info("—— DRY‑RUN PREVIEW (showing up to %d) ——", len(prompt_texts))
         for i, (pt, tgt, ex) in enumerate(zip(prompt_texts, targets, picked)):
             sid = ex.get("sample_id", "")
-            LOGGER.info("[%02d] sample_id=%s\n  prompt: %s\n  target: %s", i + 1, sid, _format_preview(pt), _format_preview(tgt))
+            LOGGER.info(
+                "[%02d] sample_id=%s\n  prompt: %s\n  target: %s", i + 1, sid, _format_preview(pt), _format_preview(tgt)
+            )
 
     if not getattr(args, "dry_run_generate", False):
         return
@@ -453,7 +480,9 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
         if is_main_process():
             LOGGER.info("GEN[%02d]: %s", i + 1, _format_preview(txt, n=300))
 
+
 # ------------------ Main ----------------------------------------------------
+
 
 def main() -> None:
     args = parse_sft_args()
@@ -482,7 +511,13 @@ def main() -> None:
         if "config.json" not in files:
             missing.append("config.json")
         has_weights = any(
-            n in files for n in ["model.safetensors", "pytorch_model.bin", "model.safetensors.index.json", "pytorch_model.bin.index.json"]
+            n in files
+            for n in [
+                "model.safetensors",
+                "pytorch_model.bin",
+                "model.safetensors.index.json",
+                "pytorch_model.bin.index.json",
+            ]
         )
         if not has_weights:
             missing.append("model weights (safetensors/bin or sharded)")
@@ -509,12 +544,12 @@ def main() -> None:
         LOGGER.info("Building WebDataset stream from: %s", args.tar_pattern)
     per_device_bsz = args.batch_size
     grad_accum = args.grad_accum
-    
+
     # Calculate based on true cardinality to hit each sample exactly once
     num_tars = len(_expand_shards(args.tar_pattern))
-    N = num_tars * 2048   # Assumption: 2048 samples per tar shard
+    N = num_tars * 2048  # Assumption: 2048 samples per tar shard
     global_batch = per_device_bsz * grad_accum * WORLD_SIZE
-    
+
     # Ensure global_batch divides N evenly to avoid drops
     if N % global_batch != 0:
         raise ValueError(
@@ -522,13 +557,18 @@ def main() -> None:
             f"(batch_size={per_device_bsz} * grad_accum={grad_accum} * world_size={WORLD_SIZE}) "
             f"to avoid dropping samples. Adjust batch_size or grad_accum."
         )
-    
-    steps_per_epoch = N // global_batch                      # exact from N
+
+    steps_per_epoch = N // global_batch  # exact from N
     per_proc_epoch_size = steps_per_epoch * args.batch_size * args.grad_accum
-    
+
     if RANK == 0:
-        LOGGER.info("Samples: %d, global_batch: %d, steps/epoch: %d, per-rank epoch size: %d",
-                    N, global_batch, steps_per_epoch, per_proc_epoch_size)
+        LOGGER.info(
+            "Samples: %d, global_batch: %d, steps/epoch: %d, per-rank epoch size: %d",
+            N,
+            global_batch,
+            steps_per_epoch,
+            per_proc_epoch_size,
+        )
 
     assert per_proc_epoch_size % (args.batch_size * args.grad_accum) == 0
 
@@ -547,18 +587,22 @@ def main() -> None:
         val_per_proc = max(round_down_multiple(val_total // WORLD_SIZE, per_device_bsz), 1)
         # Use separate eval tar pattern if provided, otherwise use training pattern
         eval_pattern = args.eval_tar_pattern if args.eval_tar_pattern else args.tar_pattern
-        val_ds = build_wds_iterable(
-            patterns=eval_pattern,
-            resampled=False,  # Deterministic eval - no resampling
-            per_proc_epoch_size=val_per_proc,
-            shuffle_shards=0,  # Minimal shuffle for eval
-            shuffle_samples=0,  # Small shuffle buffer for eval variety
-            seed=args.seed,
-        ) if val_total > 0 else None
+        val_ds = (
+            build_wds_iterable(
+                patterns=eval_pattern,
+                resampled=False,  # Deterministic eval - no resampling
+                per_proc_epoch_size=val_per_proc,
+                shuffle_shards=0,  # Minimal shuffle for eval
+                shuffle_samples=0,  # Small shuffle buffer for eval variety
+                seed=args.seed,
+            )
+            if val_total > 0
+            else None
+        )
     else:
         val_ds = None
 
-    max_steps = int(steps_per_epoch * args.epochs)           # explicitly matches the above, ensure integer
+    max_steps = int(steps_per_epoch * args.epochs)  # explicitly matches the above, ensure integer
     logging_steps = 10
 
     # Early exit: DRY RUN -----------------------------------------------------
@@ -600,7 +644,12 @@ def main() -> None:
     LOGGER.info("emb_vocab_size: %s", model.get_input_embeddings().num_embeddings)
     LOGGER.info(
         "tokenizer_len=%d pad/eos/bos=%s/%s/%s PAD token=%r PAD==EOS? %s",
-        len(tok), tok.pad_token_id, tok.eos_token_id, tok.bos_token_id, tok.pad_token, tok.pad_token_id == tok.eos_token_id
+        len(tok),
+        tok.pad_token_id,
+        tok.eos_token_id,
+        tok.bos_token_id,
+        tok.pad_token,
+        tok.pad_token_id == tok.eos_token_id,
     )
 
     # Freeze modules per your original baseline
@@ -626,15 +675,19 @@ def main() -> None:
     lm_head = getattr(model, "lm_head", None)
     frozen_h = _freeze_module(lm_head) if lm_head is not None else 0
     if lm_head is not None:
-        tied = (getattr(lm_head, "weight", None) is getattr(tok_emb, "weight", None))
+        tied = getattr(lm_head, "weight", None) is getattr(tok_emb, "weight", None)
         LOGGER.info("[freeze] lm_head (tied=%s): %.2fM params", tied, frozen_h / 1e6)
 
-
     if not args.train_vision:
-        vision_mod, vision_name = _find_first(model, ["vision_tower", "vision_model", "visual", "vision"]) or (None, None)
+        vision_mod, vision_name = _find_first(model, ["vision_tower", "vision_model", "visual", "vision"]) or (
+            None,
+            None,
+        )
         if vision_mod is None:
             base = getattr(model, "model", None)
-            vision_mod, vision_name = _find_first(base or model, ["vision_tower", "vision_model", "visual", "vision"]) or (None, None)
+            vision_mod, vision_name = _find_first(
+                base or model, ["vision_tower", "vision_model", "visual", "vision"]
+            ) or (None, None)
         frozen_v = _freeze_module(vision_mod)
         LOGGER.info("[freeze] vision module '%s': %.2fM params", vision_name, frozen_v / 1e6)
 
@@ -678,7 +731,7 @@ def main() -> None:
         remove_unused_columns=False,
         dataloader_num_workers=args.num_workers,
         dataloader_pin_memory=True,
-        dataloader_persistent_workers=args.persistent_workers, # defaults false for stability
+        dataloader_persistent_workers=args.persistent_workers,  # defaults false for stability
         # dataloader_prefetch_factor=args.prefetch_factor, NOTE: no prefetching for stability
         dataloader_drop_last=True,
         max_grad_norm=1.0,
@@ -691,7 +744,7 @@ def main() -> None:
         tf32=True,
         optim="adamw_torch_fused",
         deepspeed=getattr(args, "deepspeed_config", None),
-        eval_on_start=True
+        eval_on_start=True,
     )
 
     if training_args.gradient_checkpointing:

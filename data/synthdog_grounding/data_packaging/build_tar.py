@@ -45,32 +45,31 @@ import sys
 import tarfile
 import time
 from pathlib import Path
-from typing import Tuple, Optional
 
 try:
     from PIL import Image
-except ImportError as e:
+except ImportError:
     print("Error: This script requires Pillow. Install with: pip install pillow", file=sys.stderr)
     print("Or using uv: uv add pillow", file=sys.stderr)
     raise
 
 # Regular expression to extract numeric IDs from filenames
-NUM_RE = re.compile(r'(\d+)(?=\.[^.]+$)')  # capture digits before the final extension
+NUM_RE = re.compile(r"(\d+)(?=\.[^.]+$)")  # capture digits before the final extension
 
 
 def extract_numeric_id(file_name: str) -> int:
     """
     Extract the trailing numeric ID from a filename.
-    
+
     Args:
         file_name: Filename like 'image_22.jpg' or '00042.png'
-        
+
     Returns:
         int: The numeric ID (e.g., 22, 42)
-        
+
     Raises:
         ValueError: If no trailing number is found in the filename
-        
+
     Examples:
         >>> extract_numeric_id("image_22.jpg")
         22
@@ -83,16 +82,16 @@ def extract_numeric_id(file_name: str) -> int:
     return int(m.group(1))
 
 
-def extract_image_metadata(img_path: Path) -> Tuple[int, int, Optional[float]]:
+def extract_image_metadata(img_path: Path) -> tuple[int, int, float | None]:
     """
     Extract metadata from an image file.
-    
+
     Args:
         img_path: Path to the image file
-        
+
     Returns:
         Tuple of (width, height, dpi_or_none)
-        
+
     Note:
         DPI is extracted from:
         - info['dpi'] if present (Pillow format)
@@ -127,6 +126,7 @@ def extract_image_metadata(img_path: Path) -> Tuple[int, int, Optional[float]]:
                     dpi = x_density * 2.54
 
         return width, height, (round(dpi, 2) if dpi is not None else None)
+
 
 def process_directory(input_dir: Path, output_tar: Path):
     meta_path = input_dir / "metadata.jsonl"
@@ -189,7 +189,9 @@ def process_directory(input_dir: Path, output_tar: Path):
                 try:
                     gt = json.loads(gt)
                 except Exception as e:
-                    print(f"[warning] Could not parse 'ground_truth' JSON string on line {line_no}: {e}", file=sys.stderr)
+                    print(
+                        f"[warning] Could not parse 'ground_truth' JSON string on line {line_no}: {e}", file=sys.stderr
+                    )
                     gt = {}
 
             text_lines = []
@@ -201,15 +203,8 @@ def process_directory(input_dir: Path, output_tar: Path):
 
             # Create the new JSON payload
             new_obj = {
-                "text": {
-                    "lines": text_lines
-                },
-                "image": {
-                    "path": new_img_name,
-                    "width": width,
-                    "height": height,
-                    "dpi": dpi
-                }
+                "text": {"lines": text_lines},
+                "image": {"path": new_img_name, "width": width, "height": height, "dpi": dpi},
             }
             payload = json.dumps(new_obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
 
@@ -224,11 +219,15 @@ def process_directory(input_dir: Path, output_tar: Path):
 
             lines_processed += 1
 
-        print(f"Done. Wrote {lines_processed} record(s) to {output_tar.name} "
-              f"with {warnings} warning(s).", file=sys.stderr)
+        print(
+            f"Done. Wrote {lines_processed} record(s) to {output_tar.name} with {warnings} warning(s).", file=sys.stderr
+        )
+
 
 def main():
-    parser = argparse.ArgumentParser(description="Transform dataset into a tar with 00000.ext images and 00000.json files.")
+    parser = argparse.ArgumentParser(
+        description="Transform dataset into a tar with 00000.ext images and 00000.json files."
+    )
     parser.add_argument("directory", type=str, help="Path to the input directory containing metadata.jsonl and images")
     parser.add_argument("-o", "--output", type=str, default=None, help="Output tar path (defaults to <dir>.tar)")
     args = parser.parse_args()
@@ -240,6 +239,7 @@ def main():
 
     output_tar = Path(args.output).resolve() if args.output else input_dir.with_suffix(".tar")
     process_directory(input_dir, output_tar)
+
 
 if __name__ == "__main__":
     main()

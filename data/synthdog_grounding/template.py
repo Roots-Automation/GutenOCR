@@ -3,29 +3,31 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 # Ensure Pillow compatibility patch is loaded before anything else
 try:
     import pillow_compat
 except ImportError:
     # If running as part of the package vs script, try relative import or assume it's already patched
     try:
-        from . import pillow_compat
+        from . import pillow_compat  # noqa: F401 (side-effect import)
     except ImportError:
         pass
 
 import json
 import os
 import re
-from typing import Any, List
+from typing import Any
 
 import numpy as np
-from elements import Background, Document
 from PIL import Image
 from synthtiger import components, layers, templates
 
+from elements import Background, Document
+
 
 class SynthDoG(templates.Template):
-    def __init__(self, config=None, split_ratio: List[float] = None):
+    def __init__(self, config=None, split_ratio: list[float] = None):
         super().__init__(config)
         if config is None:
             config = {}
@@ -80,14 +82,9 @@ class SynthDoG(templates.Template):
             y1 = text_layer.top / image_height
             x2 = (text_layer.left + text_layer.width) / image_width
             y2 = (text_layer.top + text_layer.height) / image_height
-            
+
             # Round to 3 decimal places
-            bbox = [
-                round(x1, 3),
-                round(y1, 3),
-                round(x2, 3),
-                round(y2, 3)
-            ]
+            bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
             text_bboxes.append(bbox)
 
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
@@ -116,9 +113,9 @@ class SynthDoG(templates.Template):
 
     def save(self, root, data, idx):
         image = data["image"]
-        label = data["label"]
+        data["label"]
         quality = data["quality"]
-        roi = data["roi"]
+        data["roi"]
         text_lines = data.get("text_lines", [])
         text_bboxes = data.get("text_bboxes", [])
 
@@ -141,16 +138,10 @@ class SynthDoG(templates.Template):
         # Create structured data for text lines with bboxes
         text_lines_data = []
         for i, (text, bbox) in enumerate(zip(text_lines, text_bboxes)):
-            text_lines_data.append({
-                "text": text,
-                "bbox": bbox,
-                "line_id": i
-            })
+            text_lines_data.append({"text": text, "bbox": bbox, "line_id": i})
 
         metadata = self.format_metadata(
-            image_filename=image_filename, 
-            keys=["text_lines", "text_bboxes"], 
-            values=[text_lines_data, text_bboxes]
+            image_filename=image_filename, keys=["text_lines", "text_bboxes"], values=[text_lines_data, text_bboxes]
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)
@@ -159,7 +150,7 @@ class SynthDoG(templates.Template):
     def end_save(self, root):
         pass
 
-    def format_metadata(self, image_filename: str, keys: List[str], values: List[Any]):
+    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]):
         """
         Fit gt_parse contents to huggingface dataset's format
         keys and values, whose lengths are equal, are used to constrcut 'gt_parse' field in 'ground_truth' field
@@ -167,7 +158,7 @@ class SynthDoG(templates.Template):
             keys: List of task_name
             values: List of actual gt data corresponding to each task_name
         """
-        assert len(keys) == len(values), "Length does not match: keys({}), values({})".format(len(keys), len(values))
+        assert len(keys) == len(values), f"Length does not match: keys({len(keys)}), values({len(values)})"
 
         _gt_parse_v = dict()
         for k, v in zip(keys, values):

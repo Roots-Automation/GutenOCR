@@ -5,8 +5,8 @@ import pandas as pd
 from scipy.optimize import linear_sum_assignment
 from transformers import PreTrainedTokenizerBase
 
-from utils.box import evaluate_bbox_predictions, precision_iou_sweep, calculate_bbox_iou
-from utils.parse import parse_json_output, normalize_structured_keys, extract_boxes_from_normalized_json
+from utils.box import calculate_bbox_iou, evaluate_bbox_predictions, precision_iou_sweep
+from utils.parse import extract_boxes_from_normalized_json, normalize_structured_keys, parse_json_output
 from utils.text import calculate_comprehensive_text_metrics
 
 
@@ -15,65 +15,58 @@ def evaluate_structured_task(
     predicted_output: str,
     task_type: str,
     output_type: str,
-    tokenizer: PreTrainedTokenizerBase | None = None
+    tokenizer: PreTrainedTokenizerBase | None = None,
 ) -> dict[str, float]:
     """
     Route to appropriate structured evaluation based on task type.
-    
+
     Args:
         expected_output: Ground truth output
         predicted_output: Raw model output text
         task_type: Type of task (detection, conditional_detection, reading, localized_reading)
         output_type: Expected output format
         tokenizer: Optional tokenizer for text metrics
-        
+
     Returns:
         Dictionary of evaluation metrics
     """
-    if task_type in ['detection', 'conditional_detection']:
+    if task_type in ["detection", "conditional_detection"]:
         return evaluate_detection_task(expected_output, predicted_output, task_type)
-    
-    elif task_type == 'localized_reading':
+
+    elif task_type == "localized_reading":
         return evaluate_localized_reading_task(expected_output, predicted_output, tokenizer)
-    
-    elif task_type == 'reading' and '[' in output_type and 'box' in output_type:
+
+    elif task_type == "reading" and "[" in output_type and "box" in output_type:
         # Structured reading with bounding boxes
         return evaluate_structured_reading_task(expected_output, predicted_output, task_type, tokenizer)
-    
+
     else:
         # Fall back to unstructured evaluation
         if isinstance(expected_output, (list, dict)):
             # Try to extract text content for comparison
             if isinstance(expected_output, list):
-                expected_text = ' '.join([
-                    item.get('text', str(item)) if isinstance(item, dict) else str(item)
-                    for item in expected_output
-                ])
+                expected_text = " ".join(
+                    [item.get("text", str(item)) if isinstance(item, dict) else str(item) for item in expected_output]
+                )
             else:
-                expected_text = expected_output.get('text', str(expected_output))
+                expected_text = expected_output.get("text", str(expected_output))
         else:
             expected_text = str(expected_output)
-        
-        return calculate_comprehensive_text_metrics(
-            expected_text, 
-            predicted_output, 
-            tokenizer
-        )
+
+        return calculate_comprehensive_text_metrics(expected_text, predicted_output, tokenizer)
 
 
 def evaluate_detection_task(
-    expected_output: list[list[int]] | list[dict[str, Any]], 
-    predicted_output: str,
-    task_type: str = "detection"
+    expected_output: list[list[int]] | list[dict[str, Any]], predicted_output: str, task_type: str = "detection"
 ) -> dict[str, float]:
     """
     Evaluate detection tasks (detection, conditional_detection).
-    
+
     Args:
         expected_output: Ground truth boxes or structured data
         predicted_output: Raw model output text
         task_type: Type of detection task
-        
+
     Returns:
         Dictionary of evaluation metrics
     """
@@ -84,19 +77,19 @@ def evaluate_detection_task(
             if isinstance(item, list) and len(item) == 4:
                 # Direct box format
                 expected_boxes.append(item)
-            elif isinstance(item, dict) and 'bbox' in item:
-                expected_boxes.append(item['bbox'])
-            elif isinstance(item, dict) and 'box' in item:
-                expected_boxes.append(item['box'])
+            elif isinstance(item, dict) and "bbox" in item:
+                expected_boxes.append(item["bbox"])
+            elif isinstance(item, dict) and "box" in item:
+                expected_boxes.append(item["box"])
 
     # Parse and normalize predicted output
     parsed_pred = parse_json_output(predicted_output)
     if parsed_pred is None:
         parsed_pred = []
-    
+
     # Normalize the predicted output
     normalized_pred = normalize_structured_keys(parsed_pred)
-    
+
     # Extract bounding boxes from predicted output
     predicted_boxes = []
     if isinstance(normalized_pred, list):
@@ -104,79 +97,75 @@ def evaluate_detection_task(
             if isinstance(item, list) and len(item) == 4:
                 # Direct box format
                 predicted_boxes.append(item)
-            elif isinstance(item, dict) and 'bbox' in item:
-                predicted_boxes.append(item['bbox'])
-    
+            elif isinstance(item, dict) and "bbox" in item:
+                predicted_boxes.append(item["bbox"])
+
     # Calculate detection metrics
-    return {**precision_iou_sweep(expected_boxes, predicted_boxes), **evaluate_bbox_predictions(expected_boxes, predicted_boxes)}
+    return {
+        **precision_iou_sweep(expected_boxes, predicted_boxes),
+        **evaluate_bbox_predictions(expected_boxes, predicted_boxes),
+    }
 
 
 def evaluate_localized_reading_task(
-    expected_output: str | list[str], 
-    predicted_output: str,
-    tokenizer: PreTrainedTokenizerBase | None = None
+    expected_output: str | list[str], predicted_output: str, tokenizer: PreTrainedTokenizerBase | None = None
 ) -> dict[str, float]:
     """
     Evaluate localized reading tasks where a specific region is read.
-    
+
     Args:
         expected_output: Expected text content (string or list of strings)
         predicted_output: Raw model output text
         tokenizer: Optional tokenizer for token-level metrics
-        
+
     Returns:
         Dictionary of evaluation metrics
     """
     # Parse predicted output - might be JSON or plain text
     parsed_pred = parse_json_output(predicted_output)
-    
+
     # Extract text from predicted output
     if parsed_pred is not None:
         # If it's structured, try to extract text
         normalized_pred = normalize_structured_keys(parsed_pred)
-        
+
         if isinstance(normalized_pred, list):
-            predicted_text = ' '.join([
-                item.get('text', '') if isinstance(item, dict) else str(item)
-                for item in normalized_pred
-            ])
-        elif isinstance(normalized_pred, dict) and 'text' in normalized_pred:
-            predicted_text = normalized_pred['text']
+            predicted_text = " ".join(
+                [item.get("text", "") if isinstance(item, dict) else str(item) for item in normalized_pred]
+            )
+        elif isinstance(normalized_pred, dict) and "text" in normalized_pred:
+            predicted_text = normalized_pred["text"]
         else:
             predicted_text = str(normalized_pred)
     else:
         # Treat as plain text
         predicted_text = predicted_output.strip()
-    
+
     # Handle expected output
     if isinstance(expected_output, list):
-        expected_text = ' '.join(expected_output)
+        expected_text = " ".join(expected_output)
     else:
         expected_text = str(expected_output)
-    
+
     # Use unstructured text evaluation
-    return calculate_comprehensive_text_metrics(
-        expected_text, 
-        predicted_text, 
-        tokenizer
-    )
+    return calculate_comprehensive_text_metrics(expected_text, predicted_text, tokenizer)
 
 
 def evaluate_structured_reading_task(
-    expected_output: list[dict[str, Any]] | dict[str, Any], 
+    expected_output: list[dict[str, Any]] | dict[str, Any],
     predicted_output: str,
     task_type: str = "reading",
-    tokenizer: PreTrainedTokenizerBase | None = None
+    tokenizer: PreTrainedTokenizerBase | None = None,
 ) -> dict[str, float]:
     """
     Evaluate structured reading tasks that output text with bounding boxes.
-    
+
     Args:
         expected_output: Ground truth structured data
         predicted_output: Raw model output text
         task_type: Type of reading task
         tokenizer: Optional tokenizer for token-level metrics
-        
+
     Returns:
         Dictionary of evaluation metrics
     """
@@ -184,90 +173,94 @@ def evaluate_structured_reading_task(
     parsed_pred = parse_json_output(predicted_output)
     if parsed_pred is None:
         parsed_pred = []
-    
+
     # Normalize both expected and predicted
     normalized_pred = normalize_structured_keys(parsed_pred)
     normalized_expected = normalize_structured_keys(expected_output)
-    
+
     # Extract text and boxes
     def extract_text_and_boxes(data):
         texts = []
         boxes = []
-        
+
         if isinstance(data, list):
             for item in data:
                 if isinstance(item, dict):
-                    if 'text' in item:
-                        texts.append(item['text'])
-                    if 'bbox' in item:
-                        boxes.append(item['bbox'])
+                    if "text" in item:
+                        texts.append(item["text"])
+                    if "bbox" in item:
+                        boxes.append(item["bbox"])
         elif isinstance(data, dict):
-            if 'text' in data:
-                texts.append(data['text'])
-            if 'bbox' in data:
-                boxes.append(data['bbox'])
-        
+            if "text" in data:
+                texts.append(data["text"])
+            if "bbox" in data:
+                boxes.append(data["bbox"])
+
         return texts, boxes
-    
+
     expected_texts, expected_boxes = extract_text_and_boxes(normalized_expected)
     predicted_texts, predicted_boxes = extract_text_and_boxes(normalized_pred)
 
     # Evaluate bounding boxes and get matching information
     bbox_metrics = evaluate_bbox_predictions(expected_boxes, predicted_boxes)
-    
+
     # Evaluate text quality for spatially matched boxes only
     matched_text_metrics = {}
-    if expected_boxes and predicted_boxes and len(expected_texts) == len(expected_boxes) and len(predicted_texts) == len(predicted_boxes):
+    if (
+        expected_boxes
+        and predicted_boxes
+        and len(expected_texts) == len(expected_boxes)
+        and len(predicted_texts) == len(predicted_boxes)
+    ):
         # Find box matches using IoU threshold
         iou_matrix = np.zeros((len(expected_boxes), len(predicted_boxes)))
         for i, exp_box in enumerate(expected_boxes):
             for j, pred_box in enumerate(predicted_boxes):
                 iou_matrix[i, j] = calculate_bbox_iou(exp_box, pred_box)
-        
+
         # Hungarian algorithm matching above IoU threshold (0.5)
         iou_threshold_match = 0.5
         cost_matrix = 1.0 - iou_matrix
         cost_matrix[iou_matrix < iou_threshold_match] = 1e6
-        
+
         # Find optimal assignment
         row_ind, col_ind = linear_sum_assignment(cost_matrix)
-        
+
         # Filter matches that meet IoU threshold and create matched pairs
-        matched_pairs = [(i, j, iou_matrix[i, j]) for i, j in zip(row_ind, col_ind) if iou_matrix[i, j] >= iou_threshold_match]
-        
+        matched_pairs = [
+            (i, j, iou_matrix[i, j]) for i, j in zip(row_ind, col_ind) if iou_matrix[i, j] >= iou_threshold_match
+        ]
+
         # Evaluate text for matched pairs only
         if matched_pairs:
             matched_expected_texts = []
             matched_predicted_texts = []
-            
+
             for exp_idx, pred_idx, iou_score in matched_pairs:
                 matched_expected_texts.append(expected_texts[exp_idx])
                 matched_predicted_texts.append(predicted_texts[pred_idx])
-            
+
             # Calculate text metrics for matched boxes
-            matched_combined_expected = ' '.join(matched_expected_texts)
-            matched_combined_predicted = ' '.join(matched_predicted_texts)
-            
+            matched_combined_expected = " ".join(matched_expected_texts)
+            matched_combined_predicted = " ".join(matched_predicted_texts)
+
             matched_text_metrics = calculate_comprehensive_text_metrics(
-                matched_combined_expected,
-                matched_combined_predicted,
-                tokenizer
+                matched_combined_expected, matched_combined_predicted, tokenizer
             )
-            
+
             # Prefix with "matched_" to distinguish from overall text metrics
-            matched_text_metrics = {f'matched_{k}': v for k, v in matched_text_metrics.items()}
-            
+            matched_text_metrics = {f"matched_{k}": v for k, v in matched_text_metrics.items()}
+
             # Add count of matched boxes for context
-            matched_text_metrics['matched_box_count'] = len(matched_pairs)
-            matched_text_metrics['total_expected_boxes'] = len(expected_boxes)
-            matched_text_metrics['matched_box_ratio'] = len(matched_pairs) / len(expected_boxes)
-    
+            matched_text_metrics["matched_box_count"] = len(matched_pairs)
+            matched_text_metrics["total_expected_boxes"] = len(expected_boxes)
+            matched_text_metrics["matched_box_ratio"] = len(matched_pairs) / len(expected_boxes)
+
     return {**matched_text_metrics, **bbox_metrics}
 
 
 def analyze_detection_results(
-    df: pd.DataFrame,
-    iou_thresholds: tuple[float, ...] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95)
+    df: pd.DataFrame, iou_thresholds: tuple[float, ...] = (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95)
 ) -> dict[str, Any]:
     """
     Generalized analysis for detection-style outputs with [0, N] boxes per sample.
@@ -388,7 +381,9 @@ def analyze_detection_results(
 
         results["images_with_no_gt"] = int((df_valid["n_expected_boxes"] == 0).sum())
         results["images_with_no_pred"] = int((df_valid["n_predicted_boxes"] == 0).sum())
-        results["images_empty_both"] = int(((df_valid["n_expected_boxes"] == 0) & (df_valid["n_predicted_boxes"] == 0)).sum())
+        results["images_empty_both"] = int(
+            ((df_valid["n_expected_boxes"] == 0) & (df_valid["n_predicted_boxes"] == 0)).sum()
+        )
 
         total_gt = int(df_valid["n_expected_boxes"].sum())
         results["total_expected_boxes"] = total_gt

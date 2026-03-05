@@ -3,6 +3,7 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 import numpy as np
 from synthtiger import components
 
@@ -13,11 +14,11 @@ from elements.paper import Paper
 class Document:
     """
     Generates a complete document with paper texture and text content.
-    
+
     The Document class orchestrates the creation of synthetic document images
     by combining a paper background with text content, applying visual effects
     like perspective transforms, elastic distortion, and noise.
-    
+
     Attributes:
         fullscreen: Probability that the document fills the entire canvas
         landscape: Probability of landscape orientation
@@ -26,16 +27,16 @@ class Document:
         paper: Paper instance for generating paper texture
         content: Content instance for generating text
         effect: Iterator of visual effects to apply
-    
+
     Example:
         >>> doc = Document({"fullscreen": 0.3, "landscape": 0.5})
         >>> paper_layer, text_layers, texts = doc.generate((800, 600))
     """
-    
+
     def __init__(self, config):
         """
         Initialize a Document with the given configuration.
-        
+
         Args:
             config: Dictionary with optional keys:
                 - fullscreen: Probability of fullscreen mode (default: 0.5)
@@ -77,10 +78,10 @@ class Document:
     def generate(self, size):
         """
         Generate a document with paper and text content.
-        
+
         Args:
             size: Tuple of (width, height) for the document canvas
-        
+
         Returns:
             Tuple of (paper_layer, text_layers, texts) where:
                 - paper_layer: A Layer containing the paper texture
