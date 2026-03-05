@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# dependencies = [
+#     "torch>=2.0.0",
+#     "transformers>=4.40.0",
+#     "accelerate",
+#     "safetensors",
+#     "qwen-vl-utils",
+#     "torchvision",
+# ]
+# ///
 """Fix tied lm_head weights for transformers>=5.0 compatibility.
 
 GutenOCR checkpoints have ``tie_word_embeddings: true`` and omit
@@ -42,27 +53,42 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger(__name__)
 
 
-def fix_tied_weights(model: Qwen2_5_VLForConditionalGeneration) -> bool:
-    """Untie ``lm_head.weight`` so it is explicitly saved.
+def _find_embed_tokens(model: Qwen2_5_VLForConditionalGeneration) -> torch.nn.Embedding:
+    """Locate the input embedding layer across transformers versions.
 
-    Returns ``True`` if the weights were tied and have been fixed,
-    ``False`` if they were already independent.
+    - transformers 4.x: ``model.model.embed_tokens``
+    - transformers 5.x: ``model.model.language_model.embed_tokens``
     """
-    embed_w = model.model.embed_tokens.weight
+    inner = model.model
+    if hasattr(inner, "embed_tokens"):
+        return inner.embed_tokens
+    if hasattr(inner, "language_model") and hasattr(inner.language_model, "embed_tokens"):
+        return inner.language_model.embed_tokens
+    raise AttributeError(
+        "Cannot locate embed_tokens on the model. "
+        f"model.model is {type(inner).__name__} with children: "
+        f"{[n for n, _ in inner.named_children()]}"
+    )
+
+
+def fix_tied_weights(model: Qwen2_5_VLForConditionalGeneration) -> None:
+    """Untie ``lm_head.weight`` so it is explicitly saved."""
+    embed_mod = _find_embed_tokens(model)
+    embed_w = embed_mod.weight
     head_w = model.lm_head.weight
 
     if embed_w.data_ptr() == head_w.data_ptr():
         log.info("lm_head.weight is tied to embed_tokens.weight – cloning …")
         model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
     else:
-        log.info("lm_head.weight is already independent – no clone needed.")
+        # On transformers>=5.0 the weight is NOT tied (it was randomly
+        # initialized instead).  Copy the correct embedding weights over.
+        log.info("lm_head.weight is not tied – copying embed_tokens.weight → lm_head.weight …")
+        model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
 
-    # Always ensure the config flags are correct.
     model.config.tie_word_embeddings = False
     if hasattr(model.config, "text_config"):
         model.config.text_config.tie_word_embeddings = False
-
-    return True
 
 
 def main() -> None:

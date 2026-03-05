@@ -739,9 +739,14 @@ def main() -> None:
 
     # Untie lm_head so it's explicitly saved (transformers 5.x compat)
     if hasattr(model, "lm_head") and hasattr(model, "model"):
-        embed_w = model.model.embed_tokens.weight
-        head_w = model.lm_head.weight
-        if embed_w.data_ptr() == head_w.data_ptr():
+        inner = model.model
+        if hasattr(inner, "embed_tokens"):
+            embed_w = inner.embed_tokens.weight
+        elif hasattr(inner, "language_model") and hasattr(inner.language_model, "embed_tokens"):
+            embed_w = inner.language_model.embed_tokens.weight
+        else:
+            embed_w = None
+        if embed_w is not None and embed_w.data_ptr() == model.lm_head.weight.data_ptr():
             model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
             model.config.tie_word_embeddings = False
             if hasattr(model.config, "text_config"):
