@@ -320,7 +320,7 @@ Each component has its own dependencies. We recommend using [uv](https://github.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/GutenOCR.git
+git clone https://github.com/Roots-Automation/GutenOCR.git
 cd GutenOCR
 
 # Install component-specific dependencies
