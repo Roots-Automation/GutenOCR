@@ -40,30 +40,28 @@ tar -xf "$PUBMED_TAR" -C "$STAGING"
 # 2. Rank all images by visual diversity
 # ---------------------------------------------------------------------------
 mkdir -p "$OUT"
-cd "$REPO_DIR/diversity"
-uv run python rank.py "$STAGING" "$RANKINGS"
+cd "$REPO_DIR"
+uv run python3 diversity/rank.py "$STAGING" "$RANKINGS"
 
 # ---------------------------------------------------------------------------
 # 3. Assign tasks
 # ---------------------------------------------------------------------------
-cd "$REPO_DIR"
-python build.py assign "$STAGING" "$RANKINGS" --per-task 100 --seed 42
+uv run python3 build.py assign "$STAGING" "$RANKINGS" --per-task 100 --seed 42
 
 # ---------------------------------------------------------------------------
 # 4. Populate tasks
 # ---------------------------------------------------------------------------
 mkdir -p "$OUT/t1-pubmed-100"
-cd "$REPO_DIR"
-python build.py sample "$STAGING" "$RANKINGS" "$OUT/t1-pubmed-100" --task 1
+uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t1-pubmed-100" --task 1
 
 mkdir -p "$OUT/t2-pubmed-100"
-python build.py sample "$STAGING" "$RANKINGS" "$OUT/t2-pubmed-100" --task 2
+uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t2-pubmed-100" --task 2
 
 mkdir -p "$OUT/t3-pubmed-100"
-python build.py sample "$STAGING" "$RANKINGS" "$OUT/t3-pubmed-100" --task 3
+uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t3-pubmed-100" --task 3
 
 mkdir -p "$OUT/t4-pubmed-100"
-python build.py sample "$STAGING" "$RANKINGS" "$OUT/t4-pubmed-100" --task 4
+uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t4-pubmed-100" --task 4
 
 echo ""
 echo "v1 build complete."

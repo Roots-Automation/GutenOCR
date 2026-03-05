@@ -116,10 +116,10 @@ The script:
 3. Assigns each of the 400 top-ranked samples to one of four tasks (seed 42).
 4. Copies the 100 image+JSON pairs for each task to `$WORK_DIR/grounding-bench/v1/t{N}-pubmed-100/`.
 
-Install dependencies for the diversity ranking step before running:
+Install dependencies before running:
 
 ```bash
-cd benchmarks/grounding-bench/diversity
+cd benchmarks/grounding-bench
 uv sync
 ```
 
