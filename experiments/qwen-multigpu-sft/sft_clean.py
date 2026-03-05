@@ -737,6 +737,16 @@ def main() -> None:
             for k, v in metrics.items():
                 LOGGER.info("%s: %s", k, v)
 
+    # Untie lm_head so it's explicitly saved (transformers 5.x compat)
+    if hasattr(model, "lm_head") and hasattr(model, "model"):
+        embed_w = model.model.embed_tokens.weight
+        head_w = model.lm_head.weight
+        if embed_w.data_ptr() == head_w.data_ptr():
+            model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
+            model.config.tie_word_embeddings = False
+            if hasattr(model.config, "text_config"):
+                model.config.text_config.tie_word_embeddings = False
+
     if is_main_process():
         LOGGER.info("Saving model + processor to %s …", args.output_dir)
     trainer.save_model(args.output_dir)

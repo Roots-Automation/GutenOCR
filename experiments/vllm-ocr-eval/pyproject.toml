@@ -8,7 +8,7 @@ dependencies = [
     "vllm>=0.11.2",
     "torch>=2.0.0",
     "torchvision",
-    "transformers>=4.40.0",
+    "transformers>=4.40.0,<5.0.0",
     "pillow",
     "pandas",
     "numpy",
