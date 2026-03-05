@@ -139,4 +139,3 @@ uv run python run_evaluation.py \
 
 uv run python score_lines_reading.py predictions.csv --overwrite
 ```
-

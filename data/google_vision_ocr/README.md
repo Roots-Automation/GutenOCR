@@ -165,10 +165,10 @@ from data.google_vision_ocr import GoogleVisionOCRExtractor
 
 def process_arxiv_paper_with_google_vision(image_path):
     extractor = GoogleVisionOCRExtractor()
-    
+
     # Use text mode for clean academic papers
     result = extractor.extract_ocr(image_path, mode="text")
-    
+
     if result["success"]:
         return result
     else:
@@ -269,7 +269,7 @@ result = extractor.extract_ocr("document.png", mode="text")
 if not result["success"]:
     error_msg = result["error"]
     print(f"OCR failed: {error_msg}")
-    
+
     # Common error types:
     # - "Image file not found"
     # - "Google Vision API error: [details]"
@@ -388,13 +388,13 @@ def main():
     if len(sys.argv) < 2:
         print("Usage: python script.py <image_path> [mode]")
         return
-    
+
     image_path = sys.argv[1]
     mode = sys.argv[2] if len(sys.argv) > 2 else "text"
-    
+
     extractor = GoogleVisionOCRExtractor()
     result = extractor.extract_ocr(image_path, mode=mode)
-    
+
     if result["success"]:
         print(json.dumps(result, indent=2))
     else:

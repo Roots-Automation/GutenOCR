@@ -28,7 +28,7 @@ MODEL_DIRS=(
 for shard_idx in "${!SHARD_PATHS[@]}"; do
     SHARD_PATH="${SHARD_PATHS[$shard_idx]}"
     SHARD_BASENAME="${SHARD_BASENAMES[$shard_idx]}"
-    
+
     echo "Processing shard: $SHARD_PATH (basename: $SHARD_BASENAME)"
 
     for idx in "${!MODEL_NAMES[@]}"; do
@@ -50,11 +50,11 @@ for shard_idx in "${!SHARD_PATHS[@]}"; do
             task_type="${TASK_TYPES[$i]}"
             output_type="${OUTPUT_TYPES[$i]}"
             output_name="${OUTPUT_NAMES[$i]}"
-            
+
             echo "Running evaluation for task: $task_type, output: $output_type"
-            
+
             CSV_FILE="$MODEL_DIR/${SHARD_BASENAME}-${output_name}-results.csv"
-            
+
             uv run python run_evaluation.py \
                 --model-name "$MODEL_NAME" \
                 --max-model-len $MAX_MODEL_LEN \
