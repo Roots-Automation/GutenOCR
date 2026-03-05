@@ -22,6 +22,9 @@ document:
   aspect_ratio: [1, 2]
 
   paper:
+    color:
+      prob: 0.5
+      rgb: [[0, 255], [0, 255], [0, 255]]
     image:
       paths: [resources/paper]
       weights: [1]
@@ -52,12 +55,10 @@ document:
     textbox_color:
       prob: 0.2
       args:
-        gray: [0, 64]
         colorize: 1
     content_color:
       prob: 0.2
       args:
-        gray: [0, 64]
         colorize: 1
 
   effect:
