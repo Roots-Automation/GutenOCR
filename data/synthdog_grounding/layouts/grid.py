@@ -109,6 +109,6 @@ class Grid:
                 x, y = xs[c * 2 + 1], ys[r]
                 w, h = xs[c * 2 + 2] - x, ys[r + 1] - y
                 bbox = [left + x, top + y, w, h]
-                layout.append((bbox, align))
+                layout.append((bbox, align, c))
 
         return layout

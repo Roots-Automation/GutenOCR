@@ -227,14 +227,18 @@ class Content:
         layout_height = max(height - layout_top * 2, 0)
         layout_bbox = [layout_left, layout_top, layout_width, layout_height]
 
-        text_layers, texts = [], []
+        text_layers, texts, block_ids = [], [], []
         layouts = self.layout.generate(layout_bbox)
         self.reader.move(np.random.randint(len(self.reader)))
 
-        for layout in layouts:
+        # Each (grid_idx, col_idx) pair is a distinct visual block
+        col_key_to_block_id = {}
+        next_block_id = 0
+
+        for grid_idx, layout in enumerate(layouts):
             font = self.font.sample()
 
-            for bbox, align in layout:
+            for bbox, align, col_idx in layout:
                 x, y, w, h = bbox
                 text_layer, text = self.textbox.generate((w, h), self.reader, font)
                 self.reader.prev()
@@ -248,10 +252,16 @@ class Content:
                 if align == "right":
                     text_layer.right = x + w
 
+                col_key = (grid_idx, col_idx)
+                if col_key not in col_key_to_block_id:
+                    col_key_to_block_id[col_key] = next_block_id
+                    next_block_id += 1
+
                 self.textbox_color.apply([text_layer])
                 text_layers.append(text_layer)
                 texts.append(text)
+                block_ids.append(col_key_to_block_id[col_key])
 
         self.content_color.apply(text_layers)
 
-        return text_layers, texts
+        return text_layers, texts, block_ids

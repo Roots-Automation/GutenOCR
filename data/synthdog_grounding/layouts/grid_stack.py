@@ -109,7 +109,7 @@ class GridStack:
             if layout is None:
                 break
 
-            line = max(y + h - top for (_, y, _, h), _ in layout) + stack_spacing
+            line = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
             layouts.append(layout)
 
         line = max(line - stack_spacing, 0)
@@ -119,7 +119,7 @@ class GridStack:
         spaces = np.cumsum(spaces)
 
         for layout, space in zip(layouts, spaces):
-            for bbox, _ in layout:
+            for bbox, *_ in layout:
                 x, y, w, h = bbox
                 bbox[:] = [x, y + space, w, h]
 

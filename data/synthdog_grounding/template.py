@@ -16,6 +16,7 @@ except ImportError:
 import json
 import os
 import re
+from collections import defaultdict
 from typing import Any, List
 
 import numpy as np
@@ -63,7 +64,7 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts = self.document.generate(size)
+        paper_layer, text_layers, texts, block_ids = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -90,6 +91,24 @@ class SynthDoG(templates.Template):
             ]
             text_bboxes.append(bbox)
 
+        # Build block-level bboxes from line bboxes
+        block_to_lines = defaultdict(list)
+        for i, bid in enumerate(block_ids):
+            block_to_lines[bid].append(i)
+
+        text_blocks = []
+        for bid, line_indices in sorted(block_to_lines.items()):
+            bboxes = [text_bboxes[i] for i in line_indices]
+            bx1 = min(b[0] for b in bboxes)
+            by1 = min(b[1] for b in bboxes)
+            bx2 = max(b[2] for b in bboxes)
+            by2 = max(b[3] for b in bboxes)
+            text_blocks.append({
+                "block_id": bid,
+                "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
+                "line_ids": line_indices,
+            })
+
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
         self.effect.apply([layer])
 
@@ -106,6 +125,8 @@ class SynthDoG(templates.Template):
             "roi": roi,
             "text_lines": texts,
             "text_bboxes": text_bboxes,
+            "block_ids": block_ids,
+            "text_blocks": text_blocks,
         }
 
         return data
@@ -121,6 +142,8 @@ class SynthDoG(templates.Template):
         roi = data["roi"]
         text_lines = data.get("text_lines", [])
         text_bboxes = data.get("text_bboxes", [])
+        block_ids = data.get("block_ids", [])
+        text_blocks = data.get("text_blocks", [])
 
         # split
         split_idx = self.split_indexes[idx % len(self.split_indexes)]
@@ -138,19 +161,22 @@ class SynthDoG(templates.Template):
         metadata_filepath = os.path.join(output_dirpath, metadata_filename)
         os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
-        # Create structured data for text lines with bboxes
+        # Create structured data for text lines with bboxes and block_id
         text_lines_data = []
         for i, (text, bbox) in enumerate(zip(text_lines, text_bboxes)):
-            text_lines_data.append({
+            entry = {
                 "text": text,
                 "bbox": bbox,
-                "line_id": i
-            })
+                "line_id": i,
+            }
+            if i < len(block_ids):
+                entry["block_id"] = block_ids[i]
+            text_lines_data.append(entry)
 
         metadata = self.format_metadata(
-            image_filename=image_filename, 
-            keys=["text_lines", "text_bboxes"], 
-            values=[text_lines_data, text_bboxes]
+            image_filename=image_filename,
+            keys=["text_lines", "text_bboxes", "text_blocks"],
+            values=[text_lines_data, text_bboxes, text_blocks]
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)
