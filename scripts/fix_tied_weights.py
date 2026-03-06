@@ -116,7 +116,7 @@ def main() -> None:
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         args.model_path,
         torch_dtype=torch.bfloat16,
-        device_map="cpu",
+        low_cpu_mem_usage=True,
     )
 
     fix_tied_weights(model)
