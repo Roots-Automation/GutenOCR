@@ -320,7 +320,7 @@ uv run python run_evaluation.py \
 
 Older GutenOCR checkpoints were saved with `tie_word_embeddings: true`, which omits `lm_head.weight` from the safetensors files. Starting with `transformers>=5.0`, the weight-tying resolution changed for `*ForConditionalGeneration` models with nested configs, causing `lm_head.weight` to be randomly initialized and producing gibberish output.
 
-**The Hub checkpoints have been updated** so new downloads work with any transformers version. If you have a **cached copy** of an older checkpoint, re-download it or run the fix script:
+**The Hub checkpoints will be updated** so that new downloads work with any transformers version. In the meantime, if you experience gibberish output with `transformers>=5.0`, run the fix script on your local checkpoint:
 
 ```bash
 python scripts/fix_tied_weights.py \
