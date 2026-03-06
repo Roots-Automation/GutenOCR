@@ -14,6 +14,6 @@ Closes #<!-- issue number -->
 
 ## Checklist
 
-- [ ] References an issue
+- [ ] References an issue (if applicable)
 - [ ] Tested locally
 - [ ] Updated documentation (if applicable)
