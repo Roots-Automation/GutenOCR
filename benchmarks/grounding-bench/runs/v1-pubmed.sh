@@ -34,7 +34,7 @@ RANKINGS=$OUT/rankings.csv
 # 1. Extract pubmed tar into staging
 # ---------------------------------------------------------------------------
 mkdir -p "$STAGING"
-tar -xf "$PUBMED_TAR" -C "$STAGING"
+tar --touch -xf "$PUBMED_TAR" -C "$STAGING"
 
 # ---------------------------------------------------------------------------
 # 2. Rank all images by visual diversity
