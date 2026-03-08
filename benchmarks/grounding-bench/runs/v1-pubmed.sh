@@ -34,34 +34,48 @@ RANKINGS=$OUT/rankings.csv
 # 1. Extract pubmed tar into staging
 # ---------------------------------------------------------------------------
 mkdir -p "$STAGING"
+echo "[1/4] Extracting $PUBMED_TAR -> $STAGING ..."
 tar --touch -xf "$PUBMED_TAR" -C "$STAGING"
+echo "[1/4] Extraction complete."
 
 # ---------------------------------------------------------------------------
 # 2. Rank all images by visual diversity
 # ---------------------------------------------------------------------------
 mkdir -p "$OUT"
 cd "$REPO_DIR"
+echo "[2/4] Ranking images by visual diversity ..."
 uv run python3 diversity/rank.py "$STAGING" "$RANKINGS"
+echo "[2/4] Ranking complete. Rankings written to $RANKINGS"
 
 # ---------------------------------------------------------------------------
 # 3. Assign tasks
 # ---------------------------------------------------------------------------
+echo "[3/4] Assigning images to tasks ..."
 uv run python3 build.py assign "$STAGING" "$RANKINGS" --per-task 100 --seed 42
+echo "[3/4] Task assignment complete."
 
 # ---------------------------------------------------------------------------
 # 4. Populate tasks
 # ---------------------------------------------------------------------------
+echo "[4/4] Populating task directories ..."
+
+echo "  [4/4] Sampling task 1 ..."
 mkdir -p "$OUT/t1-pubmed-100"
 uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t1-pubmed-100" --task 1
 
+echo "  [4/4] Sampling task 2 ..."
 mkdir -p "$OUT/t2-pubmed-100"
 uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t2-pubmed-100" --task 2
 
+echo "  [4/4] Sampling task 3 ..."
 mkdir -p "$OUT/t3-pubmed-100"
 uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t3-pubmed-100" --task 3
 
+echo "  [4/4] Sampling task 4 ..."
 mkdir -p "$OUT/t4-pubmed-100"
 uv run python3 build.py sample "$STAGING" "$RANKINGS" "$OUT/t4-pubmed-100" --task 4
+
+echo "[4/4] All tasks populated."
 
 echo ""
 echo "v1 build complete."
