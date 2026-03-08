@@ -44,7 +44,7 @@ echo "[1/4] Extraction complete."
 mkdir -p "$OUT"
 cd "$REPO_DIR"
 echo "[2/4] Ranking images by visual diversity ..."
-uv run python3 diversity/rank.py "$STAGING" "$RANKINGS"
+uv run python3 -m diversity.rank "$STAGING" "$RANKINGS"
 echo "[2/4] Ranking complete. Rankings written to $RANKINGS"
 
 # ---------------------------------------------------------------------------
