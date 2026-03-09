@@ -30,7 +30,6 @@ import sys
 import pandas as pd
 from tqdm import tqdm
 
-
 IMAGE_EXTS = (".png", ".jpg", ".jpeg")
 
 
@@ -200,7 +199,7 @@ def cmd_sample(args: argparse.Namespace) -> None:
         shutil.copyfile(json_path, os.path.join(args.output_dir, stem + ".json"))
         copied += 1
 
-    print(f"\nDone.")
+    print("\nDone.")
     print(f"  Copied  : {copied}")
     print(f"  Missing : {skipped_missing}")
     print(f"  Output  : {args.output_dir}")
