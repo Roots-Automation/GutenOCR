@@ -7,8 +7,9 @@ import sys
 import pandas as pd
 import torch
 from PIL import Image
-from sampler import k_center_greedy
-from visual_utils import compute_embeddings, get_image_files
+
+from diversity.sampler import k_center_greedy
+from diversity.visual_utils import compute_embeddings, get_image_files
 
 # Setup logging
 logging.basicConfig(

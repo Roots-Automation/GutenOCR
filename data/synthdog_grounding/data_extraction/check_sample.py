@@ -159,17 +159,19 @@ def draw_label(draw, xy, label, font, pad=2):
 def annotate_image(
     img_bytes: bytes,
     lines,
+    words,
     out_path: Path,
     line_width: int = DEFAULT_LINE_WIDTH,
     label_with_text: bool = False,
     font_path: str = None,
 ):
     """
-    Annotate an image with bounding boxes for text lines.
+    Annotate an image with bounding boxes for text lines and words.
 
     Args:
         img_bytes: Raw image bytes
         lines: List of dicts with {"bbox": [x1,y1,x2,y2], "line_id": int, "text": "..."}
+        words: List of dicts with {"bbox": [x1,y1,x2,y2], "word_id": int, "text": "..."}
         out_path: Path to save annotated image
         line_width: Width of bounding box lines
         label_with_text: Whether to include text content in labels
@@ -181,6 +183,13 @@ def annotate_image(
         draw = ImageDraw.Draw(im)
         font = choose_font(W, font_path)
 
+        # Draw words first (under lines)
+        for wd in words:
+            box = parse_bbox(wd.get("bbox"), W, H)
+            if box:
+                draw.rectangle(list(box), outline="yellow", width=max(1, line_width - 1))
+
+        # Draw lines on top
         for ln in lines:
             bbox = ln.get("bbox")
             lid = ln.get("line_id", "?")
@@ -264,7 +273,8 @@ def process_targets(
             with tar.extractfile(json_m) as jf:
                 obj = json.loads(jf.read().decode("utf-8"))
             lines = (obj.get("text") or {}).get("lines") or []
-            print(f"[{sid}] {obj.get('image', '')} with {len(lines)} lines")
+            words = (obj.get("text") or {}).get("words") or []
+            print(f"[{sid}] {obj.get('image', '')} with {len(lines)} lines, {len(words)} words")
 
             # read image bytes
             with tar.extractfile(img_m) as imf:
@@ -279,7 +289,7 @@ def process_targets(
             # save annotated
             ann_name = f"{sid}_annotated{Path(img_name).suffix}"
             ann_path = out_dir / ann_name
-            annotate_image(img_bytes, lines, ann_path, line_width, label_with_text, font_path)
+            annotate_image(img_bytes, lines, words, ann_path, line_width, label_with_text, font_path)
 
             print(f"[{sid}] saved:")
             print(f"  - {orig_path}")
