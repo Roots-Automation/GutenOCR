@@ -96,11 +96,13 @@ class TextBox:
         for ch, layer in zip(chars, char_layers):
             if ch.isspace():
                 if cur_word_chars:
-                    word_local_data.append({
-                        "text": "".join(cur_word_chars),
-                        "x1_ratio": cur_word_x1 / line_local_width,
-                        "x2_ratio": cur_word_x2 / line_local_width,
-                    })
+                    word_local_data.append(
+                        {
+                            "text": "".join(cur_word_chars),
+                            "x1_ratio": cur_word_x1 / line_local_width,
+                            "x2_ratio": cur_word_x2 / line_local_width,
+                        }
+                    )
                     cur_word_chars, cur_word_x1, cur_word_x2 = [], None, None
             else:
                 if cur_word_x1 is None:
@@ -109,11 +111,13 @@ class TextBox:
                 cur_word_chars.append(ch)
 
         if cur_word_chars:
-            word_local_data.append({
-                "text": "".join(cur_word_chars),
-                "x1_ratio": cur_word_x1 / line_local_width if line_local_width > 0 else 0.0,
-                "x2_ratio": cur_word_x2 / line_local_width if line_local_width > 0 else 1.0,
-            })
+            word_local_data.append(
+                {
+                    "text": "".join(cur_word_chars),
+                    "x1_ratio": cur_word_x1 / line_local_width if line_local_width > 0 else 0.0,
+                    "x2_ratio": cur_word_x2 / line_local_width if line_local_width > 0 else 1.0,
+                }
+            )
 
         text_layer = layers.Group(char_layers).merge()
 

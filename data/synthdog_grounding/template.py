@@ -100,11 +100,13 @@ class SynthDoG(templates.Template):
             by1 = min(b[1] for b in bboxes)
             bx2 = max(b[2] for b in bboxes)
             by2 = max(b[3] for b in bboxes)
-            text_blocks.append({
-                "block_id": bid,
-                "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
-                "line_ids": line_indices,
-            })
+            text_blocks.append(
+                {
+                    "block_id": bid,
+                    "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
+                    "line_ids": line_indices,
+                }
+            )
 
         # Compute absolute word bboxes using ratios interpolated into final line bbox
         text_words = []
@@ -119,12 +121,14 @@ class SynthDoG(templates.Template):
                 wy1 = round(ly / image_height, 3)
                 wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
                 wy2 = round((ly + lh) / image_height, 3)
-                text_words.append({
-                    "text": word["text"],
-                    "bbox": [wx1, wy1, wx2, wy2],
-                    "word_id": word_global_id,
-                    "line_id": line_idx,
-                })
+                text_words.append(
+                    {
+                        "text": word["text"],
+                        "bbox": [wx1, wy1, wx2, wy2],
+                        "word_id": word_global_id,
+                        "line_id": line_idx,
+                    }
+                )
                 word_global_id += 1
 
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
