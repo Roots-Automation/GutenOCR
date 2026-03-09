@@ -198,12 +198,17 @@ def process_directory(input_dir: Path, output_tar: Path):
             try:
                 text_lines = gt["gt_parse"]["text_lines"]
             except Exception:
-                # If missing, keep as empty list
+                pass
+
+            text_words = []
+            try:
+                text_words = gt["gt_parse"]["text_words"]
+            except Exception:
                 pass
 
             # Create the new JSON payload
             new_obj = {
-                "text": {"lines": text_lines},
+                "text": {"lines": text_lines, "words": text_words},
                 "image": {"path": new_img_name, "width": width, "height": height, "dpi": dpi},
             }
             payload = json.dumps(new_obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8")

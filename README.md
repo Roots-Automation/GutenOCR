@@ -320,13 +320,19 @@ Each component has its own dependencies. We recommend using [uv](https://github.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/GutenOCR.git
+git clone https://github.com/Roots-Automation/GutenOCR.git
 cd GutenOCR
 
 # Install component-specific dependencies
 cd experiments/qwen-multigpu-sft && uv sync
 cd experiments/vllm-ocr-eval && uv sync
 ```
+
+* * *
+
+## Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting bugs, proposing features, and submitting pull requests.
 
 * * *
 
