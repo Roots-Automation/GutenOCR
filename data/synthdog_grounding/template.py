@@ -64,7 +64,7 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts, block_ids = self.document.generate(size)
+        paper_layer, text_layers, texts, block_ids, words_per_line = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -109,6 +109,27 @@ class SynthDoG(templates.Template):
                 "line_ids": line_indices,
             })
 
+        # Compute absolute word bboxes using ratios interpolated into final line bbox
+        text_words = []
+        word_global_id = 0
+        for line_idx, (text_layer, word_local_data) in enumerate(zip(text_layers, words_per_line)):
+            lx = text_layer.left
+            ly = text_layer.top
+            lw = text_layer.width
+            lh = text_layer.height
+            for word in word_local_data:
+                wx1 = round((lx + word["x1_ratio"] * lw) / image_width, 3)
+                wy1 = round(ly / image_height, 3)
+                wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
+                wy2 = round((ly + lh) / image_height, 3)
+                text_words.append({
+                    "text": word["text"],
+                    "bbox": [wx1, wy1, wx2, wy2],
+                    "word_id": word_global_id,
+                    "line_id": line_idx,
+                })
+                word_global_id += 1
+
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
         self.effect.apply([layer])
 
@@ -127,6 +148,7 @@ class SynthDoG(templates.Template):
             "text_bboxes": text_bboxes,
             "block_ids": block_ids,
             "text_blocks": text_blocks,
+            "text_words": text_words,
         }
 
         return data
@@ -144,6 +166,7 @@ class SynthDoG(templates.Template):
         text_bboxes = data.get("text_bboxes", [])
         block_ids = data.get("block_ids", [])
         text_blocks = data.get("text_blocks", [])
+        text_words = data.get("text_words", [])
 
         # split
         split_idx = self.split_indexes[idx % len(self.split_indexes)]
@@ -175,8 +198,8 @@ class SynthDoG(templates.Template):
 
         metadata = self.format_metadata(
             image_filename=image_filename,
-            keys=["text_lines", "text_bboxes", "text_blocks"],
-            values=[text_lines_data, text_bboxes, text_blocks]
+            keys=["text_lines", "text_bboxes", "text_blocks", "text_words"],
+            values=[text_lines_data, text_bboxes, text_blocks, text_words]
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)

@@ -31,8 +31,8 @@ class GridStack:
         >>> stack = GridStack({"stack_spacing": [0.02, 0.05]})
         >>> layouts = stack.generate([0, 0, 800, 600])
         >>> for grid_layout in layouts:
-        ...     for bbox, align in grid_layout:
-        ...         print(f"Box at {bbox}")
+        ...     for bbox, align, col_idx in grid_layout:
+        ...         print(f"Box at {bbox} in column {col_idx}")
     """
     
     def __init__(self, config):
@@ -78,7 +78,7 @@ class GridStack:
         
         Returns:
             List of grid layouts, where each grid layout is a list of
-            (bbox, align) tuples. Returns an empty list if no valid
+            (bbox, align, col_idx) triples. Returns an empty list if no valid
             grids could be generated.
         """
         left, top, width, height = bbox

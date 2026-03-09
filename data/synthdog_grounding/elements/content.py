@@ -227,7 +227,7 @@ class Content:
         layout_height = max(height - layout_top * 2, 0)
         layout_bbox = [layout_left, layout_top, layout_width, layout_height]
 
-        text_layers, texts, block_ids = [], [], []
+        text_layers, texts, block_ids, words_per_line = [], [], [], []
         layouts = self.layout.generate(layout_bbox)
         self.reader.move(np.random.randint(len(self.reader)))
 
@@ -240,7 +240,7 @@ class Content:
 
             for bbox, align, col_idx in layout:
                 x, y, w, h = bbox
-                text_layer, text = self.textbox.generate((w, h), self.reader, font)
+                text_layer, text, word_local_data = self.textbox.generate((w, h), self.reader, font)
                 self.reader.prev()
 
                 if text_layer is None:
@@ -261,7 +261,8 @@ class Content:
                 text_layers.append(text_layer)
                 texts.append(text)
                 block_ids.append(col_key_to_block_id[col_key])
+                words_per_line.append(word_local_data)
 
         self.content_color.apply(text_layers)
 
-        return text_layers, texts, block_ids
+        return text_layers, texts, block_ids, words_per_line

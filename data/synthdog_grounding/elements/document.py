@@ -104,8 +104,8 @@ class Document:
             long_size = int(short_size * aspect_ratio)
             size = (long_size, short_size) if landscape else (short_size, long_size)
 
-        text_layers, texts, block_ids = self.content.generate(size)
+        text_layers, texts, block_ids, words_per_line = self.content.generate(size)
         paper_layer = self.paper.generate(size)
         self.effect.apply([*text_layers, paper_layer])
 
-        return paper_layer, text_layers, texts, block_ids
+        return paper_layer, text_layers, texts, block_ids, words_per_line
