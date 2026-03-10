@@ -62,7 +62,9 @@ def _find_embed_tokens(model: Qwen2_5_VLForConditionalGeneration) -> torch.nn.Em
     inner = model.model
     if hasattr(inner, "embed_tokens"):
         return inner.embed_tokens
-    if hasattr(inner, "language_model") and hasattr(inner.language_model, "embed_tokens"):
+    if hasattr(inner, "language_model") and hasattr(
+        inner.language_model, "embed_tokens"
+    ):
         return inner.language_model.embed_tokens
     raise AttributeError(
         "Cannot locate embed_tokens on the model. "
@@ -84,7 +86,9 @@ def fix_tied_weights(model: Qwen2_5_VLForConditionalGeneration) -> None:
     else:
         # On transformers>=5.0 the weight is NOT tied (it was randomly
         # initialized instead).  Copy the correct embedding weights over.
-        log.info("lm_head.weight is not tied – copying embed_tokens.weight → lm_head.weight …")
+        log.info(
+            "lm_head.weight is not tied – copying embed_tokens.weight → lm_head.weight …"
+        )
         with torch.no_grad():
             model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
 

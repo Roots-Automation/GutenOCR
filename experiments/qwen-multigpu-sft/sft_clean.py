@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-"""Standardized OCR/VL SFT script with WebDataset streaming and --dry-run.
-"""
+"""Standardized OCR/VL SFT script with WebDataset streaming and --dry-run."""
+
 from __future__ import annotations
 
 import os
@@ -16,12 +16,6 @@ from typing import Any, Dict, List, Optional
 # --- Standard logging -------------------------------------------------------
 import logging
 
-LOGGER = logging.getLogger("sft")
-_handler = logging.StreamHandler(sys.stdout)
-_handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
-LOGGER.addHandler(_handler)
-LOGGER.setLevel(logging.INFO)
-
 # --- Hugging Face / Torch ---------------------------------------------------
 import torch
 from PIL import Image
@@ -35,7 +29,6 @@ from transformers import (
 from torch.utils.data import DataLoader
 from accelerate.data_loader import prepare_data_loader as accel_prepare
 from accelerate import PartialState
-from tqdm.auto import tqdm
 
 # --- WebDataset -------------------------------------------------------------
 import webdataset as wds
@@ -43,6 +36,13 @@ import webdataset as wds
 # --- Project-local imports --------------------------------------------------
 from args import parse_sft_args
 from prompt_builder import generate_prompt
+
+# --- Logger setup -----------------------------------------------------------
+LOGGER = logging.getLogger("sft")
+_handler = logging.StreamHandler(sys.stdout)
+_handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
+LOGGER.addHandler(_handler)
+LOGGER.setLevel(logging.INFO)
 
 # --- Constants --------------------------------------------------------------
 IGNORE_INDEX = -100
@@ -53,12 +53,14 @@ with open("system_prompt.txt", "r") as f:
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _ensure_rgb(img: Image.Image) -> Image.Image:
     if not isinstance(img, Image.Image):
         raise TypeError("Expected PIL.Image.Image")
     if img.mode != "RGB":
         img = img.convert("RGB")
     return img
+
 
 def get_world_size_and_rank():
     try:
@@ -70,6 +72,7 @@ def get_world_size_and_rank():
         if torch.distributed.is_available() and torch.distributed.is_initialized():
             return torch.distributed.get_world_size(), torch.distributed.get_rank()
         return torch.cuda.device_count(), 0
+
 
 def is_main_process() -> bool:
     try:
@@ -85,6 +88,7 @@ def is_main_process() -> bool:
 
 
 # ------------------ WebDataset streaming -----------------------------------
+
 
 def _expand_shards(pattern: str) -> List[str]:
     """Expand a user-provided pattern into a list of shard files.
@@ -106,30 +110,32 @@ def _remap_and_parse(sample):
     # Find JSON data - look for any key ending with .json
     meta = None
     for key, value in sample.items():
-        if key.endswith('.json'):
+        if key.endswith(".json"):
             meta = value
             break
-    
+
     # Fallback to simple 'json' key
     if meta is None and "json" in sample:
         meta = sample["json"]
-    
+
     if meta is None:
-        raise KeyError(f"Sample missing JSON data: expected key ending with '.json' or 'json', got keys: {list(sample.keys())}")
-    
+        raise KeyError(
+            f"Sample missing JSON data: expected key ending with '.json' or 'json', got keys: {list(sample.keys())}"
+        )
+
     if isinstance(meta, (bytes, bytearray)):
         meta = json.loads(meta)
-    
+
     # Find image data - look for any key ending with image extensions
     image_bytes = None
     for key, value in sample.items():
-        if key.endswith('.jpg') or key.endswith('.jpeg'):
+        if key.endswith(".jpg") or key.endswith(".jpeg"):
             image_bytes = value
             break
-        elif key.endswith('.png'):
+        elif key.endswith(".png"):
             image_bytes = value
             break
-    
+
     # Fallback to simple extension keys
     if image_bytes is None:
         if "jpg" in sample:
@@ -138,10 +144,12 @@ def _remap_and_parse(sample):
             image_bytes = sample["jpeg"]
         elif "png" in sample:
             image_bytes = sample["png"]
-    
+
     if image_bytes is None:
-        raise KeyError(f"Sample missing image data: expected key ending with '.jpg', '.jpeg', '.png', or simple 'jpg'/'png', got keys: {list(sample.keys())}")
-    
+        raise KeyError(
+            f"Sample missing image data: expected key ending with '.jpg', '.jpeg', '.png', or simple 'jpg'/'png', got keys: {list(sample.keys())}"
+        )
+
     return {
         "image_bytes": image_bytes,
         "json_data": meta,
@@ -154,7 +162,13 @@ def round_down_multiple(x: int, m: int) -> int:
 
 
 def build_wds_iterable(
-    patterns, *, per_proc_epoch_size: int, shuffle_shards: int = 1000, shuffle_samples: int = 2000, seed: int = 42, resampled: bool = True,
+    patterns,
+    *,
+    per_proc_epoch_size: int,
+    shuffle_shards: int = 1000,
+    shuffle_samples: int = 2000,
+    seed: int = 42,
+    resampled: bool = True,
 ):
     if isinstance(patterns, str):
         patterns = [patterns]
@@ -183,6 +197,7 @@ def build_wds_iterable(
 
 # ------------------ Collator ------------------------------------------------
 
+
 @dataclass
 class QwenVLCollator:
     processor: Any
@@ -203,11 +218,15 @@ class QwenVLCollator:
                 with Image.open(ex["image_path"]) as im:
                     img = _ensure_rgb(im.copy())
             else:
-                raise KeyError("Example missing image payload: expected image_bytes/image/image_path")
+                raise KeyError(
+                    "Example missing image payload: expected image_bytes/image/image_path"
+                )
 
             json_data = ex["json_data"]
             user_prompt, assistant_response = generate_prompt(
-                json_data, allowed_tasks=self.allowed_tasks, allowed_output_types=self.allowed_output_types
+                json_data,
+                allowed_tasks=self.allowed_tasks,
+                allowed_output_types=self.allowed_output_types,
             )
             if isinstance(assistant_response, (dict, list)):
                 assistant_response = json.dumps(assistant_response)
@@ -216,13 +235,30 @@ class QwenVLCollator:
 
             conversation = [
                 {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": user_prompt}]},
-                {"role": "assistant", "content": [{"type": "text", "text": assistant_response}]},
+                {
+                    "role": "user",
+                    "content": [
+                        {"type": "image"},
+                        {"type": "text", "text": user_prompt},
+                    ],
+                },
+                {
+                    "role": "assistant",
+                    "content": [{"type": "text", "text": assistant_response}],
+                },
             ]
             prompt_only = conversation[:-1]
 
-            full_texts.append(self.processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=False))
-            prompt_texts.append(self.processor.apply_chat_template(prompt_only, tokenize=False, add_generation_prompt=True))
+            full_texts.append(
+                self.processor.apply_chat_template(
+                    conversation, tokenize=False, add_generation_prompt=False
+                )
+            )
+            prompt_texts.append(
+                self.processor.apply_chat_template(
+                    prompt_only, tokenize=False, add_generation_prompt=True
+                )
+            )
             images.append(img)
 
         # Tokenize with the SAME processor/images/max_length for BOTH batches
@@ -252,7 +288,9 @@ class QwenVLCollator:
         for i, L in enumerate(prompt_lens):
             L = int(L)
             # If prompt consumes everything, mask everything (no targets)
-            if L >= full_batch["input_ids"].size(1) or L >= int(full_batch["attention_mask"][i].sum()):
+            if L >= full_batch["input_ids"].size(1) or L >= int(
+                full_batch["attention_mask"][i].sum()
+            ):
                 labels[i, :] = self.ignore_index
             else:
                 labels[i, :L] = self.ignore_index
@@ -262,6 +300,7 @@ class QwenVLCollator:
 
 
 # ------------------ Trainer with iterable-safe dataloader -------------------
+
 
 class NoDispatchTrainer(Trainer):
     def get_train_dataloader(self):
@@ -276,8 +315,8 @@ class NoDispatchTrainer(Trainer):
             drop_last=self.args.dataloader_drop_last,
             num_workers=self.args.dataloader_num_workers,
             pin_memory=self.args.dataloader_pin_memory,
-            #prefetch_factor=(self.args.dataloader_prefetch_factor if self.args.dataloader_prefetch_factor > 0 else None), NOTE: no prefetching for stability
-            #persistent_workers=self.args.dataloader_persistent_workers, NOTE: without prefetch, this arg can't be used
+            # prefetch_factor=(self.args.dataloader_prefetch_factor if self.args.dataloader_prefetch_factor > 0 else None), NOTE: no prefetching for stability
+            # persistent_workers=self.args.dataloader_persistent_workers, NOTE: without prefetch, this arg can't be used
         )
         st = getattr(self.accelerator, "state", None)
         return accel_prepare(
@@ -317,21 +356,31 @@ class NoDispatchTrainer(Trainer):
             non_blocking=True,
         )
 
+
 # ------------------ Utility: save run config --------------------------------
+
 
 def _save_run_config(args) -> None:
     try:
         os.makedirs(args.output_dir, exist_ok=True)
         # strip non-serializable bits
-        serializable = {k: (str(v) if not isinstance(v, (int, float, str, bool, list, dict, type(None))) else v)
-                        for k, v in vars(args).items()}
+        serializable = {
+            k: (
+                str(v)
+                if not isinstance(v, (int, float, str, bool, list, dict, type(None)))
+                else v
+            )
+            for k, v in vars(args).items()
+        }
         with open(os.path.join(args.output_dir, "run_args.json"), "w") as f:
             json.dump(serializable, f, indent=2, sort_keys=True)
     except Exception as e:
         if is_main_process():
             LOGGER.warning("Failed to save run_args.json: %s", e)
 
+
 # ------------------ Dry-run helpers -----------------------------------------
+
 
 def _format_preview(text: str, n: int = 1024) -> str:
     t = text.replace("\n", " ")
@@ -341,14 +390,6 @@ def _format_preview(text: str, n: int = 1024) -> str:
 def dry_run_preview(args, processor, dataset_iter) -> None:
     """Sample N examples, print prompts/targets, and optionally run generate()."""
     n = getattr(args, "dry_run_samples", 32) or 32
-
-    # We don't need the full collator for printing prompts; but for generation we do.
-    collator = QwenVLCollator(
-        processor=processor,
-        max_length=args.max_length,
-        allowed_tasks=args.tasks,
-        allowed_output_types=args.output_types,
-    )
 
     picked: List[Dict[str, Any]] = []
     it = iter(dataset_iter)
@@ -382,7 +423,9 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
 
         # prompts
         user_prompt, assistant_response = generate_prompt(
-            ex["json_data"], allowed_tasks=args.tasks, allowed_output_types=args.output_types
+            ex["json_data"],
+            allowed_tasks=args.tasks,
+            allowed_output_types=args.output_types,
         )
         if isinstance(assistant_response, (dict, list)):
             assistant_response = json.dumps(assistant_response)
@@ -391,9 +434,14 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
 
         conversation = [
             {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": [{"type": "image"}, {"type": "text", "text": user_prompt}]},
+            {
+                "role": "user",
+                "content": [{"type": "image"}, {"type": "text", "text": user_prompt}],
+            },
         ]
-        prompt_text = processor.apply_chat_template(conversation, tokenize=False, add_generation_prompt=True)
+        prompt_text = processor.apply_chat_template(
+            conversation, tokenize=False, add_generation_prompt=True
+        )
 
         images.append(img)
         prompt_texts.append(prompt_text)
@@ -404,14 +452,22 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
         LOGGER.info("—— DRY‑RUN PREVIEW (showing up to %d) ——", len(prompt_texts))
         for i, (pt, tgt, ex) in enumerate(zip(prompt_texts, targets, picked)):
             sid = ex.get("sample_id", "")
-            LOGGER.info("[%02d] sample_id=%s\n  prompt: %s\n  target: %s", i + 1, sid, _format_preview(pt), _format_preview(tgt))
+            LOGGER.info(
+                "[%02d] sample_id=%s\n  prompt: %s\n  target: %s",
+                i + 1,
+                sid,
+                _format_preview(pt),
+                _format_preview(tgt),
+            )
 
     if not getattr(args, "dry_run_generate", False):
         return
 
     # Optional tiny generation to sanity check wiring
     if getattr(args, "no_model", False):
-        LOGGER.warning("--dry-run-generate requested but --no-model is set; skipping generation.")
+        LOGGER.warning(
+            "--dry-run-generate requested but --no-model is set; skipping generation."
+        )
         return
 
     LOGGER.info("Running tiny generate() on %d samples …", len(prompt_texts))
@@ -419,7 +475,9 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
         model_path = args.resume_from_checkpoint or args.model_name
         model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
             model_path,
-            torch_dtype=torch.bfloat16 if args.bf16 else (torch.float16 if args.fp16 else None),
+            torch_dtype=torch.bfloat16
+            if args.bf16
+            else (torch.float16 if args.fp16 else None),
             attn_implementation="flash_attention_2",
             device_map="auto",
         ).eval()
@@ -448,12 +506,16 @@ def dry_run_preview(args, processor, dataset_iter) -> None:
 
     # Decode just the new tokens after the input length
     in_len = inputs["input_ids"].shape[1]
-    decoded = processor.tokenizer.batch_decode(gen_out[:, in_len:], skip_special_tokens=True)
+    decoded = processor.tokenizer.batch_decode(
+        gen_out[:, in_len:], skip_special_tokens=True
+    )
     for i, txt in enumerate(decoded):
         if is_main_process():
             LOGGER.info("GEN[%02d]: %s", i + 1, _format_preview(txt, n=300))
 
+
 # ------------------ Main ----------------------------------------------------
+
 
 def main() -> None:
     args = parse_sft_args()
@@ -466,7 +528,11 @@ def main() -> None:
     if torch.cuda.is_available():
         WORLD_SIZE, RANK = get_world_size_and_rank()
         if is_main_process():
-            LOGGER.info("World size: %d (ranks), visible gpus per rank: %d", WORLD_SIZE, torch.cuda.device_count())
+            LOGGER.info(
+                "World size: %d (ranks), visible gpus per rank: %d",
+                WORLD_SIZE,
+                torch.cuda.device_count(),
+            )
     else:
         LOGGER.error("No CUDA GPUs available!")
         return
@@ -482,7 +548,13 @@ def main() -> None:
         if "config.json" not in files:
             missing.append("config.json")
         has_weights = any(
-            n in files for n in ["model.safetensors", "pytorch_model.bin", "model.safetensors.index.json", "pytorch_model.bin.index.json"]
+            n in files
+            for n in [
+                "model.safetensors",
+                "pytorch_model.bin",
+                "model.safetensors.index.json",
+                "pytorch_model.bin.index.json",
+            ]
         )
         if not has_weights:
             missing.append("model weights (safetensors/bin or sharded)")
@@ -509,12 +581,12 @@ def main() -> None:
         LOGGER.info("Building WebDataset stream from: %s", args.tar_pattern)
     per_device_bsz = args.batch_size
     grad_accum = args.grad_accum
-    
+
     # Calculate based on true cardinality to hit each sample exactly once
     num_tars = len(_expand_shards(args.tar_pattern))
-    N = num_tars * 2048   # Assumption: 2048 samples per tar shard
+    N = num_tars * 2048  # Assumption: 2048 samples per tar shard
     global_batch = per_device_bsz * grad_accum * WORLD_SIZE
-    
+
     # Ensure global_batch divides N evenly to avoid drops
     if N % global_batch != 0:
         raise ValueError(
@@ -522,13 +594,18 @@ def main() -> None:
             f"(batch_size={per_device_bsz} * grad_accum={grad_accum} * world_size={WORLD_SIZE}) "
             f"to avoid dropping samples. Adjust batch_size or grad_accum."
         )
-    
-    steps_per_epoch = N // global_batch                      # exact from N
+
+    steps_per_epoch = N // global_batch  # exact from N
     per_proc_epoch_size = steps_per_epoch * args.batch_size * args.grad_accum
-    
+
     if RANK == 0:
-        LOGGER.info("Samples: %d, global_batch: %d, steps/epoch: %d, per-rank epoch size: %d",
-                    N, global_batch, steps_per_epoch, per_proc_epoch_size)
+        LOGGER.info(
+            "Samples: %d, global_batch: %d, steps/epoch: %d, per-rank epoch size: %d",
+            N,
+            global_batch,
+            steps_per_epoch,
+            per_proc_epoch_size,
+        )
 
     assert per_proc_epoch_size % (args.batch_size * args.grad_accum) == 0
 
@@ -544,21 +621,31 @@ def main() -> None:
     # Optional eval stream
     if not args.no_eval and args.val_samples_per_epoch > 0:
         val_total = max(0, int(args.val_samples_per_epoch))
-        val_per_proc = max(round_down_multiple(val_total // WORLD_SIZE, per_device_bsz), 1)
+        val_per_proc = max(
+            round_down_multiple(val_total // WORLD_SIZE, per_device_bsz), 1
+        )
         # Use separate eval tar pattern if provided, otherwise use training pattern
-        eval_pattern = args.eval_tar_pattern if args.eval_tar_pattern else args.tar_pattern
-        val_ds = build_wds_iterable(
-            patterns=eval_pattern,
-            resampled=False,  # Deterministic eval - no resampling
-            per_proc_epoch_size=val_per_proc,
-            shuffle_shards=0,  # Minimal shuffle for eval
-            shuffle_samples=0,  # Small shuffle buffer for eval variety
-            seed=args.seed,
-        ) if val_total > 0 else None
+        eval_pattern = (
+            args.eval_tar_pattern if args.eval_tar_pattern else args.tar_pattern
+        )
+        val_ds = (
+            build_wds_iterable(
+                patterns=eval_pattern,
+                resampled=False,  # Deterministic eval - no resampling
+                per_proc_epoch_size=val_per_proc,
+                shuffle_shards=0,  # Minimal shuffle for eval
+                shuffle_samples=0,  # Small shuffle buffer for eval variety
+                seed=args.seed,
+            )
+            if val_total > 0
+            else None
+        )
     else:
         val_ds = None
 
-    max_steps = int(steps_per_epoch * args.epochs)           # explicitly matches the above, ensure integer
+    max_steps = int(
+        steps_per_epoch * args.epochs
+    )  # explicitly matches the above, ensure integer
     logging_steps = 10
 
     # Early exit: DRY RUN -----------------------------------------------------
@@ -576,7 +663,9 @@ def main() -> None:
                 LOGGER.info("Loading model from: %s", model_path)
             model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
                 model_path,
-                torch_dtype=torch.bfloat16 if args.bf16 else (torch.float16 if args.fp16 else None),
+                torch_dtype=torch.bfloat16
+                if args.bf16
+                else (torch.float16 if args.fp16 else None),
                 attn_implementation="flash_attention_2",
                 device_map="auto",
             ).eval()
@@ -591,7 +680,9 @@ def main() -> None:
         LOGGER.info("Loading model from: %s", model_path)
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         model_path,
-        torch_dtype=torch.bfloat16 if args.bf16 else (torch.float16 if args.fp16 else None),
+        torch_dtype=torch.bfloat16
+        if args.bf16
+        else (torch.float16 if args.fp16 else None),
         attn_implementation="flash_attention_2",
     )
 
@@ -600,7 +691,12 @@ def main() -> None:
     LOGGER.info("emb_vocab_size: %s", model.get_input_embeddings().num_embeddings)
     LOGGER.info(
         "tokenizer_len=%d pad/eos/bos=%s/%s/%s PAD token=%r PAD==EOS? %s",
-        len(tok), tok.pad_token_id, tok.eos_token_id, tok.bos_token_id, tok.pad_token, tok.pad_token_id == tok.eos_token_id
+        len(tok),
+        tok.pad_token_id,
+        tok.eos_token_id,
+        tok.bos_token_id,
+        tok.pad_token,
+        tok.pad_token_id == tok.eos_token_id,
     )
 
     # Freeze modules per your original baseline
@@ -626,21 +722,31 @@ def main() -> None:
     lm_head = getattr(model, "lm_head", None)
     frozen_h = _freeze_module(lm_head) if lm_head is not None else 0
     if lm_head is not None:
-        tied = (getattr(lm_head, "weight", None) is getattr(tok_emb, "weight", None))
+        tied = getattr(lm_head, "weight", None) is getattr(tok_emb, "weight", None)
         LOGGER.info("[freeze] lm_head (tied=%s): %.2fM params", tied, frozen_h / 1e6)
 
-
     if not args.train_vision:
-        vision_mod, vision_name = _find_first(model, ["vision_tower", "vision_model", "visual", "vision"]) or (None, None)
+        vision_mod, vision_name = _find_first(
+            model, ["vision_tower", "vision_model", "visual", "vision"]
+        ) or (None, None)
         if vision_mod is None:
             base = getattr(model, "model", None)
-            vision_mod, vision_name = _find_first(base or model, ["vision_tower", "vision_model", "visual", "vision"]) or (None, None)
+            vision_mod, vision_name = _find_first(
+                base or model, ["vision_tower", "vision_model", "visual", "vision"]
+            ) or (None, None)
         frozen_v = _freeze_module(vision_mod)
-        LOGGER.info("[freeze] vision module '%s': %.2fM params", vision_name, frozen_v / 1e6)
+        LOGGER.info(
+            "[freeze] vision module '%s': %.2fM params", vision_name, frozen_v / 1e6
+        )
 
     total = sum(p.numel() for p in model.parameters())
     trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    LOGGER.info("[freeze] trainable: %.1fM / %.1fM (%.2f%%)", trainable / 1e6, total / 1e6, 100 * trainable / total)
+    LOGGER.info(
+        "[freeze] trainable: %.1fM / %.1fM (%.2f%%)",
+        trainable / 1e6,
+        total / 1e6,
+        100 * trainable / total,
+    )
 
     collator = QwenVLCollator(
         processor=processor,
@@ -652,12 +758,17 @@ def main() -> None:
     # TrainingArguments
     overwrite_output_dir = True
     if args.resume_from_checkpoint:
-        checkpoint_parent = os.path.dirname(os.path.abspath(args.resume_from_checkpoint))
+        checkpoint_parent = os.path.dirname(
+            os.path.abspath(args.resume_from_checkpoint)
+        )
         output_parent = os.path.abspath(args.output_dir)
         if checkpoint_parent == output_parent:
             overwrite_output_dir = False
             if is_main_process():
-                LOGGER.info("Resuming from checkpoint in same output dir; won't overwrite: %s", args.output_dir)
+                LOGGER.info(
+                    "Resuming from checkpoint in same output dir; won't overwrite: %s",
+                    args.output_dir,
+                )
 
     training_args = TrainingArguments(
         output_dir=args.output_dir,
@@ -678,7 +789,7 @@ def main() -> None:
         remove_unused_columns=False,
         dataloader_num_workers=args.num_workers,
         dataloader_pin_memory=True,
-        dataloader_persistent_workers=args.persistent_workers, # defaults false for stability
+        dataloader_persistent_workers=args.persistent_workers,  # defaults false for stability
         # dataloader_prefetch_factor=args.prefetch_factor, NOTE: no prefetching for stability
         dataloader_drop_last=True,
         max_grad_norm=1.0,
@@ -691,7 +802,7 @@ def main() -> None:
         tf32=True,
         optim="adamw_torch_fused",
         deepspeed=getattr(args, "deepspeed_config", None),
-        eval_on_start=True
+        eval_on_start=True,
     )
 
     if training_args.gradient_checkpointing:
@@ -700,7 +811,9 @@ def main() -> None:
     _save_run_config(args)
 
     if is_main_process():
-        LOGGER.info("Initializing Trainer … eval=%s", ("off" if args.no_eval else "epoch"))
+        LOGGER.info(
+            "Initializing Trainer … eval=%s", ("off" if args.no_eval else "epoch")
+        )
     trainer = NoDispatchTrainer(
         model=model,
         args=training_args,
@@ -713,11 +826,15 @@ def main() -> None:
     # Determine resume mode
     resume_from_checkpoint = None
     if args.resume_from_checkpoint and not args.load_model_only:
-        trainer_state_path = os.path.join(args.resume_from_checkpoint, "trainer_state.json")
+        trainer_state_path = os.path.join(
+            args.resume_from_checkpoint, "trainer_state.json"
+        )
         if os.path.exists(trainer_state_path):
             resume_from_checkpoint = args.resume_from_checkpoint
             if is_main_process():
-                LOGGER.info("Will resume training state from: %s", resume_from_checkpoint)
+                LOGGER.info(
+                    "Will resume training state from: %s", resume_from_checkpoint
+                )
         else:
             if is_main_process():
                 LOGGER.info("No trainer_state.json; starting fresh training state")
@@ -742,12 +859,17 @@ def main() -> None:
         inner = model.model
         if hasattr(inner, "embed_tokens"):
             embed_w = inner.embed_tokens.weight
-        elif hasattr(inner, "language_model") and hasattr(inner.language_model, "embed_tokens"):
+        elif hasattr(inner, "language_model") and hasattr(
+            inner.language_model, "embed_tokens"
+        ):
             embed_w = inner.language_model.embed_tokens.weight
         else:
             embed_w = None
             LOGGER.warning("Could not locate embed_tokens — lm_head will NOT be untied")
-        if embed_w is not None and embed_w.data_ptr() == model.lm_head.weight.data_ptr():
+        if (
+            embed_w is not None
+            and embed_w.data_ptr() == model.lm_head.weight.data_ptr()
+        ):
             with torch.no_grad():
                 model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
             model.config.tie_word_embeddings = False
