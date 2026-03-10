@@ -748,7 +748,8 @@ def main() -> None:
             embed_w = None
             LOGGER.warning("Could not locate embed_tokens — lm_head will NOT be untied")
         if embed_w is not None and embed_w.data_ptr() == model.lm_head.weight.data_ptr():
-            model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
+            with torch.no_grad():
+                model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
             model.config.tie_word_embeddings = False
             if hasattr(model.config, "text_config"):
                 model.config.text_config.tie_word_embeddings = False

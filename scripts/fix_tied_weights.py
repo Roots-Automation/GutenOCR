@@ -79,12 +79,14 @@ def fix_tied_weights(model: Qwen2_5_VLForConditionalGeneration) -> None:
 
     if embed_w.data_ptr() == head_w.data_ptr():
         log.info("lm_head.weight is tied to embed_tokens.weight – cloning …")
-        model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
+        with torch.no_grad():
+            model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
     else:
         # On transformers>=5.0 the weight is NOT tied (it was randomly
         # initialized instead).  Copy the correct embedding weights over.
         log.info("lm_head.weight is not tied – copying embed_tokens.weight → lm_head.weight …")
-        model.lm_head.weight = torch.nn.Parameter(embed_w.clone())
+        with torch.no_grad():
+            model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
 
     model.config.tie_word_embeddings = False
     if hasattr(model.config, "text_config"):
