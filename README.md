@@ -314,6 +314,24 @@ uv run python run_evaluation.py \
 
 * * *
 
+## Compatibility Notes
+
+### `transformers>=5.0` and tied `lm_head` weights
+
+Older GutenOCR checkpoints were saved with `tie_word_embeddings: true`, which omits `lm_head.weight` from the safetensors files. Starting with `transformers>=5.0`, the weight-tying resolution changed for `*ForConditionalGeneration` models with nested configs, causing `lm_head.weight` to be randomly initialized and producing gibberish output.
+
+**The Hub checkpoints will be updated** so that new downloads work with any transformers version. In the meantime, if you experience gibberish output with `transformers>=5.0`, run the fix script on your local checkpoint:
+
+```bash
+python scripts/fix_tied_weights.py \
+    --model-path /path/to/cached/GutenOCR-7B \
+    --output-path /path/to/fixed/GutenOCR-7B
+```
+
+See [Issue #5](https://github.com/Roots-Automation/GutenOCR/issues/5) for details.
+
+* * *
+
 ## Installation
 
 Each component has its own dependencies. We recommend using [uv](https://github.com/astral-sh/uv) for fast, reliable Python package management.

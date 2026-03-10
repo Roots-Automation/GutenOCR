@@ -790,6 +790,23 @@ def main() -> None:
             for k, v in metrics.items():
                 LOGGER.info("%s: %s", k, v)
 
+    # Untie lm_head so it's explicitly saved (transformers 5.x compat)
+    if hasattr(model, "lm_head") and hasattr(model, "model"):
+        inner = model.model
+        if hasattr(inner, "embed_tokens"):
+            embed_w = inner.embed_tokens.weight
+        elif hasattr(inner, "language_model") and hasattr(inner.language_model, "embed_tokens"):
+            embed_w = inner.language_model.embed_tokens.weight
+        else:
+            embed_w = None
+            LOGGER.warning("Could not locate embed_tokens — lm_head will NOT be untied")
+        if embed_w is not None and embed_w.data_ptr() == model.lm_head.weight.data_ptr():
+            with torch.no_grad():
+                model.lm_head.weight = torch.nn.Parameter(embed_w.detach().clone())
+            model.config.tie_word_embeddings = False
+            if hasattr(model.config, "text_config"):
+                model.config.text_config.tie_word_embeddings = False
+
     if is_main_process():
         LOGGER.info("Saving model + processor to %s …", args.output_dir)
     trainer.save_model(args.output_dir)

@@ -18,7 +18,7 @@ dependencies = [
     "torch-tb-profiler>=0.4.3",
     "torchao>=0.13.0",
     "torchvision==0.21.0", # Compatible with torch 2.6.0
-    "transformers>=4.40.0",
+    "transformers>=4.40.0,<5.0.0",
     "trl>=0.23.0",
     "webdataset>=1.0.2",
 ]
