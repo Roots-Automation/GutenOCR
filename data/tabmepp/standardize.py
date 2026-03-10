@@ -44,11 +44,10 @@ import argparse
 import io
 import json
 import logging
-import os
 import tarfile
 from math import ceil
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any
 
 from PIL import Image
 from tqdm import tqdm
@@ -56,9 +55,7 @@ from tqdm import tqdm
 # -----------------------------------------------------------------------------
 # Logging
 # -----------------------------------------------------------------------------
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------------------
@@ -67,7 +64,7 @@ logger = logging.getLogger(__name__)
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".tif", ".tiff"}
 
 
-def extract_box_coordinates(item: Dict[str, Any]) -> List[float]:
+def extract_box_coordinates(item: dict[str, Any]) -> list[float]:
     """Return [x1, y1, x3, y3] rounded to 3 decimals from TABME++ polygon.
 
     TABME++ provides X1,Y1 (top-left) clockwise to X4,Y4. We only need TL and BR.
@@ -79,14 +76,14 @@ def extract_box_coordinates(item: Dict[str, Any]) -> List[float]:
     return [x1, y1, x3, y3]
 
 
-def get_image_info(image_path: Path) -> Dict[str, Any]:
+def get_image_info(image_path: Path) -> dict[str, Any]:
     """Extract width/height/dpi from an image on disk."""
     try:
         with Image.open(image_path) as img:
             width, height = img.size
             dpi = img.info.get("dpi")
-            dpi_val: Optional[int] = int(dpi[0]) if isinstance(dpi, (tuple, list)) else (
-                int(dpi) if isinstance(dpi, (int, float)) else None
+            dpi_val: int | None = (
+                int(dpi[0]) if isinstance(dpi, (tuple, list)) else (int(dpi) if isinstance(dpi, (int, float)) else None)
             )
             return {
                 "width": int(width),
@@ -98,17 +95,15 @@ def get_image_info(image_path: Path) -> Dict[str, Any]:
         return {"width": None, "height": None, "dpi": None}
 
 
-def convert_tabmepp_to_standard(
-    json_data: Dict[str, Any], image_arcname: str, image_src_path: Path
-) -> Dict[str, Any]:
+def convert_tabmepp_to_standard(json_data: dict[str, Any], image_arcname: str, image_src_path: Path) -> dict[str, Any]:
     """Convert one TABME++ page json to the standard schema."""
     # words
-    words: List[Dict[str, Any]] = []
+    words: list[dict[str, Any]] = []
     for w in json_data.get("words_data", []) or []:
         words.append({"text": w.get("Word", ""), "box": extract_box_coordinates(w)})
 
     # lines
-    lines: List[Dict[str, Any]] = []
+    lines: list[dict[str, Any]] = []
     for ln in json_data.get("lines_data", []) or []:
         lines.append({"text": ln.get("Word", ""), "box": extract_box_coordinates(ln)})
 
@@ -123,11 +118,12 @@ def convert_tabmepp_to_standard(
 # Core processing (streaming / online)
 # -----------------------------------------------------------------------------
 
-def find_document_folders(root: Path) -> List[Path]:
+
+def find_document_folders(root: Path) -> list[Path]:
     return sorted([p for p in root.iterdir() if p.is_dir()])
 
 
-def list_page_images(doc_folder: Path) -> List[Path]:
+def list_page_images(doc_folder: Path) -> list[Path]:
     imgs = [p for p in doc_folder.iterdir() if p.suffix.lower() in IMG_EXTS]
     return sorted(imgs)
 
@@ -139,16 +135,14 @@ def open_shard(output_dir: Path, shard_index: int) -> tarfile.TarFile:
     return tarfile.open(shard_path, mode="w")
 
 
-def add_json_to_tar(tar: tarfile.TarFile, arcname: str, data: Dict[str, Any]) -> None:
+def add_json_to_tar(tar: tarfile.TarFile, arcname: str, data: dict[str, Any]) -> None:
     payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     info = tarfile.TarInfo(name=arcname)
     info.size = len(payload)
     tar.addfile(info, io.BytesIO(payload))
 
 
-def process_one_document(
-    tar: tarfile.TarFile, doc_folder: Path, strict_pairing: bool = True
-) -> Tuple[int, int]:
+def process_one_document(tar: tarfile.TarFile, doc_folder: Path, strict_pairing: bool = True) -> tuple[int, int]:
     """Write all pages of a single document folder into the open shard.
 
     Returns (pages_written, pages_skipped).
@@ -173,9 +167,9 @@ def process_one_document(
                 logger.warning(msg + " — writing image without text")
 
         try:
-            json_data: Dict[str, Any] = {}
+            json_data: dict[str, Any] = {}
             if json_path.exists():
-                with open(json_path, "r", encoding="utf-8") as f:
+                with open(json_path, encoding="utf-8") as f:
                     json_data = json.load(f)
 
             # Target names inside the tar
@@ -210,7 +204,7 @@ def stream_standardize_tabmepp(
     if dry_run:
         # Accurate counts by *documents*, plus total pages
         page_total = 0
-        samples: List[Tuple[str, int]] = []
+        samples: list[tuple[str, int]] = []
         for d in doc_folders:
             n_pages = len(list_page_images(d))
             page_total += n_pages
@@ -241,9 +235,7 @@ def stream_standardize_tabmepp(
 
     try:
         for doc_folder in tqdm(doc_folders, desc="Processing documents"):
-            pages_written, pages_skipped = process_one_document(
-                tar, doc_folder, strict_pairing=strict_pairing
-            )
+            pages_written, pages_skipped = process_one_document(tar, doc_folder, strict_pairing=strict_pairing)
 
             total_pages_written += pages_written
             total_pages_skipped += pages_skipped
@@ -273,6 +265,7 @@ def stream_standardize_tabmepp(
 # -----------------------------------------------------------------------------
 # CLI
 # -----------------------------------------------------------------------------
+
 
 def main() -> None:
     p = argparse.ArgumentParser(description="Standardize TABME++ (streaming)")

@@ -67,9 +67,7 @@ def compute_embeddings(
     all_embeds = []
 
     # Calculate number of batches for tqdm if total_count is known
-    total_batches = (
-        (total_count + batch_size - 1) // batch_size if total_count else None
-    )
+    total_batches = (total_count + batch_size - 1) // batch_size if total_count else None
 
     batched_iter = batch_iterator(image_iterator, batch_size)
 

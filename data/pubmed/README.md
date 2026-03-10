@@ -31,7 +31,7 @@ pip install google-cloud-vision pillow pdf2image
 
 **Purpose**: Processes PubMed PDFs using Google Vision OCR, creating both raw OCR data and processed images with metadata.
 
-**Input Structure**: 
+**Input Structure**:
 
     input_dir/
     ├── [hex]/

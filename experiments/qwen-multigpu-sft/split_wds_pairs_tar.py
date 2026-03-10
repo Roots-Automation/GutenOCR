@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
-import argparse, os, io, tarfile, random, zlib
+import argparse
+import io
+import os
+import random
+import tarfile
 from pathlib import Path
+
 
 def is_reg_file(ti: tarfile.TarInfo) -> bool:
     return ti.isreg()
+
 
 def key_and_ext(name: str):
     p = Path(name)
@@ -14,16 +20,23 @@ def key_and_ext(name: str):
     ext = p.suffix.lower()
     return stem, ext
 
+
 def main():
     ap = argparse.ArgumentParser(description="Split a WebDataset-style tar of paired JSON+IMG into equal shards.")
     ap.add_argument("--input", required=True, help="Input .tar (uncompressed).")
     ap.add_argument("--out-dir", required=True, help="Output directory (will be created).")
     ap.add_argument("--num-shards", type=int, default=8, help="Number of shards to write (default: 8).")
-    ap.add_argument("--samples-per-shard", type=int, default=None,
-                    help="Samples per shard. If unset, computed as total//num_shards.")
+    ap.add_argument(
+        "--samples-per-shard",
+        type=int,
+        default=None,
+        help="Samples per shard. If unset, computed as total//num_shards.",
+    )
     ap.add_argument("--img-exts", default=".png,.jpg,.jpeg", help="Comma-separated allowed image extensions.")
     ap.add_argument("--meta-ext", default=".json", help="Metadata extension (default: .json).")
-    ap.add_argument("--shuffle", action="store_true", help="Shuffle sample order before splitting (deterministic with --seed).")
+    ap.add_argument(
+        "--shuffle", action="store_true", help="Shuffle sample order before splitting (deterministic with --seed)."
+    )
     ap.add_argument("--seed", type=int, default=17, help="Shuffle seed (default: 17).")
     ap.add_argument("--prefix", default="eval", help="Output shard filename prefix (default: eval).")
     args = ap.parse_args()
@@ -34,8 +47,8 @@ def main():
     os.makedirs(args.out_dir, exist_ok=True)
 
     # Pass 1: index members by key (stem), preserving first-seen order
-    items = {}   # key -> {"meta": TarInfo, "img": TarInfo}
-    order = []   # keys in first-seen order
+    items = {}  # key -> {"meta": TarInfo, "img": TarInfo}
+    order = []  # keys in first-seen order
     with tarfile.open(args.input, "r") as tf:
         for ti in tf:
             if not is_reg_file(ti):
@@ -59,8 +72,9 @@ def main():
     keys = [k for k in order if "meta" in items[k] and "img" in items[k]]
     missing = len(order) - len(keys)
     if missing:
-        raise SystemExit(f"ERROR: {missing} samples are incomplete (missing meta or image). "
-                         f"Only {len(keys)} complete pairs found.")
+        raise SystemExit(
+            f"ERROR: {missing} samples are incomplete (missing meta or image). Only {len(keys)} complete pairs found."
+        )
 
     total = len(keys)
     if args.shuffle:
@@ -70,16 +84,18 @@ def main():
     num_shards = int(args.num_shards)
     if args.samples_per_shard is None:
         if total % num_shards != 0:
-            raise SystemExit(f"ERROR: total samples {total} not divisible by num_shards={num_shards}. "
-                             f"Pass --samples-per-shard to force a split.")
+            raise SystemExit(
+                f"ERROR: total samples {total} not divisible by num_shards={num_shards}. "
+                f"Pass --samples-per-shard to force a split."
+            )
         sps = total // num_shards
     else:
         sps = int(args.samples_per_shard)
         if sps * num_shards > total:
-            raise SystemExit(f"ERROR: requested {num_shards}×{sps}={num_shards*sps} > total {total}")
+            raise SystemExit(f"ERROR: requested {num_shards}×{sps}={num_shards * sps} > total {total}")
     if sps * num_shards != total:
-        print(f"NOTE: {num_shards}×{sps}={num_shards*sps} < total {total}; extra samples will be ignored.")
-        keys = keys[:num_shards*sps]
+        print(f"NOTE: {num_shards}×{sps}={num_shards * sps} < total {total}; extra samples will be ignored.")
+        keys = keys[: num_shards * sps]
 
     # Pass 2: write shards, keeping JSON then IMG for each key
     pad = len(str(num_shards - 1))
@@ -114,8 +130,8 @@ def main():
                     count_pairs += 1
             print(f"Wrote {out_path}  ({count_pairs} samples)")
 
-    print(f"Done. Total written: {num_shards*sps} samples across {num_shards} shards "
-          f"({sps} per shard).")
+    print(f"Done. Total written: {num_shards * sps} samples across {num_shards} shards ({sps} per shard).")
+
 
 if __name__ == "__main__":
     main()

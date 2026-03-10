@@ -3,6 +3,7 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 import numpy as np
 
 from layouts import Grid
@@ -11,11 +12,11 @@ from layouts import Grid
 class GridStack:
     """
     Generates stacked grid layouts for multi-section documents.
-    
+
     The GridStack creates multiple Grid sections stacked vertically,
     useful for generating documents with multiple paragraphs or
     distinct text regions separated by spacing.
-    
+
     Attributes:
         text_scale: [min, max] range for text size relative to box dimensions
         max_row: Maximum number of rows per grid section
@@ -26,19 +27,19 @@ class GridStack:
         stack_spacing: [min, max] range for spacing between stacked grids
         stack_fill: [min, max] range for vertical fill of the stacked area
         stack_full: Probability of using full vertical fill
-    
+
     Example:
         >>> stack = GridStack({"stack_spacing": [0.02, 0.05]})
         >>> layouts = stack.generate([0, 0, 800, 600])
         >>> for grid_layout in layouts:
-        ...     for bbox, align in grid_layout:
-        ...         print(f"Box at {bbox}")
+        ...     for bbox, align, col_idx in grid_layout:
+        ...         print(f"Box at {bbox} in column {col_idx}")
     """
-    
+
     def __init__(self, config):
         """
         Initialize a GridStack layout with the given configuration.
-        
+
         Args:
             config: Dictionary with optional keys:
                 - text_scale: [min, max] text scale range (default: [0.05, 0.1])
@@ -72,13 +73,13 @@ class GridStack:
     def generate(self, bbox):
         """
         Generate stacked grid layouts within the given bounding box.
-        
+
         Args:
             bbox: List of [left, top, width, height] defining the area
-        
+
         Returns:
             List of grid layouts, where each grid layout is a list of
-            (bbox, align) tuples. Returns an empty list if no valid
+            (bbox, align, col_idx) triples. Returns an empty list if no valid
             grids could be generated.
         """
         left, top, width, height = bbox
@@ -109,7 +110,7 @@ class GridStack:
             if layout is None:
                 break
 
-            line = max(y + h - top for (_, y, _, h), _ in layout) + stack_spacing
+            line = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
             layouts.append(layout)
 
         line = max(line - stack_spacing, 0)
@@ -119,7 +120,7 @@ class GridStack:
         spaces = np.cumsum(spaces)
 
         for layout, space in zip(layouts, spaces):
-            for bbox, _ in layout:
+            for bbox, *_ in layout:
                 x, y, w, h = bbox
                 bbox[:] = [x, y + space, w, h]
 

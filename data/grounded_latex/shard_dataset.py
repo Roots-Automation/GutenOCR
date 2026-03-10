@@ -27,21 +27,22 @@ Usage:
           create tar shard files in OUT_DIR.
 """
 
-import os
-import json
-import tarfile
 import argparse
+import json
+import os
+import tarfile
+from multiprocessing import Pool, cpu_count
 from pathlib import Path
+
 from pdf2image import convert_from_path
 from pdfrw import PdfReader
-from PIL import Image
-from multiprocessing import Pool, cpu_count
 
 # Default configuration (can be overridden via CLI arguments)
 DEFAULT_SRC_DIR = "./input"
 DEFAULT_OUT_DIR = "./output"
 DEFAULT_SHARD_SIZE = 2048
 DEFAULT_DPI = 72
+
 
 def pdf_to_pixel_bbox(bbox, pdf_path, dpi):
     """Convert absolute PDF bbox in points to exact pixel coordinates."""
@@ -63,6 +64,7 @@ def pdf_to_pixel_bbox(bbox, pdf_path, dpi):
         round(y2_px),
     ]
 
+
 def process_doc(args):
     """Convert one PDF+JSON doc into image + annotation JSON."""
     doc_id, pdf_path, json_path, dpi = args
@@ -73,20 +75,13 @@ def process_doc(args):
     img_path = f"{doc_id}.png"
     img.save(img_path, "PNG")
 
-    with open(json_path, "r") as f:
+    with open(json_path) as f:
         orig = json.load(f)
 
     width, height = img.size
 
     new_json = {
-        "text": {
-            "latex": [
-                {
-                    "text": orig["latex"],
-                    "box": pdf_to_pixel_bbox(orig["bbox"], pdf_path, dpi)
-                }
-            ]
-        },
+        "text": {"latex": [{"text": orig["latex"], "box": pdf_to_pixel_bbox(orig["bbox"], pdf_path, dpi)}]},
         "image": {
             "path": img_path,
             "width": width,
@@ -96,17 +91,18 @@ def process_doc(args):
     }
     return doc_id, img_path, new_json
 
+
 def make_shard(shard_idx, docs, out_dir, dpi):
     """Write a tar shard with a batch of documents."""
     shard_path = out_dir / f"train-{shard_idx:05d}.tar"
-    
+
     # Prepare args for parallel processing
     process_args = [(doc_id, pdf_path, json_path, dpi) for doc_id, pdf_path, json_path in docs]
-    
+
     # Process documents in parallel
     with Pool(processes=min(cpu_count(), len(docs))) as pool:
         results = pool.map(process_doc, process_args)
-    
+
     # Write to tar file
     with tarfile.open(shard_path, "w") as tar:
         for (doc_id, pdf_path, json_path), (_, img_path, ann) in zip(docs, results):
@@ -123,37 +119,36 @@ def make_shard(shard_idx, docs, out_dir, dpi):
 
     print(f"Created shard {shard_path}")
 
+
 def main():
-    parser = argparse.ArgumentParser(
-        description="Prepare standardized shards from LaTeX PDF + JSON pairs."
+    parser = argparse.ArgumentParser(description="Prepare standardized shards from LaTeX PDF + JSON pairs.")
+    parser.add_argument(
+        "--src-dir",
+        type=Path,
+        default=Path(DEFAULT_SRC_DIR),
+        help=f"Source directory containing PDF/JSON pairs (default: {DEFAULT_SRC_DIR})",
     )
     parser.add_argument(
-        "--src-dir", type=Path, default=Path(DEFAULT_SRC_DIR),
-        help=f"Source directory containing PDF/JSON pairs (default: {DEFAULT_SRC_DIR})"
+        "--out-dir",
+        type=Path,
+        default=Path(DEFAULT_OUT_DIR),
+        help=f"Output directory for tar shards (default: {DEFAULT_OUT_DIR})",
     )
     parser.add_argument(
-        "--out-dir", type=Path, default=Path(DEFAULT_OUT_DIR),
-        help=f"Output directory for tar shards (default: {DEFAULT_OUT_DIR})"
+        "--shard-size",
+        type=int,
+        default=DEFAULT_SHARD_SIZE,
+        help=f"Number of documents per shard (default: {DEFAULT_SHARD_SIZE})",
     )
-    parser.add_argument(
-        "--shard-size", type=int, default=DEFAULT_SHARD_SIZE,
-        help=f"Number of documents per shard (default: {DEFAULT_SHARD_SIZE})"
-    )
-    parser.add_argument(
-        "--dpi", type=int, default=DEFAULT_DPI,
-        help=f"DPI for PNG rendering (default: {DEFAULT_DPI})"
-    )
-    parser.add_argument(
-        "--max-docs", type=int, default=None,
-        help="Maximum documents to process (default: all)"
-    )
+    parser.add_argument("--dpi", type=int, default=DEFAULT_DPI, help=f"DPI for PNG rendering (default: {DEFAULT_DPI})")
+    parser.add_argument("--max-docs", type=int, default=None, help="Maximum documents to process (default: all)")
     args = parser.parse_args()
 
     # Validate source directory
     if not args.src_dir.exists():
         print(f"Error: Source directory '{args.src_dir}' does not exist.")
         return 1
-    
+
     # Create output directory
     args.out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -161,13 +156,13 @@ def main():
     print(f"Output: {args.out_dir}")
     print(f"Shard size: {args.shard_size}, DPI: {args.dpi}")
     print("Collecting all documents...")
-    
+
     docs = []
 
     for json_file in args.src_dir.glob("**/*.json"):
         if args.max_docs is not None and len(docs) >= args.max_docs:
             break
-            
+
         pdf_file = json_file.with_suffix(".pdf")
         if not pdf_file.exists():
             continue
@@ -188,11 +183,12 @@ def main():
 
     print("Creating shards...")
     for shard_idx in range(0, len(docs), args.shard_size):
-        shard_docs = docs[shard_idx: shard_idx + args.shard_size]
+        shard_docs = docs[shard_idx : shard_idx + args.shard_size]
         make_shard(shard_idx // args.shard_size, shard_docs, args.out_dir, args.dpi)
-    
+
     print("Done!")
     return 0
+
 
 if __name__ == "__main__":
     exit(main())

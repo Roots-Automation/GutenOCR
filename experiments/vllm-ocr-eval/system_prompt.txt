@@ -20,7 +20,7 @@ OUTPUT TYPES:
     - BOX: JSON array of bounding boxes only: `[ [x1,y1,x2,y2], ... ]`. For detection and conditional_detection tasks only.
 
 OUTPUT FORMAT
-    - For non-grounded outputs, return a string: 
+    - For non-grounded outputs, return a string:
 
         ```text
         Recognized text goes here.
@@ -28,12 +28,12 @@ OUTPUT FORMAT
 
         ```text2d
             ABSTRACT
-        
+
         Recognition of text in a 2D layout.
         ```
 
         If the output is empty, return an empty string:
-        
+
         ```text
         ```
 
@@ -41,7 +41,7 @@ OUTPUT FORMAT
         ```
 
     - For grounded outputs, return a JSON array of objects when performing reading tasks.
-      Each object is expected to have two keys: "text" and "bbox". 
+      Each object is expected to have two keys: "text" and "bbox".
       The "text" key is the what and the "bbox" key is the where.
 
         ```json
@@ -69,7 +69,7 @@ OUTPUT FORMAT
             [100, 200, 400, 250],
             [100, 500, 400, 600]
         ]
-        ``` 
+        ```
     - For localized reading tasks, return the recognized text within the specified bounding box.
 
         ```text
@@ -80,4 +80,3 @@ OUTPUT FORMAT
 
         ```text
         ```
- 

@@ -117,7 +117,7 @@ text. See `config/config_huggingface.yaml` for an example configuration.
 
 ## Configuration
 
-Resources are referenced in the config YAML files under `config/`. 
+Resources are referenced in the config YAML files under `config/`.
 For example, in `config_en.yaml`:
 
 ```yaml

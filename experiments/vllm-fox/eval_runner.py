@@ -6,17 +6,18 @@ Unified evaluation runner for Fox OCR tasks using vLLM.
 import logging
 import os
 
-from vllm_ocr_predictor import OCRVLMPredictor
-from common import (
-    load_ground_truth,
-    save_results,
-    load_system_prompt,
-    progress_callback,
-    print_run_header,
-    print_results_preview,
-)
 from prompt_extractors import (
     create_prompt_extractor,
+)
+from vllm_ocr_predictor import OCRVLMPredictor
+
+from common import (
+    load_ground_truth,
+    load_system_prompt,
+    print_results_preview,
+    print_run_header,
+    progress_callback,
+    save_results,
 )
 
 logger = logging.getLogger(__name__)

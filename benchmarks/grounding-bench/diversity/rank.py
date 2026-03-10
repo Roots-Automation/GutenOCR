@@ -7,8 +7,9 @@ import sys
 import pandas as pd
 import torch
 from PIL import Image
-from sampler import k_center_greedy
-from visual_utils import compute_embeddings, get_image_files
+
+from diversity.sampler import k_center_greedy
+from diversity.visual_utils import compute_embeddings, get_image_files
 
 # Setup logging
 logging.basicConfig(
@@ -69,9 +70,7 @@ def load_parquet_generator(parquet_path: str):
 
 def main():
     parser = argparse.ArgumentParser(description="Rank images by visual diversity.")
-    parser.add_argument(
-        "input_path", type=str, help="Directory of images OR path to Parquet file"
-    )
+    parser.add_argument("input_path", type=str, help="Directory of images OR path to Parquet file")
     parser.add_argument("output_csv", type=str, help="Path for output CSV")
     parser.add_argument(
         "--limit",
@@ -111,9 +110,7 @@ def main():
 
     # 2. Compute Embeddings
     logger.info(f"Computing embeddings for ~{count} images...")
-    embeddings = compute_embeddings(
-        img_gen, total_count=count, batch_size=args.batch_size, device=args.device
-    )
+    embeddings = compute_embeddings(img_gen, total_count=count, batch_size=args.batch_size, device=args.device)
 
     # Note: filenames list is populated as generator is consumed in compute_embeddings
     if len(embeddings) != len(filenames):

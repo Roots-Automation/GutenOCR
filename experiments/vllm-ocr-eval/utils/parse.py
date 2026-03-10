@@ -1,6 +1,6 @@
 import logging
-import re
 from typing import Any
+
 from json_repair import repair_json
 
 logger = logging.getLogger(__name__)
@@ -9,10 +9,10 @@ logger = logging.getLogger(__name__)
 def parse_json_output(output_text: str) -> list[Any] | dict[str, Any] | None:
     """
     Safely parse JSON output from model predictions with repair capabilities.
-    
+
     Args:
         output_text: Raw text output from the model.
-        
+
     Returns:
         Parsed JSON data or None if parsing fails.
     """
@@ -27,13 +27,14 @@ def normalize_structured_keys(data: dict[str, Any] | list[dict[str, Any]]) -> di
     Normalize keys in structured data.
     - Keys containing "text" → "text"
     - Keys containing "box" → "bbox"
-    
+
     Args:
         data: Dictionary or list of dictionaries to normalize
-        
+
     Returns:
         Normalized data structure
     """
+
     def _normalize_dict(item: dict[str, Any]) -> dict[str, Any]:
         normalized = {}
         for key, value in item.items():
@@ -43,7 +44,7 @@ def normalize_structured_keys(data: dict[str, Any] | list[dict[str, Any]]) -> di
                 new_key = "text"
             elif "box" in key.lower():
                 new_key = "bbox"
-            
+
             # Recursively normalize nested structures
             if isinstance(value, dict):
                 normalized[new_key] = _normalize_dict(value)
@@ -51,7 +52,7 @@ def normalize_structured_keys(data: dict[str, Any] | list[dict[str, Any]]) -> di
                 normalized[new_key] = [_normalize_dict(v) for v in value]
             else:
                 normalized[new_key] = value
-        
+
         return normalized
 
     try:
@@ -71,7 +72,7 @@ def normalize_structured_keys(data: dict[str, Any] | list[dict[str, Any]]) -> di
             return data
     except Exception as e:
         logger.warning(f"Failed to normalize structured keys: {e} {data}")
-        raise 
+        raise
 
 
 def extract_boxes_from_normalized_json(normalized_json: Any) -> list[list[int]]:
@@ -79,7 +80,7 @@ def extract_boxes_from_normalized_json(normalized_json: Any) -> list[list[int]]:
     Extract bounding boxes from normalized JSON data.
     Handles various formats:
     - Empty lists: returns empty list
-    - List of integers: wraps in extra list 
+    - List of integers: wraps in extra list
     - List of dicts with 'bbox': extracts bbox values
     """
     if isinstance(normalized_json, list):

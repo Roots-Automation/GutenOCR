@@ -28,7 +28,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - Different color fonts
   - More fonts, backgrounds, etc.
   - Expose words (in additional to line boxes)
-  - Expose block boxes (groups of lines)
+  - ✅ Expose block boxes (groups of lines) — [#12](https://github.com/Roots-Automation/GutenOCR/pull/12)
 - Semantic conditional detection support
 - Higher-order layout features w/ grounding in underlying text
 - Natural language descriptions for images, figures
