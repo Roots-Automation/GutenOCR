@@ -237,10 +237,14 @@ class Content:
 
         tb_args = {**self.textbox_color_config.get("args", {}), "gray": gray_range}
         tb_prob = self.textbox_color_config.get("prob", 0)
+        if lum < 0.5:
+            tb_prob = 1.0
         textbox_color = components.Switch(components.Gray(), prob=tb_prob, args=tb_args)
 
         cc_args = {**self.content_color_config.get("args", {}), "gray": gray_range}
         cc_prob = self.content_color_config.get("prob", 0)
+        if lum < 0.5:
+            cc_prob = 1.0
         content_color = components.Switch(components.Gray(), prob=cc_prob, args=cc_args)
 
         layout_left = width * np.random.uniform(self.margin[0], self.margin[1])
