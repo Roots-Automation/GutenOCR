@@ -15,6 +15,14 @@ from elements.textbox import TextBox
 from layouts import GridStack
 
 
+def _relative_luminance(r, g, b):
+    def channel(c):
+        c = c / 255.0
+        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+
+
 class TextReader:
     def __init__(self, path, cache_size=2**28, block_size=2**20):
         self.fp = open(path, encoding="utf-8")
@@ -218,11 +226,26 @@ class Content:
         self.font = components.BaseFont(**config.get("font", {}))
         self.layout = GridStack(config.get("layout", {}))
         self.textbox = TextBox(config.get("textbox", {}))
-        self.textbox_color = components.Switch(components.Gray(), **config.get("textbox_color", {}))
-        self.content_color = components.Switch(components.Gray(), **config.get("content_color", {}))
+        self.textbox_color_config = config.get("textbox_color", {})
+        self.content_color_config = config.get("content_color", {})
 
-    def generate(self, size):
+    def generate(self, size, bg_color=(255, 255, 255)):
         width, height = size
+
+        lum = _relative_luminance(*bg_color)
+        gray_range = [0, 64] if lum > 0.5 else [191, 255]
+
+        tb_args = {**self.textbox_color_config.get("args", {}), "gray": gray_range}
+        tb_prob = self.textbox_color_config.get("prob", 0)
+        if lum < 0.5:
+            tb_prob = 1.0
+        textbox_color = components.Switch(components.Gray(), prob=tb_prob, args=tb_args)
+
+        cc_args = {**self.content_color_config.get("args", {}), "gray": gray_range}
+        cc_prob = self.content_color_config.get("prob", 0)
+        if lum < 0.5:
+            cc_prob = 1.0
+        content_color = components.Switch(components.Gray(), prob=cc_prob, args=cc_args)
 
         layout_left = width * np.random.uniform(self.margin[0], self.margin[1])
         layout_top = height * np.random.uniform(self.margin[0], self.margin[1])
@@ -260,12 +283,12 @@ class Content:
                     col_key_to_block_id[col_key] = next_block_id
                     next_block_id += 1
 
-                self.textbox_color.apply([text_layer])
+                textbox_color.apply([text_layer])
                 text_layers.append(text_layer)
                 texts.append(text)
                 block_ids.append(col_key_to_block_id[col_key])
                 words_per_line.append(word_local_data)
 
-        self.content_color.apply(text_layers)
+        content_color.apply(text_layers)
 
         return text_layers, texts, block_ids, words_per_line

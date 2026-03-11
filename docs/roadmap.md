@@ -24,8 +24,8 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
 > New data sources, new tasks, or improvements to existing data and tasks.
 
 - SynthDoG Grounding
-  - Different color paper backgrounds
-  - Different color fonts
+  - ✅ Different color paper backgrounds
+  - ✅ Different color fonts
   - More fonts, backgrounds, etc.
   - Expose words (in additional to line boxes)
   - ✅ Expose block boxes (groups of lines) — [#12](https://github.com/Roots-Automation/GutenOCR/pull/12)
