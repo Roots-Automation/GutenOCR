@@ -3,6 +3,7 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 import numpy as np
 from synthtiger import components, layers
 
