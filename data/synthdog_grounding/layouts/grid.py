@@ -3,17 +3,18 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 import numpy as np
 
 
 class Grid:
     """
     Generates a grid-based layout for text placement.
-    
+
     The Grid layout divides a bounding box into rows and columns,
     providing positions for text boxes with configurable spacing,
     fill ratios, and text alignment.
-    
+
     Attributes:
         text_scale: [min, max] range for text size relative to box dimensions
         max_row: Maximum number of rows in the grid
@@ -21,18 +22,18 @@ class Grid:
         fill: [min, max] range for horizontal fill ratio
         full: Probability of using full fill (fill=1)
         align: List of valid alignment options ("left", "right", "center")
-    
+
     Example:
         >>> grid = Grid({"max_row": 10, "max_col": 2})
         >>> layout = grid.generate([0, 0, 800, 600])
-        >>> for bbox, align in layout:
-        ...     print(f"Box at {bbox} with {align} alignment")
+        >>> for bbox, align, col_idx in layout:
+        ...     print(f"Box at {bbox} with {align} alignment in column {col_idx}")
     """
-    
+
     def __init__(self, config):
         """
         Initialize a Grid layout with the given configuration.
-        
+
         Args:
             config: Dictionary with optional keys:
                 - text_scale: [min, max] text scale range (default: [0.05, 0.1])
@@ -52,14 +53,15 @@ class Grid:
     def generate(self, bbox):
         """
         Generate a grid layout within the given bounding box.
-        
+
         Args:
             bbox: List of [left, top, width, height] defining the area
-        
+
         Returns:
-            List of (bbox, align) tuples where:
+            List of (bbox, align, col_idx) triples where:
                 - bbox: [x, y, width, height] for each text cell
                 - align: Text alignment ("left", "right", or "center")
+                - col_idx: Zero-based column index of the cell within this grid
             Returns None if no valid grid could be generated.
         """
         left, top, width, height = bbox
@@ -109,6 +111,6 @@ class Grid:
                 x, y = xs[c * 2 + 1], ys[r]
                 w, h = xs[c * 2 + 2] - x, ys[r + 1] - y
                 bbox = [left + x, top + y, w, h]
-                layout.append((bbox, align))
+                layout.append((bbox, align, c))
 
         return layout

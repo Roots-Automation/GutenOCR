@@ -77,7 +77,7 @@ compress_dir() {
     echo "START: Compressing ${dir} -> ${out} (index: $i)"
     if tar czf "$out" "$dir" 2>/dev/null; then
         echo "COMPRESSED: ${out} (index: $i)"
-        
+
         # Remove the original directory after successful compression (if enabled)
         if [[ "${DELETE_AFTER_COMPRESS}" == "true" ]]; then
             rm -rf "$dir"

@@ -46,9 +46,7 @@ def k_center_greedy(
             min_dists = np.min(dists, axis=1)
     else:
         # Initialize by prioritizing items furthest from the dataset centroid
-        logger.info(
-            "No existing context. Initializing with furthest-from-centroid strategy."
-        )
+        logger.info("No existing context. Initializing with furthest-from-centroid strategy.")
         centroid = np.mean(embeddings, axis=0)
         centroid /= np.linalg.norm(centroid) + 1e-10
 

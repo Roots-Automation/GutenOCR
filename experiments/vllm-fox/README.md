@@ -7,9 +7,9 @@ A vLLM-optimized evaluation harness for the [Fox benchmark](https://github.com/u
 ### Original Fox Paper
 
 <h3><a href="https://github.com/ucaslcl/Fox/blob/main/Fox_paper.pdf">Fox: Focus Anywhere for Fine-grained Multi-page Document Understanding</a></h3>
-<a href="https://arxiv.org/abs/2405.14295"><img src="https://img.shields.io/badge/Paper-PDF-orange"></a> 
+<a href="https://arxiv.org/abs/2405.14295"><img src="https://img.shields.io/badge/Paper-PDF-orange"></a>
 <a href="https://ucaslcl.github.io/foxhome/"><img src="https://img.shields.io/badge/Project-Page-Green"></a>
-<a href="https://zhuanlan.zhihu.com/p/699450474"><img src="https://img.shields.io/badge/zhihu-yellow"></a> 
+<a href="https://zhuanlan.zhihu.com/p/699450474"><img src="https://img.shields.io/badge/zhihu-yellow"></a>
 
 Chenglong Liu, [Haoran Wei](https://scholar.google.com/citations?user=J4naK0MAAAAJ&hl=en), Jinyue Chen, Lingyu Kong, [Zheng Ge](https://joker316701882.github.io/), Liang Zhao, [Jianjian Sun](https://scholar.google.com/citations?user=MVZrGkYAAAAJ&hl=en), Chunrui Han, [Xiangyu Zhang](https://scholar.google.com/citations?user=yuB-cfoAAAAJ&hl=en)
 
@@ -119,17 +119,17 @@ def eval_model(args):
     print("Generate Results......")
     for ann in tqdm(gts):
         output_json = {}
-        
+
         prompt = ann["conversations"][0]["value"]
-        image_file = ann["image"] 
+        image_file = ann["image"]
         image_file_path = os.path.join(args.image_path, image_file)
         image = load_image(image_file_path)
-        
+
         # Generate model output
         outputs = model.generate(image, prompt)
 
         output_json['image'] = ann["image"]
-        output_json['question'] = prompt 
+        output_json['question'] = prompt
         output_json['label'] = ann["conversations"][1]["value"]
         output_json['answer'] = outputs
         output_list.append(output_json)
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 ```
 
 -   After obtaining the `./results_final.json`, run eval script to calculate metrics:
-     
+
 
 ```shell
 # OCR metrics: Character NED, Token F1, Soft Token F1
@@ -189,7 +189,7 @@ For questions about the original Fox benchmark, contact the authors via the [Fox
 [![Code License](https://img.shields.io/badge/Code%20License-Apache_2.0-green.svg)](https://github.com/tatsu-lab/stanford_alpaca/blob/main/LICENSE)
 [![Data License](https://img.shields.io/badge/Data%20License-CC%20By%20NC%204.0-red.svg)](https://github.com/tatsu-lab/stanford_alpaca/blob/main/DATA_LICENSE)
 
-This evaluation code is released under Apache 2.0. The Fox benchmark data follows CC BY-NC 4.0. 
+This evaluation code is released under Apache 2.0. The Fox benchmark data follows CC BY-NC 4.0.
 
 ## Citation
 

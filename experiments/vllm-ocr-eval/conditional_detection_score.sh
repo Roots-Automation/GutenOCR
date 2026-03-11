@@ -27,7 +27,7 @@ MODEL_DIRS=(
 for shard_idx in "${!SHARD_PATHS[@]}"; do
     SHARD_PATH="${SHARD_PATHS[$shard_idx]}"
     SHARD_BASENAME="${SHARD_BASENAMES[$shard_idx]}"
-    
+
     for idx in "${!MODEL_NAMES[@]}"; do
         MODEL_NAME="${MODEL_NAMES[$idx]}"
         MODEL_DIR="${MODEL_DIRS[$idx]}"
@@ -42,9 +42,9 @@ for shard_idx in "${!SHARD_PATHS[@]}"; do
             task_type="${TASK_TYPES[$i]}"
             output_type="${OUTPUT_TYPES[$i]}"
             output_name="${OUTPUT_NAMES[$i]}"
-            
+
             CSV_FILE="$MODEL_DIR/${SHARD_BASENAME}-${output_name}-results.csv"
-            
+
             # Score the conditional detection results if CSV was created
             if [ -f "$CSV_FILE" ]; then
                 echo "Scoring conditional detection results for $CSV_FILE"

@@ -12,7 +12,7 @@ echo "🔍 Dataset Integrity Check"
 echo "$(date)"
 echo "=============================="
 
-# Change to the dataset directory  
+# Change to the dataset directory
 cd "$DATASET_DIR" 2>/dev/null || { echo "❌ Error: dataset directory '$DATASET_DIR' not found"; exit 1; }
 
 echo "Checking ONLY dataset files (0000.pdf, 0000_*.pdf patterns)..."
@@ -44,12 +44,12 @@ if [ "$mismatch" -eq 0 ]; then
 elif [ "$mismatch" -gt 0 ]; then
     echo "⚠️  MISMATCH: $mismatch more dataset PDFs than JSONs"
     match_status="⚠️  MISMATCH"
-    
+
     # For active processing, small mismatches are normal
     if [ "$mismatch" -lt 1000 ]; then
         echo "📝 This small mismatch is normal during active processing"
     fi
-    
+
     # Find actual missing JSON pairs
     echo "🔍 Sample missing JSONs:"
     find . -name "[0-9][0-9][0-9][0-9].pdf" -o -name "[0-9][0-9][0-9][0-9]_*.pdf" | head -10 | while read pdf; do
@@ -61,7 +61,7 @@ elif [ "$mismatch" -gt 0 ]; then
 else
     mismatch_abs=$((0 - mismatch))
     echo "📝 STATUS: $mismatch_abs more JSONs than PDFs"
-    
+
     # For active processing, having more JSONs is normal
     if [ "$mismatch_abs" -lt 1000 ]; then
         echo "✅ This is NORMAL - JSONs are written before PDFs finish rendering"
@@ -70,7 +70,7 @@ else
     else
         echo "⚠️  Large imbalance detected - likely processing bottleneck"
         match_status="⚠️  BOTTLENECK"
-        
+
         # Check for LaTeX process backlog
         latex_procs=$(ps aux | grep -E "(latex|pdflatex)" | grep -v grep | wc -l)
         if [ "$latex_procs" -gt 20 ]; then
@@ -95,31 +95,31 @@ fi
 highest_folder=$(find . -maxdepth 1 -type d -name "[0-9][0-9][0-9][0-9]" | sed 's|./||' | sort -n | tail -1)
 if [ -n "$highest_folder" ]; then
     echo "📈 Current folder: $highest_folder"
-    
+
     # Estimate equations processed based on dataset PDFs
     processed_equations=$((dataset_pdfs / 2))
     echo "🎯 Equations processed: ~$processed_equations"
-    
+
     # Check recent activity - files created in last 5 minutes
     recent_pdfs=$(find . -name "[0-9][0-9][0-9][0-9].pdf" -o -name "[0-9][0-9][0-9][0-9]_*.pdf" -newermt "5 minutes ago" | wc -l)
     recent_jsons=$(find . -name "[0-9][0-9][0-9][0-9].json" -o -name "[0-9][0-9][0-9][0-9]_*.json" -newermt "5 minutes ago" | wc -l)
-    
+
     if [ "$recent_pdfs" -gt 0 ] || [ "$recent_jsons" -gt 0 ]; then
         echo "🕐 Last 5 min: $recent_jsons JSONs, $recent_pdfs PDFs created"
         if [ "$recent_jsons" -gt "$recent_pdfs" ]; then
             rate_diff=$((recent_jsons - recent_pdfs))
             echo "⚠️  PDF rendering is $rate_diff files behind JSON creation rate"
         fi
-        
+
         # Calculate processing rate
         equations_per_5min=$((recent_jsons / 2))
         equations_per_second=$(echo "scale=1; $equations_per_5min / 300" | bc -l 2>/dev/null || echo "$(($equations_per_5min / 300))")
         echo "📊 Current rate: ~$equations_per_second equations/second"
-        
+
         # Check system load
         load_avg=$(uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//')
         echo "⚙️  System load: $load_avg"
-        
+
         # Warn about critical performance levels
         load_num=$(echo $load_avg | cut -d. -f1)
         if [ "$load_num" -gt 100 ]; then
@@ -127,7 +127,7 @@ if [ -n "$highest_folder" ]; then
         elif [ "$load_num" -gt 80 ]; then
             echo "⚠️  WARNING: Very high system load (load > 80)"
         fi
-        
+
         # Performance status
         rate_num=$(echo $equations_per_second | cut -d. -f1)
         if [ "$rate_num" -lt 10 ]; then

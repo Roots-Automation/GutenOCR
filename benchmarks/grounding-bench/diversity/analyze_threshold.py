@@ -90,9 +90,7 @@ def analyze(csv_path: str, recommend: bool = False):
     print("-" * 30)
     print("Recommended Thresholds:")
     print(f"1. Elbow Point: {elbow_rank} (radius={radii[elbow_idx]:.4f})")
-    print(
-        "   - Represents the point of maximum curvature; signifies diminishing returns."
-    )
+    print("   - Represents the point of maximum curvature; signifies diminishing returns.")
     print(f"2. 50% Coverage: {r50} (midpoint of diversity range)")
     print(f"3. 80% Coverage: {r80}")
     print(f"4. 90% Coverage: {r90}")
@@ -103,9 +101,7 @@ def analyze(csv_path: str, recommend: bool = False):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Analyze ranking CSV to recommend sampling thresholds."
-    )
+    parser = argparse.ArgumentParser(description="Analyze ranking CSV to recommend sampling thresholds.")
     parser.add_argument("csv_path", type=str, help="Path to ranking CSV file")
     parser.add_argument(
         "--recommend-k",

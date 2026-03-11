@@ -54,7 +54,7 @@ Assumptions & Notes:
 
 Dependencies:
   pip install pymupdf pillow tqdm
-  
+
   # For text processing and token counting:
   pip install transformers
 
@@ -76,26 +76,25 @@ Usage:
       --output /mnt/mldata/datasets/idl/train-00001.tar \
       --no-text-processing
 """
+
 from __future__ import annotations
 
 import argparse
 import io
 import json
 import logging
-import math
-import os
-import sys
 import tarfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Tuple, Optional, Any
+from typing import Any
 
 import fitz  # PyMuPDF
 from tqdm import tqdm
 
 try:
     from transformers import AutoProcessor
+
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
@@ -107,7 +106,7 @@ class Config:
     output_path: Path
     dpi: int = 72
     image_ext: str = "png"  # png|jpg|tif
-    page_base: int = 0       # 0 or 1
+    page_base: int = 0  # 0 or 1
     bbox_format: str = "xywh"  # xywh | x1y1x2y2
     bbox_space: str = "as_is"  # as_is | pdf_to_pixel
     dry_run: bool = False
@@ -117,6 +116,7 @@ class Config:
 
 
 # -------------- helpers --------------
+
 
 def round3(x: float) -> float:
     return round(float(x), 3)
@@ -133,7 +133,7 @@ def _page_id_str(idx: int, total_pages: int, base: int) -> str:
     return f"{idx + base:0{pad}d}"
 
 
-def _bbox_to_x1y1x3y3(box: List[float], fmt: str, scale: float = 1.0) -> List[float]:
+def _bbox_to_x1y1x3y3(box: list[float], fmt: str, scale: float = 1.0) -> list[float]:
     if fmt == "xywh":
         x, y, w, h = box
         x1, y1, x2, y2 = x, y, x + w, y + h
@@ -148,251 +148,256 @@ def _bbox_to_x1y1x3y3(box: List[float], fmt: str, scale: float = 1.0) -> List[fl
     return [round3(x1), round3(y1), round3(x2), round3(y2)]
 
 
-def load_doc_json(json_path: Path) -> Dict:
+def load_doc_json(json_path: Path) -> dict:
     with json_path.open("r", encoding="utf-8") as f:
         return json.load(f)
 
 
 # -------------- text processing --------------
 
-def text_1d(detections: List[Dict[str, Any]]) -> str:
+
+def text_1d(detections: list[dict[str, Any]]) -> str:
     """
     Extract and concatenate text from a list of detection dictionaries.
     Each dictionary is expected to have a 'text' key.
     """
     if not detections:
         return ""
-    
-    if 'bbox' not in detections[0] and 'box' not in detections[0]:
+
+    if "bbox" not in detections[0] and "box" not in detections[0]:
         raise ValueError("Detections must contain 'bbox' or 'box' key for sorting")
 
-    detections_sorted = sorted(detections, key=lambda x: (x.get('bbox', x.get('box', []))[1], x.get('bbox', x.get('box', []))[0]))
-    return ' '.join(d['text'].strip() for d in detections_sorted if 'text' in d)
+    detections_sorted = sorted(
+        detections, key=lambda x: (x.get("bbox", x.get("box", []))[1], x.get("bbox", x.get("box", []))[0])
+    )
+    return " ".join(d["text"].strip() for d in detections_sorted if "text" in d)
 
 
-def text_2d(detections: List[Dict[str, Any]], p: float = 0.8, max_newlines: int = 2) -> str:
+def text_2d(detections: list[dict[str, Any]], p: float = 0.8, max_newlines: int = 2) -> str:
     """
     Extract and concatenate text from a list of detection dictionaries in a 2D layout.
     Each dictionary is expected to have a 'text' key and either 'bbox' or 'box' key with coordinates.
-    
-    This function uses robust line clustering and character density estimation to preserve 
+
+    This function uses robust line clustering and character density estimation to preserve
     the 2D spatial layout of text by:
     1. Computing line height and character density using percentile-based estimation
     2. Clustering text blocks into horizontal lines using line height tolerance
     3. Sorting blocks within each line by horizontal position
     4. Adding appropriate spacing between blocks based on absolute position on page
     5. Adding newlines between lines based on vertical gaps
-    
+
     Args:
         detections: List of detection dictionaries, each containing:
             - 'text': The text content
             - 'bbox' or 'box': Bounding box coordinates [x1, y1, x2, y2] or similar format
         p: Percentile for character density estimation (default 0.8)
         max_newlines: Maximum number of newlines to add between blocks (default 2)
-    
+
     Returns:
         String with text arranged in 2D layout preserving spatial relationships
     """
     if not detections:
         return ""
-    
+
     # Normalize bounding box format and extract coordinates
     normalized_blocks = []
     for detection in detections:
-        text = detection['text'].strip()
+        text = detection["text"].strip()
         if not text:  # Skip empty text blocks
             continue
-            
-        bbox = detection.get('bbox', detection.get('box', []))
-        
+
+        bbox = detection.get("bbox", detection.get("box", []))
+
         if len(bbox) >= 4:
             # Assume format is [x1, y1, x2, y2] or similar
             x1, y1 = float(bbox[0]), float(bbox[1])
             x2, y2 = float(bbox[2]), float(bbox[3])
-            
+
             # Ensure x1 <= x2 and y1 <= y2
             left, right = min(x1, x2), max(x1, x2)
             top, bottom = min(y1, y2), max(y1, y2)
-            
+
             width = right - left
             height = bottom - top
-            
+
             # Skip degenerate boxes
             if width <= 0 or height <= 0:
                 continue
-            
-            normalized_blocks.append({
-                'text': text,
-                'left': left,
-                'right': right,
-                'top': top,
-                'bottom': bottom,
-                'center_y': (top + bottom) / 2,
-                'center_x': (left + right) / 2,
-                'width': width,
-                'height': height,
-                'char_ratio': len(text) / width  # characters per unit width
-            })
-    
+
+            normalized_blocks.append(
+                {
+                    "text": text,
+                    "left": left,
+                    "right": right,
+                    "top": top,
+                    "bottom": bottom,
+                    "center_y": (top + bottom) / 2,
+                    "center_x": (left + right) / 2,
+                    "width": width,
+                    "height": height,
+                    "char_ratio": len(text) / width,  # characters per unit width
+                }
+            )
+
     if not normalized_blocks:
         return ""
-    
+
     # Compute line height and character density using robust estimation
     line_height, char_density = _compute_line_height_char_density(normalized_blocks, p)
-    
+
     # Find page bounds for absolute positioning
-    page_left = min(block['left'] for block in normalized_blocks)
-    page_right = max(block['right'] for block in normalized_blocks)
-    page_width = page_right - page_left
-    
+    page_left = min(block["left"] for block in normalized_blocks)
+    page_right = max(block["right"] for block in normalized_blocks)
+    page_right - page_left
+
     # Cluster blocks into lines using line height tolerance
     lines = _cluster_blocks_robust(normalized_blocks, line_height)
-    
+
     # Sort lines by vertical position (top of the line)
     lines = sorted(lines.items(), key=lambda x: x[0])
-    
+
     # Build the output string with absolute positioning
     result_lines = []
-    
+
     for _, line_blocks in lines:
         # Sort blocks in line by horizontal position
-        line_blocks.sort(key=lambda b: b['left'])
-        
+        line_blocks.sort(key=lambda b: b["left"])
+
         # Build the line with proper absolute spacing
         line_text = ""
         line_length = 0  # Track current position in characters
-        
+
         for i, block in enumerate(line_blocks):
             # Calculate absolute position on the page as character position
-            block_col_pos = (block['left'] - page_left) * char_density
+            block_col_pos = (block["left"] - page_left) * char_density
             target_pos = int(round(block_col_pos))
-            
+
             # Add spaces to reach the target position
             spaces_needed = max(0, target_pos - line_length)
             line_text += " " * spaces_needed
             line_length += spaces_needed
-            
+
             # Add the text
-            line_text += block['text']
-            line_length += len(block['text'])
-        
+            line_text += block["text"]
+            line_length += len(block["text"])
+
         result_lines.append(line_text.rstrip())
-    
+
     # Join lines with newlines, adding extra newlines for large vertical gaps
     if len(result_lines) <= 1:
-        return '\n'.join(result_lines)
-    
+        return "\n".join(result_lines)
+
     final_text = result_lines[0]
-    
+
     for i in range(1, len(result_lines)):
         # Calculate vertical gap between lines
-        prev_line_blocks = dict(lines)[list(dict(lines).keys())[i-1]]
+        prev_line_blocks = dict(lines)[list(dict(lines).keys())[i - 1]]
         curr_line_blocks = dict(lines)[list(dict(lines).keys())[i]]
-        
-        prev_line_bottom = max(b['bottom'] for b in prev_line_blocks)
-        curr_line_top = min(b['top'] for b in curr_line_blocks)
+
+        prev_line_bottom = max(b["bottom"] for b in prev_line_blocks)
+        curr_line_top = min(b["top"] for b in curr_line_blocks)
         gap = curr_line_top - prev_line_bottom
-        
+
         # Add extra newlines for large gaps (more than 1.5x line height)
         if gap > 1.5 * line_height:
             num_newlines = min(max_newlines, max(1, int(round(gap / line_height))))
         else:
             num_newlines = 1
-            
-        final_text += '\n' * num_newlines + result_lines[i]
-    
+
+        final_text += "\n" * num_newlines + result_lines[i]
+
     return final_text
 
 
-def _compute_line_height_char_density(blocks: List[Dict], p: float) -> Tuple[float, float]:
+def _compute_line_height_char_density(blocks: list[dict], p: float) -> tuple[float, float]:
     """
     Compute line height and character density using robust percentile-based estimation.
-    
+
     Args:
         blocks: List of normalized text blocks
         p: Percentile for character density estimation
-        
+
     Returns:
         Tuple of (line_height, char_density)
     """
     # Line height is the minimum height of any text block
-    line_height = min(block['height'] for block in blocks)
-    
+    line_height = min(block["height"] for block in blocks)
+
     # Character density is the p-th percentile of character-to-width ratios
     # Higher percentiles correspond to denser text (more chars per unit width)
-    char_ratios = [block['char_ratio'] for block in blocks]
+    char_ratios = [block["char_ratio"] for block in blocks]
     char_density = _percentile(char_ratios, p * 100)
-    
+
     return line_height, char_density
 
 
-def _cluster_blocks_robust(blocks: List[Dict], line_height: float) -> Dict:
+def _cluster_blocks_robust(blocks: list[dict], line_height: float) -> dict:
     """
     Cluster blocks into lines using line height tolerance, updating cluster centroids.
-    
+
     Args:
         blocks: List of normalized text blocks
         line_height: Estimated line height for clustering tolerance
-        
+
     Returns:
         Dictionary of lines keyed by average y-position
     """
     lines = {}
-    
+
     for block in blocks:
-        block_center_y = block['center_y']
+        block_center_y = block["center_y"]
         placed = False
-        
+
         # Search for a nearby line to merge with
         for line_y in list(lines.keys()):  # Use list() to avoid dict mutation during iteration
             if abs(block_center_y - line_y) <= line_height:
                 # Add block to existing line
                 line_blocks = lines.pop(line_y)
                 line_blocks.append(block)
-                
+
                 # Recompute line centroid
-                new_line_y = sum(b['center_y'] for b in line_blocks) / len(line_blocks)
+                new_line_y = sum(b["center_y"] for b in line_blocks) / len(line_blocks)
                 lines[new_line_y] = line_blocks
                 placed = True
                 break
-        
+
         # If no nearby line found, create new line
         if not placed:
             lines[block_center_y] = [block]
-    
+
     return lines
 
 
-def _percentile(data: List[float], percentile: float) -> float:
+def _percentile(data: list[float], percentile: float) -> float:
     """
     Calculate the percentile of a list of values.
-    
+
     Args:
         data: List of numeric values
         percentile: Percentile to calculate (0-100)
-        
+
     Returns:
         Percentile value
     """
     if not data:
         return 0.0
-    
+
     sorted_data = sorted(data)
     n = len(sorted_data)
-    
+
     if percentile <= 0:
         return sorted_data[0]
     if percentile >= 100:
         return sorted_data[-1]
-    
+
     # Use linear interpolation for percentiles
     index = (percentile / 100) * (n - 1)
     lower_index = int(index)
     upper_index = min(lower_index + 1, n - 1)
-    
+
     if lower_index == upper_index:
         return sorted_data[lower_index]
-    
+
     # Linear interpolation
     weight = index - lower_index
     return sorted_data[lower_index] * (1 - weight) + sorted_data[upper_index] * weight
@@ -400,7 +405,8 @@ def _percentile(data: List[float], percentile: float) -> float:
 
 # -------------- conversion --------------
 
-def validate_structure(doc_dir: Path, bbox_fmt: str) -> Tuple[bool, str]:
+
+def validate_structure(doc_dir: Path, bbox_fmt: str) -> tuple[bool, str]:
     """Light-weight checks used in dry-run mode."""
     doc_id = doc_dir.name
     pdf_path = doc_dir / f"{doc_id}.pdf"
@@ -441,9 +447,9 @@ def convert_one_document(
     doc_dir: Path,
     tar: tarfile.TarFile,
     cfg: Config,
-    page_pbar: Optional[tqdm] = None,
+    page_pbar: tqdm | None = None,
     processor=None,
-) -> Dict[str, int]:
+) -> dict[str, int]:
     """Convert a single {document_id}/ folder and append contents into `tar`.
 
     Returns brief stats.
@@ -478,7 +484,7 @@ def convert_one_document(
 
             # Build per-page JSON
             width, height = pix.width, pix.height
-            lines: List[Dict] = []
+            lines: list[dict] = []
 
             if i < len(page_ann):
                 p = page_ann[i] or {}
@@ -488,23 +494,37 @@ def convert_one_document(
                 if len(texts) != len(bboxes):
                     logging.debug(
                         "Doc %s page %d: mismatched text/bbox lengths (%d vs %d), truncating to %d",
-                        doc_id, i, len(texts), len(bboxes), n,
+                        doc_id,
+                        i,
+                        len(texts),
+                        len(bboxes),
+                        n,
                     )
                 for j in range(n):
                     box = _bbox_to_x1y1x3y3(bboxes[j], cfg.bbox_format, scale=coord_scale)
-                    lines.append({"text": str(texts[j]), "box": [int(box[0] * width), int(box[1] * height), int(box[2] * width), int(box[3] * height)]})
+                    lines.append(
+                        {
+                            "text": str(texts[j]),
+                            "box": [
+                                int(box[0] * width),
+                                int(box[1] * height),
+                                int(box[2] * width),
+                                int(box[3] * height),
+                            ],
+                        }
+                    )
 
             # Generate text representations
             text_1d_content = ""
             text_2d_content = ""
-            
+
             if lines and cfg.add_text_processing:
                 try:
                     text_1d_content = text_1d(lines)
                 except Exception as e:
                     logging.warning(f"Failed to generate text_1d for {doc_id} page {i}: {e}")
                     text_1d_content = ""
-                
+
                 try:
                     text_2d_content = text_2d(lines)
                 except Exception as e:
@@ -512,11 +532,7 @@ def convert_one_document(
                     text_2d_content = ""
 
             # Build text data with enhanced content
-            text_data = {
-                "lines": lines,
-                "text": text_1d_content,
-                "text2d": text_2d_content
-            }
+            text_data = {"lines": lines, "text": text_1d_content, "text2d": text_2d_content}
 
             # Add token counts if processor is available
             metadata = {}
@@ -527,10 +543,12 @@ def convert_one_document(
                         "text2d": len(processor.tokenizer(text_2d_content, return_tensors="pt").input_ids[0]),
                         "image": (width // 28) * (height // 28),
                     }
-                    
+
                     if lines:
-                        qwen_tokens["lines"] = len(processor.tokenizer(json.dumps(lines), return_tensors="pt").input_ids[0])
-                    
+                        qwen_tokens["lines"] = len(
+                            processor.tokenizer(json.dumps(lines), return_tensors="pt").input_ids[0]
+                        )
+
                     metadata["qwen_tokens"] = qwen_tokens
                 except Exception as e:
                     logging.warning(f"Failed to compute token counts for {doc_id} page {i}: {e}")
@@ -544,7 +562,7 @@ def convert_one_document(
                     "dpi": int(cfg.dpi),
                 },
             }
-            
+
             if metadata:
                 page_json["metadata"] = metadata
             page_json_bytes = json.dumps(page_json, ensure_ascii=False).encode("utf-8")
@@ -603,18 +621,18 @@ def process_shard(cfg: Config) -> None:
         return
 
     ensure_dir_exists(cfg.output_path)
-    
+
     # Count total pages for overall progress tracking
     total_pages_to_process = 0
     valid_docs = []
-    
+
     logging.info("Counting pages in documents...")
     for d in tqdm(doc_dirs, desc="Counting pages", unit="doc"):
         valid, msg = validate_structure(d, cfg.bbox_format)
         if not valid:
             logging.warning("Skipping %s due to validation error: %s", d.name, msg)
             continue
-        
+
         # Quick page count
         doc_id = d.name
         pdf_path = d / f"{doc_id}.pdf"
@@ -625,7 +643,7 @@ def process_shard(cfg: Config) -> None:
                 valid_docs.append((d, page_count))
         except Exception as e:
             logging.warning("Skipping %s due to PDF error: %s", d.name, e)
-    
+
     logging.info(f"Processing {len(valid_docs)} documents with {total_pages_to_process} total pages")
 
     with tarfile.open(cfg.output_path, mode="w") as tar:
@@ -635,58 +653,72 @@ def process_shard(cfg: Config) -> None:
 
         # Main document progress bar
         doc_pbar = tqdm(valid_docs, desc="Processing documents", unit="doc")
-        
+
         # Page progress bar (shared across all documents)
         page_pbar = tqdm(total=total_pages_to_process, desc="Processing pages", unit="page")
 
         for doc_dir, page_count in doc_pbar:
             doc_pbar.set_description(f"Processing {doc_dir.name}")
-            
+
             stats = convert_one_document(doc_dir, tar, cfg, page_pbar, processor)
             docs_done += 1
             total_pages += stats["pages"]
             total_lines += stats["lines"]
-            
-            doc_pbar.set_postfix(
-                docs=docs_done,
-                pages=total_pages,
-                lines=total_lines
-            )
+
+            doc_pbar.set_postfix(docs=docs_done, pages=total_pages, lines=total_lines)
 
         page_pbar.close()
         doc_pbar.close()
 
     logging.info(
-        "Done. Output: %s | documents: %d | pages: %d | lines: %d",
-        cfg.output_path, docs_done, total_pages, total_lines
+        "Done. Output: %s | documents: %d | pages: %d | lines: %d", cfg.output_path, docs_done, total_pages, total_lines
     )
 
 
 # -------------- CLI --------------
 
-def parse_args(argv: Optional[List[str]] = None) -> Config:
-    ap = argparse.ArgumentParser(
-        description="Convert an IDL sub-directory into a standard shard tar file.")
-    ap.add_argument("--input-dir", required=True, type=Path,
-                    help="Path to idl-train-{ix:05d} directory containing {document_id}/ subfolders")
-    ap.add_argument("--output", required=True, type=Path,
-                    help="Output tar path, e.g., /mnt/mldata/datasets/idl/train-00001.tar")
+
+def parse_args(argv: list[str] | None = None) -> Config:
+    ap = argparse.ArgumentParser(description="Convert an IDL sub-directory into a standard shard tar file.")
+    ap.add_argument(
+        "--input-dir",
+        required=True,
+        type=Path,
+        help="Path to idl-train-{ix:05d} directory containing {document_id}/ subfolders",
+    )
+    ap.add_argument(
+        "--output", required=True, type=Path, help="Output tar path, e.g., /mnt/mldata/datasets/idl/train-00001.tar"
+    )
     ap.add_argument("--dpi", type=int, default=72, help="Rasterization DPI (default: 72)")
-    ap.add_argument("--image-ext", choices=["png", "jpg", "tif"], default="png",
-                    help="Image extension/format (default: png)")
-    ap.add_argument("--page-base", type=int, choices=[0, 1], default=0,
-                    help="Filename page index base (0 or 1; default: 0)")
-    ap.add_argument("--bbox-format", choices=["xywh", "x1y1x2y2"], default="xywh",
-                    help="Source bbox format in JSON (default: xywh)")
-    ap.add_argument("--bbox-space", choices=["as_is", "pdf_to_pixel"], default="as_is",
-                    help="If 'pdf_to_pixel', scale boxes by dpi/72 to match rasterized image pixels before rounding")
+    ap.add_argument(
+        "--image-ext", choices=["png", "jpg", "tif"], default="png", help="Image extension/format (default: png)"
+    )
+    ap.add_argument(
+        "--page-base", type=int, choices=[0, 1], default=0, help="Filename page index base (0 or 1; default: 0)"
+    )
+    ap.add_argument(
+        "--bbox-format", choices=["xywh", "x1y1x2y2"], default="xywh", help="Source bbox format in JSON (default: xywh)"
+    )
+    ap.add_argument(
+        "--bbox-space",
+        choices=["as_is", "pdf_to_pixel"],
+        default="as_is",
+        help="If 'pdf_to_pixel', scale boxes by dpi/72 to match rasterized image pixels before rounding",
+    )
     ap.add_argument("--dry-run", action="store_true", help="Validate only; don't write output tar")
-    ap.add_argument("--no-text-processing", action="store_true", 
-                    help="Skip text processing and token counting (faster)")
-    ap.add_argument("--model-id", default="Qwen/Qwen2.5-VL-7B-Instruct",
-                    help="Model ID for tokenization (default: Qwen/Qwen2.5-VL-7B-Instruct)")
-    ap.add_argument("--no-local-files-only", action="store_true",
-                    help="Allow downloading model from HuggingFace (default: use local cache only)")
+    ap.add_argument(
+        "--no-text-processing", action="store_true", help="Skip text processing and token counting (faster)"
+    )
+    ap.add_argument(
+        "--model-id",
+        default="Qwen/Qwen2.5-VL-7B-Instruct",
+        help="Model ID for tokenization (default: Qwen/Qwen2.5-VL-7B-Instruct)",
+    )
+    ap.add_argument(
+        "--no-local-files-only",
+        action="store_true",
+        help="Allow downloading model from HuggingFace (default: use local cache only)",
+    )
     ap.add_argument("--log-level", default="INFO", help="Logging level (default: INFO)")
 
     args = ap.parse_args(argv)
@@ -710,7 +742,7 @@ def parse_args(argv: Optional[List[str]] = None) -> Config:
     )
 
 
-def main(argv: Optional[List[str]] = None) -> None:
+def main(argv: list[str] | None = None) -> None:
     cfg = parse_args(argv)
     process_shard(cfg)
 

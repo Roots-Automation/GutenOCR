@@ -5,11 +5,12 @@ Re-exports existing extractors from vllm_ocr_predictor and defines missing ones.
 """
 
 import re
-from typing import Any, Optional
+from typing import Any
+
 
 def create_prompt_extractor(coord_mode: str = "absolute", model_name: str = None, task: str = None):
     """Prompt extractor with explicit coordinate mode.
-    
+
     Args:
         coord_mode: 'absolute' converts [0,1000] to pixels; 'relative' keeps as-is.
         model_name: Model identifier (reserved for future model-specific behavior).
@@ -17,11 +18,11 @@ def create_prompt_extractor(coord_mode: str = "absolute", model_name: str = None
     """
     # Silence unused parameter warnings; reserved for future model/task-specific prompts
     _ = model_name, task
-    
+
     point_re = re.compile(r"\[(\d+),\s*(\d+)\]")
     rect_re = re.compile(r"\[(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\]")
 
-    def _convert_to_absolute(text: str, image_size: Optional[tuple[int, int]]):
+    def _convert_to_absolute(text: str, image_size: tuple[int, int] | None):
         if image_size is None:
             return text
         width, height = image_size
@@ -53,13 +54,14 @@ def create_prompt_extractor(coord_mode: str = "absolute", model_name: str = None
         text = rect_re.sub(_rect_sub, text)
         return text
 
-    def extract_prompt(ann: Any, image_size: Optional[tuple[int, int]] = None):
+    def extract_prompt(ann: Any, image_size: tuple[int, int] | None = None):
         user_prompt = ann["conversations"][0]["value"].replace("<image>\n", "").strip()
 
         if coord_mode == "absolute":
             user_prompt = _convert_to_absolute(user_prompt, image_size)
         # coord_mode == "relative" or unknown: keep normalized [0,1000] coordinates as-is
         return user_prompt
+
     return extract_prompt
 
 
