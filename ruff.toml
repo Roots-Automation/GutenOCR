@@ -1,0 +1,18 @@
+target-version = "py310"
+line-length = 120
+
+[lint]
+select = ["E", "F", "W", "UP", "I"]
+ignore = [
+    "E501",   # Let formatter handle line length
+    "E402",   # Module-level imports not at top — common in scripts with sys.path manipulation
+    "E701",   # Multiple statements on one line (colon)
+    "E702",   # Multiple statements on one line (semicolon)
+    "E722",   # Bare except — fix in follow-up PR
+]
+
+[lint.isort]
+known-first-party = ["elements", "layouts", "args", "prompt_builder", "dataset", "common"]
+
+[format]
+quote-style = "double"

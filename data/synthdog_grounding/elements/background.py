@@ -3,6 +3,7 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 from synthtiger import components, layers
 
 
@@ -13,7 +14,7 @@ class Background:
             [
                 components.Switch(components.GaussianBlur()),
             ],
-            **config.get("effect", {})
+            **config.get("effect", {}),
         )
 
     def generate(self, size):

@@ -9,7 +9,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
 
 - Sequence packing for more efficient training
 - Variable resolution sampling at training time (resizing images to different resolutions)
-- Training with Transformers v5+
+- Training with Transformers v5+ (checkpoint compatibility fixed in [#9](https://github.com/Roots-Automation/GutenOCR/pull/9); training pin `<5.0.0` still in place)
 - Recipe demonstration with other bases (e.g., Qwen-3)
 - Smoother multi-stage training recipes
 
@@ -28,7 +28,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - ✅ Different color fonts
   - More fonts, backgrounds, etc.
   - Expose words (in additional to line boxes)
-  - Expose block boxes (groups of lines)
+  - ✅ Expose block boxes (groups of lines) — [#12](https://github.com/Roots-Automation/GutenOCR/pull/12)
 - Semantic conditional detection support
 - Higher-order layout features w/ grounding in underlying text
 - Natural language descriptions for images, figures

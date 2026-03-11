@@ -50,7 +50,7 @@ for tar_file in "$DATASET_DIR"/*.tar; do
     count=$((count + 1))
     filename=$(basename "$tar_file")
     stats_file="${tar_file%.tar}.stats.csv"
-    
+
     # Check if stats file already exists
     if [[ -f "$stats_file" ]]; then
         echo "[$count] $filename → SKIP (stats exist)"
@@ -64,7 +64,7 @@ for tar_file in "$DATASET_DIR"/*.tar; do
             echo "  ✗ FAILED"
         fi
     fi
-    
+
     # Progress update
     if (( count % PROGRESS_INTERVAL == 0 )); then
         echo ""
@@ -80,7 +80,7 @@ done
 echo ""
 echo "=== PROCESSING COMPLETE ==="
 echo "Total checked: $count"
-echo "Newly processed: $processed" 
+echo "Newly processed: $processed"
 echo "Already existed: $skipped"
 if [ $((count - skipped)) -gt 0 ]; then
     echo "Success rate: $(( processed * 100 / (count - skipped) ))%"

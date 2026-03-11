@@ -20,16 +20,16 @@ download_file() {
     local full_url="${BASE_URL}${rel_url}"
     local output_path="${OUTPUT_DIR}/${rel_url}"
     local output_dir=$(dirname "$output_path")
-    
+
     # Create output directory if it doesn't exist
     mkdir -p "$output_dir"
-    
+
     # Skip if file already exists and is not empty
     if [[ -f "$output_path" && -s "$output_path" ]]; then
         echo "SKIP: $rel_url (already exists)"
         return 0
     fi
-    
+
     # Download with wget, multiple retries, and proper error handling
     if wget -q --timeout=30 --tries=3 --retry-connrefused \
             --user-agent="PubMed-Downloader/1.0" \

@@ -27,12 +27,12 @@ for folder in "$DATASET_DIR"/*/; do
     if [ ! -d "$folder" ]; then
         continue
     fi
-    
+
     folder_name=$(basename "$folder")
     folder_sets_checked=0
     folder_incomplete_sets=0
     folder_temp_files=0
-    
+
     # Remove all temporary equation_* files first
     for temp_file in "$folder"equation_*; do
         if [ -f "$temp_file" ]; then
@@ -41,24 +41,24 @@ for folder in "$DATASET_DIR"/*/; do
             ((total_temp_files_removed++))
         fi
     done
-    
+
     # Find all base equation files (without underscore variants)
     for pdf_file in "$folder"[0-9][0-9][0-9][0-9].pdf; do
         if [ ! -f "$pdf_file" ]; then
             continue
         fi
-        
+
         base_name=$(basename "$pdf_file" .pdf)
         ((folder_sets_checked++))
         ((total_sets_checked++))
-        
+
         # Define the 4 expected files
         base_pdf="${folder}${base_name}.pdf"
         base_json="${folder}${base_name}.json"
-        
+
         # Find variant files (any with underscore)
         variant_pdf=$(find "$folder" -maxdepth 1 -name "${base_name}_*.pdf" | head -1)
-        
+
         if [ -z "$variant_pdf" ]; then
             # No variant found - incomplete set
             ((folder_incomplete_sets++))
@@ -66,17 +66,17 @@ for folder in "$DATASET_DIR"/*/; do
             [ -f "$base_json" ] && rm "$base_json" && ((total_removed++))
             continue
         fi
-        
+
         variant_name=$(basename "$variant_pdf" .pdf)
         variant_json="${folder}${variant_name}.json"
-        
+
         # Check all 4 files exist
         missing_files=()
         [ ! -f "$base_pdf" ] && missing_files+=("$base_name.pdf")
         [ ! -f "$base_json" ] && missing_files+=("$base_name.json")
         [ ! -f "$variant_pdf" ] && missing_files+=("$variant_name.pdf")
         [ ! -f "$variant_json" ] && missing_files+=("$variant_name.json")
-        
+
         # If any missing, remove the whole set
         if [ ${#missing_files[@]} -gt 0 ]; then
             ((folder_incomplete_sets++))
@@ -86,11 +86,11 @@ for folder in "$DATASET_DIR"/*/; do
             [ -f "$variant_json" ] && rm "$variant_json" && ((total_removed++))
         fi
     done
-    
+
     # Show progress for this folder
     ((total_folders_processed++))
     complete_sets=$((folder_sets_checked - folder_incomplete_sets))
-    
+
     if [ $folder_sets_checked -gt 0 ]; then
         echo "Folder $folder_name: $complete_sets/$folder_sets_checked complete ($folder_incomplete_sets incomplete, $folder_temp_files temp files removed)"
     else

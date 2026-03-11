@@ -15,9 +15,11 @@ The SynthDoG Grounding pipeline consists of several key components:
 
 ### Extensions to SynthDoG
 
--   Grounding Annotations: Each generated document includes detailed bounding box annotations for text lines.
+-   Grounding Annotations: Each generated document includes detailed bounding box annotations for text lines and words.
 -   Coherent text: Words are never split across lines, ensuring readability.
 -   Novel data support: Hugging Face datasets for text corpora, both static and streaming.
+
+> **Note on word boundaries**: Word-level bounding boxes are computed by splitting on whitespace characters. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for languages like Chinese or Japanese, where words are not separated by spaces. For those languages, the `words` field will typically contain single characters or entire lines rather than linguistic words.
 
 ## Directory Structure
 

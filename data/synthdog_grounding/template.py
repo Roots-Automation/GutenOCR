@@ -3,29 +3,32 @@ Donut
 Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
+
 # Ensure Pillow compatibility patch is loaded before anything else
 try:
     import pillow_compat
 except ImportError:
     # If running as part of the package vs script, try relative import or assume it's already patched
     try:
-        from . import pillow_compat
+        from . import pillow_compat  # noqa: F401 (side-effect import)
     except ImportError:
         pass
 
 import json
 import os
 import re
-from typing import Any, List
+from collections import defaultdict
+from typing import Any
 
 import numpy as np
-from elements import Background, Document
 from PIL import Image
 from synthtiger import components, layers, templates
 
+from elements import Background, Document
+
 
 class SynthDoG(templates.Template):
-    def __init__(self, config=None, split_ratio: List[float] = None):
+    def __init__(self, config=None, split_ratio: list[float] = None):
         super().__init__(config)
         if config is None:
             config = {}
@@ -63,7 +66,7 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts = self.document.generate(size)
+        paper_layer, text_layers, texts, block_ids, words_per_line = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -80,15 +83,53 @@ class SynthDoG(templates.Template):
             y1 = text_layer.top / image_height
             x2 = (text_layer.left + text_layer.width) / image_width
             y2 = (text_layer.top + text_layer.height) / image_height
-            
+
             # Round to 3 decimal places
-            bbox = [
-                round(x1, 3),
-                round(y1, 3),
-                round(x2, 3),
-                round(y2, 3)
-            ]
+            bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
             text_bboxes.append(bbox)
+
+        # Build block-level bboxes from line bboxes
+        block_to_lines = defaultdict(list)
+        for i, bid in enumerate(block_ids):
+            block_to_lines[bid].append(i)
+
+        text_blocks = []
+        for bid, line_indices in sorted(block_to_lines.items()):
+            bboxes = [text_bboxes[i] for i in line_indices]
+            bx1 = min(b[0] for b in bboxes)
+            by1 = min(b[1] for b in bboxes)
+            bx2 = max(b[2] for b in bboxes)
+            by2 = max(b[3] for b in bboxes)
+            text_blocks.append(
+                {
+                    "block_id": bid,
+                    "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
+                    "line_ids": line_indices,
+                }
+            )
+
+        # Compute absolute word bboxes using ratios interpolated into final line bbox
+        text_words = []
+        word_global_id = 0
+        for line_idx, (text_layer, word_local_data) in enumerate(zip(text_layers, words_per_line)):
+            lx = text_layer.left
+            ly = text_layer.top
+            lw = text_layer.width
+            lh = text_layer.height
+            for word in word_local_data:
+                wx1 = round((lx + word["x1_ratio"] * lw) / image_width, 3)
+                wy1 = round(ly / image_height, 3)
+                wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
+                wy2 = round((ly + lh) / image_height, 3)
+                text_words.append(
+                    {
+                        "text": word["text"],
+                        "bbox": [wx1, wy1, wx2, wy2],
+                        "word_id": word_global_id,
+                        "line_id": line_idx,
+                    }
+                )
+                word_global_id += 1
 
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
         self.effect.apply([layer])
@@ -106,6 +147,9 @@ class SynthDoG(templates.Template):
             "roi": roi,
             "text_lines": texts,
             "text_bboxes": text_bboxes,
+            "block_ids": block_ids,
+            "text_blocks": text_blocks,
+            "text_words": text_words,
         }
 
         return data
@@ -116,11 +160,14 @@ class SynthDoG(templates.Template):
 
     def save(self, root, data, idx):
         image = data["image"]
-        label = data["label"]
+        data["label"]
         quality = data["quality"]
-        roi = data["roi"]
+        data["roi"]
         text_lines = data.get("text_lines", [])
         text_bboxes = data.get("text_bboxes", [])
+        block_ids = data.get("block_ids", [])
+        text_blocks = data.get("text_blocks", [])
+        text_words = data.get("text_words", [])
 
         # split
         split_idx = self.split_indexes[idx % len(self.split_indexes)]
@@ -138,19 +185,18 @@ class SynthDoG(templates.Template):
         metadata_filepath = os.path.join(output_dirpath, metadata_filename)
         os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
-        # Create structured data for text lines with bboxes
+        # Create structured data for text lines with bboxes and block_id
         text_lines_data = []
         for i, (text, bbox) in enumerate(zip(text_lines, text_bboxes)):
-            text_lines_data.append({
-                "text": text,
-                "bbox": bbox,
-                "line_id": i
-            })
+            entry = {"text": text, "bbox": bbox, "line_id": i}
+            if i < len(block_ids):
+                entry["block_id"] = block_ids[i]
+            text_lines_data.append(entry)
 
         metadata = self.format_metadata(
-            image_filename=image_filename, 
-            keys=["text_lines", "text_bboxes"], 
-            values=[text_lines_data, text_bboxes]
+            image_filename=image_filename,
+            keys=["text_lines", "text_bboxes", "text_blocks", "text_words"],
+            values=[text_lines_data, text_bboxes, text_blocks, text_words],
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)
@@ -159,7 +205,7 @@ class SynthDoG(templates.Template):
     def end_save(self, root):
         pass
 
-    def format_metadata(self, image_filename: str, keys: List[str], values: List[Any]):
+    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]):
         """
         Fit gt_parse contents to huggingface dataset's format
         keys and values, whose lengths are equal, are used to constrcut 'gt_parse' field in 'ground_truth' field
@@ -167,7 +213,7 @@ class SynthDoG(templates.Template):
             keys: List of task_name
             values: List of actual gt data corresponding to each task_name
         """
-        assert len(keys) == len(values), "Length does not match: keys({}), values({})".format(len(keys), len(values))
+        assert len(keys) == len(values), f"Length does not match: keys({len(keys)}), values({len(values)})"
 
         _gt_parse_v = dict()
         for k, v in zip(keys, values):

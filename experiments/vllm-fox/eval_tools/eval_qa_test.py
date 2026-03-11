@@ -1,22 +1,23 @@
-import json
 import argparse
+import json
+
 
 def cal_per_metrics(predict_root_, pred, gt):
-    metrics = {}
     if pred == gt:
         return 1
     else:
         return 0
 
+
 def doc_text_eval(predict_root_):
 
-    predicts = json.load(open(predict_root_, encoding='utf-8'))
-    
+    predicts = json.load(open(predict_root_, encoding="utf-8"))
+
     result = []
     for ann in predicts:
         ans = cal_per_metrics(predict_root_, ann["label"], ann["answer"])
         result.append(ans)
-    
+
     mean_dict = {}
 
     sum_true = 0
@@ -32,7 +33,6 @@ def doc_text_eval(predict_root_):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--out_file", type=str, required=True)
     args = parser.parse_args()
