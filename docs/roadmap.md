@@ -9,8 +9,8 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
 
 - Sequence packing for more efficient training
 - Variable resolution sampling at training time (resizing images to different resolutions)
-- Training with Transformers v5+ (checkpoint compatibility fixed in [#9](https://github.com/Roots-Automation/GutenOCR/pull/9); training pin `<5.0.0` still in place)
-- Recipe demonstration with other bases (e.g., Qwen-3)
+- Remove training pin `<5.0.0` to support Transformers v5+ (compatibility fix landed in [#9](https://github.com/Roots-Automation/GutenOCR/pull/9); pin stays until next training run)
+- Recipe demonstration with other bases (e.g., Qwen-3-VL)
 - Smoother multi-stage training recipes
 - **Data mixing & curriculum strategy** `[medium]`
   - Documented recipe: synthetic → clean real → noisy real; simple tasks → complex tasks
@@ -42,9 +42,9 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - Especially valuable for distilled 0.5B/1B models
   - Enables deployment in environments without Python/PyTorch
 
-## Data and Tasks
+## Data Augmentation (SynthDoG)
 
-> New data sources, new tasks, or improvements to existing data and tasks.
+> Improvements to the synthetic data generation pipeline to better match real-world document diversity.
 
 - SynthDoG Grounding
   - ✅ Different color paper backgrounds
@@ -52,9 +52,15 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - More fonts, backgrounds, etc.
   - ✅ Expose words (in addition to line boxes) — [#11](https://github.com/Roots-Automation/GutenOCR/pull/11)
   - ✅ Expose block boxes (groups of lines) — [#12](https://github.com/Roots-Automation/GutenOCR/pull/12)
-- Semantic conditional detection support
-- Higher-order layout features w/ grounding in underlying text
-- Natural language descriptions for images, figures
+- **Realistic document noise augmentation** `[high]`
+  - Scanning: moiré, skew, perspective, book spine shadow, uneven lighting
+  - Physical: coffee stains, crumples, hole punches, staple shadows, fax artifacts, aged paper
+  - Copy: photocopier noise, low-toner streaks, compression artifacts
+  - Current effects (blur, contrast) are basic compared to real-world degradation
+- **Complex layout generation** `[medium]`
+  - Beyond grid/grid_stack: headers, footers, page numbers, footnotes, sidebars, watermarks, stamps
+  - Use real PDF layouts as templates (extract structure from PubMed/IDL, re-render with synthetic text)
+  - Multi-font per document (heading sans-serif, body serif, code monospace)
 
 ## Document Understanding Tasks
 
@@ -81,6 +87,14 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - SynthDoG extension: handwriting-style fonts + stroke variation augmentation
   - Especially important for healthcare (prescriptions, notes) and insurance (claim annotations)
   - Start with printed+handwritten mixed documents (the real-world case)
+- **Semantic conditional detection** `[medium]`
+  - Move beyond exact-text grounding (`"where is {TEXT}"`) to semantic queries (`"where is the author name"`)
+  - Model resolves natural-language field descriptions to page regions without the user specifying exact surface text
+  - Bridges grounded detection and key-value extraction tasks
+- **Math / formula recognition** `[medium]`
+  - Output LaTeX from inline and display equations
+  - Leverage Grounded LaTeX dataset generator
+  - Known current failure mode — particularly affects scientific and technical documents
 - **Scene text / in-the-wild OCR** `[medium]`
   - Training data: ICDAR 2015/2019, TextOCR, TotalText, CTW1500, Open Images text
   - Different augmentation profile: perspective distortion, curved text, partial occlusion, variable lighting
@@ -89,6 +103,10 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - Page-level: table of contents / body / bibliography / figure / form / table
   - Document-level: invoice / receipt / contract / letter / scientific paper / medical record
   - Prompt-based (no architecture change needed), new task type in `tasks.csv`
+- **Higher-order layout grounding** `[medium]`
+  - Ground composite page elements: figures (`"where is Figure 3"`), table columns/rows, numbered sections, captions
+  - Requires the model to understand document structure beyond individual text spans
+  - Builds on reading order prediction and table structure recognition
 - **Multi-page document context** `[future]`
   - Cross-page awareness: running headers/footers, page numbers, table continuations
   - Approach: page-level OCR + lightweight aggregation model, or multi-image prompts
@@ -96,21 +114,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
 - **Figure/chart awareness** `[future]`
   - Model must learn to identify and skip (or describe) non-text regions
   - Generate synthetic documents with placeholder figures + captions
-  - Ties into existing roadmap item "Natural language descriptions for images/figures"
-
-## Data Augmentation (SynthDoG)
-
-> Improvements to the synthetic data generation pipeline to better match real-world document diversity.
-
-- **Realistic document noise augmentation** `[high]`
-  - Scanning: moiré, skew, perspective, book spine shadow, uneven lighting
-  - Physical: coffee stains, crumples, hole punches, staple shadows, fax artifacts, aged paper
-  - Copy: photocopier noise, low-toner streaks, compression artifacts
-  - Current effects (blur, contrast) are basic compared to real-world degradation
-- **Complex layout generation** `[medium]`
-  - Beyond grid/grid_stack: headers, footers, page numbers, footnotes, sidebars, watermarks, stamps
-  - Use real PDF layouts as templates (extract structure from PubMed/IDL, re-render with synthetic text)
-  - Multi-font per document (heading sans-serif, body serif, code monospace)
+  - Natural language descriptions for figures and charts as a follow-on capability
 
 ## Benchmarking
 
@@ -118,9 +122,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
 
 - Standardized throughput benchmarks (on key hardware configurations: T4, A100, H100, other?)
 - Reproducible OmniDocBench evals in-repo
-- Other benchmarks?
-- Other models?
-- Public leaderboard
+- **Public leaderboard** `[medium]`
 - **Robustness benchmarks** `[high]`
   - Systematic perturbation suite: blur, noise, rotation, low DPI, partial occlusion, compression
   - Applied to GroundingBench images → measure degradation curves
@@ -138,7 +140,7 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - Small eval suite runs on PRs touching training/inference code
   - Prevents silent quality regressions
 - **Failure mode taxonomy** `[medium]`
-  - Systematic error analysis: small text, dense tables, math, rotated, low contrast, overlapping text, stamps/watermarks
+  - Systematic error analysis: small text, dense tables, math (see math/formula recognition), rotated, low contrast, overlapping text, stamps/watermarks
   - Drives targeted data collection
   - Publish as part of model card
 - **Domain-specific benchmarks** `[future]`
@@ -166,36 +168,3 @@ If anything strikes your interest, please reach out on GitHub Discussions or ope
   - hOCR, ALTO XML, PAGE XML converters (standard document processing formats)
   - Searchable PDF generation (overlay invisible OCR text on original)
   - Enables integration with existing DMS, search indices, archival systems
-
-## Suggested Priority Order
-
-> No timelines — just impact ranking. Priority annotations: `[high]`, `[medium]`, `[future]`.
-
-**Highest impact — tackle first:**
-1. Table structure recognition (task + synthetic data + scoring) — critical for all three verticals
-2. LoRA / QLoRA support — unlocks community + domain adaptation
-3. Realistic document noise augmentation — immediate training quality boost
-4. Confidence / uncertainty estimation — production requirement
-5. Key-value / field extraction — direct vertical value (forms, invoices, claims)
-
-**High impact — natural follow-ons:**
-6. Robustness benchmarks — validates noise augmentation work
-7. Knowledge distillation (1B GPU model) — depends on having a strong 7B teacher
-8. Reading order (explicit + implicit) — complex layouts are a real pain point
-9. Handwritten text — healthcare vertical needs this badly
-10. Quantization recipes — pairs with distillation work
-11. Commercial API comparison — adoption driver
-
-**Important but less urgent:**
-12. Complex layout generation (SynthDoG) — supports reading order work
-13. Domain-specific benchmarks — insurance, financial, healthcare
-14. Scene text / in-the-wild — broadest scope expansion
-15. Distilled 0.5B edge model — depends on 1B success
-16. Multi-page context, document classification, unified CLI, output format interop, ONNX export, figure/chart awareness
-
-**Ongoing (do whenever convenient):**
-- Experiment tracking integration
-- Regression testing in CI
-- Failure mode taxonomy
-- Tutorials and model cards
-- Reference serving example
