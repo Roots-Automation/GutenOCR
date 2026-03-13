@@ -161,6 +161,8 @@ class HuggingFaceTextReader:
             # If we need more text, refresh the buffer
             self._refresh_buffer()
             current_text = self._get_current_text()
+        # _refresh_buffer already clamps self.idx, but move() sets an
+        # explicit target position so we override it here.
         self.idx = idx % len(current_text) if current_text else 0
 
     def next(self):
@@ -171,11 +173,6 @@ class HuggingFaceTextReader:
             # If we've gone through most of the current text, refresh buffer
             if self.idx > len(current_text) * 0.8:
                 self._refresh_buffer()
-                # Buffer may have shrunk, so clamp idx to stay in bounds.
-                # Position is approximate — semantic continuity is not needed.
-                new_text = self._get_current_text()
-                if new_text:
-                    self.idx = self.idx % len(new_text)
 
     def prev(self):
         """Move to previous character"""
@@ -193,7 +190,7 @@ class HuggingFaceTextReader:
         return current_text[self.idx]
 
     def _refresh_buffer(self):
-        """Refresh the buffer with new text"""
+        """Refresh the buffer with new text and clamp idx to stay in bounds."""
         # Keep some text from current buffer and add new text
         if len(self.text_buffer) > self.buffer_size // 4:
             self.text_buffer = self.text_buffer[-self.buffer_size // 4 :]
@@ -213,6 +210,14 @@ class HuggingFaceTextReader:
                     self.text_buffer.append(text)
         except StopIteration:
             self.dataset_iter = iter(self.dataset)
+
+        # The buffer may have shrunk, so clamp idx to stay in bounds.
+        # Position is approximate — semantic continuity is not needed.
+        new_text = self._get_current_text()
+        if new_text:
+            self.idx = self.idx % len(new_text)
+        else:
+            self.idx = 0
 
 
 class Content:

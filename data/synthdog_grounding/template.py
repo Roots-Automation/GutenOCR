@@ -56,7 +56,8 @@ class SynthDoG(templates.Template):
         # config for splits
         self.splits = ["train", "validation", "test"]
         self.split_ratio = split_ratio
-        self.split_indexes = np.random.choice(3, size=1_000_000, p=split_ratio)
+        # Cumulative thresholds for deterministic split assignment per sample
+        self._split_thresholds = np.cumsum(split_ratio)
 
     def generate(self):
         landscape = np.random.rand() < self.landscape
@@ -168,8 +169,9 @@ class SynthDoG(templates.Template):
         text_blocks = data.get("text_blocks", [])
         text_words = data.get("text_words", [])
 
-        # split
-        split_idx = self.split_indexes[idx % len(self.split_indexes)]
+        # Deterministic split: seed a local RNG per sample so the assignment
+        # is independent of generation order and worker count.
+        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(idx).random()))
         output_dirpath = os.path.join(root, self.splits[split_idx])
 
         # save image
