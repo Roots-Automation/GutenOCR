@@ -25,7 +25,7 @@ def _relative_luminance(r, g, b):
 
 class TextReader:
     def __init__(self, path, cache_size=2**28, block_size=2**20):
-        self.fp = open(path, encoding="utf-8")
+        self.fp = open(path, encoding="utf-8")  # noqa: SIM115
         self.length = 0
         self.offsets = [0]
         self.cache = OrderedDict()
@@ -40,6 +40,13 @@ class TextReader:
                 break
             self.length += len(text)
             self.offsets.append(self.fp.tell())
+
+    def close(self):
+        if self.fp and not self.fp.closed:
+            self.fp.close()
+
+    def __del__(self):
+        self.close()
 
     def __len__(self):
         return self.length
@@ -164,6 +171,9 @@ class HuggingFaceTextReader:
             # If we've gone through most of the current text, refresh buffer
             if self.idx > len(current_text) * 0.8:
                 self._refresh_buffer()
+                new_text = self._get_current_text()
+                if new_text:
+                    self.idx = self.idx % len(new_text)
 
     def prev(self):
         """Move to previous character"""
@@ -267,7 +277,6 @@ class Content:
             for bbox, align, col_idx in layout:
                 x, y, w, h = bbox
                 text_layer, text, word_local_data = self.textbox.generate((w, h), self.reader, font)
-                self.reader.prev()
 
                 if text_layer is None:
                     continue

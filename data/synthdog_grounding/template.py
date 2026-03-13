@@ -56,7 +56,7 @@ class SynthDoG(templates.Template):
         # config for splits
         self.splits = ["train", "validation", "test"]
         self.split_ratio = split_ratio
-        self.split_indexes = np.random.choice(3, size=10000, p=split_ratio)
+        self.split_indexes = np.random.choice(3, size=1_000_000, p=split_ratio)
 
     def generate(self):
         landscape = np.random.rand() < self.landscape
@@ -74,7 +74,8 @@ class SynthDoG(templates.Template):
         document_group.top = np.random.randint(document_space[1] + 1)
         roi = np.array(paper_layer.quad, dtype=int)
 
-        # Capture bounding boxes after effects are applied to text layers
+        # Capture bounding boxes after document-level geometric effects are
+        # applied (perspective, etc.); template-level pixel effects follow later.
         text_bboxes = []
         image_width, image_height = size
         for i, text_layer in enumerate(text_layers):
@@ -160,9 +161,7 @@ class SynthDoG(templates.Template):
 
     def save(self, root, data, idx):
         image = data["image"]
-        data["label"]
         quality = data["quality"]
-        data["roi"]
         text_lines = data.get("text_lines", [])
         text_bboxes = data.get("text_bboxes", [])
         block_ids = data.get("block_ids", [])
