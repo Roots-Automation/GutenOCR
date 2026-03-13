@@ -17,7 +17,7 @@ This module generates synthetic document images with line-, word-, and block-lev
 
 > **Word boundary caveat**: Word-level bounding boxes are computed by splitting on whitespace. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for CJK languages, where the `words` field will typically contain single characters or entire lines.
 
-> **AABB after perspective**: After perspective/elastic distortion, bounding boxes are computed as axis-aligned bounding rectangles (AABBs). These may be looser than the actual transformed text quadrilateral. A future improvement could emit quad coordinates for tighter ground truth.
+> **AABB after perspective**: After perspective/elastic distortion, bounding boxes are computed as axis-aligned bounding rectangles (AABBs). These may be looser than the actual transformed text quadrilateral. Enable `emit_quads: true` in the config to emit quad (4-corner polygon) coordinates for tighter ground truth alongside the AABBs.
 
 ## Directory Structure
 
@@ -196,6 +196,8 @@ Per-line text with bounding box and identifiers:
 {"text": "hello world", "bbox": [0.1, 0.2, 0.5, 0.25], "line_id": 0, "block_id": 0}
 ```
 
+When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
+
 #### `text_bboxes`
 
 Flat list of `[x1, y1, x2, y2]` bounding boxes (one per line, same order as `text_lines`). All coordinates are normalized to `[0, 1]` relative to image dimensions.
@@ -215,6 +217,22 @@ Word-level grounding with line association:
 ```json
 {"text": "hello", "bbox": [0.1, 0.2, 0.3, 0.25], "word_id": 0, "line_id": 0}
 ```
+
+When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
+
+#### `text_quads` (when `emit_quads: true`)
+
+Flat list of quad coordinates (one per line, same order as `text_bboxes`). Each quad is `[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]` in TL, TR, BR, BL order, normalized to `[0, 1]`.
+
+#### Quad Coordinates
+
+When `emit_quads: true` is set in the config, line and word entries include a `"quad"` field containing the 4-corner polygon coordinates after perspective/elastic distortion. This provides tighter ground truth than the axis-aligned bounding box.
+
+Format: `[[x, y], [x, y], [x, y], [x, y]]` — corners in **TL, TR, BR, BL** order, normalized to `[0, 1]` relative to image dimensions.
+
+Word quads are computed via bilinear interpolation of the word's `x1_ratio`/`x2_ratio` along the parent line's quad edges. When no perspective is applied, quads degenerate to the same rectangle as the AABB.
+
+This flag is backwards compatible: when `emit_quads` is `false` (the default), output is identical to the current format.
 
 ## Generation Pipeline
 
@@ -240,6 +258,7 @@ Each YAML config file controls the full pipeline. Key sections:
 |---------|----------|
 | `quality` | JPEG quality range (e.g. `[50, 95]`) |
 | `landscape` | Probability of landscape orientation |
+| `emit_quads` | Emit quad (4-corner) coordinates for lines and words (default `false`) |
 | `short_size` | Short dimension range in pixels |
 | `aspect_ratio` | Min/max aspect ratio |
 | `background` | Background texture source |

@@ -41,6 +41,7 @@ class SynthDoG(templates.Template):
         self.aspect_ratio = config.get("aspect_ratio", [1, 2])
         self.background = Background(config.get("background", {}))
         self.document = Document(config.get("document", {}))
+        self.emit_quads = config.get("emit_quads", False)
         self.effect = components.Iterator(
             [
                 components.Switch(components.RGB()),
@@ -90,6 +91,17 @@ class SynthDoG(templates.Template):
             bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
             text_bboxes.append(bbox)
 
+        # Optionally capture quad (4-corner polygon) coordinates for each line
+        text_quads = []
+        if self.emit_quads:
+            for text_layer in text_layers:
+                # .quad is [TL, TR, BR, BL] — 4x2 numpy array (already post-transform)
+                quad = text_layer.quad
+                normalized = [
+                    [round(float(pt[0]) / image_width, 3), round(float(pt[1]) / image_height, 3)] for pt in quad
+                ]
+                text_quads.append(normalized)
+
         # Build block-level bboxes from line bboxes
         block_to_lines = defaultdict(list)
         for i, bid in enumerate(block_ids):
@@ -118,19 +130,36 @@ class SynthDoG(templates.Template):
             ly = text_layer.top
             lw = text_layer.width
             lh = text_layer.height
+
+            if self.emit_quads:
+                line_quad = text_layer.quad  # [TL, TR, BR, BL]
+                tl, tr, br, bl = line_quad[0], line_quad[1], line_quad[2], line_quad[3]
+
             for word in word_local_data:
                 wx1 = round((lx + word["x1_ratio"] * lw) / image_width, 3)
                 wy1 = round(ly / image_height, 3)
                 wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
                 wy2 = round((ly + lh) / image_height, 3)
-                text_words.append(
-                    {
-                        "text": word["text"],
-                        "bbox": [wx1, wy1, wx2, wy2],
-                        "word_id": word_global_id,
-                        "line_id": line_idx,
-                    }
-                )
+                word_entry = {
+                    "text": word["text"],
+                    "bbox": [wx1, wy1, wx2, wy2],
+                    "word_id": word_global_id,
+                    "line_id": line_idx,
+                }
+                if self.emit_quads:
+                    r1, r2 = word["x1_ratio"], word["x2_ratio"]
+                    # Interpolate along top edge (TL→TR) and bottom edge (BL→BR)
+                    w_tl = tl + r1 * (tr - tl)
+                    w_tr = tl + r2 * (tr - tl)
+                    w_br = bl + r2 * (br - bl)
+                    w_bl = bl + r1 * (br - bl)
+                    word_entry["quad"] = [
+                        [round(float(w_tl[0]) / image_width, 3), round(float(w_tl[1]) / image_height, 3)],
+                        [round(float(w_tr[0]) / image_width, 3), round(float(w_tr[1]) / image_height, 3)],
+                        [round(float(w_br[0]) / image_width, 3), round(float(w_br[1]) / image_height, 3)],
+                        [round(float(w_bl[0]) / image_width, 3), round(float(w_bl[1]) / image_height, 3)],
+                    ]
+                text_words.append(word_entry)
                 word_global_id += 1
 
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
@@ -154,6 +183,9 @@ class SynthDoG(templates.Template):
             "text_words": text_words,
         }
 
+        if self.emit_quads:
+            data["text_quads"] = text_quads
+
         return data
 
     def init_save(self, root):
@@ -168,6 +200,7 @@ class SynthDoG(templates.Template):
         block_ids = data.get("block_ids", [])
         text_blocks = data.get("text_blocks", [])
         text_words = data.get("text_words", [])
+        text_quads = data.get("text_quads", [])
 
         # Deterministic split: seed a local RNG per sample so the assignment
         # is independent of generation order and worker count.
@@ -192,12 +225,20 @@ class SynthDoG(templates.Template):
             entry = {"text": text, "bbox": bbox, "line_id": i}
             if i < len(block_ids):
                 entry["block_id"] = block_ids[i]
+            if i < len(text_quads):
+                entry["quad"] = text_quads[i]
             text_lines_data.append(entry)
+
+        keys = ["text_lines", "text_bboxes", "text_blocks", "text_words"]
+        values = [text_lines_data, text_bboxes, text_blocks, text_words]
+        if text_quads:
+            keys.append("text_quads")
+            values.append(text_quads)
 
         metadata = self.format_metadata(
             image_filename=image_filename,
-            keys=["text_lines", "text_bboxes", "text_blocks", "text_words"],
-            values=[text_lines_data, text_bboxes, text_blocks, text_words],
+            keys=keys,
+            values=values,
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)

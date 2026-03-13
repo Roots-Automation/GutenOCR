@@ -2,6 +2,7 @@ quality: [50, 95]
 landscape: 0.5
 short_size: [720, 1024]
 aspect_ratio: [1, 2]
+emit_quads: false
 
 background:
   image:
