@@ -171,6 +171,8 @@ class HuggingFaceTextReader:
             # If we've gone through most of the current text, refresh buffer
             if self.idx > len(current_text) * 0.8:
                 self._refresh_buffer()
+                # Buffer may have shrunk, so clamp idx to stay in bounds.
+                # Position is approximate — semantic continuity is not needed.
                 new_text = self._get_current_text()
                 if new_text:
                     self.idx = self.idx % len(new_text)

@@ -79,6 +79,8 @@ class TextBox:
             text.prev()
 
         if len(chars):
+            # Discard the trailing space and back the reader up over it,
+            # so the next textbox starts at the character after this space.
             text.prev()
             chars.pop()
             char_layers.pop()
