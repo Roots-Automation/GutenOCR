@@ -3,7 +3,7 @@ _base: config/config_base.yaml
 document:
   content:
     text:
-      use_huggingface: true
+      type: huggingface
       dataset_name: "allenai/c4"
       subset: "en"
       split: "train"

@@ -7,8 +7,8 @@ MIT License
 import numpy as np
 from synthtiger import components
 
-from elements.content import Content
-from elements.paper import Paper
+from .content import Content
+from .paper import Paper
 
 
 class Document:

@@ -16,8 +16,12 @@ from synthtiger import components
 
 logger = logging.getLogger(__name__)
 
-from elements.textbox import TextBox
-from layouts import GridStack
+try:
+    from layouts import GridStack
+except ImportError:
+    from ..layouts import GridStack
+
+from .textbox import TextBox
 
 
 def _relative_luminance(r, g, b):
@@ -264,11 +268,9 @@ class Content:
 
         # Choose text reader based on configuration
         text_config = config.get("text", {})
-        reader_type = text_config.get("type")
-        if reader_type is None:
-            reader_type = "huggingface" if text_config.get("use_huggingface", False) else "file"
+        reader_type = text_config.get("type", "file")
         reader_cls = _READER_TYPES[reader_type]  # KeyError = clear signal of bad config
-        reader_kwargs = {k: v for k, v in text_config.items() if k not in ("type", "use_huggingface")}
+        reader_kwargs = {k: v for k, v in text_config.items() if k != "type"}
         self.reader: TextCursor = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))

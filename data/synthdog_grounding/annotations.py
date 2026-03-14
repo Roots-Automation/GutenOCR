@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
@@ -21,7 +21,6 @@ class LineAnnotation:
     block_id: int
     line_id: int
     quad: list[list[float]] | None = None
-    words: list[WordAnnotation] = field(default_factory=list)
 
 
 @dataclass

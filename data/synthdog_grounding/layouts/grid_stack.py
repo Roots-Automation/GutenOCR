@@ -6,7 +6,7 @@ MIT License
 
 import numpy as np
 
-from layouts import Grid
+from . import Grid
 
 
 class GridStack:

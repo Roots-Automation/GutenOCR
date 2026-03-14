@@ -24,12 +24,32 @@ from typing import Any
 
 import numpy as np
 import yaml
-from annotations import BlockAnnotation, LineAnnotation, WordAnnotation
-from constants import SPLITS
 from PIL import Image
 from synthtiger import components, layers, templates
 
-from elements import Background, Document
+try:
+    from annotations import BlockAnnotation, LineAnnotation, WordAnnotation
+    from constants import SPLITS
+    from serialization import (
+        KEY_QUALITY_METRICS,
+        KEY_TEXT_BLOCKS,
+        KEY_TEXT_LINES,
+        KEY_TEXT_WORDS,
+        encode_metadata,
+    )
+
+    from elements import Background, Document
+except ImportError:
+    from .annotations import BlockAnnotation, LineAnnotation, WordAnnotation
+    from .constants import SPLITS
+    from .elements import Background, Document
+    from .serialization import (
+        KEY_QUALITY_METRICS,
+        KEY_TEXT_BLOCKS,
+        KEY_TEXT_LINES,
+        KEY_TEXT_WORDS,
+        encode_metadata,
+    )
 
 
 def _deep_merge(base: dict, overlay: dict) -> dict:
@@ -453,7 +473,7 @@ class SynthDoG(templates.Template):
                 entry["quad"] = ln.quad
             text_lines_data.append(entry)
 
-        keys = ["text_lines", "text_blocks", "text_words", "quality_metrics"]
+        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
         values = [text_lines_data, text_blocks, text_words, quality_metrics]
 
         metadata = self.format_metadata(
@@ -476,10 +496,4 @@ class SynthDoG(templates.Template):
             keys: List of task_name
             values: List of actual gt data corresponding to each task_name
         """
-        if len(keys) != len(values):
-            raise ValueError(f"Length does not match: keys({len(keys)}), values({len(values)})")
-
-        gt_parse = {"gt_parse": dict(zip(keys, values))}
-        gt_parse_str = json.dumps(gt_parse, ensure_ascii=False)
-        metadata = {"file_name": image_filename, "ground_truth": gt_parse_str}
-        return metadata
+        return encode_metadata(image_filename, keys, values)
