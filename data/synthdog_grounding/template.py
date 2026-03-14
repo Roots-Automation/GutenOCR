@@ -56,9 +56,14 @@ class SynthDoG(templates.Template):
 
         # config for splits
         self.splits = ["train", "validation", "test"]
-        self.split_ratio = split_ratio
+        if any(r < 0 for r in split_ratio):
+            raise ValueError(f"split_ratio values must be non-negative, got {split_ratio}")
+        ratio_sum = sum(split_ratio)
+        if not (0.99 <= ratio_sum <= 1.01):
+            raise ValueError(f"split_ratio must sum to 1.0 (got {ratio_sum})")
+        self.split_ratio = [r / ratio_sum for r in split_ratio]
         # Cumulative thresholds for deterministic split assignment per sample
-        self._split_thresholds = np.cumsum(split_ratio)
+        self._split_thresholds = np.cumsum(self.split_ratio)
 
     def generate(self):
         landscape = np.random.rand() < self.landscape
