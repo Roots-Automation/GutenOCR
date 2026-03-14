@@ -126,6 +126,32 @@ def analyze_line_overlaps(lines: list[dict]) -> dict[str, Any]:
     }
 
 
+_ZERO_BBOX_STATS: dict[str, int | float] = {
+    "lines_with_bbox": 0,
+    "total_line_pairs": 0,
+    "high_overlap_pairs": 0,
+    "max_iou": 0,
+    "avg_iou": 0,
+    "width_min": 0,
+    "width_max": 0,
+    "width_mean": 0,
+    "width_std": 0,
+    "height_min": 0,
+    "height_max": 0,
+    "height_mean": 0,
+    "height_std": 0,
+    "aspect_ratio_min": 0,
+    "aspect_ratio_max": 0,
+    "aspect_ratio_mean": 0,
+    "x_center_min": 0,
+    "x_center_max": 0,
+    "x_center_mean": 0,
+    "y_center_min": 0,
+    "y_center_max": 0,
+    "y_center_mean": 0,
+}
+
+
 def analyze_sample(data: dict[str, Any], sample_id: str) -> dict[str, Any]:
     """
     Analyze a single sample and return per-sample statistics.
@@ -226,34 +252,64 @@ def analyze_sample(data: dict[str, Any], sample_id: str) -> dict[str, Any]:
             )
     else:
         # No bounding boxes
-        sample_stats.update(
-            {
-                "lines_with_bbox": 0,
-                "total_line_pairs": 0,
-                "high_overlap_pairs": 0,
-                "max_iou": 0,
-                "avg_iou": 0,
-                "width_min": 0,
-                "width_max": 0,
-                "width_mean": 0,
-                "width_std": 0,
-                "height_min": 0,
-                "height_max": 0,
-                "height_mean": 0,
-                "height_std": 0,
-                "aspect_ratio_min": 0,
-                "aspect_ratio_max": 0,
-                "aspect_ratio_mean": 0,
-                "x_center_min": 0,
-                "x_center_max": 0,
-                "x_center_mean": 0,
-                "y_center_min": 0,
-                "y_center_max": 0,
-                "y_center_mean": 0,
-            }
-        )
+        sample_stats.update(_ZERO_BBOX_STATS)
 
     return sample_stats
+
+
+def _collect_sample_stats(tar_path: Path) -> list[dict]:
+    """Extract per-sample statistics from all JSON files in a tar archive."""
+    sample_stats = []
+
+    with tarfile.open(tar_path, "r") as tar:
+        json_files = [member for member in tar.getmembers() if member.name.endswith(".json") and member.isfile()]
+
+        for json_member in tqdm(json_files, desc="Processing samples", unit="sample"):
+            try:
+                json_file = tar.extractfile(json_member)
+                if json_file is None:
+                    print(f"[warning] Could not extract {json_member.name}", file=sys.stderr)
+                    continue
+
+                content = json_file.read().decode("utf-8")
+                data = json.loads(content)
+
+                sample_id = json_member.name.replace(".json", "")
+                stats = analyze_sample(data, sample_id)
+                sample_stats.append(stats)
+
+            except json.JSONDecodeError as e:
+                print(f"[warning] JSON decode error in {json_member.name}: {e}", file=sys.stderr)
+            except Exception as e:
+                print(f"[warning] Error processing {json_member.name}: {e}", file=sys.stderr)
+
+    return sample_stats
+
+
+def _build_stats_csv(sample_stats: list[dict]) -> str:
+    """Format sample statistics as a CSV string."""
+    csv_buffer = io.StringIO()
+    fieldnames = sample_stats[0].keys()
+    writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(sample_stats)
+    return csv_buffer.getvalue()
+
+
+def _print_summary(sample_stats: list[dict]) -> None:
+    """Print aggregate summary statistics to stderr."""
+    total_lines = sum(s["num_lines"] for s in sample_stats)
+    total_words = sum(s["num_words"] for s in sample_stats)
+    samples_with_high_overlap = sum(1 for s in sample_stats if s["high_overlap_pairs"] > 0)
+
+    print("Summary:", file=sys.stderr)
+    print(f"  Samples: {len(sample_stats)}", file=sys.stderr)
+    print(f"  Total lines: {total_lines}", file=sys.stderr)
+    print(f"  Total words: {total_words}", file=sys.stderr)
+    print(
+        f"  Samples with high overlap: {samples_with_high_overlap} ({100 * samples_with_high_overlap / len(sample_stats):.1f}%)",
+        file=sys.stderr,
+    )
 
 
 def add_stats_to_tar(tar_path: Path) -> None:
@@ -280,44 +336,12 @@ def add_stats_to_tar(tar_path: Path) -> None:
 
     print(f"Analyzing tar file: {tar_path}", file=sys.stderr)
 
-    # Collect sample statistics
-    sample_stats = []
-
-    with tarfile.open(tar_path, "r") as tar:
-        json_files = [member for member in tar.getmembers() if member.name.endswith(".json") and member.isfile()]
-
-        for json_member in tqdm(json_files, desc="Processing samples", unit="sample"):
-            try:
-                json_file = tar.extractfile(json_member)
-                if json_file is None:
-                    print(f"[warning] Could not extract {json_member.name}", file=sys.stderr)
-                    continue
-
-                content = json_file.read().decode("utf-8")
-                data = json.loads(content)
-
-                # Extract sample ID from filename (e.g., "00042.json" -> "00042")
-                sample_id = json_member.name.replace(".json", "")
-
-                stats = analyze_sample(data, sample_id)
-                sample_stats.append(stats)
-
-            except json.JSONDecodeError as e:
-                print(f"[warning] JSON decode error in {json_member.name}: {e}", file=sys.stderr)
-            except Exception as e:
-                print(f"[warning] Error processing {json_member.name}: {e}", file=sys.stderr)
-
+    sample_stats = _collect_sample_stats(tar_path)
     if not sample_stats:
         print("No valid samples found!", file=sys.stderr)
         return
 
-    # Create CSV content
-    csv_buffer = io.StringIO()
-    fieldnames = sample_stats[0].keys()
-    writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)
-    writer.writeheader()
-    writer.writerows(sample_stats)
-    csv_content = csv_buffer.getvalue().encode("utf-8")
+    csv_content = _build_stats_csv(sample_stats).encode("utf-8")
 
     # Append the stats.csv to the tar file (much more efficient!)
     try:
@@ -333,25 +357,12 @@ def add_stats_to_tar(tar_path: Path) -> None:
         print(f"Error appending to tar: {e}", file=sys.stderr)
         print("Falling back to creating separate stats file...", file=sys.stderr)
 
-        # Fallback: create separate stats file
         stats_path = tar_path.with_suffix(".stats.csv")
         with open(stats_path, "w", encoding="utf-8") as f:
-            f.write(csv_buffer.getvalue())
+            f.write(_build_stats_csv(sample_stats))
         print(f"Created separate stats file: {stats_path}", file=sys.stderr)
 
-    # Print summary statistics
-    total_lines = sum(s["num_lines"] for s in sample_stats)
-    total_words = sum(s["num_words"] for s in sample_stats)
-    samples_with_high_overlap = sum(1 for s in sample_stats if s["high_overlap_pairs"] > 0)
-
-    print("Summary:", file=sys.stderr)
-    print(f"  Samples: {len(sample_stats)}", file=sys.stderr)
-    print(f"  Total lines: {total_lines}", file=sys.stderr)
-    print(f"  Total words: {total_words}", file=sys.stderr)
-    print(
-        f"  Samples with high overlap: {samples_with_high_overlap} ({100 * samples_with_high_overlap / len(sample_stats):.1f}%)",
-        file=sys.stderr,
-    )
+    _print_summary(sample_stats)
 
 
 def create_separate_stats_file(tar_path: Path, output_path: str = None) -> None:
@@ -359,13 +370,11 @@ def create_separate_stats_file(tar_path: Path, output_path: str = None) -> None:
     Create a separate stats CSV file for the tar file (most efficient approach).
     If stats file already exists, assume it's correct and skip processing.
     """
-    # Determine output path
     if output_path:
         stats_path = Path(output_path).resolve()
     else:
         stats_path = tar_path.with_suffix(".stats.csv")
 
-    # Check if stats file already exists
     if stats_path.exists():
         file_size = stats_path.stat().st_size
         print(f"Stats file already exists: {stats_path} (size: {file_size} bytes)", file=sys.stderr)
@@ -374,60 +383,18 @@ def create_separate_stats_file(tar_path: Path, output_path: str = None) -> None:
 
     print(f"Analyzing tar file: {tar_path}", file=sys.stderr)
 
-    # Collect sample statistics
-    sample_stats = []
-
-    with tarfile.open(tar_path, "r") as tar:
-        json_files = [member for member in tar.getmembers() if member.name.endswith(".json") and member.isfile()]
-
-        for json_member in tqdm(json_files, desc="Processing samples", unit="sample"):
-            try:
-                json_file = tar.extractfile(json_member)
-                if json_file is None:
-                    print(f"[warning] Could not extract {json_member.name}", file=sys.stderr)
-                    continue
-
-                content = json_file.read().decode("utf-8")
-                data = json.loads(content)
-
-                # Extract sample ID from filename (e.g., "00042.json" -> "00042")
-                sample_id = json_member.name.replace(".json", "")
-
-                stats = analyze_sample(data, sample_id)
-                sample_stats.append(stats)
-
-            except json.JSONDecodeError as e:
-                print(f"[warning] JSON decode error in {json_member.name}: {e}", file=sys.stderr)
-            except Exception as e:
-                print(f"[warning] Error processing {json_member.name}: {e}", file=sys.stderr)
-
+    sample_stats = _collect_sample_stats(tar_path)
     if not sample_stats:
         print("No valid samples found!", file=sys.stderr)
         return
 
-    # Write CSV file
     with open(stats_path, "w", encoding="utf-8", newline="") as f:
-        fieldnames = sample_stats[0].keys()
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(sample_stats)
+        f.write(_build_stats_csv(sample_stats))
 
     print(f"Created stats file: {stats_path}", file=sys.stderr)
     print(f"Stats for {len(sample_stats)} samples written to {stats_path.name}", file=sys.stderr)
 
-    # Print summary statistics
-    total_lines = sum(s["num_lines"] for s in sample_stats)
-    total_words = sum(s["num_words"] for s in sample_stats)
-    samples_with_high_overlap = sum(1 for s in sample_stats if s["high_overlap_pairs"] > 0)
-
-    print("Summary:", file=sys.stderr)
-    print(f"  Samples: {len(sample_stats)}", file=sys.stderr)
-    print(f"  Total lines: {total_lines}", file=sys.stderr)
-    print(f"  Total words: {total_words}", file=sys.stderr)
-    print(
-        f"  Samples with high overlap: {samples_with_high_overlap} ({100 * samples_with_high_overlap / len(sample_stats):.1f}%)",
-        file=sys.stderr,
-    )
+    _print_summary(sample_stats)
 
 
 def main():

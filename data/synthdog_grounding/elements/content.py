@@ -237,25 +237,24 @@ class HuggingFaceTextReader:
             self.idx = 0
 
 
+_READER_TYPES: dict[str, type] = {
+    "file": TextReader,
+    "huggingface": HuggingFaceTextReader,
+}
+
+
 class Content:
     def __init__(self, config):
         self.margin = config.get("margin", [0, 0.1])
 
         # Choose text reader based on configuration
         text_config = config.get("text", {})
-        if text_config.get("use_huggingface", False):
-            # Use HuggingFace dataset reader
-            hf_config = {
-                "dataset_name": text_config.get("dataset_name", "HuggingFaceFW/finepdfs"),
-                "split": text_config.get("split", "train"),
-                "streaming": text_config.get("streaming", True),
-                "buffer_size": text_config.get("buffer_size", 1000),
-                "subset": text_config.get("subset", None),
-            }
-            self.reader = HuggingFaceTextReader(**hf_config)
-        else:
-            # Use traditional file-based text reader
-            self.reader = TextReader(**text_config)
+        reader_type = text_config.get("type")
+        if reader_type is None:
+            reader_type = "huggingface" if text_config.get("use_huggingface", False) else "file"
+        reader_cls = _READER_TYPES[reader_type]  # KeyError = clear signal of bad config
+        reader_kwargs = {k: v for k, v in text_config.items() if k not in ("type", "use_huggingface")}
+        self.reader = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))
         self.layout = GridStack(config.get("layout", {}))

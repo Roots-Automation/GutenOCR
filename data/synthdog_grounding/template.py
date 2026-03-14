@@ -4,16 +4,6 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-# Ensure Pillow compatibility patch is loaded before anything else
-try:
-    import pillow_compat
-except ImportError:
-    # If running as part of the package vs script, try relative import or assume it's already patched
-    try:
-        from . import pillow_compat  # noqa: F401 (side-effect import)
-    except ImportError:
-        pass
-
 import json
 import os
 import re
@@ -30,6 +20,16 @@ from elements import Background, Document
 def _clamp01(v: float) -> float:
     """Clamp a value to [0, 1]."""
     return max(0.0, min(1.0, v))
+
+
+def _norm(val: float, dim: int) -> float:
+    """Normalize a pixel coordinate by a dimension and clamp to [0, 1]."""
+    return round(_clamp01(val / dim), 3)
+
+
+def _norm_pt(x: float, y: float, w: int, h: int) -> list[float]:
+    """Normalize an (x, y) point by image dimensions."""
+    return [_norm(x, w), _norm(y, h)]
 
 
 def _bbox_area_px(bbox: list[float], image_width: int, image_height: int) -> float:
@@ -123,13 +123,12 @@ class SynthDoG(templates.Template):
         image_width, image_height = size
         for i, text_layer in enumerate(text_layers):
             # Get the bounding box as [x1, y1, x2, y2] normalized coordinates
-            x1 = _clamp01(text_layer.left / image_width)
-            y1 = _clamp01(text_layer.top / image_height)
-            x2 = _clamp01((text_layer.left + text_layer.width) / image_width)
-            y2 = _clamp01((text_layer.top + text_layer.height) / image_height)
-
-            # Round to 3 decimal places
-            bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
+            bbox = [
+                _norm(text_layer.left, image_width),
+                _norm(text_layer.top, image_height),
+                _norm(text_layer.left + text_layer.width, image_width),
+                _norm(text_layer.top + text_layer.height, image_height),
+            ]
             text_bboxes.append(bbox)
 
         # Optionally capture quad (4-corner polygon) coordinates for each line
@@ -138,10 +137,7 @@ class SynthDoG(templates.Template):
             for text_layer in text_layers:
                 # .quad is [TL, TR, BR, BL] — 4x2 numpy array (already post-transform)
                 quad = text_layer.quad
-                normalized = [
-                    [round(_clamp01(float(pt[0]) / image_width), 3), round(_clamp01(float(pt[1]) / image_height), 3)]
-                    for pt in quad
-                ]
+                normalized = [_norm_pt(float(pt[0]), float(pt[1]), image_width, image_height) for pt in quad]
                 text_quads.append(normalized)
 
         # Build block-level bboxes from line bboxes
@@ -166,10 +162,10 @@ class SynthDoG(templates.Template):
                 # Derive AABB as bounding box of the four quad corners
                 xs = [float(w_tl[0]), float(w_tr[0]), float(w_br[0]), float(w_bl[0])]
                 ys = [float(w_tl[1]), float(w_tr[1]), float(w_br[1]), float(w_bl[1])]
-                wx1 = round(_clamp01(min(xs) / image_width), 3)
-                wy1 = round(_clamp01(min(ys) / image_height), 3)
-                wx2 = round(_clamp01(max(xs) / image_width), 3)
-                wy2 = round(_clamp01(max(ys) / image_height), 3)
+                wx1 = _norm(min(xs), image_width)
+                wy1 = _norm(min(ys), image_height)
+                wx2 = _norm(max(xs), image_width)
+                wy2 = _norm(max(ys), image_height)
 
                 word_entry = {
                     "text": word["text"],
@@ -179,22 +175,10 @@ class SynthDoG(templates.Template):
                 }
                 if self.emit_quads:
                     word_entry["quad"] = [
-                        [
-                            round(_clamp01(float(w_tl[0]) / image_width), 3),
-                            round(_clamp01(float(w_tl[1]) / image_height), 3),
-                        ],
-                        [
-                            round(_clamp01(float(w_tr[0]) / image_width), 3),
-                            round(_clamp01(float(w_tr[1]) / image_height), 3),
-                        ],
-                        [
-                            round(_clamp01(float(w_br[0]) / image_width), 3),
-                            round(_clamp01(float(w_br[1]) / image_height), 3),
-                        ],
-                        [
-                            round(_clamp01(float(w_bl[0]) / image_width), 3),
-                            round(_clamp01(float(w_bl[1]) / image_height), 3),
-                        ],
+                        _norm_pt(float(w_tl[0]), float(w_tl[1]), image_width, image_height),
+                        _norm_pt(float(w_tr[0]), float(w_tr[1]), image_width, image_height),
+                        _norm_pt(float(w_br[0]), float(w_br[1]), image_width, image_height),
+                        _norm_pt(float(w_bl[0]), float(w_bl[1]), image_width, image_height),
                     ]
                 text_words.append(word_entry)
                 word_global_id += 1

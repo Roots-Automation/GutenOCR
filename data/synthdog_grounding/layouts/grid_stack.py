@@ -94,7 +94,6 @@ class GridStack:
         full = np.random.rand() < self.full
         fill = np.random.uniform(self.fill[0], self.fill[1])
         fill = 1 if full else fill
-        self._grid.fill = [fill, fill]
 
         layouts = []
         line = 0
@@ -104,9 +103,12 @@ class GridStack:
             text_scale = np.random.uniform(self.text_scale[0], self.text_scale[1])
             text_size = min(width, height) * text_scale
             text_scale = text_size / min(grid_size)
-            self._grid.text_scale = [text_scale, text_scale]
 
-            layout = self._grid.generate([left, top + line, *grid_size])
+            layout = self._grid.generate(
+                [left, top + line, *grid_size],
+                fill_range=[fill, fill],
+                text_scale_range=[text_scale, text_scale],
+            )
             if layout is None:
                 break
 

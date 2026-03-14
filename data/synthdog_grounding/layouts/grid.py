@@ -50,12 +50,14 @@ class Grid:
         self.full = config.get("full", 0)
         self.align = config.get("align", ["left", "right", "center"])
 
-    def generate(self, bbox):
+    def generate(self, bbox, *, fill_range=None, text_scale_range=None):
         """
         Generate a grid layout within the given bounding box.
 
         Args:
             bbox: List of [left, top, width, height] defining the area
+            fill_range: Optional [min, max] fill ratio override (defaults to self.fill)
+            text_scale_range: Optional [min, max] text scale override (defaults to self.text_scale)
 
         Returns:
             List of (bbox, align, col_idx) triples where:
@@ -66,7 +68,12 @@ class Grid:
         """
         left, top, width, height = bbox
 
-        text_scale = np.random.uniform(self.text_scale[0], self.text_scale[1])
+        if text_scale_range is None:
+            text_scale_range = self.text_scale
+        if fill_range is None:
+            fill_range = self.fill
+
+        text_scale = np.random.uniform(text_scale_range[0], text_scale_range[1])
         text_size = min(width, height) * text_scale
         grids = np.random.permutation(self.max_row * self.max_col)
 
@@ -80,7 +87,7 @@ class Grid:
 
         bound = max(1 - text_size / width * (col - 1), 0)
         full = np.random.rand() < self.full
-        fill = np.random.uniform(self.fill[0], self.fill[1])
+        fill = np.random.uniform(fill_range[0], fill_range[1])
         fill = 1 if full else fill
         fill = np.clip(fill, 0, bound)
 
