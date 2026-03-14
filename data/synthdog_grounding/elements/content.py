@@ -110,7 +110,7 @@ class HuggingFaceTextReader:
 
         # Initialize text buffer and position tracking
         self.text_buffer = []
-        self.current_text = ""
+        self._joined_text_cache = None
         self.idx = 0
         self.dataset_iter = iter(self.dataset)
 
@@ -149,12 +149,15 @@ class HuggingFaceTextReader:
             self.dataset_iter = iter(self.dataset)
             if not self.text_buffer:  # Only refill if buffer is empty
                 self._fill_buffer()
+        self._joined_text_cache = None
 
     def _get_current_text(self):
-        """Get current concatenated text from buffer"""
+        """Get current concatenated text from buffer (cached)."""
         if not self.text_buffer:
             self._fill_buffer()
-        return " ".join(self.text_buffer)
+        if self._joined_text_cache is None:
+            self._joined_text_cache = " ".join(self.text_buffer)
+        return self._joined_text_cache
 
     def __len__(self):
         # Return a large number since we're streaming
@@ -208,6 +211,7 @@ class HuggingFaceTextReader:
         # Keep some text from current buffer and add new text
         if len(self.text_buffer) > self.buffer_size // 4:
             self.text_buffer = self.text_buffer[-self.buffer_size // 4 :]
+        self._joined_text_cache = None
 
         try:
             for _ in range(self.buffer_size * 3 // 4):
