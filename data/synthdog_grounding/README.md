@@ -6,7 +6,7 @@ This module generates synthetic document images with line-, word-, and block-lev
 
 ## Key Features
 
-- **Multi-level grounding**: Line, word, and block bounding boxes in normalized `[x1, y1, x2, y2]` coordinates
+- **Multi-level grounding**: Line, word, and block bounding boxes in normalized `[x1, y1, x2, y2]` (top-left, bottom-right) coordinates
 - **Coherent text**: Words are never split across lines
 - **Contrast-aware rendering**: Text color adapts to background luminance using the WCAG relative-luminance formula
 - **Color paper backgrounds**: Random RGB paper colors with optional texture overlay
@@ -18,7 +18,14 @@ This module generates synthetic document images with line-, word-, and block-lev
 
 > **Word boundary caveat**: Word-level bounding boxes are computed by splitting on whitespace. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for CJK languages, where the `words` field will typically contain single characters or entire lines.
 
-> **AABB after perspective**: Line-level bounding boxes are axis-aligned bounding rectangles (AABBs) of the transformed quad — slightly loose after perspective/elastic distortion. Word-level AABBs are derived from quad interpolation and tightly enclose each word even after distortion. Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels. All normalized coordinates are clamped to `[0, 1]`. Samples with no visible text are silently skipped (not saved). Lines whose AABB area falls below `min_bbox_area` pixels (default 16) are excluded from annotations (but remain in the rendered image).
+> **AABB after perspective**:
+>
+> - **Line AABBs** are axis-aligned bounding rectangles of the transformed quad — slightly loose after perspective/elastic distortion.
+> - **Word AABBs** are derived from quad interpolation and tightly enclose each word even after distortion.
+> - Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels.
+> - All normalized coordinates are clamped to `[0, 1]`.
+> - Samples with no visible text are silently skipped (not saved).
+> - Lines whose AABB area falls below `min_bbox_area` pixels (default 16) are excluded from annotations (but remain in the rendered image).
 
 ## Directory Structure
 
@@ -75,7 +82,7 @@ synthdog_grounding/
 
 ## Prerequisites
 
-- Python >= 3.8
+- Python >= 3.10
 - [uv](https://docs.astral.sh/uv/) (recommended) or pip
 - [SynthTiger](https://github.com/clovaai/synthtiger)
 
@@ -102,7 +109,7 @@ uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py S
 uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py SynthDoG config/config_huggingface.yaml
 
 # Batch generation for directory ranges (e.g., dirs 0035-0075)
-data_generation/run_synthdog_range.sh 35 75
+bash data_generation/run_synthdog_range.sh 35 75
 ```
 
 #### SynthTiger CLI Arguments
@@ -131,7 +138,7 @@ uv run python data_extraction/check_sample.py /path/to/data.tar --ids 00087 0004
 | `-n, --first-n` | Number of samples to extract | 25 |
 | `--ids` | Specific sample IDs to extract | — |
 | `--line-width` | Bbox annotation line width | 3 |
-| `--label-with-text` | Include text content in labels | off |
+| `--label-with-text` | Overlay text content in bbox labels on the annotated image | off |
 | `--font-path` | Custom TTF font for labels | — |
 
 ### Package Data into Archives
@@ -151,7 +158,7 @@ uv run python data_packaging/build_tars_parallel.py --core-dir /path/to/data
 uv run python data_analysis/generate_stats.py /path/to/data.tar
 
 # Batch process all tar files in a directory
-data_analysis/simple_batch_process.sh /path/to/data/directory
+bash data_analysis/simple_batch_process.sh /path/to/data/directory
 
 # Aggregate across multiple tar files
 uv run python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
@@ -201,7 +208,7 @@ When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Qu
 
 #### `text_bboxes`
 
-Flat list of `[x1, y1, x2, y2]` bounding boxes (one per line, same order as `text_lines`). All coordinates are normalized to `[0, 1]` relative to image dimensions.
+Flat list of `[x1, y1, x2, y2]` (top-left, bottom-right) bounding boxes (one per line, same order as `text_lines`). All coordinates are normalized to `[0, 1]` relative to image dimensions.
 
 #### `text_blocks`
 
@@ -297,6 +304,7 @@ Each YAML config file controls the full pipeline. Key sections:
 | `document.content.layout` | Grid dimensions, text scale, alignment |
 | `document.effect` | Geometric effects (elastic, perspective, noise) |
 | `effect` | Pixel-level effects (color, shadow, blur, contrast) |
+| `split_ratio` | Train/val/test split proportions (default `[0.8, 0.1, 0.1]`) |
 
 ### HuggingFace Text Source
 
@@ -309,7 +317,7 @@ text:
   subset: "en"
   split: "train"
   streaming: true
-  buffer_size: 1000
+  buffer_size: 1000  # number of documents pre-loaded from the streaming iterator at a time
 ```
 
 See `config/config_huggingface.yaml` for a complete example.
@@ -317,7 +325,8 @@ See `config/config_huggingface.yaml` for a complete example.
 ## Environment Variables
 
 ```bash
-# Required on macOS for multiprocessing
+# Required on macOS for multiprocessing — without this, macOS will crash
+# worker processes due to Objective-C fork safety checks
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 # Optional performance tuning
