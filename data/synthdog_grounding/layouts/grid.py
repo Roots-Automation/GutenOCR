@@ -4,7 +4,16 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from __future__ import annotations
+
 import numpy as np
+
+
+def _sample_fill(fill_range: list[float], full_prob: float) -> float:
+    """Sample a fill ratio, with a chance of forcing full fill."""
+    full = np.random.rand() < full_prob
+    fill = np.random.uniform(fill_range[0], fill_range[1])
+    return 1.0 if full else fill
 
 
 class Grid:
@@ -30,7 +39,7 @@ class Grid:
         ...     print(f"Box at {bbox} with {align} alignment in column {col_idx}")
     """
 
-    def __init__(self, config):
+    def __init__(self, config: dict[str, object]) -> None:
         """
         Initialize a Grid layout with the given configuration.
 
@@ -50,7 +59,13 @@ class Grid:
         self.full = config.get("full", 0)
         self.align = config.get("align", ["left", "right", "center"])
 
-    def generate(self, bbox, *, fill_range=None, text_scale_range=None):
+    def generate(
+        self,
+        bbox: list[float],
+        *,
+        fill_range: list[float] | None = None,
+        text_scale_range: list[float] | None = None,
+    ) -> list[tuple[list[float], str, int]] | None:
         """
         Generate a grid layout within the given bounding box.
 
@@ -86,11 +101,11 @@ class Grid:
             return None
 
         bound = max(1 - text_size / width * (col - 1), 0)
-        full = np.random.rand() < self.full
-        fill = np.random.uniform(fill_range[0], fill_range[1])
-        fill = 1 if full else fill
+        fill = _sample_fill(fill_range, self.full)
         fill = np.clip(fill, 0, bound)
 
+        # 2-bit encoding of (left_pad, right_pad): bit1=left, bit0=right.
+        # Single column excludes 0 to guarantee at least one side has padding.
         padding = np.random.randint(4) if col > 1 else np.random.randint(1, 4)
         padding = (bool(padding // 2), bool(padding % 2))
 

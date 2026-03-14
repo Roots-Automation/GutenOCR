@@ -4,9 +4,11 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from __future__ import annotations
+
 import numpy as np
 
-from . import Grid
+from .grid import Grid, _sample_fill
 
 
 class GridStack:
@@ -19,11 +21,8 @@ class GridStack:
 
     Attributes:
         text_scale: [min, max] range for text size relative to box dimensions
-        max_row: Maximum number of rows per grid section
-        max_col: Maximum number of columns per grid section
         fill: [min, max] range for horizontal fill ratio
         full: Probability of using full fill
-        align: List of valid alignment options
         stack_spacing: [min, max] range for spacing between stacked grids
         stack_fill: [min, max] range for vertical fill of the stacked area
         stack_full: Probability of using full vertical fill
@@ -36,7 +35,7 @@ class GridStack:
         ...         print(f"Box at {bbox} in column {col_idx}")
     """
 
-    def __init__(self, config):
+    def __init__(self, config: dict[str, object]) -> None:
         """
         Initialize a GridStack layout with the given configuration.
 
@@ -53,24 +52,21 @@ class GridStack:
                 - stack_full: Probability of full vertical fill (default: 0)
         """
         self.text_scale = config.get("text_scale", [0.05, 0.1])
-        self.max_row = config.get("max_row", 5)
-        self.max_col = config.get("max_col", 3)
         self.fill = config.get("fill", [0, 1])
         self.full = config.get("full", 0)
-        self.align = config.get("align", ["left", "right", "center"])
         self.stack_spacing = config.get("stack_spacing", [0, 0.05])
         self.stack_fill = config.get("stack_fill", [1, 1])
         self.stack_full = config.get("stack_full", 0)
         self._grid = Grid(
             {
                 "text_scale": self.text_scale,
-                "max_row": self.max_row,
-                "max_col": self.max_col,
-                "align": self.align,
+                "max_row": config.get("max_row", 5),
+                "max_col": config.get("max_col", 3),
+                "align": config.get("align", ["left", "right", "center"]),
             }
         )
 
-    def generate(self, bbox):
+    def generate(self, bbox: list[float]) -> list[list[tuple[list[float], str, int]]]:
         """
         Generate stacked grid layouts within the given bounding box.
 
@@ -87,19 +83,17 @@ class GridStack:
         stack_spacing = np.random.uniform(self.stack_spacing[0], self.stack_spacing[1])
         stack_spacing *= min(width, height)
 
-        stack_full = np.random.rand() < self.stack_full
-        stack_fill = np.random.uniform(self.stack_fill[0], self.stack_fill[1])
-        stack_fill = 1 if stack_full else stack_fill
-
-        full = np.random.rand() < self.full
-        fill = np.random.uniform(self.fill[0], self.fill[1])
-        fill = 1 if full else fill
+        stack_fill = _sample_fill(self.stack_fill, self.stack_full)
+        fill = _sample_fill(self.fill, self.full)
 
         layouts = []
         line = 0
 
         while True:
             grid_size = (width, height * stack_fill - line)
+            if grid_size[1] <= 0:
+                break
+
             text_scale = np.random.uniform(self.text_scale[0], self.text_scale[1])
             text_size = min(width, height) * text_scale
             text_scale = text_size / min(grid_size)
@@ -121,9 +115,12 @@ class GridStack:
         spaces *= space / sum(spaces) if sum(spaces) > 0 else 0
         spaces = np.cumsum(spaces)
 
+        redistributed = []
         for layout, space in zip(layouts, spaces):
-            for bbox, *_ in layout:
+            new_layout = []
+            for bbox, align, col_idx in layout:
                 x, y, w, h = bbox
-                bbox[:] = [x, y + space, w, h]
+                new_layout.append(([x, y + space, w, h], align, col_idx))
+            redistributed.append(new_layout)
 
-        return layouts
+        return redistributed
