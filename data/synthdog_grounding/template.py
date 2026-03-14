@@ -27,6 +27,11 @@ from synthtiger import components, layers, templates
 from elements import Background, Document
 
 
+def _clamp01(v: float) -> float:
+    """Clamp a value to [0, 1]."""
+    return max(0.0, min(1.0, v))
+
+
 class SynthDoG(templates.Template):
     def __init__(self, config=None, split_ratio: list[float] = None):
         super().__init__(config)
@@ -87,10 +92,10 @@ class SynthDoG(templates.Template):
         image_width, image_height = size
         for i, text_layer in enumerate(text_layers):
             # Get the bounding box as [x1, y1, x2, y2] normalized coordinates
-            x1 = text_layer.left / image_width
-            y1 = text_layer.top / image_height
-            x2 = (text_layer.left + text_layer.width) / image_width
-            y2 = (text_layer.top + text_layer.height) / image_height
+            x1 = _clamp01(text_layer.left / image_width)
+            y1 = _clamp01(text_layer.top / image_height)
+            x2 = _clamp01((text_layer.left + text_layer.width) / image_width)
+            y2 = _clamp01((text_layer.top + text_layer.height) / image_height)
 
             # Round to 3 decimal places
             bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
@@ -103,7 +108,8 @@ class SynthDoG(templates.Template):
                 # .quad is [TL, TR, BR, BL] — 4x2 numpy array (already post-transform)
                 quad = text_layer.quad
                 normalized = [
-                    [round(float(pt[0]) / image_width, 3), round(float(pt[1]) / image_height, 3)] for pt in quad
+                    [round(_clamp01(float(pt[0]) / image_width), 3), round(_clamp01(float(pt[1]) / image_height), 3)]
+                    for pt in quad
                 ]
                 text_quads.append(normalized)
 
@@ -115,10 +121,10 @@ class SynthDoG(templates.Template):
         text_blocks = []
         for bid, line_indices in sorted(block_to_lines.items()):
             bboxes = [text_bboxes[i] for i in line_indices]
-            bx1 = min(b[0] for b in bboxes)
-            by1 = min(b[1] for b in bboxes)
-            bx2 = max(b[2] for b in bboxes)
-            by2 = max(b[3] for b in bboxes)
+            bx1 = _clamp01(min(b[0] for b in bboxes))
+            by1 = _clamp01(min(b[1] for b in bboxes))
+            bx2 = _clamp01(max(b[2] for b in bboxes))
+            by2 = _clamp01(max(b[3] for b in bboxes))
             text_blocks.append(
                 {
                     "block_id": bid,
@@ -141,10 +147,10 @@ class SynthDoG(templates.Template):
                 tl, tr, br, bl = line_quad[0], line_quad[1], line_quad[2], line_quad[3]
 
             for word in word_local_data:
-                wx1 = round((lx + word["x1_ratio"] * lw) / image_width, 3)
-                wy1 = round(ly / image_height, 3)
-                wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
-                wy2 = round((ly + lh) / image_height, 3)
+                wx1 = round(_clamp01((lx + word["x1_ratio"] * lw) / image_width), 3)
+                wy1 = round(_clamp01(ly / image_height), 3)
+                wx2 = round(_clamp01((lx + word["x2_ratio"] * lw) / image_width), 3)
+                wy2 = round(_clamp01((ly + lh) / image_height), 3)
                 word_entry = {
                     "text": word["text"],
                     "bbox": [wx1, wy1, wx2, wy2],
@@ -159,10 +165,22 @@ class SynthDoG(templates.Template):
                     w_br = bl + r2 * (br - bl)
                     w_bl = bl + r1 * (br - bl)
                     word_entry["quad"] = [
-                        [round(float(w_tl[0]) / image_width, 3), round(float(w_tl[1]) / image_height, 3)],
-                        [round(float(w_tr[0]) / image_width, 3), round(float(w_tr[1]) / image_height, 3)],
-                        [round(float(w_br[0]) / image_width, 3), round(float(w_br[1]) / image_height, 3)],
-                        [round(float(w_bl[0]) / image_width, 3), round(float(w_bl[1]) / image_height, 3)],
+                        [
+                            round(_clamp01(float(w_tl[0]) / image_width), 3),
+                            round(_clamp01(float(w_tl[1]) / image_height), 3),
+                        ],
+                        [
+                            round(_clamp01(float(w_tr[0]) / image_width), 3),
+                            round(_clamp01(float(w_tr[1]) / image_height), 3),
+                        ],
+                        [
+                            round(_clamp01(float(w_br[0]) / image_width), 3),
+                            round(_clamp01(float(w_br[1]) / image_height), 3),
+                        ],
+                        [
+                            round(_clamp01(float(w_bl[0]) / image_width), 3),
+                            round(_clamp01(float(w_bl[1]) / image_height), 3),
+                        ],
                     ]
                 text_words.append(word_entry)
                 word_global_id += 1
