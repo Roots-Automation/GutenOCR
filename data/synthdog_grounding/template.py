@@ -32,6 +32,34 @@ def _clamp01(v: float) -> float:
     return max(0.0, min(1.0, v))
 
 
+def _bbox_area_px(bbox, image_width, image_height):
+    """Area of a normalized [x1, y1, x2, y2] bbox in pixels."""
+    return (bbox[2] - bbox[0]) * image_width * (bbox[3] - bbox[1]) * image_height
+
+
+def _build_text_blocks(block_ids, text_bboxes):
+    """Build block-level bboxes by grouping lines that share a block_id."""
+    block_to_lines = defaultdict(list)
+    for i, bid in enumerate(block_ids):
+        block_to_lines[bid].append(i)
+
+    text_blocks = []
+    for bid, line_indices in sorted(block_to_lines.items()):
+        bboxes = [text_bboxes[i] for i in line_indices]
+        bx1 = _clamp01(min(b[0] for b in bboxes))
+        by1 = _clamp01(min(b[1] for b in bboxes))
+        bx2 = _clamp01(max(b[2] for b in bboxes))
+        by2 = _clamp01(max(b[3] for b in bboxes))
+        text_blocks.append(
+            {
+                "block_id": bid,
+                "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
+                "line_ids": line_indices,
+            }
+        )
+    return text_blocks
+
+
 class SynthDoG(templates.Template):
     def __init__(self, config=None, split_ratio: list[float] = None):
         super().__init__(config)
@@ -47,6 +75,7 @@ class SynthDoG(templates.Template):
         self.background = Background(config.get("background", {}))
         self.document = Document(config.get("document", {}))
         self.emit_quads = config.get("emit_quads", False)
+        self.min_bbox_area = config.get("min_bbox_area", 16)
         self.effect = components.Iterator(
             [
                 components.Switch(components.RGB()),
@@ -78,7 +107,9 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts, block_ids, words_per_line = self.document.generate(size)
+        paper_layer, text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count = (
+            self.document.generate(size)
+        )
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -114,24 +145,7 @@ class SynthDoG(templates.Template):
                 text_quads.append(normalized)
 
         # Build block-level bboxes from line bboxes
-        block_to_lines = defaultdict(list)
-        for i, bid in enumerate(block_ids):
-            block_to_lines[bid].append(i)
-
-        text_blocks = []
-        for bid, line_indices in sorted(block_to_lines.items()):
-            bboxes = [text_bboxes[i] for i in line_indices]
-            bx1 = _clamp01(min(b[0] for b in bboxes))
-            by1 = _clamp01(min(b[1] for b in bboxes))
-            bx2 = _clamp01(max(b[2] for b in bboxes))
-            by2 = _clamp01(max(b[3] for b in bboxes))
-            text_blocks.append(
-                {
-                    "block_id": bid,
-                    "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
-                    "line_ids": line_indices,
-                }
-            )
+        text_blocks = _build_text_blocks(block_ids, text_bboxes)
 
         # Compute word bboxes by always deriving from quad interpolation,
         # so that after perspective the AABB tightly encloses the actual word.
@@ -185,10 +199,86 @@ class SynthDoG(templates.Template):
                 text_words.append(word_entry)
                 word_global_id += 1
 
+        # --- Degenerate bbox filtering ---
+        # Identify lines whose bbox area (in pixels) is below the threshold.
+        # Filtering affects annotations only; the rendered image is unchanged.
+        degenerate_mask = [_bbox_area_px(bbox, image_width, image_height) < self.min_bbox_area for bbox in text_bboxes]
+        degenerate_line_count = sum(degenerate_mask)
+        degenerate_word_count = (
+            sum(1 for w in text_words if degenerate_mask[w["line_id"]]) if degenerate_line_count else 0
+        )
+
+        if degenerate_line_count:
+            # Build old→new line index mapping for surviving lines
+            survive = [i for i, degen in enumerate(degenerate_mask) if not degen]
+            old_to_new = {old: new for new, old in enumerate(survive)}
+
+            text_layers = [text_layers[i] for i in survive]
+            texts = [texts[i] for i in survive]
+            text_bboxes = [text_bboxes[i] for i in survive]
+            block_ids = [block_ids[i] for i in survive]
+            words_per_line = [words_per_line[i] for i in survive]
+            if text_quads:
+                text_quads = [text_quads[i] for i in survive]
+
+            # Rebuild text_words with remapped line_id and word_id
+            new_words = []
+            new_word_id = 0
+            for w in text_words:
+                old_line = w["line_id"]
+                if old_line not in old_to_new:
+                    continue
+                w["line_id"] = old_to_new[old_line]
+                w["word_id"] = new_word_id
+                new_words.append(w)
+                new_word_id += 1
+            text_words = new_words
+
+            # Rebuild text_blocks from surviving lines
+            text_blocks = _build_text_blocks(block_ids, text_bboxes)
+
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
         self.effect.apply([layer])
 
         image = layer.output(bbox=[0, 0, *size])
+
+        # --- RMS contrast per surviving line bbox ---
+        gray = 0.2989 * image[..., 0] + 0.5870 * image[..., 1] + 0.1140 * image[..., 2]
+        line_contrasts = []
+        line_bbox_areas_px = []
+        for bbox in text_bboxes:
+            x1_px = int(round(bbox[0] * image_width))
+            y1_px = int(round(bbox[1] * image_height))
+            x2_px = int(round(bbox[2] * image_width))
+            y2_px = int(round(bbox[3] * image_height))
+            if x2_px <= x1_px or y2_px <= y1_px:
+                continue
+            region = gray[y1_px:y2_px, x1_px:x2_px]
+            if region.size == 0:
+                continue
+            line_contrasts.append(float(np.std(region)))
+            line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
+
+        word_bbox_areas_px = []
+        for w in text_words:
+            wb = w["bbox"]
+            wx = int(round(wb[2] * image_width)) - int(round(wb[0] * image_width))
+            wy = int(round(wb[3] * image_height)) - int(round(wb[1] * image_height))
+            if wx > 0 and wy > 0:
+                word_bbox_areas_px.append(wx * wy)
+
+        quality_metrics = {
+            "min_line_contrast": round(min(line_contrasts), 3) if line_contrasts else None,
+            "mean_line_contrast": round(float(np.mean(line_contrasts)), 3) if line_contrasts else None,
+            "min_line_bbox_area_px": int(min(line_bbox_areas_px)) if line_bbox_areas_px else None,
+            "min_word_bbox_area_px": int(min(word_bbox_areas_px)) if word_bbox_areas_px else None,
+            "degenerate_line_count": int(degenerate_line_count),
+            "degenerate_word_count": int(degenerate_word_count),
+            "textbox_null_count": int(textbox_null_count),
+            "textbox_total_count": int(textbox_total_count),
+            "image_size": [int(image_width), int(image_height)],
+        }
+
         label = " ".join(texts)
         label = label.strip()
         label = re.sub(r"\s+", " ", label)
@@ -204,6 +294,7 @@ class SynthDoG(templates.Template):
             "block_ids": block_ids,
             "text_blocks": text_blocks,
             "text_words": text_words,
+            "quality_metrics": quality_metrics,
         }
 
         if self.emit_quads:
@@ -227,6 +318,7 @@ class SynthDoG(templates.Template):
         text_blocks = data.get("text_blocks", [])
         text_words = data.get("text_words", [])
         text_quads = data.get("text_quads", [])
+        quality_metrics = data.get("quality_metrics", {})
 
         # Deterministic split: seed a local RNG per sample so the assignment
         # is independent of generation order and worker count.
@@ -255,8 +347,8 @@ class SynthDoG(templates.Template):
                 entry["quad"] = text_quads[i]
             text_lines_data.append(entry)
 
-        keys = ["text_lines", "text_bboxes", "text_blocks", "text_words"]
-        values = [text_lines_data, text_bboxes, text_blocks, text_words]
+        keys = ["text_lines", "text_bboxes", "text_blocks", "text_words", "quality_metrics"]
+        values = [text_lines_data, text_bboxes, text_blocks, text_words, quality_metrics]
         if text_quads:
             keys.append("text_quads")
             values.append(text_quads)

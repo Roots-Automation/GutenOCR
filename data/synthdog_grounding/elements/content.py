@@ -286,6 +286,8 @@ class Content:
         layout_bbox = [layout_left, layout_top, layout_width, layout_height]
 
         text_layers, texts, block_ids, words_per_line = [], [], [], []
+        textbox_total_count = 0
+        textbox_null_count = 0
         layouts = self.layout.generate(layout_bbox)
         self.reader.move(np.random.randint(len(self.reader)))
 
@@ -297,10 +299,12 @@ class Content:
             font = self.font.sample()
 
             for bbox, align, col_idx in layout:
+                textbox_total_count += 1
                 x, y, w, h = bbox
                 text_layer, text, word_local_data = self.textbox.generate((w, h), self.reader, font)
 
                 if text_layer is None:
+                    textbox_null_count += 1
                     continue
 
                 text_layer.center = (x + w / 2, y + h / 2)
@@ -322,4 +326,4 @@ class Content:
 
         content_color.apply(text_layers)
 
-        return text_layers, texts, block_ids, words_per_line
+        return text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count

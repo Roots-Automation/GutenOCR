@@ -13,11 +13,12 @@ This module generates synthetic document images with line-, word-, and block-lev
 - **Dual text sources**: Local corpus files or HuggingFace datasets (streaming supported)
 - **Multilingual**: English, Chinese, Japanese, Korean with language-specific fonts
 - **Document effects**: Perspective transforms, elastic distortion, Gaussian noise, color/shadow/blur post-processing
+- **Per-sample quality metrics**: Contrast, bbox area, textbox fill rate, and degenerate bbox counts
 - **HuggingFace-compatible output**: JSONL metadata format ready for dataset loading
 
 > **Word boundary caveat**: Word-level bounding boxes are computed by splitting on whitespace. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for CJK languages, where the `words` field will typically contain single characters or entire lines.
 
-> **AABB after perspective**: Line-level bounding boxes are axis-aligned bounding rectangles (AABBs) of the transformed quad — slightly loose after perspective/elastic distortion. Word-level AABBs are derived from quad interpolation and tightly enclose each word even after distortion. Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels. All normalized coordinates are clamped to `[0, 1]`. Samples with no visible text are silently skipped (not saved).
+> **AABB after perspective**: Line-level bounding boxes are axis-aligned bounding rectangles (AABBs) of the transformed quad — slightly loose after perspective/elastic distortion. Word-level AABBs are derived from quad interpolation and tightly enclose each word even after distortion. Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels. All normalized coordinates are clamped to `[0, 1]`. Samples with no visible text are silently skipped (not saved). Lines whose AABB area falls below `min_bbox_area` pixels (default 16) are excluded from annotations (but remain in the rendered image).
 
 ## Directory Structure
 
@@ -182,11 +183,11 @@ Each line in `metadata.jsonl` is a JSON object:
 ```json
 {
   "file_name": "image_0.jpg",
-  "ground_truth": "{\"gt_parse\": {\"text_lines\": [...], \"text_bboxes\": [...], \"text_blocks\": [...], \"text_words\": [...]}}"
+  "ground_truth": "{\"gt_parse\": {\"text_lines\": [...], \"text_bboxes\": [...], \"text_blocks\": [...], \"text_words\": [...], \"quality_metrics\": {...}}}"
 }
 ```
 
-The `ground_truth` field is a JSON string containing a `gt_parse` object with four keys:
+The `ground_truth` field is a JSON string containing a `gt_parse` object with the following keys:
 
 #### `text_lines`
 
@@ -234,6 +235,22 @@ Word quads are computed via bilinear interpolation of the word's `x1_ratio`/`x2_
 
 This flag is backwards compatible: when `emit_quads` is `false` (the default), output is identical to the current format.
 
+#### `quality_metrics`
+
+Per-sample quality and integrity signals:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `min_line_contrast` | `float \| null` | Minimum RMS contrast (std of grayscale pixel values) across all surviving line bbox regions. `null` if no measurable lines. |
+| `mean_line_contrast` | `float \| null` | Mean RMS contrast across all surviving line bbox regions. |
+| `min_line_bbox_area_px` | `int \| null` | Smallest surviving line bbox area in pixels. |
+| `min_word_bbox_area_px` | `int \| null` | Smallest surviving word bbox area in pixels. |
+| `degenerate_line_count` | `int` | Number of lines removed because their bbox area was below `min_bbox_area`. |
+| `degenerate_word_count` | `int` | Number of words removed (belonging to degenerate lines). |
+| `textbox_null_count` | `int` | Number of textbox layout slots that produced no text (e.g., text didn't fit). |
+| `textbox_total_count` | `int` | Total textbox layout slots attempted. |
+| `image_size` | `[int, int]` | Image dimensions `[width, height]` in pixels. |
+
 ## Generation Pipeline
 
 The `SynthDoG` template in `template.py` orchestrates this pipeline per image:
@@ -246,9 +263,20 @@ The `SynthDoG` template in `template.py` orchestrates this pipeline per image:
    - Words are never split across lines
 5. **Document effects**: Apply elastic distortion, perspective transform, and Gaussian noise to the document group
 6. **Bbox capture**: Compute line/word/block bounding boxes from the transformed text layers (AABBs)
-7. **Compositing**: Merge document group with background
-8. **Pixel effects**: Apply color shift, shadow, contrast, brightness, motion blur, and Gaussian blur
-9. **Save**: Write JPEG image and append metadata to `metadata.jsonl`
+7. **Degenerate filtering**: Remove annotations for lines whose bbox area is below `min_bbox_area` pixels
+8. **Compositing**: Merge document group with background
+9. **Pixel effects**: Apply color shift, shadow, contrast, brightness, motion blur, and Gaussian blur
+10. **Quality metrics**: Measure RMS contrast per line, compute bbox area stats, record textbox fill rate
+11. **Save**: Write JPEG image and append metadata (including `quality_metrics`) to `metadata.jsonl`
+
+> **Multi-worker safety**: SynthTiger calls `save()` from the main process only, so there is no risk of concurrent writes corrupting the JSONL metadata file, regardless of `-w` worker count.
+
+## Known Limitations
+
+- **Contrast-aware color is pre-effects**: Text color is chosen based on the base paper RGB color *before* texture overlay and all pixel-level effects (shadow, brightness, contrast, blur). Actual post-effects contrast may be lower than what the WCAG-based color selection targeted. Use `min_line_contrast` in `quality_metrics` to filter low-contrast samples.
+- **Elastic distortion warps pixels but not quads**: Quad coordinates reflect perspective transforms only. Elastic distortion modifies the rendered pixels without updating annotation coordinates. For the moderate distortion levels used (alpha ≤ 1, sigma ≤ 0.5), this is a good approximation.
+- **Motion blur shifts apparent text position**: Motion blur (k=3–5) is applied after bbox capture and can shift apparent text position by ~1–2px beyond annotated boundaries.
+- **Shadow/brightness reduce legibility**: These pixel-level effects can reduce text legibility below what the WCAG-based color selection targeted. The `min_line_contrast` metric captures this.
 
 ## Configuration
 
@@ -259,6 +287,7 @@ Each YAML config file controls the full pipeline. Key sections:
 | `quality` | JPEG quality range (e.g. `[50, 95]`) |
 | `landscape` | Probability of landscape orientation |
 | `emit_quads` | Emit quad (4-corner) coordinates for lines and words (default `false`) |
+| `min_bbox_area` | Minimum line bbox area in pixels; lines below this are excluded from annotations (default `16`) |
 | `short_size` | Short dimension range in pixels |
 | `aspect_ratio` | Min/max aspect ratio |
 | `background` | Background texture source |

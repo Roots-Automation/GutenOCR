@@ -3,6 +3,7 @@ landscape: 0.5
 short_size: [720, 1024]
 aspect_ratio: [1, 2]
 emit_quads: false
+min_bbox_area: 16
 
 background:
   image:
