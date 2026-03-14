@@ -133,24 +133,30 @@ class SynthDoG(templates.Template):
                 }
             )
 
-        # Compute absolute word bboxes using ratios interpolated into final line bbox
+        # Compute word bboxes by always deriving from quad interpolation,
+        # so that after perspective the AABB tightly encloses the actual word.
         text_words = []
         word_global_id = 0
         for line_idx, (text_layer, word_local_data) in enumerate(zip(text_layers, words_per_line)):
-            lx = text_layer.left
-            ly = text_layer.top
-            lw = text_layer.width
-            lh = text_layer.height
-
-            if self.emit_quads:
-                line_quad = text_layer.quad  # [TL, TR, BR, BL]
-                tl, tr, br, bl = line_quad[0], line_quad[1], line_quad[2], line_quad[3]
+            line_quad = text_layer.quad  # [TL, TR, BR, BL] — always available
+            tl, tr, br, bl = line_quad[0], line_quad[1], line_quad[2], line_quad[3]
 
             for word in word_local_data:
-                wx1 = round(_clamp01((lx + word["x1_ratio"] * lw) / image_width), 3)
-                wy1 = round(_clamp01(ly / image_height), 3)
-                wx2 = round(_clamp01((lx + word["x2_ratio"] * lw) / image_width), 3)
-                wy2 = round(_clamp01((ly + lh) / image_height), 3)
+                r1, r2 = word["x1_ratio"], word["x2_ratio"]
+                # Interpolate along top edge (TL→TR) and bottom edge (BL→BR)
+                w_tl = tl + r1 * (tr - tl)
+                w_tr = tl + r2 * (tr - tl)
+                w_br = bl + r2 * (br - bl)
+                w_bl = bl + r1 * (br - bl)
+
+                # Derive AABB as bounding box of the four quad corners
+                xs = [float(w_tl[0]), float(w_tr[0]), float(w_br[0]), float(w_bl[0])]
+                ys = [float(w_tl[1]), float(w_tr[1]), float(w_br[1]), float(w_bl[1])]
+                wx1 = round(_clamp01(min(xs) / image_width), 3)
+                wy1 = round(_clamp01(min(ys) / image_height), 3)
+                wx2 = round(_clamp01(max(xs) / image_width), 3)
+                wy2 = round(_clamp01(max(ys) / image_height), 3)
+
                 word_entry = {
                     "text": word["text"],
                     "bbox": [wx1, wy1, wx2, wy2],
@@ -158,12 +164,6 @@ class SynthDoG(templates.Template):
                     "line_id": line_idx,
                 }
                 if self.emit_quads:
-                    r1, r2 = word["x1_ratio"], word["x2_ratio"]
-                    # Interpolate along top edge (TL→TR) and bottom edge (BL→BR)
-                    w_tl = tl + r1 * (tr - tl)
-                    w_tr = tl + r2 * (tr - tl)
-                    w_br = bl + r2 * (br - bl)
-                    w_bl = bl + r1 * (br - bl)
                     word_entry["quad"] = [
                         [
                             round(_clamp01(float(w_tl[0]) / image_width), 3),
