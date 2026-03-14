@@ -32,12 +32,12 @@ def _clamp01(v: float) -> float:
     return max(0.0, min(1.0, v))
 
 
-def _bbox_area_px(bbox, image_width, image_height):
+def _bbox_area_px(bbox: list[float], image_width: int, image_height: int) -> float:
     """Area of a normalized [x1, y1, x2, y2] bbox in pixels."""
     return (bbox[2] - bbox[0]) * image_width * (bbox[3] - bbox[1]) * image_height
 
 
-def _build_text_blocks(block_ids, text_bboxes):
+def _build_text_blocks(block_ids: list[int], text_bboxes: list[list[float]]) -> list[dict]:
     """Build block-level bboxes by grouping lines that share a block_id."""
     block_to_lines = defaultdict(list)
     for i, bid in enumerate(block_ids):
@@ -61,7 +61,7 @@ def _build_text_blocks(block_ids, text_bboxes):
 
 
 class SynthDoG(templates.Template):
-    def __init__(self, config=None, split_ratio: list[float] = None):
+    def __init__(self, config=None, split_ratio: list[float] | None = None):
         super().__init__(config)
         if config is None:
             config = {}
@@ -303,8 +303,7 @@ class SynthDoG(templates.Template):
         return data
 
     def init_save(self, root):
-        if not os.path.exists(root):
-            os.makedirs(root, exist_ok=True)
+        os.makedirs(root, exist_ok=True)
 
     def save(self, root, data, idx):
         if not data.get("text_lines"):
@@ -329,7 +328,7 @@ class SynthDoG(templates.Template):
         image_filename = f"image_{idx}.jpg"
         image_filepath = os.path.join(output_dirpath, image_filename)
         os.makedirs(os.path.dirname(image_filepath), exist_ok=True)
-        image = Image.fromarray(image[..., :3].astype(np.uint8))
+        image = Image.fromarray(np.clip(image[..., :3], 0, 255).astype(np.uint8))
         image.save(image_filepath, quality=quality)
 
         # save metadata (gt_json)
@@ -362,7 +361,7 @@ class SynthDoG(templates.Template):
     def end_save(self, root):
         pass
 
-    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]):
+    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]) -> dict[str, str]:
         """
         Fit gt_parse contents to huggingface dataset's format
         keys and values, whose lengths are equal, are used to constrcut 'gt_parse' field in 'ground_truth' field
@@ -370,12 +369,10 @@ class SynthDoG(templates.Template):
             keys: List of task_name
             values: List of actual gt data corresponding to each task_name
         """
-        assert len(keys) == len(values), f"Length does not match: keys({len(keys)}), values({len(values)})"
+        if len(keys) != len(values):
+            raise ValueError(f"Length does not match: keys({len(keys)}), values({len(values)})")
 
-        _gt_parse_v = dict()
-        for k, v in zip(keys, values):
-            _gt_parse_v[k] = v
-        gt_parse = {"gt_parse": _gt_parse_v}
+        gt_parse = {"gt_parse": dict(zip(keys, values))}
         gt_parse_str = json.dumps(gt_parse, ensure_ascii=False)
         metadata = {"file_name": image_filename, "ground_truth": gt_parse_str}
         return metadata
