@@ -8,12 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
-
-def _sample_fill(fill_range: list[float], full_prob: float) -> float:
-    """Sample a fill ratio, with a chance of forcing full fill."""
-    full = np.random.rand() < full_prob
-    fill = np.random.uniform(fill_range[0], fill_range[1])
-    return 1.0 if full else fill
+from ._utils import sample_fill
 
 
 class Grid:
@@ -83,6 +78,9 @@ class Grid:
         """
         left, top, width, height = bbox
 
+        if width <= 0 or height <= 0:
+            return None
+
         if text_scale_range is None:
             text_scale_range = self.text_scale
         if fill_range is None:
@@ -93,15 +91,15 @@ class Grid:
         grids = np.random.permutation(self.max_row * self.max_col)
 
         for grid in grids:
-            row = grid // self.max_col + 1
-            col = grid % self.max_col + 1
+            row = int(grid // self.max_col + 1)
+            col = int(grid % self.max_col + 1)
             if text_size * (col * 2 - 1) <= width and text_size * row <= height:
                 break
         else:
             return None
 
         bound = max(1 - text_size / width * (col - 1), 0)
-        fill = _sample_fill(fill_range, self.full)
+        fill = sample_fill(fill_range, self.full)
         fill = np.clip(fill, 0, bound)
 
         # 2-bit encoding of (left_pad, right_pad): bit1=left, bit0=right.

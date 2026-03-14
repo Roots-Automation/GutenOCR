@@ -8,7 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from .grid import Grid, _sample_fill
+from ._utils import sample_fill
+from .grid import Grid
 
 
 class GridStack:
@@ -57,6 +58,8 @@ class GridStack:
         self.stack_spacing = config.get("stack_spacing", [0, 0.05])
         self.stack_fill = config.get("stack_fill", [1, 1])
         self.stack_full = config.get("stack_full", 0)
+        # fill/full intentionally omitted: generate() always overrides them
+        # via the fill_range keyword argument to Grid.generate().
         self._grid = Grid(
             {
                 "text_scale": self.text_scale,
@@ -71,7 +74,7 @@ class GridStack:
         Generate stacked grid layouts within the given bounding box.
 
         Args:
-            bbox: List of [left, top, width, height] defining the area
+            bbox: List of [left, top, width, height] defining the area.
 
         Returns:
             List of grid layouts, where each grid layout is a list of
@@ -80,11 +83,14 @@ class GridStack:
         """
         left, top, width, height = bbox
 
+        if width <= 0 or height <= 0:
+            return []
+
         stack_spacing = np.random.uniform(self.stack_spacing[0], self.stack_spacing[1])
         stack_spacing *= min(width, height)
 
-        stack_fill = _sample_fill(self.stack_fill, self.stack_full)
-        fill = _sample_fill(self.fill, self.full)
+        stack_fill = sample_fill(self.stack_fill, self.stack_full)
+        fill = sample_fill(self.fill, self.full)
 
         layouts = []
         line = 0
