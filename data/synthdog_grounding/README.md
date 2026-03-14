@@ -17,7 +17,7 @@ This module generates synthetic document images with line-, word-, and block-lev
 
 > **Word boundary caveat**: Word-level bounding boxes are computed by splitting on whitespace. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for CJK languages, where the `words` field will typically contain single characters or entire lines.
 
-> **AABB after perspective**: After perspective/elastic distortion, bounding boxes are computed as axis-aligned bounding rectangles (AABBs). These may be looser than the actual transformed text quadrilateral. Enable `emit_quads: true` in the config to emit quad (4-corner polygon) coordinates for tighter ground truth alongside the AABBs.
+> **AABB after perspective**: Line-level bounding boxes are axis-aligned bounding rectangles (AABBs) of the transformed quad — slightly loose after perspective/elastic distortion. Word-level AABBs are derived from quad interpolation and tightly enclose each word even after distortion. Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels. All normalized coordinates are clamped to `[0, 1]`. Samples with no visible text are silently skipped (not saved).
 
 ## Directory Structure
 
