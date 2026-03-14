@@ -347,11 +347,8 @@ class SynthDoG(templates.Template):
                 entry["quad"] = text_quads[i]
             text_lines_data.append(entry)
 
-        keys = ["text_lines", "text_bboxes", "text_blocks", "text_words", "quality_metrics"]
-        values = [text_lines_data, text_bboxes, text_blocks, text_words, quality_metrics]
-        if text_quads:
-            keys.append("text_quads")
-            values.append(text_quads)
+        keys = ["text_lines", "text_blocks", "text_words", "quality_metrics"]
+        values = [text_lines_data, text_blocks, text_words, quality_metrics]
 
         metadata = self.format_metadata(
             image_filename=image_filename,

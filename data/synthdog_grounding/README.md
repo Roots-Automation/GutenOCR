@@ -190,7 +190,7 @@ Each line in `metadata.jsonl` is a JSON object:
 ```json
 {
   "file_name": "image_0.jpg",
-  "ground_truth": "{\"gt_parse\": {\"text_lines\": [...], \"text_bboxes\": [...], \"text_blocks\": [...], \"text_words\": [...], \"quality_metrics\": {...}}}"
+  "ground_truth": "{\"gt_parse\": {\"text_lines\": [...], \"text_blocks\": [...], \"text_words\": [...], \"quality_metrics\": {...}}}"
 }
 ```
 
@@ -205,10 +205,6 @@ Per-line text with bounding box and identifiers:
 ```
 
 When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
-
-#### `text_bboxes`
-
-Flat list of `[x1, y1, x2, y2]` (top-left, bottom-right) bounding boxes (one per line, same order as `text_lines`). All coordinates are normalized to `[0, 1]` relative to image dimensions.
 
 #### `text_blocks`
 
@@ -227,10 +223,6 @@ Word-level grounding with line association:
 ```
 
 When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
-
-#### `text_quads` (when `emit_quads: true`)
-
-Flat list of quad coordinates (one per line, same order as `text_bboxes`). Each quad is `[[x1, y1], [x2, y2], [x3, y3], [x4, y4]]` in TL, TR, BR, BL order, normalized to `[0, 1]`.
 
 #### Quad Coordinates
 
