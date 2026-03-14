@@ -4,12 +4,15 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+import logging
 import re
 from collections import OrderedDict
 
 import numpy as np
 from datasets import load_dataset
 from synthtiger import components
+
+logger = logging.getLogger(__name__)
 
 from elements.textbox import TextBox
 from layouts import GridStack
@@ -88,6 +91,8 @@ class TextReader:
 
 
 class HuggingFaceTextReader:
+    _warned_unrecognized = False
+
     def __init__(
         self, dataset_name="HuggingFaceFW/finepdfs", split="train", streaming=True, buffer_size=1000, subset=None
     ):
@@ -112,19 +117,28 @@ class HuggingFaceTextReader:
         # Pre-load some text
         self._fill_buffer()
 
+    @staticmethod
+    def _extract_text(sample):
+        """Extract text from a HuggingFace sample, returning None for unrecognized formats."""
+        if "text" in sample:
+            return sample["text"]
+        if "content" in sample:
+            return sample["content"]
+        if not HuggingFaceTextReader._warned_unrecognized:
+            logger.warning(
+                "Skipping HuggingFace sample with no 'text' or 'content' key (keys: %s)", list(sample.keys())
+            )
+            HuggingFaceTextReader._warned_unrecognized = True
+        return None
+
     def _fill_buffer(self):
         """Fill the buffer with text from the next few documents"""
         try:
             for _ in range(self.buffer_size):
                 sample = next(self.dataset_iter)
-                # Extract text content from the PDF document
-                if "text" in sample:
-                    text = sample["text"]
-                elif "content" in sample:
-                    text = sample["content"]
-                else:
-                    # If we can't find text directly, try to get it from other fields
-                    text = str(sample)
+                text = self._extract_text(sample)
+                if text is None:
+                    continue
 
                 # Clean the text - remove excessive whitespace, keep only printable chars
                 text = re.sub(r"\s+", " ", text).strip()
@@ -198,12 +212,9 @@ class HuggingFaceTextReader:
         try:
             for _ in range(self.buffer_size * 3 // 4):
                 sample = next(self.dataset_iter)
-                if "text" in sample:
-                    text = sample["text"]
-                elif "content" in sample:
-                    text = sample["content"]
-                else:
-                    text = str(sample)
+                text = self._extract_text(sample)
+                if text is None:
+                    continue
 
                 text = re.sub(r"\s+", " ", text).strip()
                 if text:
