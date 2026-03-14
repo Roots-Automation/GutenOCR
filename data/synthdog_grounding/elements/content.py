@@ -4,12 +4,14 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from __future__ import annotations
+
 import logging
 import re
 from collections import OrderedDict
+from typing import Protocol, runtime_checkable
 
 import numpy as np
-from datasets import load_dataset
 from synthtiger import components
 
 logger = logging.getLogger(__name__)
@@ -24,6 +26,19 @@ def _relative_luminance(r, g, b):
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+
+
+@runtime_checkable
+class TextCursor(Protocol):
+    """Protocol shared by all text readers (file-backed and streaming)."""
+
+    def __len__(self) -> int: ...
+    def __iter__(self) -> TextCursor: ...
+    def __next__(self) -> str: ...
+    def move(self, idx: int) -> None: ...
+    def next(self) -> None: ...
+    def prev(self) -> None: ...
+    def get(self) -> str: ...
 
 
 class TextReader:
@@ -91,16 +106,17 @@ class TextReader:
 
 
 class HuggingFaceTextReader:
-    _warned_unrecognized = False
-
     def __init__(
         self, dataset_name="HuggingFaceFW/finepdfs", split="train", streaming=True, buffer_size=1000, subset=None
     ):
+        from datasets import load_dataset
+
         self.dataset_name = dataset_name
         self.split = split
         self.streaming = streaming
         self.buffer_size = buffer_size
         self.subset = subset
+        self._warned_unrecognized = False
 
         # Load the dataset in streaming mode
         if subset is not None:
@@ -117,18 +133,17 @@ class HuggingFaceTextReader:
         # Pre-load some text
         self._fill_buffer()
 
-    @staticmethod
-    def _extract_text(sample):
+    def _extract_text(self, sample):
         """Extract text from a HuggingFace sample, returning None for unrecognized formats."""
         if "text" in sample:
             return sample["text"]
         if "content" in sample:
             return sample["content"]
-        if not HuggingFaceTextReader._warned_unrecognized:
+        if not self._warned_unrecognized:
             logger.warning(
                 "Skipping HuggingFace sample with no 'text' or 'content' key (keys: %s)", list(sample.keys())
             )
-            HuggingFaceTextReader._warned_unrecognized = True
+            self._warned_unrecognized = True
         return None
 
     def _fill_buffer(self):
@@ -237,7 +252,7 @@ class HuggingFaceTextReader:
             self.idx = 0
 
 
-_READER_TYPES: dict[str, type] = {
+_READER_TYPES: dict[str, type[TextCursor]] = {
     "file": TextReader,
     "huggingface": HuggingFaceTextReader,
 }
@@ -254,7 +269,7 @@ class Content:
             reader_type = "huggingface" if text_config.get("use_huggingface", False) else "file"
         reader_cls = _READER_TYPES[reader_type]  # KeyError = clear signal of bad config
         reader_kwargs = {k: v for k, v in text_config.items() if k not in ("type", "use_huggingface")}
-        self.reader = reader_cls(**reader_kwargs)
+        self.reader: TextCursor = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))
         self.layout = GridStack(config.get("layout", {}))

@@ -1,64 +1,54 @@
 #!/usr/bin/env python3
 """
 Extract text from FinePDFs dataset and save to a .txt file.
-This script loads the first 10 million rows from the eng_Latn subset of FinePDFs.
+This script loads the first N rows from the specified subset of FinePDFs.
 """
 
-from datasets import load_dataset
-from tqdm import tqdm
+import argparse
 
 
-def extract_finepdfs_text():
+def extract_finepdfs_text(
+    output: str,
+    target_samples: int,
+    dataset: str,
+    subset: str,
+    split: str,
+):
     """Extract text from FinePDFs dataset and save to txt file."""
+    from datasets import load_dataset
+    from tqdm import tqdm
 
-    print("Loading FinePDFs dataset (eng_Latn subset)...")
+    print(f"Loading {dataset} dataset ({subset} subset)...")
 
-    # Load the dataset - using streaming to handle large dataset efficiently
-    ds = load_dataset("HuggingFaceFW/finepdfs", "eng_Latn", streaming=True)
+    ds = load_dataset(dataset, subset, streaming=True)
+    train_ds = ds[split]
 
-    # Get the train split (streaming)
-    train_ds = ds["train"]
-
-    output_file = "finepdfs_eng_latn_1M.txt"
-    target_samples = 1_000_000
-
-    print(f"Extracting {target_samples:,} ASCII-only samples to {output_file}...")
+    print(f"Extracting {target_samples:,} ASCII-only samples to {output}...")
 
     valid_samples = 0
     processed_rows = 0
 
-    # Create progress bar for valid samples
     pbar = tqdm(total=target_samples, desc="Valid samples", unit="samples")
 
-    with open(output_file, "w", encoding="utf-8") as f:
+    with open(output, "w", encoding="utf-8") as f:
         for sample in train_ds:
             processed_rows += 1
 
-            # Extract the text content from the sample
-            # The text field in FinePDFs is typically called 'text'
             text = sample.get("text", "")
-
-            # Clean the text: replace internal newlines with spaces to maintain one sample per line
-            # This ensures each sample is on its own line for easier processing later
             cleaned_text = text.replace("\n", " ").replace("\r", " ").strip()
 
-            # Skip empty texts
             if not cleaned_text:
                 continue
 
-            # Check if text contains only ASCII characters
             try:
                 cleaned_text.encode("ascii")
             except UnicodeEncodeError:
-                # Skip samples with non-ASCII characters
                 continue
 
-            # Write valid ASCII-only text
             f.write(cleaned_text)
             f.write("\n")
             valid_samples += 1
 
-            # Update progress bar
             pbar.update(1)
             pbar.set_postfix(
                 {
@@ -67,15 +57,32 @@ def extract_finepdfs_text():
                 }
             )
 
-            # Stop when we reach target
             if valid_samples >= target_samples:
                 break
 
     pbar.close()
-    print(f"Extraction complete! Saved {valid_samples:,} ASCII-only samples to {output_file}")
+    print(f"Extraction complete! Saved {valid_samples:,} ASCII-only samples to {output}")
     print(f"Total rows processed: {processed_rows:,}")
     print(f"Success rate: {valid_samples / processed_rows * 100:.2f}%")
 
 
+def main():
+    parser = argparse.ArgumentParser(description="Extract text from a HuggingFace dataset into a .txt file")
+    parser.add_argument("--output", default="finepdfs_eng_latn_1M.txt", help="Output text file path")
+    parser.add_argument("--target-samples", type=int, default=1_000_000, help="Number of ASCII-only samples to extract")
+    parser.add_argument("--dataset", default="HuggingFaceFW/finepdfs", help="HuggingFace dataset name")
+    parser.add_argument("--subset", default="eng_Latn", help="Dataset subset/config name")
+    parser.add_argument("--split", default="train", help="Dataset split to use")
+    args = parser.parse_args()
+
+    extract_finepdfs_text(
+        output=args.output,
+        target_samples=args.target_samples,
+        dataset=args.dataset,
+        subset=args.subset,
+        split=args.split,
+    )
+
+
 if __name__ == "__main__":
-    extract_finepdfs_text()
+    main()
