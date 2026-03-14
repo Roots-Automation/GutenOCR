@@ -4,6 +4,17 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+# Ensure Pillow compatibility patch is loaded before anything else.
+# When synthtiger loads this module directly (not as a package), the
+# package __init__.py never runs, so we must import the shim here.
+try:
+    import pillow_compat  # noqa: F401
+except ImportError:
+    try:
+        from . import pillow_compat  # noqa: F401
+    except ImportError:
+        pass
+
 import json
 import os
 import re
