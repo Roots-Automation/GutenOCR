@@ -197,13 +197,13 @@ def process_directory(input_dir: Path, output_tar: Path):
             text_lines = []
             try:
                 text_lines = gt["gt_parse"]["text_lines"]
-            except Exception:
+            except (KeyError, TypeError):
                 pass
 
             text_words = []
             try:
                 text_words = gt["gt_parse"]["text_words"]
-            except Exception:
+            except (KeyError, TypeError):
                 pass
 
             # Create the new JSON payload

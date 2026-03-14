@@ -126,54 +126,6 @@ def analyze_line_overlaps(lines: list[dict]) -> dict[str, Any]:
     }
 
 
-def analyze_line_dimensions(lines: list[dict], img_width: int, img_height: int) -> dict[str, Any]:
-    """
-    Analyze dimensions and spatial properties of text lines.
-    """
-    widths, heights, aspect_ratios = [], [], []
-    x_centers, y_centers = [], []
-
-    for line in lines:
-        if "bbox" in line:
-            bbox = line["bbox"]
-            # Convert normalized coords to pixel coords for absolute measurements
-            width_norm = bbox[2] - bbox[0]
-            height_norm = bbox[3] - bbox[1]
-
-            width_px = width_norm * img_width
-            height_px = height_norm * img_height
-
-            widths.append(width_px)
-            heights.append(height_px)
-
-            if height_px > 0:
-                aspect_ratios.append(width_px / height_px)
-
-            # Center coordinates (normalized)
-            x_centers.append((bbox[0] + bbox[2]) / 2)
-            y_centers.append((bbox[1] + bbox[3]) / 2)
-
-    def safe_stats(values):
-        if not values:
-            return {"min": 0, "max": 0, "mean": 0, "median": 0, "std": 0}
-        return {
-            "min": min(values),
-            "max": max(values),
-            "mean": statistics.mean(values),
-            "median": statistics.median(values),
-            "std": statistics.stdev(values) if len(values) > 1 else 0,
-        }
-
-    return {
-        "width_px": safe_stats(widths),
-        "height_px": safe_stats(heights),
-        "aspect_ratio": safe_stats(aspect_ratios),
-        "x_center_norm": safe_stats(x_centers),
-        "y_center_norm": safe_stats(y_centers),
-        "total_lines_with_bbox": len(widths),
-    }
-
-
 def analyze_sample(data: dict[str, Any], sample_id: str) -> dict[str, Any]:
     """
     Analyze a single sample and return per-sample statistics.

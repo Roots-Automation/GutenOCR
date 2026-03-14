@@ -306,12 +306,12 @@ class SynthDoG(templates.Template):
         os.makedirs(root, exist_ok=True)
 
     def save(self, root, data, idx):
-        if not data.get("text_lines"):
+        text_lines = data.get("text_lines")
+        if not text_lines:
             return
 
         image = data["image"]
         quality = data["quality"]
-        text_lines = data.get("text_lines", [])
         text_bboxes = data.get("text_bboxes", [])
         block_ids = data.get("block_ids", [])
         text_blocks = data.get("text_blocks", [])

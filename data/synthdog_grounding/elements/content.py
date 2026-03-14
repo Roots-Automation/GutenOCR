@@ -133,22 +133,24 @@ class HuggingFaceTextReader:
 
     def _fill_buffer(self):
         """Fill the buffer with text from the next few documents"""
-        try:
-            for _ in range(self.buffer_size):
-                sample = next(self.dataset_iter)
-                text = self._extract_text(sample)
-                if text is None:
-                    continue
+        for _attempt in range(2):
+            try:
+                for _ in range(self.buffer_size):
+                    sample = next(self.dataset_iter)
+                    text = self._extract_text(sample)
+                    if text is None:
+                        continue
 
-                # Clean the text - remove excessive whitespace, keep only printable chars
-                text = re.sub(r"\s+", " ", text).strip()
-                if text:
-                    self.text_buffer.append(text)
-        except StopIteration:
-            # If we run out of data, restart the iterator
-            self.dataset_iter = iter(self.dataset)
-            if not self.text_buffer:  # Only refill if buffer is empty
-                self._fill_buffer()
+                    # Clean the text - remove excessive whitespace, keep only printable chars
+                    text = re.sub(r"\s+", " ", text).strip()
+                    if text:
+                        self.text_buffer.append(text)
+                break  # successfully filled
+            except StopIteration:
+                # If we run out of data, restart the iterator
+                self.dataset_iter = iter(self.dataset)
+                if self.text_buffer:
+                    break
         self._joined_text_cache = None
 
     def _get_current_text(self):
