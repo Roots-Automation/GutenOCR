@@ -98,10 +98,55 @@ pip install -e .
 
 ### Generate Synthetic Data
 
-```bash
-# Required on macOS
-export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+> **Important: run from the `synthdog_grounding/` directory.** All resource
+> paths in the YAML configs are relative to this directory. SynthTiger workers
+> that resolve paths from a different cwd will fail silently (or loop forever
+> retrying). Always `cd` here first.
 
+```bash
+cd data/synthdog_grounding
+
+# Required on macOS — without this, worker processes may hang or crash
+# due to Objective-C fork safety checks
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+```
+
+#### Option A: Direct Python (recommended for small runs / local dev)
+
+The SynthTiger multiprocessing CLI has known issues with relative resource
+paths in worker processes. For quick local runs, invoke the template directly:
+
+```python
+import yaml
+from template import SynthDoG
+
+with open("config/config_en.yaml") as f:
+    config = yaml.safe_load(f)
+
+t = SynthDoG(config)
+t.init_save("./outputs/SynthDoG_en")
+for i in range(50):
+    data = t.generate()
+    t.save("./outputs/SynthDoG_en", data, i)
+```
+
+Or as a one-liner:
+
+```bash
+uv run python -c "
+import yaml; from template import SynthDoG
+with open('config/config_en.yaml') as f: config = yaml.safe_load(f)
+t = SynthDoG(config); t.init_save('./outputs/SynthDoG_en')
+for i in range(50): data = t.generate(); t.save('./outputs/SynthDoG_en', data, i)
+"
+```
+
+#### Option B: SynthTiger CLI (production runs)
+
+When using the SynthTiger CLI, always pass `-v` so that worker errors are
+visible instead of silently retried:
+
+```bash
 # Generate English documents (50 samples, 4 workers)
 uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py SynthDoG config/config_en.yaml
 
@@ -112,6 +157,11 @@ uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py S
 bash data_generation/run_synthdog_range.sh 35 75
 ```
 
+> **Troubleshooting:** If the CLI appears to hang, re-run with `-v`. The most
+> common cause is `RuntimeError: Texture path is not specified` — this means
+> worker processes cannot resolve relative resource paths. Ensure you are
+> running from the `synthdog_grounding/` directory.
+
 #### SynthTiger CLI Arguments
 
 | Flag | Description |
@@ -120,7 +170,7 @@ bash data_generation/run_synthdog_range.sh 35 75
 | `-c` | Number of documents to generate |
 | `-w` | Number of worker processes |
 | `-s` | Random seed for reproducibility |
-| `-v` | Verbose output (print error messages) |
+| `-v` | Verbose output (print error messages) — **always recommended** |
 
 ### Inspect Samples
 
@@ -300,11 +350,11 @@ Each YAML config file controls the full pipeline. Key sections:
 
 ### HuggingFace Text Source
 
-To use a HuggingFace dataset as the text corpus, set the `text` section in the config:
+To use a HuggingFace dataset as the text corpus, set `type: huggingface` in the `text` section:
 
 ```yaml
 text:
-  use_huggingface: true
+  type: huggingface
   dataset_name: "allenai/c4"
   subset: "en"
   split: "train"
