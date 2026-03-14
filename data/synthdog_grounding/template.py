@@ -216,6 +216,9 @@ class SynthDoG(templates.Template):
             os.makedirs(root, exist_ok=True)
 
     def save(self, root, data, idx):
+        if not data.get("text_lines"):
+            return
+
         image = data["image"]
         quality = data["quality"]
         text_lines = data.get("text_lines", [])
