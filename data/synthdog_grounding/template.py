@@ -28,26 +28,30 @@ from PIL import Image
 from synthtiger import components, layers, templates
 
 try:
-    from annotations import BlockAnnotation, LineAnnotation, WordAnnotation
-    from constants import SPLITS
     from serialization import (
         KEY_QUALITY_METRICS,
         KEY_TEXT_BLOCKS,
         KEY_TEXT_LINES,
         KEY_TEXT_WORDS,
+        SPLITS,
+        BlockAnnotation,
+        LineAnnotation,
+        WordAnnotation,
         encode_metadata,
     )
 
     from elements import Background, Document
 except ImportError:
-    from .annotations import BlockAnnotation, LineAnnotation, WordAnnotation
-    from .constants import SPLITS
     from .elements import Background, Document
     from .serialization import (
         KEY_QUALITY_METRICS,
         KEY_TEXT_BLOCKS,
         KEY_TEXT_LINES,
         KEY_TEXT_WORDS,
+        SPLITS,
+        BlockAnnotation,
+        LineAnnotation,
+        WordAnnotation,
         encode_metadata,
     )
 

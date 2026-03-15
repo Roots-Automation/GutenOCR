@@ -14,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from build_tar import process_directory
-from constants import SPLITS
+from serialization import SPLITS
 
 
 def process_single_tar(args: tuple[str, str, str]) -> tuple[bool, str]:

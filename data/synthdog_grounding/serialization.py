@@ -1,14 +1,45 @@
-"""Shared serialization schema for SynthDoG metadata.
+"""Shared schema, constants, and annotations for SynthDoG metadata.
 
 Centralizes the contract between producer (template.py) and consumer
-(build_tar.py) so that key names and encoding/decoding logic live in
-one place.
+(build_tar.py) so that key names, encoding/decoding logic, annotation
+dataclasses, and shared constants live in one place.
 """
 
 from __future__ import annotations
 
 import json
+from dataclasses import dataclass
 from typing import Any
+
+# ── Dataset splits ───────────────────────────────────────────────────
+SPLITS = ["train", "validation", "test"]
+
+
+# ── Annotation dataclasses ───────────────────────────────────────────
+@dataclass
+class WordAnnotation:
+    text: str
+    bbox: list[float]
+    line_id: int
+    word_id: int
+    quad: list[list[float]] | None = None
+
+
+@dataclass
+class LineAnnotation:
+    text: str
+    bbox: list[float]
+    block_id: int
+    line_id: int
+    quad: list[list[float]] | None = None
+
+
+@dataclass
+class BlockAnnotation:
+    block_id: int
+    bbox: list[float]
+    line_ids: list[int]
+
 
 # ── Canonical key names ──────────────────────────────────────────────
 KEY_FILE_NAME = "file_name"
