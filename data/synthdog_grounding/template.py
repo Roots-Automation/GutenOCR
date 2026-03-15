@@ -16,6 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import pillow_compat  # noqa: E402, F401, I001
 
 import copy  # noqa: E402
+import hashlib  # noqa: E402
 import json  # noqa: E402
 import os  # noqa: E402
 import re  # noqa: E402
@@ -113,7 +114,7 @@ class SynthDoG(templates.Template):
             config = _deep_merge(base_config, config)
 
         if split_ratio is None:
-            split_ratio = [0.8, 0.1, 0.1]
+            split_ratio = config.get("split_ratio", [0.8, 0.1, 0.1])
 
         self.quality = config.get("quality", [50, 95])
         self.landscape = config.get("landscape", 0.5)
@@ -135,6 +136,9 @@ class SynthDoG(templates.Template):
             **config.get("effect", {}),
         )
 
+        # Per-sample RNG seeding counter (see generate())
+        self._gen_counter = 0
+
         # config for splits
         self.splits = SPLITS
         if any(r < 0 for r in split_ratio):
@@ -152,6 +156,12 @@ class SynthDoG(templates.Template):
         return layer.output(bbox=[0, 0, *size])
 
     def generate(self):
+        # Seed per-sample so that workers sharing the global NumPy RNG don't
+        # produce correlated sequences.  Not perfectly reproducible across
+        # different worker counts, but prevents shared-state RNG drift.
+        self._gen_counter += 1
+        np.random.seed(os.getpid() * 1_000_000 + self._gen_counter)
+
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
         aspect_ratio = np.random.uniform(self.aspect_ratio[0], self.aspect_ratio[1])
@@ -225,8 +235,10 @@ class SynthDoG(templates.Template):
         text_words = data.get("text_words", [])
         quality_metrics = data.get("quality_metrics", {})
 
-        # Deterministic split
-        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(idx).random()))
+        # Content-based split: hash the label so the same text always lands
+        # in the same split regardless of generation order or worker count.
+        label_hash = int(hashlib.sha256(data["label"].encode()).hexdigest()[:16], 16)
+        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random()))
         output_dirpath = os.path.join(root, self.splits[split_idx])
 
         # save image
