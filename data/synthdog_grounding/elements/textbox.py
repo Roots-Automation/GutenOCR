@@ -10,6 +10,43 @@ import numpy as np
 from synthtiger import layers
 
 
+def _extract_word_ratios(chars: list[str], char_layers: list) -> list[dict]:
+    """Compute per-word x-ratio dicts from character layers."""
+    line_local_width = char_layers[-1].right if char_layers else 0
+    words = []
+    cur_chars: list[str] = []
+    cur_x1: float | None = None
+    cur_x2: float = 0.0
+
+    for ch, layer in zip(chars, char_layers):
+        if ch.isspace():
+            if cur_chars:
+                words.append(
+                    {
+                        "text": "".join(cur_chars),
+                        "x1_ratio": cur_x1 / line_local_width if line_local_width > 0 else 0.0,
+                        "x2_ratio": cur_x2 / line_local_width if line_local_width > 0 else 1.0,
+                    }
+                )
+                cur_chars, cur_x1, cur_x2 = [], None, 0.0
+        else:
+            if cur_x1 is None:
+                cur_x1 = layer.left
+            cur_x2 = layer.right
+            cur_chars.append(ch)
+
+    if cur_chars:
+        words.append(
+            {
+                "text": "".join(cur_chars),
+                "x1_ratio": cur_x1 / line_local_width if line_local_width > 0 else 0.0,
+                "x2_ratio": cur_x2 / line_local_width if line_local_width > 0 else 1.0,
+            }
+        )
+
+    return words
+
+
 class TextBox:
     """
     Generates a single line of text rendered as an image layer.
@@ -90,36 +127,7 @@ class TextBox:
         if len(char_layers) == 0 or len(text) == 0 or len(text_alpha_only) == 0:
             return None, None, None
 
-        # Compute word ratios before merging char_layers
-        line_local_width = char_layers[-1].right if char_layers else 0
-        word_local_data = []
-        cur_word_chars, cur_word_x1, cur_word_x2 = [], None, None
-
-        for ch, layer in zip(chars, char_layers):
-            if ch.isspace():
-                if cur_word_chars:
-                    word_local_data.append(
-                        {
-                            "text": "".join(cur_word_chars),
-                            "x1_ratio": cur_word_x1 / line_local_width if line_local_width > 0 else 0.0,
-                            "x2_ratio": cur_word_x2 / line_local_width if line_local_width > 0 else 1.0,
-                        }
-                    )
-                    cur_word_chars, cur_word_x1, cur_word_x2 = [], None, None
-            else:
-                if cur_word_x1 is None:
-                    cur_word_x1 = layer.left
-                cur_word_x2 = layer.right
-                cur_word_chars.append(ch)
-
-        if cur_word_chars:
-            word_local_data.append(
-                {
-                    "text": "".join(cur_word_chars),
-                    "x1_ratio": cur_word_x1 / line_local_width if line_local_width > 0 else 0.0,
-                    "x2_ratio": cur_word_x2 / line_local_width if line_local_width > 0 else 1.0,
-                }
-            )
+        word_local_data = _extract_word_ratios(chars, char_layers)
 
         text_layer = layers.Group(char_layers).merge()
 

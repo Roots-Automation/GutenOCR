@@ -75,6 +75,25 @@ class Document:
             **config.get("effect", {}),
         )
 
+    def _compute_document_size(self, size: tuple[int, int]) -> tuple[int, int]:
+        """Optionally shrink *size* based on fullscreen, landscape, and aspect-ratio config."""
+        width, height = size
+        if np.random.rand() < self.fullscreen:
+            return size
+
+        landscape = np.random.rand() < self.landscape
+        max_size = width if landscape else height
+        short_size = np.random.randint(
+            min(width, height, self.short_size[0]),
+            min(width, height, self.short_size[1]) + 1,
+        )
+        aspect_ratio = np.random.uniform(
+            min(max_size / short_size, self.aspect_ratio[0]),
+            min(max_size / short_size, self.aspect_ratio[1]),
+        )
+        long_size = int(short_size * aspect_ratio)
+        return (long_size, short_size) if landscape else (short_size, long_size)
+
     def generate(self, size):
         """
         Generate a document with paper and text content.
@@ -93,23 +112,7 @@ class Document:
                 - textbox_null_count: Number of textbox slots that produced no text
                 - textbox_total_count: Total textbox slots attempted
         """
-        width, height = size
-        fullscreen = np.random.rand() < self.fullscreen
-
-        if not fullscreen:
-            landscape = np.random.rand() < self.landscape
-            max_size = width if landscape else height
-            short_size = np.random.randint(
-                min(width, height, self.short_size[0]),
-                min(width, height, self.short_size[1]) + 1,
-            )
-            aspect_ratio = np.random.uniform(
-                min(max_size / short_size, self.aspect_ratio[0]),
-                min(max_size / short_size, self.aspect_ratio[1]),
-            )
-            long_size = int(short_size * aspect_ratio)
-            size = (long_size, short_size) if landscape else (short_size, long_size)
-
+        size = self._compute_document_size(size)
         paper_layer, bg_color = self.paper.generate(size)
         text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count = self.content.generate(
             size, bg_color

@@ -32,6 +32,24 @@ def _relative_luminance(r, g, b):
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
 
 
+def _make_adaptive_color(color_config: dict, gray_range: list[int], lum: float) -> components.Switch:
+    """Build a Switch(Gray) component whose prob is forced to 1.0 on dark backgrounds."""
+    args = {**color_config.get("args", {}), "gray": gray_range}
+    prob = color_config.get("prob", 0)
+    if lum < 0.5:
+        prob = 1.0
+    return components.Switch(components.Gray(), prob=prob, args=args)
+
+
+def _compute_layout_bbox(width: int, height: int, margin: list[float]) -> list[float]:
+    """Sample symmetric margins and return [left, top, w, h] for the content area."""
+    layout_left = width * np.random.uniform(margin[0], margin[1])
+    layout_top = height * np.random.uniform(margin[0], margin[1])
+    layout_width = max(width - layout_left * 2, 0)
+    layout_height = max(height - layout_top * 2, 0)
+    return [layout_left, layout_top, layout_width, layout_height]
+
+
 @runtime_checkable
 class TextCursor(Protocol):
     """Protocol shared by all text readers (file-backed and streaming)."""
@@ -292,23 +310,9 @@ class Content:
         lum = _relative_luminance(*bg_color)
         gray_range = [0, 64] if lum > 0.5 else [191, 255]
 
-        tb_args = {**self.textbox_color_config.get("args", {}), "gray": gray_range}
-        tb_prob = self.textbox_color_config.get("prob", 0)
-        if lum < 0.5:
-            tb_prob = 1.0
-        textbox_color = components.Switch(components.Gray(), prob=tb_prob, args=tb_args)
-
-        cc_args = {**self.content_color_config.get("args", {}), "gray": gray_range}
-        cc_prob = self.content_color_config.get("prob", 0)
-        if lum < 0.5:
-            cc_prob = 1.0
-        content_color = components.Switch(components.Gray(), prob=cc_prob, args=cc_args)
-
-        layout_left = width * np.random.uniform(self.margin[0], self.margin[1])
-        layout_top = height * np.random.uniform(self.margin[0], self.margin[1])
-        layout_width = max(width - layout_left * 2, 0)
-        layout_height = max(height - layout_top * 2, 0)
-        layout_bbox = [layout_left, layout_top, layout_width, layout_height]
+        textbox_color = _make_adaptive_color(self.textbox_color_config, gray_range, lum)
+        content_color = _make_adaptive_color(self.content_color_config, gray_range, lum)
+        layout_bbox = _compute_layout_bbox(width, height, self.margin)
 
         text_layers, texts, block_ids, words_per_line = [], [], [], []
         textbox_total_count = 0
