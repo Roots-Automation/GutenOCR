@@ -7,8 +7,8 @@ MIT License
 import numpy as np
 from synthtiger import components
 
-from elements.content import Content
-from elements.paper import Paper
+from .content import Content
+from .paper import Paper
 
 
 class Document:
@@ -83,10 +83,15 @@ class Document:
             size: Tuple of (width, height) for the document canvas
 
         Returns:
-            Tuple of (paper_layer, text_layers, texts) where:
+            Tuple of (paper_layer, text_layers, texts, block_ids,
+            words_per_line, textbox_null_count, textbox_total_count) where:
                 - paper_layer: A Layer containing the paper texture
                 - text_layers: List of Layers, one per text line
                 - texts: List of strings corresponding to each text layer
+                - block_ids: List of int block IDs, one per text line
+                - words_per_line: List of word-detail dicts per line
+                - textbox_null_count: Number of textbox slots that produced no text
+                - textbox_total_count: Total textbox slots attempted
         """
         width, height = size
         fullscreen = np.random.rand() < self.fullscreen
@@ -106,7 +111,9 @@ class Document:
             size = (long_size, short_size) if landscape else (short_size, long_size)
 
         paper_layer, bg_color = self.paper.generate(size)
-        text_layers, texts, block_ids, words_per_line = self.content.generate(size, bg_color)
+        text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count = self.content.generate(
+            size, bg_color
+        )
         self.effect.apply([*text_layers, paper_layer])
 
-        return paper_layer, text_layers, texts, block_ids, words_per_line
+        return paper_layer, text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count

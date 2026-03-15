@@ -79,6 +79,8 @@ class TextBox:
             text.prev()
 
         if len(chars):
+            # Discard the trailing space and back the reader up over it,
+            # so the next textbox starts at the character after this space.
             text.prev()
             chars.pop()
             char_layers.pop()
@@ -99,8 +101,8 @@ class TextBox:
                     word_local_data.append(
                         {
                             "text": "".join(cur_word_chars),
-                            "x1_ratio": cur_word_x1 / line_local_width,
-                            "x2_ratio": cur_word_x2 / line_local_width,
+                            "x1_ratio": cur_word_x1 / line_local_width if line_local_width > 0 else 0.0,
+                            "x2_ratio": cur_word_x2 / line_local_width if line_local_width > 0 else 1.0,
                         }
                     )
                     cur_word_chars, cur_word_x1, cur_word_x2 = [], None, None

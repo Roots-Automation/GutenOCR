@@ -6,10 +6,15 @@ Processes all directories from 0000-0075 with train/validation/test splits in pa
 
 import argparse
 import os
-import subprocess
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from build_tar import process_directory
+from constants import SPLITS
 
 
 def process_single_tar(args: tuple[str, str, str]) -> tuple[bool, str]:
@@ -36,31 +41,17 @@ def process_single_tar(args: tuple[str, str, str]) -> tuple[bool, str]:
         return False, f"Skipping {input_dir} (directory does not exist)"
 
     try:
-        # Get the directory containing build_tar.py
-        script_dir = Path(__file__).parent
-        build_tar_script = script_dir / "build_tar.py"
-
-        # Run the build_tar.py script
-        cmd = ["uv", "run", str(build_tar_script), str(input_dir), "-o", str(output_tar)]
-
         print(f"Processing {input_dir} -> {output_tar.name}")
-
-        result = subprocess.run(cmd, capture_output=True, text=True, cwd=script_dir)
-
-        if result.returncode == 0:
-            return True, f"Done: {output_tar.name}"
-        else:
-            error_msg = f"Failed {output_tar.name}: {result.stderr.strip()}"
-            return False, error_msg
-
+        process_directory(input_dir, output_tar)
+        return True, f"Done: {output_tar.name}"
     except Exception as e:
-        return False, f"Error processing {output_tar.name}: {str(e)}"
+        return False, f"Error processing {output_tar.name}: {e}"
 
 
 def generate_tasks(core_dir: str, start_dir: int = 0, end_dir: int = 75) -> list[tuple[str, str, str]]:
     """Generate list of tasks (core_dir, directory_num, split)."""
     tasks = []
-    splits = ["train", "validation", "test"]
+    splits = SPLITS
 
     for i in range(start_dir, end_dir + 1):
         directory_num = f"{i:04d}"  # Zero-padded to 4 digits

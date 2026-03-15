@@ -1,356 +1,383 @@
-# SynthDoG Grounding 🐶: Synthetic Document Generator with Grounding
+# SynthDoG Grounding: Synthetic Document Generator with Grounding Annotations
 
-This module provides a complete pipeline for generating, processing, and analyzing synthetic document data using SynthDoG (Synthetic Document Generator) for visual document understanding (VDU) with grounding annotations.
+This module generates synthetic document images with line-, word-, and block-level bounding-box annotations for visual document understanding (VDU) tasks.
 
-> **Attribution**: This module is a fork of [SynthDoG](https://github.com/clovaai/donut/tree/master/synthdog) from the [Donut](https://github.com/clovaai/donut) project by NAVER Corp., released under the MIT License. We've extended it with grounding annotations, coherent text generation, and additional tooling.
+> **Attribution**: Fork of [SynthDoG](https://github.com/clovaai/donut/tree/master/synthdog) from the [Donut](https://github.com/clovaai/donut) project by NAVER Corp. (MIT License). Extended with grounding annotations, contrast-aware rendering, HuggingFace dataset support, and additional tooling.
 
-## Overview
+## Key Features
 
-The SynthDoG Grounding pipeline consists of several key components:
+- **Multi-level grounding**: Line, word, and block bounding boxes in normalized `[x1, y1, x2, y2]` (top-left, bottom-right) coordinates
+- **Coherent text**: Words are never split across lines
+- **Contrast-aware rendering**: Text color adapts to background luminance using the WCAG relative-luminance formula
+- **Color paper backgrounds**: Random RGB paper colors with optional texture overlay
+- **Dual text sources**: Local corpus files or HuggingFace datasets (streaming supported)
+- **Multilingual**: English, Chinese, Japanese, Korean with language-specific fonts
+- **Document effects**: Perspective transforms, elastic distortion, Gaussian noise, color/shadow/blur post-processing
+- **Per-sample quality metrics**: Contrast, bbox area, textbox fill rate, and degenerate bbox counts
+- **HuggingFace-compatible output**: JSONL metadata format ready for dataset loading
 
-1.  **Data Generation**: Creating synthetic documents with grounding annotations
-2.  **Data Packaging**: Converting generated data into efficient tar archives
-3.  **Quality Analysis**: Statistical analysis and validation of generated data
-4.  **Data Extraction**: Tools for extracting and inspecting dataset contents
+> **Word boundary caveat**: Word-level bounding boxes are computed by splitting on whitespace. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for CJK languages, where the `words` field will typically contain single characters or entire lines.
 
-### Extensions to SynthDoG
-
--   Grounding Annotations: Each generated document includes detailed bounding box annotations for text lines and words.
--   Coherent text: Words are never split across lines, ensuring readability.
--   Novel data support: Hugging Face datasets for text corpora, both static and streaming.
-
-> **Note on word boundaries**: Word-level bounding boxes are computed by splitting on whitespace characters. This works well for space-delimited languages (English, etc.) but will not produce meaningful word segments for languages like Chinese or Japanese, where words are not separated by spaces. For those languages, the `words` field will typically contain single characters or entire lines rather than linguistic words.
+> **AABB after perspective**:
+>
+> - **Line AABBs** are axis-aligned bounding rectangles of the transformed quad — slightly loose after perspective/elastic distortion.
+> - **Word AABBs** are derived from quad interpolation and tightly enclose each word even after distortion.
+> - Enable `emit_quads: true` for exact 4-corner polygon coordinates at both levels.
+> - All normalized coordinates are clamped to `[0, 1]`.
+> - Samples with no visible text are silently skipped (not saved).
+> - Lines whose AABB area falls below `min_bbox_area` pixels (default 16) are excluded from annotations (but remain in the rendered image).
 
 ## Directory Structure
 
-    synthdog_grounding/
-    ├── README.md                    # This documentation
-    ├── requirements-synthdog.txt    # Python dependencies
-    │
-    ├── config/                      # SynthDoG configuration files
-    │   ├── config_en.yaml          # English documents
-    │   ├── config_en-pdfs.yaml     # English PDF-based documents
-    │   ├── config_zh.yaml          # Chinese documents
-    │   ├── config_ja.yaml          # Japanese documents
-    │   └── config_ko.yaml          # Korean documents
-    │
-    ├── elements/                    # SynthDoG document elements
-    ├── layouts/                     # SynthDoG layout definitions
-    ├── resources/                   # SynthDoG resources (fonts, backgrounds, etc.)
-    │
-    ├── template.py                  # Main SynthDoG template
-    │
-    ├── data_generation/             # Data generation scripts
-    │   └── run_synthdog_range.sh   # Generate data for ID ranges
-    │
-    ├── data_packaging/              # Data packaging and archiving
-    │   ├── build_tar.py            # Create tar archives from generated data
-    │   └── build_tars_parallel.py  # Parallel tar creation
-    │
-    ├── data_analysis/               # Data analysis and statistics
-    │   ├── generate_stats.py       # Generate statistics for tar files
-    │   ├── aggregate_stats.py      # Aggregate statistics across datasets
-    │   └── simple_batch_process.sh # Simple batch processing script
-    │
-    ├── data_extraction/             # Data extraction and inspection
-    │   ├── check_sample.py         # Extract and visualize samples
-    │   └── extract_finepdfs.py     # Extract text from FinePDFs dataset
-    │
-    └── outputs/                    # Generated data (gitignored)
+```
+synthdog_grounding/
+├── template.py                  # Main SynthDoG template (generation + save)
+├── pillow_compat.py             # Pillow 10+ compatibility patches
+├── pyproject.toml               # Project metadata and dependencies
+├── requirements-synthdog.txt    # Lightweight pip requirements
+│
+├── config/                      # Language and source configurations
+│   ├── config_en.yaml           # English (file-based corpus)
+│   ├── config_en-pdfs.yaml      # English (PDF-style layout)
+│   ├── config_huggingface.yaml  # English (HuggingFace streaming)
+│   ├── config_zh.yaml           # Chinese
+│   ├── config_ja.yaml           # Japanese
+│   └── config_ko.yaml           # Korean
+│
+├── elements/                    # Document generation components
+│   ├── background.py            # Background texture generation
+│   ├── paper.py                 # Paper color and texture (with luminance output)
+│   ├── content.py               # Text readers (file-based and HuggingFace)
+│   ├── document.py              # Document orchestration and geometric effects
+│   └── textbox.py               # Single-line text rendering and word tracking
+│
+├── layouts/                     # Text layout engines
+│   ├── grid.py                  # Single grid layout (rows x columns)
+│   └── grid_stack.py            # Stacked multi-section grid layout
+│
+├── resources/                   # Fonts, backgrounds, paper textures, corpora
+│   ├── font/{en,ja,ko,zh}/      # Language-specific font directories
+│   ├── background/              # Background texture images
+│   ├── paper/                   # Paper texture images
+│   └── corpus/                  # Text corpus files (e.g. enwiki.txt)
+│
+├── data_generation/
+│   └── run_synthdog_range.sh    # Batch generation for directory ID ranges
+│
+├── data_packaging/
+│   ├── build_tar.py             # Single tar archive from a data directory
+│   └── build_tars_parallel.py   # Parallel tar creation across directories
+│
+├── data_analysis/
+│   ├── generate_stats.py        # Statistics for individual tar files
+│   ├── aggregate_stats.py       # Aggregate statistics across datasets
+│   └── simple_batch_process.sh  # Batch processing wrapper
+│
+├── data_extraction/
+│   ├── check_sample.py          # Extract and visualize annotated samples
+│   └── extract_finepdfs.py      # Extract text from FinePDFs dataset
+│
+└── outputs/                     # Generated data (git-ignored)
+```
 
 ## Prerequisites
 
--   Python >= 3.8
--   [synthtiger](https://github.com/clovaai/synthtiger)
--   Additional dependencies: see `requirements-synthdog.txt`
+- Python >= 3.10
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+- [SynthTiger](https://github.com/clovaai/synthtiger)
 
 ```bash
-# Install synthtiger
-pip install synthtiger
+# Using uv (recommended)
+uv sync
 
-# Install additional dependencies
-pip install -r requirements-synthdog.txt
+# Or using pip
+pip install -e .
 ```
 
 ## Quick Start
 
-### 1. Generate Synthetic Data
+### Generate Synthetic Data
 
-Generate synthetic documents for a specific range of IDs:
+> **Important: run from the `synthdog_grounding/` directory.** All resource
+> paths in the YAML configs are relative to this directory. SynthTiger workers
+> that resolve paths from a different cwd will fail silently (or loop forever
+> retrying). Always `cd` here first.
 
 ```bash
-# Set environment variable (required for macOS)
+cd data/synthdog_grounding
+
+# Required on macOS — without this, worker processes may hang or crash
+# due to Objective-C fork safety checks
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
-
-# Generate data for directories 0035-0075 (configurable)
-./run_synthdog_range.sh 35 75
 ```
 
-### 2. Package Data into Archives
+#### Option A: Direct Python (recommended for small runs / local dev)
 
-Convert generated directories into efficient tar archives:
+The SynthTiger multiprocessing CLI has known issues with relative resource
+paths in worker processes. For quick local runs, invoke the template directly:
 
-```bash
-# Create a single tar archive from a data directory
-python data_packaging/build_tar.py /path/to/data/directory -o output.tar
+```python
+import yaml
+from template import SynthDoG
 
-# Or create tar archives in parallel for multiple directories
-python data_packaging/build_tars_parallel.py --core-dir /path/to/data
+with open("config/config_en.yaml") as f:
+    config = yaml.safe_load(f)
+
+t = SynthDoG(config)
+t.init_save("./outputs/SynthDoG_en")
+for i in range(50):
+    data = t.generate()
+    t.save("./outputs/SynthDoG_en", data, i)
 ```
 
-### 3. Generate Statistics
-
-Analyze the generated data and create statistical summaries:
+Or as a one-liner:
 
 ```bash
-# Process all tar files in a directory
-./data_analysis/simple_batch_process.sh /path/to/data/directory
-
-# Or process a single tar file
-python data_analysis/generate_stats.py /path/to/data.tar
+uv run python -c "
+import yaml; from template import SynthDoG
+with open('config/config_en.yaml') as f: config = yaml.safe_load(f)
+t = SynthDoG(config); t.init_save('./outputs/SynthDoG_en')
+for i in range(50): data = t.generate(); t.save('./outputs/SynthDoG_en', data, i)
+"
 ```
 
-### 4. Inspect Samples
+#### Option B: SynthTiger CLI (production runs)
 
-Extract and visualize samples from the dataset:
+When using the SynthTiger CLI, always pass `-v` so that worker errors are
+visible instead of silently retried:
 
 ```bash
-# Extract first 10 samples with bounding box annotations
-python data_extraction/check_sample.py /path/to/data.tar -n 10
+# Generate English documents (50 samples, 4 workers)
+uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py SynthDoG config/config_en.yaml
+
+# Generate using HuggingFace streaming corpus
+uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py SynthDoG config/config_huggingface.yaml
+
+# Batch generation for directory ranges (e.g., dirs 0035-0075)
+bash data_generation/run_synthdog_range.sh 35 75
+```
+
+> **Troubleshooting:** If the CLI appears to hang, re-run with `-v`. The most
+> common cause is `RuntimeError: Texture path is not specified` — this means
+> worker processes cannot resolve relative resource paths. Ensure you are
+> running from the `synthdog_grounding/` directory.
+
+#### SynthTiger CLI Arguments
+
+| Flag | Description |
+|------|-------------|
+| `-o` | Output directory path |
+| `-c` | Number of documents to generate |
+| `-w` | Number of worker processes |
+| `-s` | Random seed for reproducibility |
+| `-v` | Verbose output (print error messages) — **always recommended** |
+
+### Inspect Samples
+
+```bash
+# Extract first 25 samples with bounding box annotations
+uv run python data_extraction/check_sample.py /path/to/data.tar
 
 # Extract specific samples with text labels
-python data_extraction/check_sample.py /path/to/data.tar --ids 00087 00042 --label-with-text
+uv run python data_extraction/check_sample.py /path/to/data.tar --ids 00087 00042 --label-with-text
 ```
 
-## Detailed Usage
+| Flag | Description | Default |
+|------|-------------|---------|
+| `-o, --output` | Output directory | `./check_sample` |
+| `-n, --first-n` | Number of samples to extract | 25 |
+| `--ids` | Specific sample IDs to extract | — |
+| `--line-width` | Bbox annotation line width | 3 |
+| `--label-with-text` | Overlay text content in bbox labels on the annotated image | off |
+| `--font-path` | Custom TTF font for labels | — |
 
-### Data Generation
-
-The data generation process uses SynthDoG with custom configurations for different languages and document types.
-
-#### Basic Generation
+### Package Data into Archives
 
 ```bash
-# Generate English documents
-synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py SynthDoG config/config_en.yaml
+# Single tar archive
+uv run python data_packaging/build_tar.py /path/to/data/directory -o output.tar
 
-# Generate multilingual documents
-synthtiger -o ./outputs/SynthDoG_zh -c 50 -w 4 -v template.py SynthDoG config/config_zh.yaml  # Chinese
-synthtiger -o ./outputs/SynthDoG_ja -c 50 -w 4 -v template.py SynthDoG config/config_ja.yaml  # Japanese
-synthtiger -o ./outputs/SynthDoG_ko -c 50 -w 4 -v template.py SynthDoG config/config_ko.yaml  # Korean
+# Parallel tar creation across directories
+uv run python data_packaging/build_tars_parallel.py --core-dir /path/to/data
 ```
 
-#### Key Arguments
-
--   `-o` : Output directory path
--   `-c` : Number of documents to generate
--   `-w` : Number of worker processes
--   `-s` : Random seed for reproducibility
--   `-v` : Verbose output (print error messages)
-
-### Data Packaging
-
-#### Single Archive Creation
+### Generate Statistics
 
 ```bash
-# Create a tar archive from a data directory
-python data_packaging/build_tar.py /path/to/data/directory -o output.tar
+# Single tar file
+uv run python data_analysis/generate_stats.py /path/to/data.tar
 
-# Options:
-# -o, --output: Output tar file path (defaults to <directory>.tar)
+# Batch process all tar files in a directory
+bash data_analysis/simple_batch_process.sh /path/to/data/directory
+
+# Aggregate across multiple tar files
+uv run python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
 ```
-
-#### Parallel Archive Creation
-
-```bash
-# Process all directories in parallel (uses SYNTHDOG_DATA_DIR env var or ./outputs default)
-python data_packaging/build_tars_parallel.py --core-dir /path/to/data
-
-# Options:
-# --core-dir: Directory containing numbered subdirectories
-# --workers: Maximum number of parallel workers (default: CPU count)
-# --start/--end: Directory range to process
-```
-
-### Statistical Analysis
-
-#### Generate Statistics for Single Archive
-
-```bash
-# Generate comprehensive statistics for a tar file
-python data_analysis/generate_stats.py /path/to/data.tar
-
-# Output: Creates data.stats.csv with detailed metrics
-```
-
-#### Batch Statistics Processing
-
-```bash
-# Process all tar files in a directory (creates .stats.csv files)
-./data_analysis/simple_batch_process.sh /path/to/data/directory
-```
-
-#### Aggregate Statistics
-
-```bash
-# Combine statistics from multiple tar files in a directory
-python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
-
-# Or specify tar files directly
-python data_analysis/aggregate_stats.py file1.tar file2.tar -o aggregated_stats
-
-# Options:
-# -d, --directory: Directory to scan for tar files with .stats.csv files
-# -o, --output: Output path prefix (creates .csv and .json files)
-```
-
-### Data Inspection and Validation
-
-#### Extract Sample Images
-
-```bash
-# Extract and visualize first 25 samples with bounding box annotations
-python data_extraction/check_sample.py /path/to/data.tar
-
-# Extract specific samples with custom options
-python data_extraction/check_sample.py /path/to/data.tar --ids 00087 00042 -o ./my_samples --label-with-text --line-width 5
-```
-
-CLI options:
-
--   `tar_file`: Path to tar archive to inspect (required)
--   `-o, --output`: Output directory (default: `./check_sample`)
--   `-n, --first-n`: Number of samples to extract (default: 25)
--   `--ids`: Specific sample IDs to extract
--   `--line-width`: Annotation line thickness (default: 3)
--   `--label-with-text`: Include text content in annotation labels
--   `--font-path`: Custom TTF font for labels
-
-#### Extract Text Corpus
-
-```bash
-# Extract text from FinePDFs dataset for training corpus
-# Note: This script streams from HuggingFace and extracts 1M ASCII samples
-python data_extraction/extract_finepdfs.py
-```
-
-## Configuration Files
-
-### Language-Specific Configs
-
--   `config_en.yaml`: English documents with standard layouts
--   `config_en-pdfs.yaml`: English documents with PDF-style layouts
--   `config_zh.yaml`: Chinese documents
--   `config_ja.yaml`: Japanese documents
--   `config_ko.yaml`: Korean documents
-
-Each config file specifies:
-
--   Text corpus sources
--   Font selections
--   Layout parameters
--   Image quality settings
--   Document dimensions
-
-### Custom Configuration
-
-To create custom configurations:
-
-1.  Copy an existing config file
-2.  Modify corpus paths, fonts, and layout parameters
-3.  Update resource paths as needed
-4.  Test with small sample generation first
 
 ## Output Format
 
-### Generated Data Structure
+Each generation run produces a split directory structure:
 
-Each generated sample consists of:
+```
+outputs/<run_name>/
+├── train/
+│   ├── image_0.jpg
+│   ├── image_3.jpg
+│   ├── ...
+│   └── metadata.jsonl
+├── validation/
+│   └── ...
+└── test/
+    └── ...
+```
 
--   **Image file**: `{id}.jpg` - The synthetic document image
--   **Annotation file**: `{id}.json` - Grounding annotations with:
-    -   Text lines with bounding boxes
-    -   Character-level annotations
-    -   Layout information
-    -   Metadata (DPI, dimensions, etc.)
+Split assignment follows the configured ratio (default 80/10/10 train/val/test).
 
-### Statistics Output
+### Metadata Schema
 
-Statistics files contain comprehensive metrics:
+Each line in `metadata.jsonl` is a JSON object:
 
--   Sample counts and distributions
--   Image dimensions and quality metrics
--   Text statistics (character counts, word counts)
--   Bounding box analysis (overlap, density)
--   Layout complexity measures
+```json
+{
+  "file_name": "image_0.jpg",
+  "ground_truth": "{\"gt_parse\": {\"text_lines\": [...], \"text_blocks\": [...], \"text_words\": [...], \"quality_metrics\": {...}}}"
+}
+```
 
-## Performance Optimization
+The `ground_truth` field is a JSON string containing a `gt_parse` object with the following keys:
 
-### Generation Performance
+#### `text_lines`
 
--   Use appropriate worker count (`-w`) based on CPU cores
--   Optimize batch sizes for memory usage
--   Use SSD storage for faster I/O
--   Monitor memory usage during generation
+Per-line text with bounding box and identifiers:
 
-### Processing Performance
+```json
+{"text": "hello world", "bbox": [0.1, 0.2, 0.5, 0.25], "line_id": 0, "block_id": 0}
+```
 
--   Use parallel processing scripts for large datasets
--   Set appropriate timeout values for batch operations
--   Process statistics incrementally to avoid recomputation
--   Use compression for archive storage
+When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
 
-## Troubleshooting
+#### `text_blocks`
 
-### Common Issues
+Block-level groupings (lines sharing the same visual column/section):
 
-1.  **Memory errors during generation**
+```json
+{"block_id": 0, "bbox": [0.1, 0.2, 0.5, 0.4], "line_ids": [0, 1, 2]}
+```
 
-    -   Reduce worker count (`-w`)
-    -   Decrease batch size
-    -   Monitor system memory usage
+#### `text_words`
 
-2.  **Missing dependencies**
+Word-level grounding with line association:
 
-    -   Install synthtiger: `pip install synthtiger`
-    -   Install additional deps: `pip install -r requirements-synthdog.txt`
+```json
+{"text": "hello", "bbox": [0.1, 0.2, 0.3, 0.25], "word_id": 0, "line_id": 0}
+```
 
-3.  **Archive creation failures**
+When `emit_quads` is enabled, each entry also includes a `"quad"` field (see [Quad Coordinates](#quad-coordinates) below).
 
-    -   Check disk space availability
-    -   Verify input directory structure
-    -   Use appropriate compression levels
+#### Quad Coordinates
 
-4.  **Statistics processing timeouts**
-    -   Increase timeout values in batch scripts
-    -   Process files individually if needed
-    -   Check for corrupted tar files
+When `emit_quads: true` is set in the config, line and word entries include a `"quad"` field containing the 4-corner polygon coordinates after perspective/elastic distortion. This provides tighter ground truth than the axis-aligned bounding box.
 
-### Environment Variables
+Format: `[[x, y], [x, y], [x, y], [x, y]]` — corners in **TL, TR, BR, BL** order, normalized to `[0, 1]` relative to image dimensions.
+
+Word quads are computed via bilinear interpolation of the word's `x1_ratio`/`x2_ratio` along the parent line's quad edges. When no perspective is applied, quads degenerate to the same rectangle as the AABB.
+
+This flag is backwards compatible: when `emit_quads` is `false` (the default), output is identical to the current format.
+
+#### `quality_metrics`
+
+Per-sample quality and integrity signals:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `min_line_contrast` | `float \| null` | Minimum RMS contrast (std of grayscale pixel values) across all surviving line bbox regions. `null` if no measurable lines. |
+| `mean_line_contrast` | `float \| null` | Mean RMS contrast across all surviving line bbox regions. |
+| `min_line_bbox_area_px` | `int \| null` | Smallest surviving line bbox area in pixels. |
+| `min_word_bbox_area_px` | `int \| null` | Smallest surviving word bbox area in pixels. |
+| `degenerate_line_count` | `int` | Number of lines removed because their bbox area was below `min_bbox_area`. |
+| `degenerate_word_count` | `int` | Number of words removed (belonging to degenerate lines). |
+| `textbox_null_count` | `int` | Number of textbox layout slots that produced no text (e.g., text didn't fit). |
+| `textbox_total_count` | `int` | Total textbox layout slots attempted. |
+| `image_size` | `[int, int]` | Image dimensions `[width, height]` in pixels. |
+
+## Generation Pipeline
+
+The `SynthDoG` template in `template.py` orchestrates this pipeline per image:
+
+1. **Size**: Randomize dimensions (short side 720-1024px, aspect ratio 1:1 to 2:1, 50% landscape)
+2. **Background**: Generate background texture layer
+3. **Paper**: Generate paper layer (50% chance of random RGB color, optional texture overlay)
+4. **Content**: Render text onto the paper using the selected text reader and layout
+   - Text color adapts to paper luminance for contrast
+   - Words are never split across lines
+5. **Document effects**: Apply elastic distortion, perspective transform, and Gaussian noise to the document group
+6. **Bbox capture**: Compute line/word/block bounding boxes from the transformed text layers (AABBs)
+7. **Degenerate filtering**: Remove annotations for lines whose bbox area is below `min_bbox_area` pixels
+8. **Compositing**: Merge document group with background
+9. **Pixel effects**: Apply color shift, shadow, contrast, brightness, motion blur, and Gaussian blur
+10. **Quality metrics**: Measure RMS contrast per line, compute bbox area stats, record textbox fill rate
+11. **Save**: Write JPEG image and append metadata (including `quality_metrics`) to `metadata.jsonl`
+
+> **Multi-worker safety**: SynthTiger calls `save()` from the main process only, so there is no risk of concurrent writes corrupting the JSONL metadata file, regardless of `-w` worker count.
+
+## Known Limitations
+
+- **Contrast-aware color is pre-effects**: Text color is chosen based on the base paper RGB color *before* texture overlay and all pixel-level effects (shadow, brightness, contrast, blur). Actual post-effects contrast may be lower than what the WCAG-based color selection targeted. Use `min_line_contrast` in `quality_metrics` to filter low-contrast samples.
+- **Elastic distortion warps pixels but not quads**: Quad coordinates reflect perspective transforms only. Elastic distortion modifies the rendered pixels without updating annotation coordinates. For the moderate distortion levels used (alpha ≤ 1, sigma ≤ 0.5), this is a good approximation.
+- **Motion blur shifts apparent text position**: Motion blur (k=3–5) is applied after bbox capture and can shift apparent text position by ~1–2px beyond annotated boundaries.
+- **Shadow/brightness reduce legibility**: These pixel-level effects can reduce text legibility below what the WCAG-based color selection targeted. The `min_line_contrast` metric captures this.
+
+## Configuration
+
+Each YAML config file controls the full pipeline. Key sections:
+
+| Section | Controls |
+|---------|----------|
+| `quality` | JPEG quality range (e.g. `[50, 95]`) |
+| `landscape` | Probability of landscape orientation |
+| `emit_quads` | Emit quad (4-corner) coordinates for lines and words (default `false`) |
+| `min_bbox_area` | Minimum line bbox area in pixels; lines below this are excluded from annotations (default `16`) |
+| `short_size` | Short dimension range in pixels |
+| `aspect_ratio` | Min/max aspect ratio |
+| `background` | Background texture source |
+| `document.paper` | Paper color ranges and texture source |
+| `document.content.text` | Text corpus path or HuggingFace dataset config |
+| `document.content.font` | Font paths and size ranges |
+| `document.content.layout` | Grid dimensions, text scale, alignment |
+| `document.effect` | Geometric effects (elastic, perspective, noise) |
+| `effect` | Pixel-level effects (color, shadow, blur, contrast) |
+| `split_ratio` | Train/val/test split proportions (default `[0.8, 0.1, 0.1]`) |
+
+### HuggingFace Text Source
+
+To use a HuggingFace dataset as the text corpus, set `type: huggingface` in the `text` section:
+
+```yaml
+text:
+  type: huggingface
+  dataset_name: "allenai/c4"
+  subset: "en"
+  split: "train"
+  streaming: true
+  buffer_size: 1000  # number of documents pre-loaded from the streaming iterator at a time
+```
+
+See `config/config_huggingface.yaml` for a complete example.
+
+## Environment Variables
 
 ```bash
-# Required for macOS
+# Required on macOS for multiprocessing — without this, macOS will crash
+# worker processes due to Objective-C fork safety checks
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 # Optional performance tuning
-export OMP_NUM_THREADS=1  # Limit OpenMP threads
-export MKL_NUM_THREADS=1  # Limit MKL threads
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
 ```
 
-## Development
+## License
 
-### Adding New Analysis Tools
+MIT License. See [LICENSE](LICENSE) for details.
 
-1.  Create new Python scripts in appropriate subdirectories
-2.  Follow the existing argument parsing patterns
-3.  Add comprehensive docstrings and type hints
-4.  Update this README with usage instructions
-
-### Extending Configuration
-
-1.  Copy existing config files as templates
-2.  Modify corpus sources and parameters
-3.  Test with small sample generations
-4.  Document new config options
-
-For questions or issues, please refer to the [SynthTiger documentation](https://github.com/clovaai/synthtiger) or create an issue in this repository.
+For questions or issues, please refer to the [SynthTiger documentation](https://github.com/clovaai/synthtiger) or create an issue in the [GutenOCR repository](https://github.com/Roots-Automation/GutenOCR/issues).

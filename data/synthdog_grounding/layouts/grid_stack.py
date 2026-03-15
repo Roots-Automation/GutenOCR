@@ -4,9 +4,12 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from __future__ import annotations
+
 import numpy as np
 
-from layouts import Grid
+from ._utils import LayoutCell, sample_fill
+from .grid import Grid
 
 
 class GridStack:
@@ -17,13 +20,15 @@ class GridStack:
     useful for generating documents with multiple paragraphs or
     distinct text regions separated by spacing.
 
+    Failure contract: GridStack.generate() returns an empty list when no
+    valid grids fit, while Grid.generate() returns None. The difference is
+    intentional — GridStack always returns an iterable of grid layouts
+    (possibly empty), so callers can unconditionally iterate over the result.
+
     Attributes:
         text_scale: [min, max] range for text size relative to box dimensions
-        max_row: Maximum number of rows per grid section
-        max_col: Maximum number of columns per grid section
         fill: [min, max] range for horizontal fill ratio
         full: Probability of using full fill
-        align: List of valid alignment options
         stack_spacing: [min, max] range for spacing between stacked grids
         stack_fill: [min, max] range for vertical fill of the stacked area
         stack_full: Probability of using full vertical fill
@@ -36,7 +41,7 @@ class GridStack:
         ...         print(f"Box at {bbox} in column {col_idx}")
     """
 
-    def __init__(self, config):
+    def __init__(self, config: dict[str, object], *, grid: Grid | None = None) -> None:
         """
         Initialize a GridStack layout with the given configuration.
 
@@ -51,77 +56,121 @@ class GridStack:
                 - stack_spacing: [min, max] vertical spacing range (default: [0, 0.05])
                 - stack_fill: [min, max] vertical fill range (default: [1, 1])
                 - stack_full: Probability of full vertical fill (default: 0)
+            grid: Optional pre-configured Grid collaborator. If None, a Grid is
+                built from the relevant keys in *config*.
         """
         self.text_scale = config.get("text_scale", [0.05, 0.1])
-        self.max_row = config.get("max_row", 5)
-        self.max_col = config.get("max_col", 3)
         self.fill = config.get("fill", [0, 1])
         self.full = config.get("full", 0)
-        self.align = config.get("align", ["left", "right", "center"])
         self.stack_spacing = config.get("stack_spacing", [0, 0.05])
         self.stack_fill = config.get("stack_fill", [1, 1])
         self.stack_full = config.get("stack_full", 0)
-        self._grid = Grid(
-            {
-                "text_scale": self.text_scale,
-                "max_row": self.max_row,
-                "max_col": self.max_col,
-                "align": self.align,
-            }
+        # fill, full, and text_scale intentionally omitted: generate() always
+        # overrides fill_range and text_scale_range at call time.
+        self._grid = (
+            grid
+            if grid is not None
+            else Grid(
+                {
+                    "max_row": config.get("max_row", 5),
+                    "max_col": config.get("max_col", 3),
+                    "align": config.get("align", ["left", "right", "center"]),
+                }
+            )
         )
 
-    def generate(self, bbox):
+    def generate(self, bbox: list[float]) -> list[list[LayoutCell]]:
         """
         Generate stacked grid layouts within the given bounding box.
 
         Args:
-            bbox: List of [left, top, width, height] defining the area
+            bbox: List of [left, top, width, height] defining the area.
 
         Returns:
             List of grid layouts, where each grid layout is a list of
-            (bbox, align, col_idx) triples. Returns an empty list if no valid
+            LayoutCell(bbox, align, col_idx). Returns an empty list if no valid
             grids could be generated.
         """
         left, top, width, height = bbox
 
+        if width <= 0 or height <= 0:
+            return []
+
         stack_spacing = np.random.uniform(self.stack_spacing[0], self.stack_spacing[1])
         stack_spacing *= min(width, height)
 
-        stack_full = np.random.rand() < self.stack_full
-        stack_fill = np.random.uniform(self.stack_fill[0], self.stack_fill[1])
-        stack_fill = 1 if stack_full else stack_fill
+        stack_fill = sample_fill(self.stack_fill, self.stack_full)
+        fill = sample_fill(self.fill, self.full)
 
-        full = np.random.rand() < self.full
-        fill = np.random.uniform(self.fill[0], self.fill[1])
-        fill = 1 if full else fill
-        self._grid.fill = [fill, fill]
+        layouts, y_cursor = self._generate_grids(left, top, width, height, stack_fill, fill, stack_spacing)
+        if not layouts:
+            return []
 
+        return self._redistribute_spacing(layouts, height, y_cursor, stack_spacing)
+
+    def _generate_grids(
+        self,
+        left: float,
+        top: float,
+        width: float,
+        height: float,
+        stack_fill: float,
+        fill: float,
+        stack_spacing: float,
+    ) -> tuple[list[list[LayoutCell]], float]:
+        """Generate grids sequentially until the available height is exhausted.
+
+        Returns (layouts, y_cursor) where y_cursor is the bottom edge of the
+        last grid plus one spacing gap (relative to *top*).
+        """
         layouts = []
-        line = 0
+        y_cursor = 0.0
 
         while True:
-            grid_size = (width, height * stack_fill - line)
-            text_scale = np.random.uniform(self.text_scale[0], self.text_scale[1])
-            text_size = min(width, height) * text_scale
-            text_scale = text_size / min(grid_size)
-            self._grid.text_scale = [text_scale, text_scale]
+            remaining = height * stack_fill - y_cursor
+            if remaining <= 0:
+                break
 
-            layout = self._grid.generate([left, top + line, *grid_size])
+            text_size = min(width, height) * np.random.uniform(self.text_scale[0], self.text_scale[1])
+            text_scale = text_size / min(width, remaining)
+
+            layout = self._grid.generate(
+                [left, top + y_cursor, width, remaining],
+                fill_range=(fill, fill),
+                text_scale_range=(text_scale, text_scale),
+            )
             if layout is None:
                 break
 
-            line = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
+            y_cursor = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
             layouts.append(layout)
 
-        line = max(line - stack_spacing, 0)
-        space = max(height - line, 0)
+        return layouts, y_cursor
+
+    def _redistribute_spacing(
+        self,
+        layouts: list[list[LayoutCell]],
+        height: float,
+        y_cursor: float,
+        stack_spacing: float,
+    ) -> list[list[LayoutCell]]:
+        """Distribute leftover vertical space evenly across grid sections.
+
+        Randomly partitions the unused height into (len(layouts) + 1) gaps
+        and shifts each grid's cells downward by the cumulative offset.
+        """
+        total_used = max(y_cursor - stack_spacing, 0)
+        space = max(height - total_used, 0)
         spaces = np.random.rand(len(layouts) + 1)
         spaces *= space / sum(spaces) if sum(spaces) > 0 else 0
         spaces = np.cumsum(spaces)
 
-        for layout, space in zip(layouts, spaces):
-            for bbox, *_ in layout:
-                x, y, w, h = bbox
-                bbox[:] = [x, y + space, w, h]
+        redistributed = []
+        for layout, y_offset in zip(layouts, spaces):
+            new_layout = []
+            for cell_bbox, align, col_idx in layout:
+                x, y, w, h = cell_bbox
+                new_layout.append(LayoutCell((x, y + y_offset, w, h), align, col_idx))
+            redistributed.append(new_layout)
 
-        return layouts
+        return redistributed

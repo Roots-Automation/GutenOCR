@@ -46,6 +46,11 @@ import tarfile
 import time
 from pathlib import Path
 
+# Allow standalone execution from the data_packaging/ directory.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from serialization import KEY_TEXT_LINES, KEY_TEXT_WORDS, decode_metadata
+
 try:
     from PIL import Image
 except ImportError:
@@ -183,28 +188,10 @@ def process_directory(input_dir: Path, output_tar: Path):
                 # If metadata fails, we can still proceed with width/height as None
                 width, height, dpi = None, None, None
 
-            # Parse ground_truth (may be a JSON-encoded string)
-            gt = rec.get("ground_truth", {})
-            if isinstance(gt, str):
-                try:
-                    gt = json.loads(gt)
-                except Exception as e:
-                    print(
-                        f"[warning] Could not parse 'ground_truth' JSON string on line {line_no}: {e}", file=sys.stderr
-                    )
-                    gt = {}
-
-            text_lines = []
-            try:
-                text_lines = gt["gt_parse"]["text_lines"]
-            except Exception:
-                pass
-
-            text_words = []
-            try:
-                text_words = gt["gt_parse"]["text_words"]
-            except Exception:
-                pass
+            # Parse ground_truth via shared serialization schema
+            gt_parse = decode_metadata(rec)
+            text_lines = gt_parse.get(KEY_TEXT_LINES, [])
+            text_words = gt_parse.get(KEY_TEXT_WORDS, [])
 
             # Create the new JSON payload
             new_obj = {

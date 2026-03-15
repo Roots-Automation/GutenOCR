@@ -4,15 +4,24 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from __future__ import annotations
+
+import logging
 import re
 from collections import OrderedDict
+from typing import Protocol, runtime_checkable
 
 import numpy as np
-from datasets import load_dataset
 from synthtiger import components
 
-from elements.textbox import TextBox
-from layouts import GridStack
+logger = logging.getLogger(__name__)
+
+try:
+    from layouts import GridStack, Layout
+except ImportError:
+    from ..layouts import GridStack, Layout
+
+from .textbox import TextBox
 
 
 def _relative_luminance(r, g, b):
@@ -23,9 +32,22 @@ def _relative_luminance(r, g, b):
     return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
 
 
+@runtime_checkable
+class TextCursor(Protocol):
+    """Protocol shared by all text readers (file-backed and streaming)."""
+
+    def __len__(self) -> int: ...
+    def __iter__(self) -> TextCursor: ...
+    def __next__(self) -> str: ...
+    def move(self, idx: int) -> None: ...
+    def next(self) -> None: ...
+    def prev(self) -> None: ...
+    def get(self) -> str: ...
+
+
 class TextReader:
     def __init__(self, path, cache_size=2**28, block_size=2**20):
-        self.fp = open(path, encoding="utf-8")
+        self.fp = open(path, encoding="utf-8")  # noqa: SIM115
         self.length = 0
         self.offsets = [0]
         self.cache = OrderedDict()
@@ -40,6 +62,13 @@ class TextReader:
                 break
             self.length += len(text)
             self.offsets.append(self.fp.tell())
+
+    def close(self):
+        if self.fp and not self.fp.closed:
+            self.fp.close()
+
+    def __del__(self):
+        self.close()
 
     def __len__(self):
         return self.length
@@ -84,11 +113,14 @@ class HuggingFaceTextReader:
     def __init__(
         self, dataset_name="HuggingFaceFW/finepdfs", split="train", streaming=True, buffer_size=1000, subset=None
     ):
+        from datasets import load_dataset
+
         self.dataset_name = dataset_name
         self.split = split
         self.streaming = streaming
         self.buffer_size = buffer_size
         self.subset = subset
+        self._warned_unrecognized = False
 
         # Load the dataset in streaming mode
         if subset is not None:
@@ -98,42 +130,55 @@ class HuggingFaceTextReader:
 
         # Initialize text buffer and position tracking
         self.text_buffer = []
-        self.current_text = ""
+        self._joined_text_cache = None
         self.idx = 0
         self.dataset_iter = iter(self.dataset)
 
         # Pre-load some text
         self._fill_buffer()
 
+    def _extract_text(self, sample):
+        """Extract text from a HuggingFace sample, returning None for unrecognized formats."""
+        if "text" in sample:
+            return sample["text"]
+        if "content" in sample:
+            return sample["content"]
+        if not self._warned_unrecognized:
+            logger.warning(
+                "Skipping HuggingFace sample with no 'text' or 'content' key (keys: %s)", list(sample.keys())
+            )
+            self._warned_unrecognized = True
+        return None
+
     def _fill_buffer(self):
         """Fill the buffer with text from the next few documents"""
-        try:
-            for _ in range(self.buffer_size):
-                sample = next(self.dataset_iter)
-                # Extract text content from the PDF document
-                if "text" in sample:
-                    text = sample["text"]
-                elif "content" in sample:
-                    text = sample["content"]
-                else:
-                    # If we can't find text directly, try to get it from other fields
-                    text = str(sample)
+        for _attempt in range(2):
+            try:
+                for _ in range(self.buffer_size):
+                    sample = next(self.dataset_iter)
+                    text = self._extract_text(sample)
+                    if text is None:
+                        continue
 
-                # Clean the text - remove excessive whitespace, keep only printable chars
-                text = re.sub(r"\s+", " ", text).strip()
-                if text:
-                    self.text_buffer.append(text)
-        except StopIteration:
-            # If we run out of data, restart the iterator
-            self.dataset_iter = iter(self.dataset)
-            if not self.text_buffer:  # Only refill if buffer is empty
-                self._fill_buffer()
+                    # Clean the text - remove excessive whitespace, keep only printable chars
+                    text = re.sub(r"\s+", " ", text).strip()
+                    if text:
+                        self.text_buffer.append(text)
+                break  # successfully filled
+            except StopIteration:
+                # If we run out of data, restart the iterator
+                self.dataset_iter = iter(self.dataset)
+                if self.text_buffer:
+                    break
+        self._joined_text_cache = None
 
     def _get_current_text(self):
-        """Get current concatenated text from buffer"""
+        """Get current concatenated text from buffer (cached)."""
         if not self.text_buffer:
             self._fill_buffer()
-        return " ".join(self.text_buffer)
+        if self._joined_text_cache is None:
+            self._joined_text_cache = " ".join(self.text_buffer)
+        return self._joined_text_cache
 
     def __len__(self):
         # Return a large number since we're streaming
@@ -154,6 +199,8 @@ class HuggingFaceTextReader:
             # If we need more text, refresh the buffer
             self._refresh_buffer()
             current_text = self._get_current_text()
+        # _refresh_buffer already clamps self.idx, but move() sets an
+        # explicit target position so we override it here.
         self.idx = idx % len(current_text) if current_text else 0
 
     def next(self):
@@ -181,26 +228,42 @@ class HuggingFaceTextReader:
         return current_text[self.idx]
 
     def _refresh_buffer(self):
-        """Refresh the buffer with new text"""
+        """Refresh the buffer with new text and clamp idx to stay in bounds."""
         # Keep some text from current buffer and add new text
         if len(self.text_buffer) > self.buffer_size // 4:
             self.text_buffer = self.text_buffer[-self.buffer_size // 4 :]
+        self._joined_text_cache = None
 
         try:
             for _ in range(self.buffer_size * 3 // 4):
                 sample = next(self.dataset_iter)
-                if "text" in sample:
-                    text = sample["text"]
-                elif "content" in sample:
-                    text = sample["content"]
-                else:
-                    text = str(sample)
+                text = self._extract_text(sample)
+                if text is None:
+                    continue
 
                 text = re.sub(r"\s+", " ", text).strip()
                 if text:
                     self.text_buffer.append(text)
         except StopIteration:
             self.dataset_iter = iter(self.dataset)
+
+        # The buffer may have shrunk, so clamp idx to stay in bounds.
+        # Position is approximate — semantic continuity is not needed.
+        new_text = self._get_current_text()
+        if new_text:
+            self.idx = self.idx % len(new_text)
+        else:
+            self.idx = 0
+
+
+_READER_TYPES: dict[str, type[TextCursor]] = {
+    "file": TextReader,
+    "huggingface": HuggingFaceTextReader,
+}
+
+_LAYOUT_TYPES: dict[str, type] = {
+    "grid_stack": GridStack,
+}
 
 
 class Content:
@@ -209,22 +272,16 @@ class Content:
 
         # Choose text reader based on configuration
         text_config = config.get("text", {})
-        if text_config.get("use_huggingface", False):
-            # Use HuggingFace dataset reader
-            hf_config = {
-                "dataset_name": text_config.get("dataset_name", "HuggingFaceFW/finepdfs"),
-                "split": text_config.get("split", "train"),
-                "streaming": text_config.get("streaming", True),
-                "buffer_size": text_config.get("buffer_size", 1000),
-                "subset": text_config.get("subset", None),
-            }
-            self.reader = HuggingFaceTextReader(**hf_config)
-        else:
-            # Use traditional file-based text reader
-            self.reader = TextReader(**text_config)
+        reader_type = text_config.get("type", "file")
+        reader_cls = _READER_TYPES[reader_type]  # KeyError = clear signal of bad config
+        reader_kwargs = {k: v for k, v in text_config.items() if k != "type"}
+        self.reader: TextCursor = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))
-        self.layout = GridStack(config.get("layout", {}))
+        layout_config = config.get("layout", {})
+        layout_type = layout_config.get("type", "grid_stack")
+        layout_cls = _LAYOUT_TYPES[layout_type]
+        self.layout: Layout = layout_cls(layout_config)
         self.textbox = TextBox(config.get("textbox", {}))
         self.textbox_color_config = config.get("textbox_color", {})
         self.content_color_config = config.get("content_color", {})
@@ -254,6 +311,8 @@ class Content:
         layout_bbox = [layout_left, layout_top, layout_width, layout_height]
 
         text_layers, texts, block_ids, words_per_line = [], [], [], []
+        textbox_total_count = 0
+        textbox_null_count = 0
         layouts = self.layout.generate(layout_bbox)
         self.reader.move(np.random.randint(len(self.reader)))
 
@@ -265,11 +324,12 @@ class Content:
             font = self.font.sample()
 
             for bbox, align, col_idx in layout:
+                textbox_total_count += 1
                 x, y, w, h = bbox
                 text_layer, text, word_local_data = self.textbox.generate((w, h), self.reader, font)
-                self.reader.prev()
 
                 if text_layer is None:
+                    textbox_null_count += 1
                     continue
 
                 text_layer.center = (x + w / 2, y + h / 2)
@@ -291,4 +351,4 @@ class Content:
 
         content_color.apply(text_layers)
 
-        return text_layers, texts, block_ids, words_per_line
+        return text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count
