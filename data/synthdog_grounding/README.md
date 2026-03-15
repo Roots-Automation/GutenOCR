@@ -32,6 +32,7 @@ This module generates synthetic document images with line-, word-, and block-lev
 ```
 synthdog_grounding/
 ├── template.py                  # Main SynthDoG template (generation + save)
+├── annotations.py               # Annotation construction, filtering, and quality metrics
 ├── serialization.py             # Shared schema, constants, and annotation dataclasses
 ├── pillow_compat.py             # Pillow 10+ compatibility patches
 ├── pyproject.toml               # Project metadata and dependencies
