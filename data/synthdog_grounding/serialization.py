@@ -49,6 +49,30 @@ KEY_TEXT_WORDS = "text_words"
 KEY_QUALITY_METRICS = "quality_metrics"
 
 
+# ── Annotation → dict helpers ─────────────────────────────────────────
+
+
+def line_annotation_to_dict(ln: LineAnnotation) -> dict[str, Any]:
+    """Convert a LineAnnotation to a JSON-serializable dict."""
+    entry: dict[str, Any] = {"text": ln.text, "bbox": ln.bbox, "line_id": ln.line_id, "block_id": ln.block_id}
+    if ln.quad is not None:
+        entry["quad"] = ln.quad
+    return entry
+
+
+def word_annotation_to_dict(wd: WordAnnotation) -> dict[str, Any]:
+    """Convert a WordAnnotation to a JSON-serializable dict."""
+    entry: dict[str, Any] = {"text": wd.text, "bbox": wd.bbox, "word_id": wd.word_id, "line_id": wd.line_id}
+    if wd.quad is not None:
+        entry["quad"] = wd.quad
+    return entry
+
+
+def block_annotation_to_dict(blk: BlockAnnotation) -> dict[str, Any]:
+    """Convert a BlockAnnotation to a JSON-serializable dict."""
+    return {"block_id": blk.block_id, "bbox": blk.bbox, "line_ids": blk.line_ids}
+
+
 def encode_metadata(
     image_filename: str,
     keys: list[str],

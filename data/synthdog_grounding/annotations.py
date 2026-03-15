@@ -216,6 +216,7 @@ def compute_quality_metrics(
         "textbox_null_count": int(null_ct),
         "textbox_total_count": int(total_ct),
         "image_size": [int(w), int(h)],
+        "word_segmentation_method": "whitespace",
     }
 
 

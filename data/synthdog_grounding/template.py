@@ -36,7 +36,10 @@ from serialization import (  # noqa: E402
     KEY_TEXT_WORDS,
     SPLITS,
     LineAnnotation,
+    block_annotation_to_dict,
     encode_metadata,
+    line_annotation_to_dict,
+    word_annotation_to_dict,
 )
 
 
@@ -68,18 +71,8 @@ def _package_data(
     emit_quads: bool,
 ) -> dict[str, Any]:
     """Assemble the final data dict returned by generate()."""
-    text_blocks_dicts = [{"block_id": b.block_id, "bbox": b.bbox, "line_ids": b.line_ids} for b in blocks]
-    text_words_dicts = []
-    for wd in words:
-        entry: dict[str, Any] = {
-            "text": wd.text,
-            "bbox": wd.bbox,
-            "word_id": wd.word_id,
-            "line_id": wd.line_id,
-        }
-        if wd.quad is not None:
-            entry["quad"] = wd.quad
-        text_words_dicts.append(entry)
+    text_blocks_dicts = [block_annotation_to_dict(b) for b in blocks]
+    text_words_dicts = [word_annotation_to_dict(wd) for wd in words]
 
     data: dict[str, Any] = {
         "image": image,
@@ -253,18 +246,7 @@ class SynthDoG(templates.Template):
         metadata_filepath = os.path.join(output_dirpath, metadata_filename)
         os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
-        # Build text_lines_data from LineAnnotation objects
-        text_lines_data = []
-        for ln in lines:
-            entry: dict[str, Any] = {
-                "text": ln.text,
-                "bbox": ln.bbox,
-                "line_id": ln.line_id,
-                "block_id": ln.block_id,
-            }
-            if ln.quad is not None:
-                entry["quad"] = ln.quad
-            text_lines_data.append(entry)
+        text_lines_data = [line_annotation_to_dict(ln) for ln in lines]
 
         keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
         values = [text_lines_data, text_blocks, text_words, quality_metrics]

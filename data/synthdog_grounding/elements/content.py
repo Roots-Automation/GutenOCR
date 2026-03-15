@@ -7,10 +7,7 @@ MIT License
 import numpy as np
 from synthtiger import components
 
-try:
-    from layouts import GridStack, Layout
-except ImportError:
-    from ..layouts import GridStack, Layout
+from layouts import GridStack, Layout
 
 from .readers import _READER_TYPES, TextCursor
 from .textbox import TextBox
