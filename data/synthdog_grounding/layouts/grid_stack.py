@@ -102,33 +102,65 @@ class GridStack:
         stack_fill = sample_fill(self.stack_fill, self.stack_full)
         fill = sample_fill(self.fill, self.full)
 
+        layouts, y_cursor = self._generate_grids(left, top, width, height, stack_fill, fill, stack_spacing)
+        if not layouts:
+            return []
+
+        return self._redistribute_spacing(layouts, height, y_cursor, stack_spacing)
+
+    def _generate_grids(
+        self,
+        left: float,
+        top: float,
+        width: float,
+        height: float,
+        stack_fill: float,
+        fill: float,
+        stack_spacing: float,
+    ) -> tuple[list[list[LayoutCell]], float]:
+        """Generate grids sequentially until the available height is exhausted.
+
+        Returns (layouts, y_cursor) where y_cursor is the bottom edge of the
+        last grid plus one spacing gap (relative to *top*).
+        """
         layouts = []
-        line = 0
+        y_cursor = 0.0
 
         while True:
-            grid_size = (width, height * stack_fill - line)
-            if grid_size[1] <= 0:
+            remaining = height * stack_fill - y_cursor
+            if remaining <= 0:
                 break
 
             text_size = min(width, height) * np.random.uniform(self.text_scale[0], self.text_scale[1])
-            text_scale = text_size / min(grid_size)
+            text_scale = text_size / min(width, remaining)
 
             layout = self._grid.generate(
-                [left, top + line, *grid_size],
+                [left, top + y_cursor, width, remaining],
                 fill_range=(fill, fill),
                 text_scale_range=(text_scale, text_scale),
             )
             if layout is None:
                 break
 
-            line = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
+            y_cursor = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
             layouts.append(layout)
 
-        if not layouts:
-            return []
+        return layouts, y_cursor
 
-        line = max(line - stack_spacing, 0)
-        space = max(height - line, 0)
+    def _redistribute_spacing(
+        self,
+        layouts: list[list[LayoutCell]],
+        height: float,
+        y_cursor: float,
+        stack_spacing: float,
+    ) -> list[list[LayoutCell]]:
+        """Distribute leftover vertical space evenly across grid sections.
+
+        Randomly partitions the unused height into (len(layouts) + 1) gaps
+        and shifts each grid's cells downward by the cumulative offset.
+        """
+        total_used = max(y_cursor - stack_spacing, 0)
+        space = max(height - total_used, 0)
         spaces = np.random.rand(len(layouts) + 1)
         spaces *= space / sum(spaces) if sum(spaces) > 0 else 0
         spaces = np.cumsum(spaces)
