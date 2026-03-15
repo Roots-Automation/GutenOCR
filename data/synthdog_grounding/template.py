@@ -4,56 +4,40 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-# Ensure Pillow compatibility patch is loaded before anything else.
-# When synthtiger loads this module directly (not as a package), the
-# package __init__.py never runs, so we must import the shim here.
-try:
-    import pillow_compat  # noqa: F401
-except ImportError:
-    try:
-        from . import pillow_compat  # noqa: F401
-    except ImportError:
-        pass
-
-import json
-import os
-import re
-from collections import defaultdict
+# When synthtiger loads this file directly (not as a package), the package
+# __init__.py never runs.  Ensure the package root is on sys.path so that
+# sibling modules (pillow_compat, serialization, elements, …) can always
+# be imported with plain bare imports.
+import sys
 from pathlib import Path
-from typing import Any
 
-import numpy as np
-import yaml
-from PIL import Image
-from synthtiger import components, layers, templates
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-try:
-    from serialization import (
-        KEY_QUALITY_METRICS,
-        KEY_TEXT_BLOCKS,
-        KEY_TEXT_LINES,
-        KEY_TEXT_WORDS,
-        SPLITS,
-        BlockAnnotation,
-        LineAnnotation,
-        WordAnnotation,
-        encode_metadata,
-    )
+import pillow_compat  # noqa: E402, F401, I001
 
-    from elements import Background, Document
-except ImportError:
-    from .elements import Background, Document
-    from .serialization import (
-        KEY_QUALITY_METRICS,
-        KEY_TEXT_BLOCKS,
-        KEY_TEXT_LINES,
-        KEY_TEXT_WORDS,
-        SPLITS,
-        BlockAnnotation,
-        LineAnnotation,
-        WordAnnotation,
-        encode_metadata,
-    )
+import json  # noqa: E402
+import os  # noqa: E402
+import re  # noqa: E402
+from collections import defaultdict  # noqa: E402
+from typing import Any  # noqa: E402
+
+import numpy as np  # noqa: E402
+import yaml  # noqa: E402
+from PIL import Image  # noqa: E402
+from synthtiger import components, layers, templates  # noqa: E402
+
+from elements import Background, Document  # noqa: E402
+from serialization import (  # noqa: E402
+    KEY_QUALITY_METRICS,
+    KEY_TEXT_BLOCKS,
+    KEY_TEXT_LINES,
+    KEY_TEXT_WORDS,
+    SPLITS,
+    BlockAnnotation,
+    LineAnnotation,
+    WordAnnotation,
+    encode_metadata,
+)
 
 
 def _deep_merge(base: dict, overlay: dict) -> dict:

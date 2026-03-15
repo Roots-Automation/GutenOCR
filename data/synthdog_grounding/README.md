@@ -54,7 +54,8 @@ synthdog_grounding/
 │
 ├── layouts/                     # Text layout engines
 │   ├── grid.py                  # Single grid layout (rows x columns)
-│   └── grid_stack.py            # Stacked multi-section grid layout
+│   ├── grid_stack.py            # Stacked multi-section grid layout
+│   └── utils.py                 # Shared layout helpers
 │
 ├── resources/                   # Fonts, backgrounds, paper textures, corpora
 │   ├── font/{en,ja,ko,zh}/      # Language-specific font directories
