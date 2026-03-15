@@ -90,49 +90,110 @@ class Grid:
         if fill_range is None:
             fill_range = self.fill
 
+        dims = self._pick_grid_dimensions(width, height, text_scale_range)
+        if dims is None:
+            return None
+        row, col, text_size = dims
+
+        widths, heights = self._compute_column_widths(col, row, width, text_size, fill_range)
+
+        return self._emit_cells(left, top, col, row, widths, heights)
+
+    def _pick_grid_dimensions(
+        self,
+        width: float,
+        height: float,
+        text_scale_range: tuple[float, float] | list[float],
+    ) -> tuple[int, int, float] | None:
+        """Sample a text size and find a (row, col) pair that fits.
+
+        Returns (row, col, text_size) or None if no combination fits.
+        """
         text_scale = np.random.uniform(text_scale_range[0], text_scale_range[1])
         text_size = min(width, height) * text_scale
-        grids = np.random.permutation(self.max_row * self.max_col)
+        cell_indices = np.random.permutation(self.max_row * self.max_col)
 
-        for grid in grids:
-            row = int(grid // self.max_col + 1)
-            col = int(grid % self.max_col + 1)
+        for cell_idx in cell_indices:
+            row = int(cell_idx // self.max_col + 1)
+            col = int(cell_idx % self.max_col + 1)
+            # Each of `col` columns needs `text_size` width, and the (col-1)
+            # gaps between them each need another `text_size`, giving
+            # text_size * (col * 2 - 1) total. Rows just stack vertically.
             if text_size * (col * 2 - 1) <= width and text_size * row <= height:
-                break
-        else:
-            return None
+                return row, col, text_size
 
-        bound = max(1 - text_size / width * (col - 1), 0)
+        return None
+
+    def _compute_column_widths(
+        self,
+        col: int,
+        row: int,
+        width: float,
+        text_size: float,
+        fill_range: tuple[float, float] | list[float],
+    ) -> tuple[list[float], list[float]]:
+        """Compute per-slot widths and row heights for the grid.
+
+        The width array uses an interleaved slot model:
+            [pad_L, text_0, gap_01, text_1, ..., text_{n-1}, pad_R]
+        Odd indices (1, 3, ...) are text columns; even indices (0, 2, ...)
+        are gaps or edge padding. The method distributes a random fill budget
+        across text slots and the remaining space across gap slots.
+
+        Returns (widths, heights) where widths has (col * 2 + 1) entries and
+        heights has `row` entries.
+        """
+        max_fill = max(1 - text_size / width * (col - 1), 0)
         fill = sample_fill(fill_range, self.full)
-        fill = np.clip(fill, 0, bound)
+        fill = np.clip(fill, 0, max_fill)
 
         # 2-bit encoding of (left_pad, right_pad): bit1=left, bit0=right.
         # Single column excludes 0 to guarantee at least one side has padding.
-        padding = np.random.randint(4) if col > 1 else np.random.randint(1, 4)
-        padding = (bool(padding // 2), bool(padding % 2))
+        pad_bits = np.random.randint(4) if col > 1 else np.random.randint(1, 4)
+        has_left_pad = bool(pad_bits // 2)
+        has_right_pad = bool(pad_bits % 2)
 
+        # Base weights: each text column gets a minimum of text_size/width.
         weights = np.zeros(col * 2 + 1)
         weights[1:-1] = text_size / width
+
+        # Random proportions for distributing extra space.
         probs = 1 - np.random.rand(col * 2 + 1)
-        probs[0] = 0 if not padding[0] else probs[0]
-        probs[-1] = 0 if not padding[-1] else probs[-1]
-        probs[1::2] *= max(fill - sum(weights[1::2]), 0) / sum(probs[1::2])
-        even_sum = sum(probs[::2])
-        if even_sum > 0:
-            probs[::2] *= max(1 - fill - sum(weights[::2]), 0) / even_sum
+        probs[0] = 0 if not has_left_pad else probs[0]
+        probs[-1] = 0 if not has_right_pad else probs[-1]
+
+        # Distribute fill budget across text (odd) slots.
+        odd_prob_sum = sum(probs[1::2])
+        if odd_prob_sum > 0:
+            probs[1::2] *= max(fill - sum(weights[1::2]), 0) / odd_prob_sum
+
+        # Distribute gap budget across gap/padding (even) slots.
+        even_prob_sum = sum(probs[::2])
+        if even_prob_sum > 0:
+            probs[::2] *= max(1 - fill - sum(weights[::2]), 0) / even_prob_sum
+
         weights += probs
 
         widths = [width * weights[c] for c in range(col * 2 + 1)]
         heights = [text_size for _ in range(row)]
+        return widths, heights
 
+    def _emit_cells(
+        self,
+        left: float,
+        top: float,
+        col: int,
+        row: int,
+        widths: list[float],
+        heights: list[float],
+    ) -> list[LayoutCell]:
+        """Convert slot widths and row heights into positioned LayoutCells."""
         xs = np.cumsum([0] + widths)
         ys = np.cumsum([0] + heights)
 
         layout = []
-
         for c in range(col):
             align = self.align[np.random.randint(len(self.align))]
-
             for r in range(row):
                 x, y = xs[c * 2 + 1], ys[r]
                 w, h = xs[c * 2 + 2] - x, ys[r + 1] - y
