@@ -31,53 +31,52 @@ This module generates synthetic document images with line-, word-, and block-lev
 
 ```
 synthdog_grounding/
-├── template.py                  # Main SynthDoG template (generation + save)
-├── annotations.py               # Annotation construction, filtering, and quality metrics
-├── serialization.py             # Shared schema, constants, and annotation dataclasses
-├── pillow_compat.py             # Pillow 10+ compatibility patches
-├── pyproject.toml               # Project metadata and dependencies
 │
-├── config/                      # Language and source configurations
-│   ├── config_en.yaml           # English (file-based corpus)
-│   ├── config_en-pdfs.yaml      # English (PDF-style layout)
+│   # ── Generation core ──────────────────────────────────────────
+├── template.py              # Main SynthDoG template (generation + save)
+├── annotations.py           # Annotation construction, filtering, and quality metrics
+├── serialization.py         # Shared schema, constants, and annotation dataclasses
+├── pillow_compat.py         # Pillow 10+ compatibility patches
+│
+│   # ── Generation internals ─────────────────────────────────────
+├── config/                  # Language and source configurations
+│   ├── config_en.yaml       #   English (file-based corpus)
+│   ├── config_en-pdfs.yaml  #   English (PDF-style layout)
 │   ├── config_huggingface.yaml  # English (HuggingFace streaming)
-│   ├── config_zh.yaml           # Chinese
-│   ├── config_ja.yaml           # Japanese
-│   └── config_ko.yaml           # Korean
+│   ├── config_zh.yaml       #   Chinese
+│   ├── config_ja.yaml       #   Japanese
+│   └── config_ko.yaml       #   Korean
+├── elements/                # Document generation components
+│   ├── background.py        #   Background texture generation
+│   ├── paper.py             #   Paper color and texture (with luminance output)
+│   ├── content.py           #   Layout orchestration and text content generation
+│   ├── document.py          #   Document orchestration and geometric effects
+│   ├── readers.py           #   Text readers (file-based and HuggingFace)
+│   └── textbox.py           #   Single-line text rendering and word tracking
+├── layouts/                 # Text layout engines
+│   ├── grid.py              #   Single grid layout (rows x columns)
+│   ├── grid_stack.py        #   Stacked multi-section grid layout
+│   └── utils.py             #   Shared layout helpers
+├── resources/               # Fonts, backgrounds, paper textures, corpora
+│   ├── font/{en,ja,ko,zh}/  #   Language-specific font directories
+│   ├── background/          #   Background texture images
+│   ├── paper/               #   Paper texture images
+│   └── corpus/              #   Text corpus files (e.g. enwiki.txt)
 │
-├── elements/                    # Document generation components
-│   ├── background.py            # Background texture generation
-│   ├── paper.py                 # Paper color and texture (with luminance output)
-│   ├── content.py               # Layout orchestration and text content generation
-│   ├── document.py              # Document orchestration and geometric effects
-│   ├── readers.py               # Text readers (file-based and HuggingFace)
-│   └── textbox.py               # Single-line text rendering and word tracking
+│   # ── Post-generation tools ────────────────────────────────────
+├── package.py               # Tar archive builder (single + batch)
+├── data_readers.py          # Unified sample iterator (tar + directory)
+├── data_analysis/           # Statistics and aggregation
+│   ├── generate_stats.py    #   Per-sample statistics (tar or directory)
+│   ├── aggregate_stats.py   #   Aggregate stats across datasets
+│   └── batch_stats.py       #   Batch processing with parallel support
+├── data_extraction/         # Inspection and extraction utilities
+│   ├── check_sample.py      #   Extract and visualize annotated samples
+│   └── extract_finepdfs.py  #   Extract text from FinePDFs dataset
 │
-├── layouts/                     # Text layout engines
-│   ├── grid.py                  # Single grid layout (rows x columns)
-│   ├── grid_stack.py            # Stacked multi-section grid layout
-│   └── utils.py                 # Shared layout helpers
-│
-├── resources/                   # Fonts, backgrounds, paper textures, corpora
-│   ├── font/{en,ja,ko,zh}/      # Language-specific font directories
-│   ├── background/              # Background texture images
-│   ├── paper/                   # Paper texture images
-│   └── corpus/                  # Text corpus files (e.g. enwiki.txt)
-│
-├── data_readers.py                  # Unified sample iterator (tar + directory)
-│
-├── package.py                       # Tar archive builder (single + batch)
-│
-├── data_analysis/
-│   ├── generate_stats.py        # Statistics for tar files or directories
-│   ├── aggregate_stats.py       # Aggregate statistics across datasets
-│   └── batch_stats.py           # Batch processing with parallel support
-│
-├── data_extraction/
-│   ├── check_sample.py          # Extract and visualize annotated samples
-│   └── extract_finepdfs.py      # Extract text from FinePDFs dataset
-│
-└── outputs/                     # Generated data (git-ignored)
+│   # ── Project metadata ─────────────────────────────────────────
+├── pyproject.toml           # Project metadata and dependencies
+└── outputs/                 # Generated data (git-ignored)
 ```
 
 ## Prerequisites
