@@ -101,31 +101,18 @@ uv pip install --force-reinstall --no-binary pillow pillow
 
 ### Generate Synthetic Data
 
-> **Critical: you MUST `cd` into `synthdog_grounding/` before running ANY
-> generation command.** All resource paths in the YAML configs (fonts,
-> backgrounds, paper textures, corpora) are **relative to this directory**.
-> If you run from a different working directory, SynthTiger workers will
-> fail with `RuntimeError: Texture path is not specified` because they
-> resolve these relative paths against their own cwd. The SynthTiger CLI
-> does **not** change the worker cwd to match the script location — it
-> inherits whatever directory the parent shell was in.
->
-> This is the single most common cause of generation failures.
+All resource paths (fonts, backgrounds, paper textures, corpora) in the YAML
+configs are **relative to the `synthdog_grounding/` directory**. The template
+resolves them to absolute paths at init time, so you can run from any working
+directory — just make sure file paths in the command point to the right places.
 
 ```bash
-# ALWAYS cd here first — this is not optional
-cd data/synthdog_grounding
-
 # Required on macOS — without this, worker processes may hang or crash
 # due to Objective-C fork safety checks
 export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 ```
 
 #### Option A: Direct Python (recommended for small runs / local dev)
-
-The direct Python API avoids the cwd issue entirely because everything
-runs in a single process that inherits the shell's cwd. Use this for
-quick local runs:
 
 ```python
 import yaml
@@ -144,6 +131,7 @@ for i in range(50):
 Or as a one-liner:
 
 ```bash
+cd data/synthdog_grounding
 uv run python -c "
 import yaml; from template import SynthDoG
 with open('config/config_en.yaml') as f: config = yaml.safe_load(f)
@@ -154,29 +142,22 @@ for i in range(50): data = t.generate(); t.save('./outputs/SynthDoG_en', data, i
 
 #### Option B: SynthTiger CLI (production runs)
 
-When using the SynthTiger CLI, always pass `-v` so that worker errors are
-visible instead of silently retried:
+Always pass `-v` so that any worker errors are visible instead of silently retried:
 
 ```bash
+cd data/synthdog_grounding
+
 # Generate English documents (50 samples, 4 workers)
 uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py SynthDoG config/config_en.yaml
 
 # Generate using HuggingFace streaming corpus
 uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py SynthDoG config/config_huggingface.yaml
-
 ```
 
-> **Troubleshooting `RuntimeError: Texture path is not specified`:**
+> **Tip:** `-w 0` runs generation in a single process, which is useful for
+> debugging since stack traces are easier to read.
 >
-> This error means SynthTiger workers cannot find resource files (textures,
-> fonts, etc.) because the working directory is wrong. The fix is always
-> the same: `cd data/synthdog_grounding` before running. This applies to
-> every invocation method — CLI, subprocess, background task, CI job, etc.
-> If you are calling synthtiger from a script or tool that manages its own
-> cwd (e.g., a task runner, IDE, or agent), ensure the cwd is set to the
-> `synthdog_grounding/` directory, not the repo root.
->
-> If the CLI appears to hang without any error output, you forgot `-v`.
+> If the CLI appears to hang without any error output, you likely forgot `-v`.
 > Without `-v`, SynthTiger silently retries failed generations forever.
 
 #### SynthTiger CLI Arguments

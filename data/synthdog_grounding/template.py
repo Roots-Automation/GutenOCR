@@ -43,6 +43,34 @@ from serialization import (  # noqa: E402
 )
 
 
+def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
+    """Resolve relative resource paths in config to absolute paths.
+
+    SynthTiger's BaseTexture and BaseFont resolve paths via os.path.exists()
+    during __init__.  When the CLI spawns worker processes, the child's cwd
+    may differ from the parent's, breaking relative paths.  Resolving them
+    here (in the main process, where cwd is correct) makes the config
+    portable across processes.
+    """
+    config = copy.deepcopy(config)
+
+    def _resolve(node):
+        if isinstance(node, dict):
+            if "paths" in node and isinstance(node["paths"], list):
+                node["paths"] = [str((base_dir / p).resolve()) if not os.path.isabs(p) else p for p in node["paths"]]
+            if "path" in node and isinstance(node["path"], str):
+                if not os.path.isabs(node["path"]):
+                    node["path"] = str((base_dir / node["path"]).resolve())
+            for v in node.values():
+                _resolve(v)
+        elif isinstance(node, list):
+            for item in node:
+                _resolve(item)
+
+    _resolve(config)
+    return config
+
+
 def _deep_merge(base: dict, overlay: dict) -> dict:
     """Recursively merge *overlay* into a deep copy of *base*.
 
@@ -99,12 +127,22 @@ class SynthDoG(templates.Template):
         if config is None:
             config = {}
 
+        # Deep-copy so we never mutate the caller's dict — SynthTiger
+        # passes the same config object to multiple read_template() calls.
+        config = copy.deepcopy(config)
+
         # Resolve _base inheritance
         if "_base" in config:
             base_path = Path(config.pop("_base"))
+            if not base_path.is_absolute():
+                base_path = Path(__file__).resolve().parent / base_path
             with open(base_path, encoding="utf-8") as f:
                 base_config = yaml.safe_load(f)
             config = _deep_merge(base_config, config)
+
+        # Resolve relative resource paths to absolute so that SynthTiger
+        # worker processes (which may have a different cwd) can find them.
+        config = _resolve_config_paths(config, Path(__file__).resolve().parent)
 
         if split_ratio is None:
             split_ratio = config.get("split_ratio", [0.8, 0.1, 0.1])
