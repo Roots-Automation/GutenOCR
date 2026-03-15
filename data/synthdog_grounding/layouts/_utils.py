@@ -14,7 +14,7 @@ import numpy as np
 class LayoutCell(NamedTuple):
     """A single cell in a grid layout."""
 
-    bbox: list[float]
+    bbox: tuple[float, float, float, float]
     align: str
     col_idx: int
 

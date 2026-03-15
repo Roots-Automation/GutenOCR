@@ -261,6 +261,10 @@ _READER_TYPES: dict[str, type[TextCursor]] = {
     "huggingface": HuggingFaceTextReader,
 }
 
+_LAYOUT_TYPES: dict[str, type] = {
+    "grid_stack": GridStack,
+}
+
 
 class Content:
     def __init__(self, config):
@@ -274,7 +278,10 @@ class Content:
         self.reader: TextCursor = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))
-        self.layout: Layout = GridStack(config.get("layout", {}))
+        layout_config = config.get("layout", {})
+        layout_type = layout_config.get("type", "grid_stack")
+        layout_cls = _LAYOUT_TYPES[layout_type]
+        self.layout: Layout = layout_cls(layout_config)
         self.textbox = TextBox(config.get("textbox", {}))
         self.textbox_color_config = config.get("textbox_color", {})
         self.content_color_config = config.get("content_color", {})

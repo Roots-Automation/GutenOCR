@@ -66,8 +66,12 @@ class Grid:
 
         Args:
             bbox: List of [left, top, width, height] defining the area
-            fill_range: Optional (min, max) fill ratio override (defaults to self.fill)
-            text_scale_range: Optional (min, max) text scale override (defaults to self.text_scale)
+            fill_range: Optional (min, max) fill ratio override (defaults to self.fill).
+                Note: When used internally by GridStack, these are always provided,
+                overriding the instance defaults.
+            text_scale_range: Optional (min, max) text scale override (defaults to self.text_scale).
+                Note: When used internally by GridStack, these are always provided,
+                overriding the instance defaults.
 
         Returns:
             List of LayoutCell(bbox, align, col_idx) where:
@@ -132,7 +136,7 @@ class Grid:
             for r in range(row):
                 x, y = xs[c * 2 + 1], ys[r]
                 w, h = xs[c * 2 + 2] - x, ys[r + 1] - y
-                cell_bbox = [left + x, top + y, w, h]
+                cell_bbox = (left + x, top + y, w, h)
                 layout.append(LayoutCell(cell_bbox, align, c))
 
         return layout

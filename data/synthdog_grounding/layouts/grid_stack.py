@@ -65,14 +65,13 @@ class GridStack:
         self.stack_spacing = config.get("stack_spacing", [0, 0.05])
         self.stack_fill = config.get("stack_fill", [1, 1])
         self.stack_full = config.get("stack_full", 0)
-        # fill/full intentionally omitted: generate() always overrides them
-        # via the fill_range keyword argument to Grid.generate().
+        # fill, full, and text_scale intentionally omitted: generate() always
+        # overrides fill_range and text_scale_range at call time.
         self._grid = (
             grid
             if grid is not None
             else Grid(
                 {
-                    "text_scale": self.text_scale,
                     "max_row": config.get("max_row", 5),
                     "max_col": config.get("max_col", 3),
                     "align": config.get("align", ["left", "right", "center"]),
@@ -111,8 +110,7 @@ class GridStack:
             if grid_size[1] <= 0:
                 break
 
-            text_scale = np.random.uniform(self.text_scale[0], self.text_scale[1])
-            text_size = min(width, height) * text_scale
+            text_size = min(width, height) * np.random.uniform(self.text_scale[0], self.text_scale[1])
             text_scale = text_size / min(grid_size)
 
             layout = self._grid.generate(
@@ -136,11 +134,11 @@ class GridStack:
         spaces = np.cumsum(spaces)
 
         redistributed = []
-        for layout, space in zip(layouts, spaces):
+        for layout, y_offset in zip(layouts, spaces):
             new_layout = []
             for cell_bbox, align, col_idx in layout:
                 x, y, w, h = cell_bbox
-                new_layout.append(LayoutCell([x, y + space, w, h], align, col_idx))
+                new_layout.append(LayoutCell((x, y + y_offset, w, h), align, col_idx))
             redistributed.append(new_layout)
 
         return redistributed
