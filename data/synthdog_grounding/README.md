@@ -85,6 +85,7 @@ synthdog_grounding/
 - Python >= 3.10
 - [uv](https://docs.astral.sh/uv/) (recommended) or pip
 - [SynthTiger](https://github.com/clovaai/synthtiger)
+- [libraqm](https://github.com/HOST-Oman/libraqm) (optional, required for CJK/RTL text direction support)
 
 ```bash
 # Using uv (recommended)
@@ -92,6 +93,11 @@ uv sync
 
 # Or using pip
 pip install -e .
+
+# Optional: install libraqm for full CJK/RTL text shaping (macOS)
+brew install libraqm
+# Pillow must be rebuilt from source to link against libraqm:
+uv pip install --force-reinstall --no-binary pillow pillow
 ```
 
 ## Quick Start

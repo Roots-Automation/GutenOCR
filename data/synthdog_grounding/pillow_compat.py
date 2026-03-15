@@ -1,14 +1,13 @@
-import PIL
-from PIL import ImageDraw, ImageFont
+import warnings
+
+from PIL import ImageFont
 
 
 def register_pillow_compat():
     """
-    Monkey-patches Pillow > 10 to include removed methods 'getsize' and 'textsize'
-    which are required by synthtiger.
+    Monkey-patches Pillow 10+ to restore removed methods ``getsize`` and
+    ``getmask2`` that synthtiger still relies on.
     """
-    if int(PIL.__version__.split(".")[0]) < 10:
-        return
 
     # Patch ImageFont.FreeTypeFont.getsize
     if not hasattr(ImageFont.FreeTypeFont, "getsize"):
@@ -18,8 +17,7 @@ def register_pillow_compat():
             try:
                 left, top, right, bottom = self.getbbox(text, direction=direction, features=features, language=language)
             except KeyError:
-                # Likely 'setting text direction... is not supported without libraqm'
-                # If we don't have raqm, we can't support these features.
+                # Likely 'setting text direction… is not supported without libraqm'
                 # Fallback to simple bbox without direction/features
                 left, top, right, bottom = self.getbbox(text)
 
@@ -27,9 +25,9 @@ def register_pillow_compat():
 
         setattr(ImageFont.FreeTypeFont, "getsize", getsize)
 
-    # Patch ImageFont.FreeTypeFont.getmask2 to handle missing libraqm
-    # We always patch this because even if it exists, it might fail with KeyError in Pillow 10+
-    # if libraqm is missing but direction/features are passed.
+    # Patch ImageFont.FreeTypeFont.getmask2 to handle missing libraqm.
+    # We always patch this because even if it exists, it may raise KeyError
+    # in Pillow 10+ when libraqm is missing but direction/features are passed.
     if hasattr(ImageFont.FreeTypeFont, "getmask2"):
         original_getmask2 = ImageFont.FreeTypeFont.getmask2
 
@@ -37,43 +35,16 @@ def register_pillow_compat():
             try:
                 return original_getmask2(self, text, mode, direction, features, language, *args, **kwargs)
             except KeyError:
-                # Fallback: try without direction/features/language
+                warnings.warn(
+                    "libraqm is not available — ignoring direction/features/language "
+                    "for text rendering. Install libraqm for full CJK/RTL support.",
+                    stacklevel=2,
+                )
+                # Only warn once
+                warnings.filterwarnings("ignore", message="libraqm is not available")
                 return original_getmask2(self, text, mode, *args, **kwargs)
 
         setattr(ImageFont.FreeTypeFont, "getmask2", getmask2)
-
-    # Patch ImageDraw.ImageDraw.textsize
-    if not hasattr(ImageDraw.ImageDraw, "textsize"):
-
-        def textsize(
-            self,
-            text,
-            font=None,
-            spacing=4,
-            direction=None,
-            features=None,
-            language=None,
-            stroke_width=0,
-            embedded_color=False,
-        ):
-            if font is None:
-                font = self.getfont()
-
-            # textbbox returns (left, top, right, bottom)
-            left, top, right, bottom = self.textbbox(
-                (0, 0),
-                text,
-                font=font,
-                spacing=spacing,
-                direction=direction,
-                features=features,
-                language=language,
-                stroke_width=stroke_width,
-                embedded_color=embedded_color,
-            )
-            return right - left, bottom - top
-
-        setattr(ImageDraw.ImageDraw, "textsize", textsize)
 
 
 # Apply patches immediately on import

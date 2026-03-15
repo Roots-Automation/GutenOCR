@@ -137,16 +137,8 @@ def choose_font(img_w, font_path=None):
 
 def text_size(draw, text, font):
     # Robust size measurement across Pillow versions
-    try:
-        left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
-        return (right - left), (bottom - top)
-    except Exception:
-        try:
-            # Older Pillow
-            return draw.textsize(text, font=font)
-        except Exception:
-            # Last-resort guess
-            return (8 * max(1, len(text)), 12)
+    left, top, right, bottom = draw.textbbox((0, 0), text, font=font)
+    return (right - left), (bottom - top)
 
 
 def draw_label(draw, xy, label, font, pad=2):
