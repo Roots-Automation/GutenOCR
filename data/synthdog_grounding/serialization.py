@@ -1,7 +1,7 @@
 """Shared schema, constants, and annotations for SynthDoG metadata.
 
 Centralizes the contract between producer (template.py) and consumer
-(build_tar.py) so that key names, encoding/decoding logic, annotation
+(package.py) so that key names, encoding/decoding logic, annotation
 dataclasses, and shared constants live in one place.
 """
 

@@ -66,9 +66,7 @@ synthdog_grounding/
 │
 ├── data_readers.py                  # Unified sample iterator (tar + directory)
 │
-├── data_packaging/
-│   ├── build_tar.py             # Single tar archive from a data directory
-│   └── build_tars_parallel.py   # Parallel tar creation across directories
+├── package.py                       # Tar archive builder (single + batch)
 │
 ├── data_analysis/
 │   ├── generate_stats.py        # Statistics for tar files or directories
@@ -216,11 +214,14 @@ uv run python data_extraction/check_sample.py /path/to/data.tar --ids 00087 0004
 ### Package Data into Archives
 
 ```bash
-# Single tar archive
-uv run python data_packaging/build_tar.py /path/to/data/directory -o output.tar
+# Single directory
+uv run python package.py /path/to/data/directory -o output.tar
 
-# Parallel tar creation across directories
-uv run python data_packaging/build_tars_parallel.py --core-dir /path/to/data
+# Batch: package numbered subdirectories with train/val/test splits
+uv run python package.py --batch /path/to/outputs --start 0 --end 75 --workers 8
+
+# Dry run to see what would be processed
+uv run python package.py --batch /path/to/outputs --dry-run
 ```
 
 ### Generate Statistics

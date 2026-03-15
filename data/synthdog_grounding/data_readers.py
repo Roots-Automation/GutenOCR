@@ -32,7 +32,7 @@ except ImportError:
 def extract_image_metadata(img_path: Path) -> tuple[int, int, float | None]:
     """Extract (width, height, dpi) from an image file.
 
-    Reused by build_tar.py — this is the canonical implementation.
+    Reused by package.py — this is the canonical implementation.
     """
     if Image is None:
         raise ImportError("Pillow is required for image metadata extraction")
