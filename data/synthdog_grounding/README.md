@@ -66,9 +66,6 @@ synthdog_grounding/
 │
 ├── data_readers.py                  # Unified sample iterator (tar + directory)
 │
-├── data_generation/
-│   └── run_synthdog_range.py    # Batch generation for directory ID ranges
-│
 ├── data_packaging/
 │   ├── build_tar.py             # Single tar archive from a data directory
 │   └── build_tars_parallel.py   # Parallel tar creation across directories
@@ -172,8 +169,6 @@ uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py S
 # Generate using HuggingFace streaming corpus
 uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py SynthDoG config/config_huggingface.yaml
 
-# Batch generation for directory ranges (e.g., dirs 0035-0075)
-uv run python data_generation/run_synthdog_range.py --start 35 --end 75
 ```
 
 > **Troubleshooting `RuntimeError: Texture path is not specified`:**

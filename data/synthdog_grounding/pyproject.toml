@@ -39,7 +39,7 @@ dependencies = [
 "Bug Tracker" = "https://github.com/Roots-Automation/GutenOCR/issues"
 
 [tool.setuptools.packages.find]
-include = ["elements*", "layouts*", "data_generation*", "data_packaging*", "data_analysis*", "data_extraction*"]
+include = ["elements*", "layouts*", "data_packaging*", "data_analysis*", "data_extraction*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.txt"]
