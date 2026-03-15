@@ -64,17 +64,19 @@ synthdog_grounding/
 │   ├── paper/                   # Paper texture images
 │   └── corpus/                  # Text corpus files (e.g. enwiki.txt)
 │
+├── data_readers.py                  # Unified sample iterator (tar + directory)
+│
 ├── data_generation/
-│   └── run_synthdog_range.sh    # Batch generation for directory ID ranges
+│   └── run_synthdog_range.py    # Batch generation for directory ID ranges
 │
 ├── data_packaging/
 │   ├── build_tar.py             # Single tar archive from a data directory
 │   └── build_tars_parallel.py   # Parallel tar creation across directories
 │
 ├── data_analysis/
-│   ├── generate_stats.py        # Statistics for individual tar files
+│   ├── generate_stats.py        # Statistics for tar files or directories
 │   ├── aggregate_stats.py       # Aggregate statistics across datasets
-│   └── simple_batch_process.sh  # Batch processing wrapper
+│   └── batch_stats.py           # Batch processing with parallel support
 │
 ├── data_extraction/
 │   ├── check_sample.py          # Extract and visualize annotated samples
@@ -107,12 +109,19 @@ uv pip install --force-reinstall --no-binary pillow pillow
 
 ### Generate Synthetic Data
 
-> **Important: run from the `synthdog_grounding/` directory.** All resource
-> paths in the YAML configs are relative to this directory. SynthTiger workers
-> that resolve paths from a different cwd will fail silently (or loop forever
-> retrying). Always `cd` here first.
+> **Critical: you MUST `cd` into `synthdog_grounding/` before running ANY
+> generation command.** All resource paths in the YAML configs (fonts,
+> backgrounds, paper textures, corpora) are **relative to this directory**.
+> If you run from a different working directory, SynthTiger workers will
+> fail with `RuntimeError: Texture path is not specified` because they
+> resolve these relative paths against their own cwd. The SynthTiger CLI
+> does **not** change the worker cwd to match the script location — it
+> inherits whatever directory the parent shell was in.
+>
+> This is the single most common cause of generation failures.
 
 ```bash
+# ALWAYS cd here first — this is not optional
 cd data/synthdog_grounding
 
 # Required on macOS — without this, worker processes may hang or crash
@@ -122,8 +131,9 @@ export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 
 #### Option A: Direct Python (recommended for small runs / local dev)
 
-The SynthTiger multiprocessing CLI has known issues with relative resource
-paths in worker processes. For quick local runs, invoke the template directly:
+The direct Python API avoids the cwd issue entirely because everything
+runs in a single process that inherits the shell's cwd. Use this for
+quick local runs:
 
 ```python
 import yaml
@@ -163,13 +173,21 @@ uv run python -m synthtiger -o ./outputs/SynthDoG_en -c 50 -w 4 -v template.py S
 uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py SynthDoG config/config_huggingface.yaml
 
 # Batch generation for directory ranges (e.g., dirs 0035-0075)
-bash data_generation/run_synthdog_range.sh 35 75
+uv run python data_generation/run_synthdog_range.py --start 35 --end 75
 ```
 
-> **Troubleshooting:** If the CLI appears to hang, re-run with `-v`. The most
-> common cause is `RuntimeError: Texture path is not specified` — this means
-> worker processes cannot resolve relative resource paths. Ensure you are
-> running from the `synthdog_grounding/` directory.
+> **Troubleshooting `RuntimeError: Texture path is not specified`:**
+>
+> This error means SynthTiger workers cannot find resource files (textures,
+> fonts, etc.) because the working directory is wrong. The fix is always
+> the same: `cd data/synthdog_grounding` before running. This applies to
+> every invocation method — CLI, subprocess, background task, CI job, etc.
+> If you are calling synthtiger from a script or tool that manages its own
+> cwd (e.g., a task runner, IDE, or agent), ensure the cwd is set to the
+> `synthdog_grounding/` directory, not the repo root.
+>
+> If the CLI appears to hang without any error output, you forgot `-v`.
+> Without `-v`, SynthTiger silently retries failed generations forever.
 
 #### SynthTiger CLI Arguments
 
@@ -216,12 +234,18 @@ uv run python data_packaging/build_tars_parallel.py --core-dir /path/to/data
 # Single tar file
 uv run python data_analysis/generate_stats.py /path/to/data.tar
 
-# Batch process all tar files in a directory
-bash data_analysis/simple_batch_process.sh /path/to/data/directory
+# Raw generation output directory (metadata.jsonl)
+uv run python data_analysis/generate_stats.py /path/to/output_dir
 
-# Aggregate across multiple tar files
+# Batch process all data sources under a directory
+uv run python data_analysis/batch_stats.py /path/to/outputs
+uv run python data_analysis/batch_stats.py /path/to/outputs --workers 4
+
+# Aggregate across .stats.csv files
 uv run python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
 ```
+
+Statistics now include quality metrics (contrast, degenerate counts, textbox fill rate) when present in the data.
 
 ## Output Format
 

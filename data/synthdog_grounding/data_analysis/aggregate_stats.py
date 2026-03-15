@@ -1,98 +1,113 @@
 #!/usr/bin/env python3
+"""Aggregate per-sample statistics from multiple .stats.csv files.
+
+Reads CSV files produced by generate_stats.py, computes summary statistics,
+and writes an aggregated CSV plus a summary JSON.
+
+Usage:
+    python aggregate_stats.py -d /path/to/directory -o aggregated_stats
+    python aggregate_stats.py file1.stats.csv file2.stats.csv -o aggregated_stats
+"""
+
 import argparse
+import csv
 import json
+import math
 import sys
 from pathlib import Path
 
-import pandas as pd
 
-
-def find_external_stats_file(tar_path: Path) -> Path:
-    """
-    Find the external .stats.csv file for a given tar file.
-    """
-    # For /path/to/file.tar, look for /path/to/file.stats.csv
-    stats_path = tar_path.with_suffix(".stats.csv")
-    return stats_path
-
-
-def find_tar_files_with_stats(directory: Path) -> list[Path]:
-    """
-    Find all tar files in a directory that have corresponding .stats.csv files.
-    """
-    tar_files_with_stats = []
-
-    for tar_path in directory.glob("*.tar"):
-        stats_path = find_external_stats_file(tar_path)
-        if stats_path.exists():
-            tar_files_with_stats.append(tar_path)
-        else:
-            print(f"[info] Skipping {tar_path.name} - no stats file found", file=sys.stderr)
-
-    return sorted(tar_files_with_stats)
-
-
-def extract_stats_from_external_csv(tar_path: Path) -> pd.DataFrame:
-    """
-    Extract stats from external .stats.csv file and return as DataFrame.
-    """
-    stats_path = find_external_stats_file(tar_path)
-
-    if not stats_path.exists():
-        print(f"[warning] No external stats file found: {stats_path}", file=sys.stderr)
-        return pd.DataFrame()
-
+def _safe_float(value: str) -> float | None:
+    """Convert a CSV cell to float, returning None for empty/invalid values."""
+    if value is None or value == "" or value == "None":
+        return None
     try:
-        df = pd.read_csv(stats_path)
-
-        # Add source tar info
-        df["source_tar"] = tar_path.name
-        df["stats_file"] = stats_path.name
-
-        return df
-
-    except Exception as e:
-        print(f"[error] Failed to read {stats_path}: {e}", file=sys.stderr)
-        return pd.DataFrame()
+        return float(value)
+    except (ValueError, TypeError):
+        return None
 
 
-def aggregate_stats(tar_files: list[Path], output_path: Path = None):
-    """
-    Aggregate statistics from multiple tar files using external .stats.csv files.
-    """
-    all_dfs = []
+def _stats_for(values: list[float]) -> dict[str, float]:
+    """Compute min/max/mean/median/std for a list of floats."""
+    if not values:
+        return {"min": 0.0, "max": 0.0, "mean": 0.0, "median": 0.0, "std": 0.0}
+    n = len(values)
+    sorted_vals = sorted(values)
+    mean = sum(sorted_vals) / n
+    if n % 2 == 0:
+        median = (sorted_vals[n // 2 - 1] + sorted_vals[n // 2]) / 2
+    else:
+        median = sorted_vals[n // 2]
+    if n > 1:
+        variance = sum((x - mean) ** 2 for x in sorted_vals) / (n - 1)
+        std = math.sqrt(variance)
+    else:
+        std = 0.0
+    return {
+        "min": round(sorted_vals[0], 4),
+        "max": round(sorted_vals[-1], 4),
+        "mean": round(mean, 4),
+        "median": round(median, 4),
+        "std": round(std, 4),
+    }
 
-    for tar_path in tar_files:
-        print(f"Processing {tar_path.name}...", file=sys.stderr)
-        df = extract_stats_from_external_csv(tar_path)
-        if not df.empty:
-            all_dfs.append(df)
 
-    if not all_dfs:
-        print("No valid stats found in any tar files!", file=sys.stderr)
+def find_stats_files(directory: Path) -> list[Path]:
+    """Find all .stats.csv files in a directory."""
+    return sorted(directory.glob("*.stats.csv"))
+
+
+def read_stats_csv(path: Path) -> list[dict[str, str]]:
+    """Read a .stats.csv file and return rows as dicts."""
+    with path.open("r", encoding="utf-8", newline="") as f:
+        return list(csv.DictReader(f))
+
+
+def aggregate_stats(stats_files: list[Path], output_path: Path | None = None) -> None:
+    """Aggregate statistics from multiple .stats.csv files."""
+    all_rows: list[dict[str, str]] = []
+
+    for stats_path in stats_files:
+        print(f"Processing {stats_path.name}...", file=sys.stderr)
+        rows = read_stats_csv(stats_path)
+        source = stats_path.name.replace(".stats.csv", "")
+        for row in rows:
+            row["source"] = source
+            row["stats_file"] = stats_path.name
+        all_rows.extend(rows)
+
+    if not all_rows:
+        print("No valid stats found in any files!", file=sys.stderr)
         return
 
-    # Combine all DataFrames
-    combined_df = pd.concat(all_dfs, ignore_index=True)
+    # Determine all fieldnames (union of all keys, preserving order)
+    fieldnames: list[str] = []
+    seen: set[str] = set()
+    for row in all_rows:
+        for key in row:
+            if key not in seen:
+                fieldnames.append(key)
+                seen.add(key)
 
-    # Generate summary statistics
-    summary = {}
+    # Build summary
+    summary: dict = {}
+    summary["total_samples"] = len(all_rows)
+    summary["unique_sources"] = len(set(r.get("source", "") for r in all_rows))
 
-    # Basic counts
-    summary["total_samples"] = int(len(combined_df))
-    summary["total_lines"] = int(combined_df["num_lines"].sum())
-    summary["total_words"] = int(combined_df["num_words"].sum())
-    summary["unique_tar_files"] = int(combined_df["source_tar"].nunique())
+    # Totals
+    total_lines = sum(int(r.get("num_lines", 0) or 0) for r in all_rows)
+    total_words = sum(int(r.get("num_words", 0) or 0) for r in all_rows)
+    summary["total_lines"] = total_lines
+    summary["total_words"] = total_words
 
     # Overlap analysis
-    samples_with_bbox = (combined_df["lines_with_bbox"] > 0).sum()
-    samples_with_high_overlap = (combined_df["high_overlap_pairs"] > 0).sum()
-
-    summary["samples_with_bbox"] = int(samples_with_bbox)
-    summary["samples_with_high_overlap"] = int(samples_with_high_overlap)
+    samples_with_bbox = sum(1 for r in all_rows if int(r.get("lines_with_bbox", 0) or 0) > 0)
+    samples_with_high_overlap = sum(1 for r in all_rows if int(r.get("high_overlap_pairs", 0) or 0) > 0)
+    summary["samples_with_bbox"] = samples_with_bbox
+    summary["samples_with_high_overlap"] = samples_with_high_overlap
     summary["pct_samples_with_high_overlap"] = round(100 * samples_with_high_overlap / max(samples_with_bbox, 1), 2)
 
-    # Statistical summaries for key metrics
+    # Statistical summaries for numeric columns
     numeric_cols = [
         "num_lines",
         "num_words",
@@ -102,45 +117,59 @@ def aggregate_stats(tar_files: list[Path], output_path: Path = None):
         "width_mean",
         "height_mean",
         "aspect_ratio_mean",
+        # Quality metric columns
+        "min_line_contrast",
+        "mean_line_contrast",
+        "min_line_bbox_area_px",
+        "min_word_bbox_area_px",
+        "degenerate_line_count",
+        "degenerate_word_count",
+        "textbox_null_count",
+        "textbox_total_count",
     ]
 
     for col in numeric_cols:
-        if col in combined_df.columns:
-            values = combined_df[col].dropna()
-            if len(values) > 0:
-                summary[f"{col}_stats"] = {
-                    "min": round(float(values.min()), 4),
-                    "max": round(float(values.max()), 4),
-                    "mean": round(float(values.mean()), 4),
-                    "median": round(float(values.median()), 4),
-                    "std": round(float(values.std()) if len(values) > 1 else 0.0, 4),
-                }
+        values = []
+        for r in all_rows:
+            v = _safe_float(r.get(col, ""))
+            if v is not None:
+                values.append(v)
+        if values:
+            summary[f"{col}_stats"] = _stats_for(values)
 
     # Identify problematic samples
-    problematic_samples = (
-        combined_df[
-            (combined_df["high_overlap_pairs"] > 10)  # Many overlapping pairs
-            | (combined_df["max_iou"] > 0.5)  # Very high overlap
-            | (combined_df["num_lines"] > 100)  # Unusually many lines
-        ][["sample_id", "source_tar", "high_overlap_pairs", "max_iou", "num_lines"]]
-        .sort_values(by="max_iou", ascending=False)
-        .to_dict("records")
-    )
-
+    problematic = []
+    for r in all_rows:
+        high_overlap = int(r.get("high_overlap_pairs", 0) or 0)
+        max_iou = _safe_float(r.get("max_iou", "")) or 0.0
+        num_lines = int(r.get("num_lines", 0) or 0)
+        if high_overlap > 10 or max_iou > 0.5 or num_lines > 100:
+            problematic.append(
+                {
+                    "sample_id": r.get("sample_id", ""),
+                    "source": r.get("source", ""),
+                    "high_overlap_pairs": high_overlap,
+                    "max_iou": max_iou,
+                    "num_lines": num_lines,
+                }
+            )
+    problematic.sort(key=lambda x: x["max_iou"], reverse=True)
     summary["problematic_samples"] = {
-        "count": len(problematic_samples),
-        "samples": problematic_samples[:20],  # Show first 20
+        "count": len(problematic),
+        "samples": problematic[:20],
     }
 
-    # Save aggregated CSV
+    # Write outputs
     if output_path:
         csv_path = output_path.with_suffix(".csv")
-        combined_df.to_csv(csv_path, index=False)
+        with csv_path.open("w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerows(all_rows)
         print(f"Aggregated CSV saved to: {csv_path}", file=sys.stderr)
 
-        # Save summary JSON
         json_path = output_path.with_suffix(".json")
-        with open(json_path, "w") as f:
+        with json_path.open("w", encoding="utf-8") as f:
             json.dump(summary, f, indent=2)
         print(f"Summary statistics saved to: {json_path}", file=sys.stderr)
 
@@ -148,55 +177,39 @@ def aggregate_stats(tar_files: list[Path], output_path: Path = None):
     print(json.dumps(summary, indent=2))
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Aggregate statistics from multiple tar files using external .stats.csv files"
-    )
-    parser.add_argument(
-        "tar_files", nargs="*", help="Paths to tar files (will look for corresponding .stats.csv files)"
-    )
-    parser.add_argument(
-        "-d", "--directory", type=str, help="Directory to scan for tar files with corresponding .stats.csv files"
-    )
-    parser.add_argument(
-        "-o", "--output", type=str, help="Output path prefix for aggregated results (will create .csv and .json files)"
-    )
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Aggregate statistics from multiple .stats.csv files")
+    parser.add_argument("stats_files", nargs="*", help="Paths to .stats.csv files")
+    parser.add_argument("-d", "--directory", type=str, help="Directory to scan for .stats.csv files")
+    parser.add_argument("-o", "--output", type=str, help="Output path prefix (creates .csv and .json)")
 
     args = parser.parse_args()
 
-    # Determine tar files to process
     if args.directory:
         directory = Path(args.directory).resolve()
         if not directory.exists() or not directory.is_dir():
             print(f"Directory not found: {directory}", file=sys.stderr)
             sys.exit(1)
-        tar_paths = find_tar_files_with_stats(directory)
-        if not tar_paths:
-            print(f"No tar files with .stats.csv found in {directory}", file=sys.stderr)
+        stats_paths = find_stats_files(directory)
+        if not stats_paths:
+            print(f"No .stats.csv files found in {directory}", file=sys.stderr)
             sys.exit(1)
-        print(f"Found {len(tar_paths)} tar files with stats in {directory}", file=sys.stderr)
-    elif args.tar_files:
-        tar_paths = [Path(p).resolve() for p in args.tar_files]
+        print(f"Found {len(stats_paths)} .stats.csv files in {directory}", file=sys.stderr)
+    elif args.stats_files:
+        stats_paths = [Path(p).resolve() for p in args.stats_files]
     else:
-        print("Either provide tar files or use --directory option", file=sys.stderr)
+        print("Either provide .stats.csv files or use --directory option", file=sys.stderr)
         sys.exit(1)
 
-    # Check that all files exist
-    for tar_path in tar_paths:
-        if not tar_path.exists():
-            print(f"Tar file not found: {tar_path}", file=sys.stderr)
-            sys.exit(1)
-
-        # Check for corresponding stats file
-        stats_path = find_external_stats_file(tar_path)
-        if not stats_path.exists():
-            print(f"Stats file not found: {stats_path}", file=sys.stderr)
+    for p in stats_paths:
+        if not p.exists():
+            print(f"Stats file not found: {p}", file=sys.stderr)
             sys.exit(1)
 
     output_path = Path(args.output).resolve() if args.output else None
 
     try:
-        aggregate_stats(tar_paths, output_path)
+        aggregate_stats(stats_paths, output_path)
     except Exception as e:
         print(f"Error aggregating stats: {e}", file=sys.stderr)
         sys.exit(1)

@@ -49,14 +49,8 @@ from pathlib import Path
 # Allow standalone execution from the data_packaging/ directory.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from serialization import KEY_TEXT_LINES, KEY_TEXT_WORDS, decode_metadata
-
-try:
-    from PIL import Image
-except ImportError:
-    print("Error: This script requires Pillow. Install with: pip install pillow", file=sys.stderr)
-    print("Or using uv: uv add pillow", file=sys.stderr)
-    raise
+from data_readers import extract_image_metadata
+from serialization import KEY_QUALITY_METRICS, KEY_TEXT_BLOCKS, KEY_TEXT_LINES, KEY_TEXT_WORDS, decode_metadata
 
 # Regular expression to extract numeric IDs from filenames
 NUM_RE = re.compile(r"(\d+)(?=\.[^.]+$)")  # capture digits before the final extension
@@ -85,52 +79,6 @@ def extract_numeric_id(file_name: str) -> int:
     if not m:
         raise ValueError(f"No trailing number found in filename: {file_name}")
     return int(m.group(1))
-
-
-def extract_image_metadata(img_path: Path) -> tuple[int, int, float | None]:
-    """
-    Extract metadata from an image file.
-
-    Args:
-        img_path: Path to the image file
-
-    Returns:
-        Tuple of (width, height, dpi_or_none)
-
-    Note:
-        DPI is extracted from:
-        - info['dpi'] if present (Pillow format)
-        - JFIF density information (converted to inches if needed)
-        - Returns None if no DPI information is available
-    """
-    with Image.open(img_path) as im:
-        width, height = im.size
-        info = getattr(im, "info", {}) or {}
-        dpi = None
-
-        # Try to extract DPI from various sources
-        if "dpi" in info:
-            v = info["dpi"]
-            if isinstance(v, tuple) and len(v) > 0:
-                dpi = float(v[0])
-            elif isinstance(v, (int, float)):
-                dpi = float(v)
-        elif "jfif_density" in info:
-            density = info.get("jfif_density")
-            unit = info.get("jfif_unit", 1)  # 1=inches, 2=cm
-            if isinstance(density, tuple) and len(density) > 0:
-                x_density = float(density[0])
-            elif isinstance(density, (int, float)):
-                x_density = float(density)
-            else:
-                x_density = None
-            if x_density is not None:
-                if unit == 1:  # per inch
-                    dpi = x_density
-                elif unit == 2:  # per cm -> per inch
-                    dpi = x_density * 2.54
-
-        return width, height, (round(dpi, 2) if dpi is not None else None)
 
 
 def process_directory(input_dir: Path, output_tar: Path):
@@ -192,11 +140,14 @@ def process_directory(input_dir: Path, output_tar: Path):
             gt_parse = decode_metadata(rec)
             text_lines = gt_parse.get(KEY_TEXT_LINES, [])
             text_words = gt_parse.get(KEY_TEXT_WORDS, [])
+            text_blocks = gt_parse.get(KEY_TEXT_BLOCKS, [])
+            quality_metrics = gt_parse.get(KEY_QUALITY_METRICS, {})
 
             # Create the new JSON payload
             new_obj = {
-                "text": {"lines": text_lines, "words": text_words},
+                "text": {"lines": text_lines, "words": text_words, "blocks": text_blocks},
                 "image": {"path": new_img_name, "width": width, "height": height, "dpi": dpi},
+                "quality_metrics": quality_metrics,
             }
             payload = json.dumps(new_obj, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
 
