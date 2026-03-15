@@ -229,6 +229,9 @@ uv run python extract_corpus.py
 
 # Custom dataset and sample count
 uv run python extract_corpus.py --dataset allenai/c4 --subset en --target-samples 500000
+
+# Allow Latin-1 characters (default is ASCII-only)
+uv run python extract_corpus.py --charset latin-1
 ```
 
 ### Generate Statistics
@@ -267,7 +270,7 @@ outputs/<run_name>/
     └── ...
 ```
 
-Split assignment follows the configured ratio (default 80/10/10 train/val/test).
+Split assignment is **content-based**: each sample's label text is hashed (SHA-256) to deterministically assign it to a split, so the same text always lands in the same split regardless of generation order or worker count. The split follows the configured ratio (default 80/10/10 train/val/test).
 
 ### Metadata Schema
 
@@ -335,6 +338,7 @@ Per-sample quality and integrity signals:
 | `textbox_null_count` | `int` | Number of textbox layout slots that produced no text (e.g., text didn't fit). |
 | `textbox_total_count` | `int` | Total textbox layout slots attempted. |
 | `image_size` | `[int, int]` | Image dimensions `[width, height]` in pixels. |
+| `word_segmentation_method` | `str` | Method used for word segmentation (currently `"whitespace"`). Useful for downstream filtering of CJK data where whitespace splitting is not meaningful. |
 
 ## Generation Pipeline
 
@@ -346,6 +350,7 @@ The `SynthDoG` template in `template.py` orchestrates this pipeline per image:
 4. **Content**: Render text onto the paper using the selected text reader and layout
    - Text color adapts to paper luminance for contrast
    - Words are never split across lines
+   - Margins are sampled independently for each of the four sides (asymmetric)
 5. **Document effects**: Apply elastic distortion, perspective transform, and Gaussian noise to the document group
 6. **Bbox capture**: Compute line/word/block bounding boxes from the transformed text layers (AABBs)
 7. **Degenerate filtering**: Remove annotations for lines whose bbox area is below `min_bbox_area` pixels
@@ -362,6 +367,7 @@ The `SynthDoG` template in `template.py` orchestrates this pipeline per image:
 - **Elastic distortion warps pixels but not quads**: Quad coordinates reflect perspective transforms only. Elastic distortion modifies the rendered pixels without updating annotation coordinates. For the moderate distortion levels used (alpha ≤ 1, sigma ≤ 0.5), this is a good approximation.
 - **Motion blur shifts apparent text position**: Motion blur (k=3–5) is applied after bbox capture and can shift apparent text position by ~1–2px beyond annotated boundaries.
 - **Shadow/brightness reduce legibility**: These pixel-level effects can reduce text legibility below what the WCAG-based color selection targeted. The `min_line_contrast` metric captures this.
+- **Per-sample RNG seeding is approximate**: Each sample seeds NumPy's global RNG using `(PID * 1_000_000 + counter) % 2**32`. This prevents shared-state RNG drift across workers but is not perfectly reproducible across different worker counts. Threading `np.random.Generator` through the entire pipeline would be needed for full reproducibility.
 
 ## Configuration
 
