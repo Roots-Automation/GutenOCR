@@ -83,10 +83,11 @@ class TextBox:
             font: Font configuration dictionary with keys like 'path', 'size', etc.
 
         Returns:
-            Tuple of (text_layer, text_string) where:
+            Tuple of (text_layer, text_string, word_local_data) where:
                 - text_layer: A merged synthtiger Layer containing the rendered text
                 - text_string: The actual text that was rendered
-            Returns (None, None) if no valid text could be generated.
+                - word_local_data: Per-word x-ratio dicts from character layers
+            Returns (None, None, None) if no valid text could be generated.
         """
         width, height = size
 

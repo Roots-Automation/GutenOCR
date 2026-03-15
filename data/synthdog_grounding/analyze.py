@@ -220,6 +220,8 @@ def collect_sample_stats(input_path: Path) -> list[dict]:
 
 def _build_stats_csv(sample_stats: list[dict]) -> str:
     """Format sample statistics as a CSV string."""
+    if not sample_stats:
+        return ""
     csv_buffer = io.StringIO()
     fieldnames = list(sample_stats[0].keys())
     writer = csv.DictWriter(csv_buffer, fieldnames=fieldnames)

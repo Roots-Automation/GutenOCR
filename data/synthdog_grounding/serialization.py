@@ -5,8 +5,6 @@ Centralizes the contract between producer (template.py) and consumer
 dataclasses, and shared constants live in one place.
 """
 
-from __future__ import annotations
-
 import json
 from dataclasses import dataclass
 from typing import Any

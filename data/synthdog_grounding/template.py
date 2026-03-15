@@ -15,6 +15,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pillow_compat  # noqa: E402, F401, I001
 
+import copy  # noqa: E402
 import json  # noqa: E402
 import os  # noqa: E402
 import re  # noqa: E402
@@ -44,17 +45,12 @@ def _deep_merge(base: dict, overlay: dict) -> dict:
     Scalar / list values in *overlay* replace those in *base*;
     nested dicts are merged recursively.
     """
-    merged = {}
-    for key in set(base) | set(overlay):
-        if key in overlay and key in base:
-            if isinstance(base[key], dict) and isinstance(overlay[key], dict):
-                merged[key] = _deep_merge(base[key], overlay[key])
-            else:
-                merged[key] = overlay[key]
-        elif key in overlay:
-            merged[key] = overlay[key]
+    merged = copy.deepcopy(base)
+    for key, value in overlay.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(merged[key], value)
         else:
-            merged[key] = base[key]
+            merged[key] = copy.deepcopy(value)
     return merged
 
 

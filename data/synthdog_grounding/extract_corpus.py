@@ -70,7 +70,7 @@ def extract_finepdfs_text(
     pbar.close()
     print(f"Extraction complete! Saved {valid_samples:,} ASCII-only samples to {output}")
     print(f"Total rows processed: {processed_rows:,}")
-    print(f"Success rate: {valid_samples / processed_rows * 100:.2f}%")
+    print(f"Success rate: {valid_samples / max(processed_rows, 1) * 100:.2f}%")
 
 
 def main():

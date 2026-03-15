@@ -4,8 +4,6 @@ Supports both raw generation output (metadata.jsonl directories) and
 packaged tar archives, normalizing both to a common dict shape.
 """
 
-from __future__ import annotations
-
 import json
 import sys
 import tarfile

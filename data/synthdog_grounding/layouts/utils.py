@@ -4,8 +4,6 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-from __future__ import annotations
-
 from typing import NamedTuple, Protocol
 
 import numpy as np

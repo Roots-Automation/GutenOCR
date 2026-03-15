@@ -4,8 +4,6 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-from __future__ import annotations
-
 import logging
 import re
 from collections import OrderedDict
@@ -19,7 +17,7 @@ class TextCursor(Protocol):
     """Protocol shared by all text readers (file-backed and streaming)."""
 
     def __len__(self) -> int: ...
-    def __iter__(self) -> TextCursor: ...
+    def __iter__(self) -> "TextCursor": ...
     def __next__(self) -> str: ...
     def move(self, idx: int) -> None: ...
     def next(self) -> None: ...
@@ -51,6 +49,13 @@ class TextReader:
 
     def __del__(self):
         self.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
 
     def __len__(self):
         return self.length
@@ -89,6 +94,12 @@ class TextReader:
         self.cache.move_to_end(key)
         char = text[self.idx % self.block_size]
         return char
+
+
+# Virtual length returned by HuggingFaceTextReader.__len__; the reader is
+# streaming so the true length is unknown.  This must be large enough that
+# np.random.randint(len(reader)) produces a varied starting position.
+_HF_READER_VIRTUAL_LENGTH = 10**8
 
 
 class HuggingFaceTextReader:
@@ -163,8 +174,7 @@ class HuggingFaceTextReader:
         return self._joined_text_cache
 
     def __len__(self):
-        # Return a large number since we're streaming
-        return 10**8
+        return _HF_READER_VIRTUAL_LENGTH
 
     def __iter__(self):
         return self
