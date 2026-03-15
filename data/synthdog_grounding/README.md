@@ -63,16 +63,14 @@ synthdog_grounding/
 │   ├── paper/               #   Paper texture images
 │   └── corpus/              #   Text corpus files (e.g. enwiki.txt)
 │
+│   # ── Data preparation ──────────────────────────────────────────
+├── extract_corpus.py        # Extract text corpus from HuggingFace datasets
+│
 │   # ── Post-generation tools ────────────────────────────────────
 ├── package.py               # Tar archive builder (single + batch)
 ├── data_readers.py          # Unified sample iterator (tar + directory)
-├── data_analysis/           # Statistics and aggregation
-│   ├── generate_stats.py    #   Per-sample statistics (tar or directory)
-│   ├── aggregate_stats.py   #   Aggregate stats across datasets
-│   └── batch_stats.py       #   Batch processing with parallel support
-├── data_extraction/         # Inspection and extraction utilities
-│   ├── check_sample.py      #   Extract and visualize annotated samples
-│   └── extract_finepdfs.py  #   Extract text from FinePDFs dataset
+├── analyze.py               # Statistics: per-sample, aggregation, batch
+├── inspect_sample.py        # Extract and visualize annotated samples
 │
 │   # ── Project metadata ─────────────────────────────────────────
 ├── pyproject.toml           # Project metadata and dependencies
@@ -195,10 +193,10 @@ uv run python -m synthtiger -o ./outputs/SynthDoG_hf -c 50 -w 4 -v template.py S
 
 ```bash
 # Extract first 25 samples with bounding box annotations
-uv run python data_extraction/check_sample.py /path/to/data.tar
+uv run python inspect_sample.py /path/to/data.tar
 
 # Extract specific samples with text labels
-uv run python data_extraction/check_sample.py /path/to/data.tar --ids 00087 00042 --label-with-text
+uv run python inspect_sample.py /path/to/data.tar --ids 00087 00042 --label-with-text
 ```
 
 | Flag | Description | Default |
@@ -223,21 +221,31 @@ uv run python package.py --batch /path/to/outputs --start 0 --end 75 --workers 8
 uv run python package.py --batch /path/to/outputs --dry-run
 ```
 
+### Prepare Text Corpus
+
+```bash
+# Extract ASCII text from FinePDFs dataset (default: 1M samples)
+uv run python extract_corpus.py
+
+# Custom dataset and sample count
+uv run python extract_corpus.py --dataset allenai/c4 --subset en --target-samples 500000
+```
+
 ### Generate Statistics
 
 ```bash
 # Single tar file
-uv run python data_analysis/generate_stats.py /path/to/data.tar
+uv run python analyze.py stats /path/to/data.tar
 
 # Raw generation output directory (metadata.jsonl)
-uv run python data_analysis/generate_stats.py /path/to/output_dir
+uv run python analyze.py stats /path/to/output_dir
 
 # Batch process all data sources under a directory
-uv run python data_analysis/batch_stats.py /path/to/outputs
-uv run python data_analysis/batch_stats.py /path/to/outputs --workers 4
+uv run python analyze.py batch /path/to/outputs
+uv run python analyze.py batch /path/to/outputs --workers 4
 
 # Aggregate across .stats.csv files
-uv run python data_analysis/aggregate_stats.py -d /path/to/directory -o aggregated_stats
+uv run python analyze.py aggregate -d /path/to/directory -o aggregated_stats
 ```
 
 Statistics now include quality metrics (contrast, degenerate counts, textbox fill rate) when present in the data.

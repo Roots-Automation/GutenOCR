@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 """
-Extract text from FinePDFs dataset and save to a .txt file.
-This script loads the first N rows from the specified subset of FinePDFs.
+Extract text from a HuggingFace dataset and save to a .txt corpus file.
+
+This is a pre-generation tool for preparing text corpus files that SynthDoG
+uses as input during document generation.
+
+Usage:
+    python extract_corpus.py
+    python extract_corpus.py --output my_corpus.txt --target-samples 500000
+    python extract_corpus.py --dataset allenai/c4 --subset en
 """
 
 import argparse
@@ -14,7 +21,7 @@ def extract_finepdfs_text(
     subset: str,
     split: str,
 ):
-    """Extract text from FinePDFs dataset and save to txt file."""
+    """Extract text from a HuggingFace dataset and save to txt file."""
     from datasets import load_dataset
     from tqdm import tqdm
 
@@ -67,7 +74,7 @@ def extract_finepdfs_text(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Extract text from a HuggingFace dataset into a .txt file")
+    parser = argparse.ArgumentParser(description="Extract text from a HuggingFace dataset into a .txt corpus file")
     parser.add_argument("--output", default="finepdfs_eng_latn_1M.txt", help="Output text file path")
     parser.add_argument("--target-samples", type=int, default=1_000_000, help="Number of ASCII-only samples to extract")
     parser.add_argument("--dataset", default="HuggingFaceFW/finepdfs", help="HuggingFace dataset name")

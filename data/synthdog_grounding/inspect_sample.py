@@ -14,19 +14,19 @@ Features:
 - Saves both original and annotated versions for comparison
 
 Usage:
-    python check_sample.py <tar_file> [options]
+    python inspect_sample.py <tar_file> [options]
 
     # Extract first 10 samples from a tar file
-    python check_sample.py path/to/train-0011.tar -n 10
+    python inspect_sample.py path/to/train-0011.tar -n 10
 
     # Extract specific sample IDs
-    python check_sample.py path/to/train-0011.tar --ids 00087 00042 00013
+    python inspect_sample.py path/to/train-0011.tar --ids 00087 00042 00013
 
     # Custom output directory and line width
-    python check_sample.py path/to/train-0011.tar -o ./my_samples --line-width 5
+    python inspect_sample.py path/to/train-0011.tar -o ./my_samples --line-width 5
 
     # Include text labels on annotations
-    python check_sample.py path/to/train-0011.tar --label-with-text
+    python inspect_sample.py path/to/train-0011.tar --label-with-text
 
 Output:
     Creates files in the output directory (default: ./check_sample/):
@@ -295,13 +295,13 @@ def main():
         epilog="""
 Examples:
     # Extract first 10 samples
-    python check_sample.py path/to/train-0011.tar -n 10
+    python inspect_sample.py path/to/train-0011.tar -n 10
 
     # Extract specific sample IDs
-    python check_sample.py path/to/train-0011.tar --ids 00087 00042 00013
+    python inspect_sample.py path/to/train-0011.tar --ids 00087 00042 00013
 
     # Custom output directory with text labels
-    python check_sample.py path/to/train-0011.tar -o ./my_samples --label-with-text
+    python inspect_sample.py path/to/train-0011.tar -o ./my_samples --label-with-text
         """,
     )
     parser.add_argument("tar_file", type=Path, help="Path to the tar archive to inspect")
