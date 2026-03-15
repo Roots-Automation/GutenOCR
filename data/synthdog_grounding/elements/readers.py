@@ -125,6 +125,7 @@ class HuggingFaceTextReader:
         self.text_buffer = []
         self._joined_text_cache = None
         self.idx = 0
+        self._needs_refresh = False
         self.dataset_iter = iter(self.dataset)
 
         # Pre-load some text
@@ -186,6 +187,9 @@ class HuggingFaceTextReader:
 
     def move(self, idx):
         """Move to a specific position in the text"""
+        if self._needs_refresh:
+            self._refresh_buffer()
+            self._needs_refresh = False
         current_text = self._get_current_text()
         if idx >= len(current_text):
             # If we need more text, refresh the buffer
@@ -200,9 +204,10 @@ class HuggingFaceTextReader:
         current_text = self._get_current_text()
         if current_text:
             self.idx = (self.idx + 1) % len(current_text)
-            # If we've gone through most of the current text, refresh buffer
+            # Defer buffer refresh to next move() call so we never swap
+            # the buffer mid-character-iteration within a single textbox.
             if self.idx > len(current_text) * 0.8:
-                self._refresh_buffer()
+                self._needs_refresh = True
 
     def prev(self):
         """Move to previous character"""
