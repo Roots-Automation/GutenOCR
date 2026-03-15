@@ -285,6 +285,87 @@ def _compute_quality_metrics(
     }
 
 
+def _build_annotations(
+    text_layers,
+    texts: list[str],
+    block_ids: list[int],
+    words_per_line: list[list[dict]],
+    image_width: int,
+    image_height: int,
+    emit_quads: bool,
+    min_bbox_area: float,
+) -> tuple[list[LineAnnotation], list[WordAnnotation], list[BlockAnnotation], int, int]:
+    """Orchestrate line/word/block annotation construction and degenerate filtering."""
+    line_bboxes = _capture_line_bboxes(text_layers, image_width, image_height)
+    line_quads = _capture_line_quads(text_layers, image_width, image_height) if emit_quads else []
+
+    lines = []
+    for i, text in enumerate(texts):
+        lines.append(
+            LineAnnotation(
+                text=text,
+                bbox=line_bboxes[i],
+                block_id=block_ids[i],
+                line_id=i,
+                quad=line_quads[i] if line_quads else None,
+            )
+        )
+
+    words = _build_word_annotations(text_layers, words_per_line, image_width, image_height, emit_quads)
+    blocks = _build_block_annotations(block_ids, line_bboxes)
+
+    lines, words, blocks, deg_line_ct, deg_word_ct = _filter_degenerate(
+        lines, words, blocks, min_bbox_area, image_width, image_height
+    )
+
+    return lines, words, blocks, deg_line_ct, deg_word_ct
+
+
+def _package_data(
+    *,
+    image: np.ndarray,
+    label: str,
+    quality: int,
+    roi: np.ndarray,
+    lines: list[LineAnnotation],
+    words: list[WordAnnotation],
+    blocks: list[BlockAnnotation],
+    quality_metrics: dict,
+    emit_quads: bool,
+) -> dict[str, Any]:
+    """Assemble the final data dict returned by generate()."""
+    text_blocks_dicts = [{"block_id": b.block_id, "bbox": b.bbox, "line_ids": b.line_ids} for b in blocks]
+    text_words_dicts = []
+    for wd in words:
+        entry: dict[str, Any] = {
+            "text": wd.text,
+            "bbox": wd.bbox,
+            "word_id": wd.word_id,
+            "line_id": wd.line_id,
+        }
+        if wd.quad is not None:
+            entry["quad"] = wd.quad
+        text_words_dicts.append(entry)
+
+    data: dict[str, Any] = {
+        "image": image,
+        "label": label,
+        "quality": quality,
+        "roi": roi,
+        "lines": lines,
+        "words": words,
+        "blocks": blocks,
+        "text_blocks": text_blocks_dicts,
+        "text_words": text_words_dicts,
+        "quality_metrics": quality_metrics,
+    }
+
+    if emit_quads:
+        data["text_quads"] = [ln.quad for ln in lines]
+
+    return data
+
+
 class SynthDoG(templates.Template):
     def __init__(self, config=None, split_ratio: list[float] | None = None):
         super().__init__(config)
@@ -331,6 +412,12 @@ class SynthDoG(templates.Template):
         self.split_ratio = [r / ratio_sum for r in split_ratio]
         self._split_thresholds = np.cumsum(self.split_ratio)
 
+    def _render(self, document_group, bg_layer, size: tuple[int, int]) -> np.ndarray:
+        """Merge layers, apply effects, and rasterize to a numpy array."""
+        layer = layers.Group([*document_group.layers, bg_layer]).merge()
+        self.effect.apply([layer])
+        return layer.output(bbox=[0, 0, *size])
+
     def generate(self):
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
@@ -351,38 +438,19 @@ class SynthDoG(templates.Template):
 
         image_width, image_height = size
 
-        # Capture line bboxes and optional quads
-        line_bboxes = _capture_line_bboxes(text_layers, image_width, image_height)
-        line_quads = _capture_line_quads(text_layers, image_width, image_height) if self.emit_quads else []
-
-        # Assemble LineAnnotation objects
-        lines = []
-        for i, text in enumerate(texts):
-            lines.append(
-                LineAnnotation(
-                    text=text,
-                    bbox=line_bboxes[i],
-                    block_id=block_ids[i],
-                    line_id=i,
-                    quad=line_quads[i] if line_quads else None,
-                )
-            )
-
-        # Build word and block annotations
-        words = _build_word_annotations(text_layers, words_per_line, image_width, image_height, self.emit_quads)
-        blocks = _build_block_annotations(block_ids, line_bboxes)
-
-        # Filter degenerate bboxes
-        lines, words, blocks, deg_line_ct, deg_word_ct = _filter_degenerate(
-            lines, words, blocks, self.min_bbox_area, image_width, image_height
+        lines, words, blocks, deg_line_ct, deg_word_ct = _build_annotations(
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            image_width,
+            image_height,
+            self.emit_quads,
+            self.min_bbox_area,
         )
 
-        # Render final image
-        layer = layers.Group([*document_group.layers, bg_layer]).merge()
-        self.effect.apply([layer])
-        image = layer.output(bbox=[0, 0, *size])
+        image = self._render(document_group, bg_layer, size)
 
-        # Quality metrics
         quality_metrics = _compute_quality_metrics(
             image,
             lines,
@@ -398,37 +466,17 @@ class SynthDoG(templates.Template):
         label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
 
-        # Flatten annotations to dicts for SynthTiger interface
-        text_blocks_dicts = [{"block_id": b.block_id, "bbox": b.bbox, "line_ids": b.line_ids} for b in blocks]
-        text_words_dicts = []
-        for wd in words:
-            entry: dict[str, Any] = {
-                "text": wd.text,
-                "bbox": wd.bbox,
-                "word_id": wd.word_id,
-                "line_id": wd.line_id,
-            }
-            if wd.quad is not None:
-                entry["quad"] = wd.quad
-            text_words_dicts.append(entry)
-
-        data: dict[str, Any] = {
-            "image": image,
-            "label": label,
-            "quality": quality,
-            "roi": roi,
-            "lines": lines,
-            "words": words,
-            "blocks": blocks,
-            "text_blocks": text_blocks_dicts,
-            "text_words": text_words_dicts,
-            "quality_metrics": quality_metrics,
-        }
-
-        if self.emit_quads:
-            data["text_quads"] = [ln.quad for ln in lines]
-
-        return data
+        return _package_data(
+            image=image,
+            label=label,
+            quality=quality,
+            roi=roi,
+            lines=lines,
+            words=words,
+            blocks=blocks,
+            quality_metrics=quality_metrics,
+            emit_quads=self.emit_quads,
+        )
 
     def init_save(self, root):
         os.makedirs(root, exist_ok=True)
