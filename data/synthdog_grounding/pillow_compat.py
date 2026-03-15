@@ -1,3 +1,4 @@
+import math
 import warnings
 
 from PIL import ImageFont
@@ -13,15 +14,24 @@ def register_pillow_compat():
     if not hasattr(ImageFont.FreeTypeFont, "getsize"):
 
         def getsize(self, text, direction=None, features=None, language=None):
-            # getbbox returns (left, top, right, bottom)
+            # Width: prefer getlength (advance width) over getbbox (ink width)
             try:
-                left, top, right, bottom = self.getbbox(text, direction=direction, features=features, language=language)
-            except KeyError:
-                # Likely 'setting text direction… is not supported without libraqm'
-                # Fallback to simple bbox without direction/features
-                left, top, right, bottom = self.getbbox(text)
+                w = int(math.ceil(self.getlength(text, direction=direction, features=features, language=language)))
+            except (AttributeError, KeyError):
+                try:
+                    left, _, right, _ = self.getbbox(text, direction=direction, features=features, language=language)
+                except KeyError:
+                    left, _, right, _ = self.getbbox(text)
+                w = right - left
 
-            return right - left, bottom - top
+            # Height: ink height from getbbox is correct for layout purposes
+            try:
+                _, top, _, bottom = self.getbbox(text, direction=direction, features=features, language=language)
+            except KeyError:
+                _, top, _, bottom = self.getbbox(text)
+            h = bottom - top
+
+            return w, h
 
         setattr(ImageFont.FreeTypeFont, "getsize", getsize)
 
