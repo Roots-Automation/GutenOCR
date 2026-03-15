@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ._utils import sample_fill
+from ._utils import LayoutCell, sample_fill
 
 
 class Grid:
@@ -58,19 +58,19 @@ class Grid:
         self,
         bbox: list[float],
         *,
-        fill_range: list[float] | None = None,
-        text_scale_range: list[float] | None = None,
-    ) -> list[tuple[list[float], str, int]] | None:
+        fill_range: tuple[float, float] | None = None,
+        text_scale_range: tuple[float, float] | None = None,
+    ) -> list[LayoutCell] | None:
         """
         Generate a grid layout within the given bounding box.
 
         Args:
             bbox: List of [left, top, width, height] defining the area
-            fill_range: Optional [min, max] fill ratio override (defaults to self.fill)
-            text_scale_range: Optional [min, max] text scale override (defaults to self.text_scale)
+            fill_range: Optional (min, max) fill ratio override (defaults to self.fill)
+            text_scale_range: Optional (min, max) text scale override (defaults to self.text_scale)
 
         Returns:
-            List of (bbox, align, col_idx) triples where:
+            List of LayoutCell(bbox, align, col_idx) where:
                 - bbox: [x, y, width, height] for each text cell
                 - align: Text alignment ("left", "right", or "center")
                 - col_idx: Zero-based column index of the cell within this grid
@@ -113,7 +113,9 @@ class Grid:
         probs[0] = 0 if not padding[0] else probs[0]
         probs[-1] = 0 if not padding[-1] else probs[-1]
         probs[1::2] *= max(fill - sum(weights[1::2]), 0) / sum(probs[1::2])
-        probs[::2] *= max(1 - fill - sum(weights[::2]), 0) / sum(probs[::2])
+        even_sum = sum(probs[::2])
+        if even_sum > 0:
+            probs[::2] *= max(1 - fill - sum(weights[::2]), 0) / even_sum
         weights += probs
 
         widths = [width * weights[c] for c in range(col * 2 + 1)]
@@ -130,7 +132,7 @@ class Grid:
             for r in range(row):
                 x, y = xs[c * 2 + 1], ys[r]
                 w, h = xs[c * 2 + 2] - x, ys[r + 1] - y
-                bbox = [left + x, top + y, w, h]
-                layout.append((bbox, align, c))
+                cell_bbox = [left + x, top + y, w, h]
+                layout.append(LayoutCell(cell_bbox, align, c))
 
         return layout

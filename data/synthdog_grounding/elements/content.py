@@ -17,9 +17,9 @@ from synthtiger import components
 logger = logging.getLogger(__name__)
 
 try:
-    from layouts import GridStack
+    from layouts import GridStack, Layout
 except ImportError:
-    from ..layouts import GridStack
+    from ..layouts import GridStack, Layout
 
 from .textbox import TextBox
 
@@ -274,7 +274,7 @@ class Content:
         self.reader: TextCursor = reader_cls(**reader_kwargs)
 
         self.font = components.BaseFont(**config.get("font", {}))
-        self.layout = GridStack(config.get("layout", {}))
+        self.layout: Layout = GridStack(config.get("layout", {}))
         self.textbox = TextBox(config.get("textbox", {}))
         self.textbox_color_config = config.get("textbox_color", {})
         self.content_color_config = config.get("content_color", {})

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ._utils import sample_fill
+from ._utils import LayoutCell, sample_fill
 from .grid import Grid
 
 
@@ -19,6 +19,11 @@ class GridStack:
     The GridStack creates multiple Grid sections stacked vertically,
     useful for generating documents with multiple paragraphs or
     distinct text regions separated by spacing.
+
+    Failure contract: GridStack.generate() returns an empty list when no
+    valid grids fit, while Grid.generate() returns None. The difference is
+    intentional — GridStack always returns an iterable of grid layouts
+    (possibly empty), so callers can unconditionally iterate over the result.
 
     Attributes:
         text_scale: [min, max] range for text size relative to box dimensions
@@ -36,7 +41,7 @@ class GridStack:
         ...         print(f"Box at {bbox} in column {col_idx}")
     """
 
-    def __init__(self, config: dict[str, object]) -> None:
+    def __init__(self, config: dict[str, object], *, grid: Grid | None = None) -> None:
         """
         Initialize a GridStack layout with the given configuration.
 
@@ -51,6 +56,8 @@ class GridStack:
                 - stack_spacing: [min, max] vertical spacing range (default: [0, 0.05])
                 - stack_fill: [min, max] vertical fill range (default: [1, 1])
                 - stack_full: Probability of full vertical fill (default: 0)
+            grid: Optional pre-configured Grid collaborator. If None, a Grid is
+                built from the relevant keys in *config*.
         """
         self.text_scale = config.get("text_scale", [0.05, 0.1])
         self.fill = config.get("fill", [0, 1])
@@ -60,16 +67,20 @@ class GridStack:
         self.stack_full = config.get("stack_full", 0)
         # fill/full intentionally omitted: generate() always overrides them
         # via the fill_range keyword argument to Grid.generate().
-        self._grid = Grid(
-            {
-                "text_scale": self.text_scale,
-                "max_row": config.get("max_row", 5),
-                "max_col": config.get("max_col", 3),
-                "align": config.get("align", ["left", "right", "center"]),
-            }
+        self._grid = (
+            grid
+            if grid is not None
+            else Grid(
+                {
+                    "text_scale": self.text_scale,
+                    "max_row": config.get("max_row", 5),
+                    "max_col": config.get("max_col", 3),
+                    "align": config.get("align", ["left", "right", "center"]),
+                }
+            )
         )
 
-    def generate(self, bbox: list[float]) -> list[list[tuple[list[float], str, int]]]:
+    def generate(self, bbox: list[float]) -> list[list[LayoutCell]]:
         """
         Generate stacked grid layouts within the given bounding box.
 
@@ -78,7 +89,7 @@ class GridStack:
 
         Returns:
             List of grid layouts, where each grid layout is a list of
-            (bbox, align, col_idx) triples. Returns an empty list if no valid
+            LayoutCell(bbox, align, col_idx). Returns an empty list if no valid
             grids could be generated.
         """
         left, top, width, height = bbox
@@ -106,14 +117,17 @@ class GridStack:
 
             layout = self._grid.generate(
                 [left, top + line, *grid_size],
-                fill_range=[fill, fill],
-                text_scale_range=[text_scale, text_scale],
+                fill_range=(fill, fill),
+                text_scale_range=(text_scale, text_scale),
             )
             if layout is None:
                 break
 
             line = max(y + h - top for (_, y, _, h), *_ in layout) + stack_spacing
             layouts.append(layout)
+
+        if not layouts:
+            return []
 
         line = max(line - stack_spacing, 0)
         space = max(height - line, 0)
@@ -124,9 +138,9 @@ class GridStack:
         redistributed = []
         for layout, space in zip(layouts, spaces):
             new_layout = []
-            for bbox, align, col_idx in layout:
-                x, y, w, h = bbox
-                new_layout.append(([x, y + space, w, h], align, col_idx))
+            for cell_bbox, align, col_idx in layout:
+                x, y, w, h = cell_bbox
+                new_layout.append(LayoutCell([x, y + space, w, h], align, col_idx))
             redistributed.append(new_layout)
 
         return redistributed
