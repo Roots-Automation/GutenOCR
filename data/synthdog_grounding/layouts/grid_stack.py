@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from ._utils import LayoutCell, sample_fill
 from .grid import Grid
+from .utils import LayoutCell, sample_fill
 
 
 class GridStack:
