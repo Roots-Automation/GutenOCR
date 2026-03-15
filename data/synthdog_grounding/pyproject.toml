@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,7 +7,7 @@ name = "synthdog-grounding"
 version = "0.1.0"
 description = "Synthetic Document Generator with Grounding Annotations"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "NAVER Corp."},
     {name = "Roots Automation"},
@@ -30,18 +30,9 @@ requires-python = ">=3.10"
 dependencies = [
     "pillow>=10.2.0",
     "synthtiger",
-    "numpy<2",
+    "numpy",
     "datasets",
     "tqdm",
-]
-
-[project.optional-dependencies]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "black",
-    "isort",
-    "mypy",
 ]
 
 [project.urls]
@@ -49,21 +40,7 @@ dev = [
 "Bug Tracker" = "https://github.com/Roots-Automation/GutenOCR/issues"
 
 [tool.setuptools.packages.find]
-include = ["elements*", "layouts*", "data_packaging*", "data_analysis*", "data_extraction*"]
+include = ["elements*", "layouts*", "data_generation*", "data_packaging*", "data_analysis*", "data_extraction*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.txt"]
-
-[tool.black]
-line-length = 100
-target-version = ["py310", "py311", "py312", "py313"]
-
-[tool.isort]
-profile = "black"
-line_length = 100
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-ignore_missing_imports = true
