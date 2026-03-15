@@ -76,7 +76,12 @@ def capture_line_quads(text_layers, w: int, h: int) -> list[list[list[float]]]:
 def build_word_annotations(
     text_layers, words_per_line: list[list[dict]], w: int, h: int, emit_quads: bool
 ) -> list[WordAnnotation]:
-    """Build word-level annotations from quad interpolation."""
+    """Build word-level annotations from quad interpolation.
+
+    Word bounding boxes are derived by linear interpolation of line quad
+    corners.  Under perspective transforms this is a first-order
+    approximation.
+    """
     words = []
     word_global_id = 0
     for line_idx, (text_layer, word_local_data) in enumerate(zip(text_layers, words_per_line)):

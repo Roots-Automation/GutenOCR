@@ -335,15 +335,22 @@ Examples:
         print(f"Error: Tar file not found: {args.tar_file}")
         return 1
 
-    process_targets(
-        tar_path=args.tar_file,
-        out_dir=args.output,
-        target_ids=args.ids,
-        first_n=args.first_n,
-        line_width=args.line_width,
-        label_with_text=args.label_with_text,
-        font_path=args.font_path,
-    )
+    try:
+        process_targets(
+            tar_path=args.tar_file,
+            out_dir=args.output,
+            target_ids=args.ids,
+            first_n=args.first_n,
+            line_width=args.line_width,
+            label_with_text=args.label_with_text,
+            font_path=args.font_path,
+        )
+    except FileNotFoundError as e:
+        print(f"Error: {e}")
+        return 1
+    except tarfile.TarError as e:
+        print(f"Error reading tar archive: {e}")
+        return 1
     return 0
 
 

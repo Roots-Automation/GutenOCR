@@ -14,6 +14,11 @@ class Paper:
         self.color_config = config.get("color", {})
 
     def generate(self, size):
+        """Generate a paper layer with optional random color and texture.
+
+        Returns the base RGB before texture overlay. Callers should rely on
+        min_line_contrast quality metric for post-hoc contrast validation.
+        """
         color_prob = self.color_config.get("prob", 0)
         rgb_ranges = self.color_config.get("rgb", [[255, 255], [255, 255], [255, 255]])
 
