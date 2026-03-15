@@ -152,8 +152,10 @@ class SynthDoG(templates.Template):
         # Seed per-sample so that workers sharing the global NumPy RNG don't
         # produce correlated sequences.  Not perfectly reproducible across
         # different worker counts, but prevents shared-state RNG drift.
+        # np.random.seed requires a 32-bit unsigned int (max 2**32 - 1).
         self._gen_counter += 1
-        np.random.seed(os.getpid() * 1_000_000 + self._gen_counter)
+        seed = (os.getpid() * 1_000_000 + self._gen_counter) % (2**32)
+        np.random.seed(seed)
 
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
