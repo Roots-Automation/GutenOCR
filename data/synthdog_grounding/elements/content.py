@@ -31,11 +31,13 @@ def _make_adaptive_color(color_config: dict, gray_range: list[int], lum: float) 
 
 
 def _compute_layout_bbox(width: int, height: int, margin: list[float]) -> list[float]:
-    """Sample symmetric margins and return [left, top, w, h] for the content area."""
+    """Sample 4 independent margins and return [left, top, w, h] for the content area."""
     layout_left = width * np.random.uniform(margin[0], margin[1])
+    layout_right = width * np.random.uniform(margin[0], margin[1])
     layout_top = height * np.random.uniform(margin[0], margin[1])
-    layout_width = max(width - layout_left * 2, 0)
-    layout_height = max(height - layout_top * 2, 0)
+    layout_bottom = height * np.random.uniform(margin[0], margin[1])
+    layout_width = max(width - layout_left - layout_right, 0)
+    layout_height = max(height - layout_top - layout_bottom, 0)
     return [layout_left, layout_top, layout_width, layout_height]
 
 

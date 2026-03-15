@@ -107,7 +107,7 @@ effect:
     # brightness
     - prob: 1
       args:
-        beta: [-48, 0]
+        beta: [-48, 48]
     # motion blur
     - prob: 0.5
       args:

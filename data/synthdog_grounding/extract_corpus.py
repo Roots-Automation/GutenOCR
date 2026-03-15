@@ -20,6 +20,7 @@ def extract_finepdfs_text(
     dataset: str,
     subset: str,
     split: str,
+    charset: str = "ascii",
 ):
     """Extract text from a HuggingFace dataset and save to txt file."""
     from datasets import load_dataset
@@ -30,7 +31,7 @@ def extract_finepdfs_text(
     ds = load_dataset(dataset, subset, streaming=True)
     train_ds = ds[split]
 
-    print(f"Extracting {target_samples:,} ASCII-only samples to {output}...")
+    print(f"Extracting {target_samples:,} {charset}-only samples to {output}...")
 
     valid_samples = 0
     processed_rows = 0
@@ -48,8 +49,8 @@ def extract_finepdfs_text(
                 continue
 
             try:
-                cleaned_text.encode("ascii")
-            except UnicodeEncodeError:
+                cleaned_text.encode(charset)
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 continue
 
             f.write(cleaned_text)
@@ -68,7 +69,7 @@ def extract_finepdfs_text(
                 break
 
     pbar.close()
-    print(f"Extraction complete! Saved {valid_samples:,} ASCII-only samples to {output}")
+    print(f"Extraction complete! Saved {valid_samples:,} {charset}-only samples to {output}")
     print(f"Total rows processed: {processed_rows:,}")
     print(f"Success rate: {valid_samples / max(processed_rows, 1) * 100:.2f}%")
 
@@ -80,6 +81,11 @@ def main():
     parser.add_argument("--dataset", default="HuggingFaceFW/finepdfs", help="HuggingFace dataset name")
     parser.add_argument("--subset", default="eng_Latn", help="Dataset subset/config name")
     parser.add_argument("--split", default="train", help="Dataset split to use")
+    parser.add_argument(
+        "--charset",
+        default="ascii",
+        help="Character encoding filter (e.g. 'ascii', 'latin-1'). Samples that cannot encode are skipped.",
+    )
     args = parser.parse_args()
 
     extract_finepdfs_text(
@@ -88,6 +94,7 @@ def main():
         dataset=args.dataset,
         subset=args.subset,
         split=args.split,
+        charset=args.charset,
     )
 
 
