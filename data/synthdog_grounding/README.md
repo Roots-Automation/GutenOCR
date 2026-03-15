@@ -34,7 +34,6 @@ synthdog_grounding/
 ├── template.py                  # Main SynthDoG template (generation + save)
 ├── pillow_compat.py             # Pillow 10+ compatibility patches
 ├── pyproject.toml               # Project metadata and dependencies
-├── requirements-synthdog.txt    # Lightweight pip requirements
 │
 ├── config/                      # Language and source configurations
 │   ├── config_en.yaml           # English (file-based corpus)
@@ -47,8 +46,9 @@ synthdog_grounding/
 ├── elements/                    # Document generation components
 │   ├── background.py            # Background texture generation
 │   ├── paper.py                 # Paper color and texture (with luminance output)
-│   ├── content.py               # Text readers (file-based and HuggingFace)
+│   ├── content.py               # Layout orchestration and text content generation
 │   ├── document.py              # Document orchestration and geometric effects
+│   ├── readers.py               # Text readers (file-based and HuggingFace)
 │   └── textbox.py               # Single-line text rendering and word tracking
 │
 ├── layouts/                     # Text layout engines
