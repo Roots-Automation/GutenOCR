@@ -48,10 +48,14 @@ check_sample/
 *.tar
 *.tar.gz
 
-# Noto font binaries (downloaded on demand via fetch_fonts.py)
-# Non-Noto English fonts are small enough to keep in git.
+# Font binaries downloaded on demand via fetch_fonts.py.
+# Bundled stylized fonts (small, no stable download URL) are tracked in git.
 resources/font/**/Noto*.ttf
 resources/font/**/Noto*.otf
+resources/font/**/Roboto*.ttf
+resources/font/**/OpenSans*.ttf
+resources/font/**/SourceSerif*.ttf
+resources/font/**/CourierPrime*.ttf
 
 # Logs
 *.log

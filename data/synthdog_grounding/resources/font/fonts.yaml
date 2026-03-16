@@ -485,3 +485,162 @@ fonts:
     license: CC0-1.0
     source: GGBotNet
     homepage: https://www.fontspace.com/scabber-font-f140130
+
+  # ── English: Pixel/bitmap fonts ──────────────────────────────────
+  - filename: HomeVideo.ttf
+    lang: en
+    name: Home Video
+    bundled: true
+    sha256: e73d67f92457bd05d24c42f43156bc422e98982e9e62d267ad6d1a3cc595bb01
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/home-video-font-f116641
+
+  - filename: HomeVideoBold.ttf
+    lang: en
+    name: Home Video Bold
+    bundled: true
+    sha256: b240d123470dd1a1d45a3587c0a22c2b6d84be7a997a973c21bc0fffb54ce4b9
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/home-video-font-f116641
+
+  - filename: RasterForge.ttf
+    lang: en
+    name: Raster Forge
+    bundled: true
+    sha256: 7b7026730e15ce9a84eef9ef7501d133fdc2a1e6c589a45e4e82f7a349114963
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/raster-forge-font-f135159
+
+  # ── English: Stencil fonts ───────────────────────────────────────
+  - filename: OperationNapalm.ttf
+    lang: en
+    name: Operation Napalm
+    bundled: true
+    sha256: 24454062e6ad999f3a9e30fd351a1f34bb0f8fcfd121148336d19ed7783060b3
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/operation-napalm-font-f101917
+
+  - filename: OperationNapalmItalic.ttf
+    lang: en
+    name: Operation Napalm Italic
+    bundled: true
+    sha256: 39fb2d26a18fb6d8040a5bdcb385bfc46880dee3272f710a35ce0339c7e838a6
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/operation-napalm-font-f101917
+
+  # ── English: Distressed/rough fonts ──────────────────────────────
+  - filename: Stampcraft.ttf
+    lang: en
+    name: Stampcraft
+    bundled: true
+    sha256: bebf88e28361d8946ba58179c4398c131d6367cc8ccb5f69bfce2e7cf9930aa4
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/stampcraft-font-f149164
+
+  - filename: StampcraftItalic.ttf
+    lang: en
+    name: Stampcraft Italic
+    bundled: true
+    sha256: c74089aceb5a7301d3ae50bca976900fa475c8794cec48a3b065f2c16fdb30a1
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/stampcraft-font-f149164
+
+  - filename: Unsightly.ttf
+    lang: en
+    name: Unsightly
+    bundled: true
+    sha256: 2b860071ef521df6308825bf0bc4a66067920927a6d0eff7e39eb1d06ddbaf37
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/unsightly-font-f126289
+
+  # ── English: Rounded/bubbly fonts ────────────────────────────────
+  - filename: Coconut.ttf
+    lang: en
+    name: Coconut
+    bundled: true
+    sha256: 3b7b4b42315c3a5565a60dfef6ef793a29e4edc2fd4e6b87b0ac2c4f246340be
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/coconut-font-f94509
+
+  - filename: Rainbow2000.ttf
+    lang: en
+    name: Rainbow 2000
+    bundled: true
+    sha256: 86706d9c94338e811f055854be405e0fa598c9f27bab608fd8a11e667b660280
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/rainbow-2000-font-f81175
+
+  - filename: Rainbow2000Bold.ttf
+    lang: en
+    name: Rainbow 2000 Bold
+    bundled: true
+    sha256: 0e8eff6bae0185fcb4d5f210900ccf99e12874c3a100554a72e139add7044d19
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/rainbow-2000-font-f81175
+
+  # ── English: Handwriting fonts ───────────────────────────────────
+  - filename: FirstTimeWriting.ttf
+    lang: en
+    name: First Time Writing
+    bundled: true
+    sha256: ff42d749e994863ad8ae6ea3b94843fec55779e343471c09a9debc96c3930f57
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/first-time-writing-font-f68087
+
+  - filename: CrayonLibre.ttf
+    lang: en
+    name: Crayon Libre
+    bundled: true
+    sha256: 39da6b272e5aa1bb73a9de0fdc42df0f5f4b0bb524cb4a529497c111f03d2aa6
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/crayon-libre-font-f105058
+
+  - filename: CrayonLibreItalic.ttf
+    lang: en
+    name: Crayon Libre Italic
+    bundled: true
+    sha256: e405d187589caed05b1d9ba7e6949f2c5b3648ca8586fad354f1a92f1ef97bb6
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/crayon-libre-font-f105058
+
+  # ── English: Blackletter/gothic fonts ────────────────────────────
+  - filename: Gotfridus.ttf
+    lang: en
+    name: Gotfridus
+    bundled: true
+    sha256: 9e27c2326462fa5f6f13121938ce44bc6e59c9b1d665d1186b4c856db0a0913e
+    license: OFL-1.1
+    source: GGBotNet
+    homepage: https://www.fontspace.com/gotfridus-font-f128569
+
+  - filename: LeipzigFraktur.ttf
+    lang: en
+    name: Leipzig Fraktur
+    bundled: true
+    sha256: 76ac70f4968c77ea363c8a9b3040657fa142d004d1b50d5a0cdb75c80476e5d2
+    license: OFL-1.1
+    source: Peter Wiegel
+    homepage: https://www.fontspace.com/leipzig-fraktur-font-f7833
+
+  - filename: LeipzigFrakturBold.ttf
+    lang: en
+    name: Leipzig Fraktur Bold
+    bundled: true
+    sha256: 717169f6d8da76afc30d834802c95f6c0159118a4550177fc2a104a91e6bdd09
+    license: OFL-1.1
+    source: Peter Wiegel
+    homepage: https://www.fontspace.com/leipzig-fraktur-font-f7833
