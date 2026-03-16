@@ -86,11 +86,17 @@ verifies SHA-256 checksums. Use `--force` to re-download all fonts.
    SHA-256 checksum (`shasum -a 256 <file>`), license, and source
 3. The font file itself is gitignored — only the manifest entry is tracked
 
-**Included fonts:**
-- `NotoSans-Regular.ttf` - Clean sans-serif (Google, OFL-1.1)
-- `NotoSerif-Regular.ttf` - Classic serif (Google, OFL-1.1)
-- Various stylized English fonts (CC0/Public Domain)
-- Noto CJK fonts for Japanese, Korean, and Chinese
+**Included fonts (downloaded on demand):**
+- **Noto Sans** / **Noto Serif** — Clean sans-serif and classic serif (Google, OFL-1.1)
+- **Noto Sans JP** / **Noto Serif JP** — Japanese (Google, OFL-1.1)
+- **Noto Sans KR** / **Noto Serif KR** — Korean (Google, OFL-1.1)
+- **Noto Sans SC** / **Noto Serif SC** — Chinese Simplified (Google, OFL-1.1)
+
+**Included fonts (bundled in git):**
+- **[Erratic Cursive](https://www.fontspace.com/erratic-cursive-font-f121261)** — Handwritten cursive with irregular letterforms (GGBotNet, CC0-1.0)
+- **[Gib Font Plox](https://www.fontspace.com/gib-font-plox-font-f29395)** — Stylized display font (Cannot Into Space Fonts, Public Domain)
+- **[Public Pixel](https://www.fontspace.com/public-pixel-font-f72785)** — Bitmap pixel font (GGBotNet, CC0-1.0)
+- **[Scabber](https://www.fontspace.com/scabber-font-f140130)** — Casual hand-drawn typeface (GGBotNet, CC0-1.0)
 
 ---
 

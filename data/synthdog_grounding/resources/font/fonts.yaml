@@ -5,18 +5,24 @@
 # Each entry specifies:
 #   filename  - target filename within lang/ subdirectory
 #   lang      - language subdirectory (en, ja, ko, zh)
-#   url       - stable download URL
+#   url       - stable download URL (for downloadable fonts)
 #   sha256    - integrity checksum
 #   license   - SPDX license identifier
 #   source    - human-readable origin
 #
-# Non-Noto English fonts (ErraticCursive, GibFontPlox, PublicPixel, Scabber)
-# are small (~1.6 MB) and committed directly to git.
+# Fonts are split into two categories:
+#   - "download" fonts: Noto family (~40 MB), fetched on demand via fetch_fonts.py
+#   - "bundled" fonts:  Small stylized fonts (~1.6 MB total), committed to git
 
 fonts:
+  # ══════════════════════════════════════════════════════════════════════
+  # DOWNLOADABLE — fetched on demand via fetch_fonts.py
+  # ══════════════════════════════════════════════════════════════════════
+
   # ── English: Noto fonts (Google Fonts) ──────────────────────────────
   - filename: NotoSans-Regular.ttf
     lang: en
+    name: Noto Sans
     url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
     zip_path: NotoSans/googlefonts/ttf/NotoSans-Regular.ttf
     sha256: 2ddeaed07f6483f7831b23faa32cf85a04c3406eb4bb2925530894805a05d4fb
@@ -25,6 +31,7 @@ fonts:
 
   - filename: NotoSerif-Regular.ttf
     lang: en
+    name: Noto Serif
     url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
     zip_path: NotoSerif/googlefonts/ttf/NotoSerif-Regular.ttf
     sha256: 3dd6bd89c716d265347ba7b0fa674d0d9e587b2fa8a438febf3a1be7aeb831e4
@@ -34,6 +41,7 @@ fonts:
   # ── Japanese: Noto CJK fonts ───────────────────────────────────────
   - filename: NotoSansJP-Regular.otf
     lang: ja
+    name: Noto Sans JP
     url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansJP-Regular.otf
     sha256: 47c29251c03bd7731461efd9aff279d04058025c24fc08ed49552aeec20adc6d
     license: OFL-1.1
@@ -41,6 +49,7 @@ fonts:
 
   - filename: NotoSerifJP-Regular.otf
     lang: ja
+    name: Noto Serif JP
     url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifJP-Regular.otf
     sha256: 9a0f0ab1c97dc9b1bb857f3259f5de23c6caa224c14d12878575b0a84676db8f
     license: OFL-1.1
@@ -49,6 +58,7 @@ fonts:
   # ── Korean: Noto CJK fonts ─────────────────────────────────────────
   - filename: NotoSansKR-Regular.otf
     lang: ko
+    name: Noto Sans KR
     url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansKR-Regular.otf
     sha256: 2f62e282b5ff3694c09af182d0dfc29d46ce6b85303c0da74f159c098e75991b
     license: OFL-1.1
@@ -56,6 +66,7 @@ fonts:
 
   - filename: NotoSerifKR-Regular.otf
     lang: ko
+    name: Noto Serif KR
     url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifKR-Regular.otf
     sha256: 13196f84ee798b18eddd80077051e5d88ff869696c43200dc54c66807884f74e
     license: OFL-1.1
@@ -64,6 +75,7 @@ fonts:
   # ── Chinese (Simplified): Noto CJK fonts ───────────────────────────
   - filename: NotoSansSC-Regular.otf
     lang: zh
+    name: Noto Sans SC
     url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansSC-Regular.otf
     sha256: 63fdadb47c21197170f3cda6c60e98e481b8a1eb28e5f44102da51bec17d123b
     license: OFL-1.1
@@ -71,7 +83,67 @@ fonts:
 
   - filename: NotoSerifSC-Regular.otf
     lang: zh
+    name: Noto Serif SC
     url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifSC-Regular.otf
     sha256: 66080541a111a7a31179700496013aac4b64a53cc41f570bd21c2628c75e4628
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
+
+  # ══════════════════════════════════════════════════════════════════════
+  # BUNDLED — committed to git (small files, no stable download URL)
+  # ══════════════════════════════════════════════════════════════════════
+
+  # ── English: Stylized fonts ────────────────────────────────────────
+  - filename: ErraticCursive.ttf
+    lang: en
+    name: Erratic Cursive
+    bundled: true
+    sha256: a4944be86c5a4e2e0bc732cace765477cd2bd1c33ecff09d8ca8e0e2850e94ae
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/erratic-cursive-font-f121261
+
+  - filename: ErraticCursiveItalic.ttf
+    lang: en
+    name: Erratic Cursive Italic
+    bundled: true
+    sha256: 269e9b5bd856884fc775b2aa923bd0215e563144887998194a55da33f82136a2
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/erratic-cursive-font-f121261
+
+  - filename: GibFontPlox.otf
+    lang: en
+    name: Gib Font Plox
+    bundled: true
+    sha256: 93aab75a74f7239b266c1f93e88ef53fc48cf368c2820cd0661bb60b55554145
+    license: Public Domain
+    source: Cannot Into Space Fonts (Robert Jablonski)
+    homepage: https://www.fontspace.com/gib-font-plox-font-f29395
+
+  - filename: GibItalicFontPlox.otf
+    lang: en
+    name: Gib Italic Font Plox
+    bundled: true
+    sha256: 57e2c6c4a8d1cf5629f54c03a88b2c749b7efe05c7257910e6adc859a7ea3a0c
+    license: Public Domain
+    source: Cannot Into Space Fonts (Robert Jablonski)
+    homepage: https://www.fontspace.com/gib-font-plox-font-f29395
+
+  - filename: PublicPixel.ttf
+    lang: en
+    name: Public Pixel
+    bundled: true
+    sha256: 931eb4bf9ef25a6d4bb31783b8681712a42b7408988d53971a3070a2f7443ccf
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/public-pixel-font-f72785
+
+  - filename: Scabber.ttf
+    lang: en
+    name: Scabber
+    bundled: true
+    sha256: 81e136eb22cc00cdc1c91e443c587814dbfc40a2e6deb683896e46d6364422c8
+    license: CC0-1.0
+    source: GGBotNet
+    homepage: https://www.fontspace.com/scabber-font-f140130

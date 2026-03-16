@@ -95,6 +95,9 @@ def fetch_fonts(manifest: Path, *, force: bool = False) -> bool:
         tmpdir_path = Path(tmpdir)
 
         for entry in fonts:
+            if entry.get("bundled"):
+                continue
+
             filename: str = entry["filename"]
             lang: str = entry["lang"]
             url: str = entry["url"]
