@@ -12,8 +12,8 @@
 #   source    - human-readable origin
 #
 # Fonts are split into two categories:
-#   - "download" fonts: Noto family (~40 MB), fetched on demand via fetch_fonts.py
-#   - "bundled" fonts:  Small stylized fonts (~1.6 MB total), committed to git
+#   - "download" fonts: fetched on demand via fetch_fonts.py
+#   - "bundled" fonts:  small stylized fonts committed to git
 
 fonts:
   # ══════════════════════════════════════════════════════════════════════
@@ -39,6 +39,60 @@ fonts:
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
+  - filename: NotoSans-Italic.ttf
+    lang: en
+    name: Noto Sans Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-Italic.ttf
+    sha256: 2e22b68846ecae5f3a355c8750ffad24e85ebf4d65d27e396a55cab0c779009b
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-BoldItalic.ttf
+    lang: en
+    name: Noto Sans Bold Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-BoldItalic.ttf
+    sha256: df795a0026143b49282f67e291c7b79250b6fd134dc4b0d28badf89ccce08cdd
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-Condensed.ttf
+    lang: en
+    name: Noto Sans Condensed
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-Condensed.ttf
+    sha256: 71f242994b807cc7ab6fcc35760d03d46095c4b4accc4cd98bfbec45018c5389
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-CondensedBold.ttf
+    lang: en
+    name: Noto Sans Condensed Bold
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-CondensedBold.ttf
+    sha256: b0d8eb1d438dc35e057886ddb95cb6fb6a604eec237d4d84974be566bbf4a4b4
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-CondensedItalic.ttf
+    lang: en
+    name: Noto Sans Condensed Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-CondensedItalic.ttf
+    sha256: cdf5d3a5cdb28a6b32571f28fff606112a0579cdaf59f2e3dc68a31c81d11479
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-CondensedBoldItalic.ttf
+    lang: en
+    name: Noto Sans Condensed Bold Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-CondensedBoldItalic.ttf
+    sha256: 936fac10a62c99f6a9367f6bdde816844cb7f6f3eff75ed6944b3940aa5b1188
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
   # ── English: Noto Serif (v2.014) ───────────────────────────────────
   - filename: NotoSerif-Regular.ttf
     lang: en
@@ -58,22 +112,21 @@ fonts:
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
-  # ── English: Noto Sans Condensed (v2.014) ────────────────────────────
-  - filename: NotoSans-Condensed.ttf
+  - filename: NotoSerif-Italic.ttf
     lang: en
-    name: Noto Sans Condensed
-    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
-    zip_path: NotoSans/full/ttf/NotoSans-Condensed.ttf
-    sha256: 71f242994b807cc7ab6fcc35760d03d46095c4b4accc4cd98bfbec45018c5389
+    name: Noto Serif Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
+    zip_path: NotoSerif/hinted/ttf/NotoSerif-Italic.ttf
+    sha256: 59c90f6faebcd59ace700c32ba7eb75899e21db6bb16320989cd25e0ca8e6ce5
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
-  - filename: NotoSans-CondensedBold.ttf
+  - filename: NotoSerif-BoldItalic.ttf
     lang: en
-    name: Noto Sans Condensed Bold
-    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
-    zip_path: NotoSans/full/ttf/NotoSans-CondensedBold.ttf
-    sha256: b0d8eb1d438dc35e057886ddb95cb6fb6a604eec237d4d84974be566bbf4a4b4
+    name: Noto Serif Bold Italic
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
+    zip_path: NotoSerif/hinted/ttf/NotoSerif-BoldItalic.ttf
+    sha256: 6db7550540526a9a18125b8152f354c6f6ea51e7de7055cb182eb5f12c77c3e6
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
@@ -86,6 +139,39 @@ fonts:
     sha256: 74fd536351d0f30a73410e1bd223a0ebf763dd4808eb844aa2aed18c0d6e3c84
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── English: Open Sans (googlefonts/opensans) ──────────────────────
+  - filename: OpenSans-Regular.ttf
+    lang: en
+    name: Open Sans
+    url: https://github.com/googlefonts/opensans/raw/main/fonts/ttf/OpenSans-Regular.ttf
+    sha256: c53aceea2dcf5b4098099c0c4d0a061d17e178a049317b42a422b1a9f7f8eb59
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/opensans)
+
+  - filename: OpenSans-Bold.ttf
+    lang: en
+    name: Open Sans Bold
+    url: https://github.com/googlefonts/opensans/raw/main/fonts/ttf/OpenSans-Bold.ttf
+    sha256: 27da758f4dcac9a65abe914c13b463b42982b9909bc65713424099f4810bd1e6
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/opensans)
+
+  - filename: OpenSans-Italic.ttf
+    lang: en
+    name: Open Sans Italic
+    url: https://github.com/googlefonts/opensans/raw/main/fonts/ttf/OpenSans-Italic.ttf
+    sha256: 93bc1bb6abf4e6b7c75d7131714061d5b57cc478abcabe4cb3519bb38fb917aa
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/opensans)
+
+  - filename: OpenSans-BoldItalic.ttf
+    lang: en
+    name: Open Sans Bold Italic
+    url: https://github.com/googlefonts/opensans/raw/main/fonts/ttf/OpenSans-BoldItalic.ttf
+    sha256: d672a770037104b6af45e1336b3d3c1729c8aea940f81e010f5a8a7319c29a21
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/opensans)
 
   # ── English: Roboto (v2.138) ───────────────────────────────────────
   - filename: Roboto-Regular.ttf
@@ -106,6 +192,24 @@ fonts:
     license: Apache-2.0
     source: Google Fonts (googlefonts/roboto)
 
+  - filename: Roboto-Italic.ttf
+    lang: en
+    name: Roboto Italic
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: Roboto-Italic.ttf
+    sha256: 5cd9337020d0b1593bae42dcca5cfc0fb86f5806ef469d66d09eae1e56ce346b
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: Roboto-BoldItalic.ttf
+    lang: en
+    name: Roboto Bold Italic
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: Roboto-BoldItalic.ttf
+    sha256: 63d368b094a9bde61447b410b4261b30569eef1bf2094a52de9828121ba7baf7
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
   - filename: RobotoCondensed-Regular.ttf
     lang: en
     name: Roboto Condensed
@@ -121,6 +225,24 @@ fonts:
     url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
     zip_path: RobotoCondensed-Bold.ttf
     sha256: 7f109b2b6d72e7563522d3c3d2c6c8b79ec5a711bfdf483b93e345eab5b5ef94
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: RobotoCondensed-Italic.ttf
+    lang: en
+    name: Roboto Condensed Italic
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: RobotoCondensed-Italic.ttf
+    sha256: 718ec69846837362c43937caf7fe1a72a5392ee60454ee54981050ee389ed43b
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: RobotoCondensed-BoldItalic.ttf
+    lang: en
+    name: Roboto Condensed Bold Italic
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: RobotoCondensed-BoldItalic.ttf
+    sha256: 6dcbc5c98d5d61038a7cb5f4e7d53d628ec4e29dd4a37239018d8c377ed1daa3
     license: Apache-2.0
     source: Google Fonts (googlefonts/roboto)
 
@@ -143,6 +265,24 @@ fonts:
     license: OFL-1.1
     source: Adobe Fonts (adobe-fonts/source-serif)
 
+  - filename: SourceSerif4-It.ttf
+    lang: en
+    name: Source Serif 4 Italic
+    url: https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
+    zip_path: source-serif-4.005_Desktop/TTF/SourceSerif4-It.ttf
+    sha256: 9d2950a8f1da66e21502c35d646a1d2148e79f9ea43fd2158cf02f5232e7f430
+    license: OFL-1.1
+    source: Adobe Fonts (adobe-fonts/source-serif)
+
+  - filename: SourceSerif4-BoldIt.ttf
+    lang: en
+    name: Source Serif 4 Bold Italic
+    url: https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
+    zip_path: source-serif-4.005_Desktop/TTF/SourceSerif4-BoldIt.ttf
+    sha256: 7b215b37f8873f5579f3f8d2ded3ca7c588e2f435cd996605ebfc5befe2cd5eb
+    license: OFL-1.1
+    source: Adobe Fonts (adobe-fonts/source-serif)
+
   # ── English: Courier Prime (typewriter monospace) ──────────────────
   - filename: CourierPrime-Regular.ttf
     lang: en
@@ -157,6 +297,22 @@ fonts:
     name: Courier Prime Bold
     url: https://github.com/quoteunquoteapps/CourierPrime/raw/master/fonts/ttf/CourierPrime-Bold.ttf
     sha256: ff1f38786c849d1c41fa8e447960abdb2bd75fdfb0cfcdeb524fad65a5af3638
+    license: OFL-1.1
+    source: Quote-Unquote Apps (quoteunquoteapps/CourierPrime)
+
+  - filename: CourierPrime-Italic.ttf
+    lang: en
+    name: Courier Prime Italic
+    url: https://github.com/quoteunquoteapps/CourierPrime/raw/master/fonts/ttf/CourierPrime-Italic.ttf
+    sha256: f1b9a5829789f7e56432a9f3bc7665ef4531dbba1c112639e48bef39621a006b
+    license: OFL-1.1
+    source: Quote-Unquote Apps (quoteunquoteapps/CourierPrime)
+
+  - filename: CourierPrime-BoldItalic.ttf
+    lang: en
+    name: Courier Prime Bold Italic
+    url: https://github.com/quoteunquoteapps/CourierPrime/raw/master/fonts/ttf/CourierPrime-BoldItalic.ttf
+    sha256: 3355273f3ea6d6362658f9564f4e83d59e156cf1a182e3c1592b5c5943627dcc
     license: OFL-1.1
     source: Quote-Unquote Apps (quoteunquoteapps/CourierPrime)
 
