@@ -87,9 +87,12 @@ verifies SHA-256 checksums. Use `--force` to re-download all fonts.
 3. The font file itself is gitignored — only the manifest entry is tracked
 
 **Included fonts (downloaded on demand):**
-- **Noto Sans** / **Noto Sans Bold** — Clean sans-serif, regular and bold (Google, OFL-1.1)
-- **Noto Serif** / **Noto Serif Bold** — Classic serif, regular and bold (Google, OFL-1.1)
+- **Noto Sans** — Clean sans-serif; Regular, Bold, Condensed, Condensed Bold (Google, OFL-1.1)
+- **Noto Serif** — Classic serif; Regular, Bold (Google, OFL-1.1)
 - **Noto Sans Mono** — Monospace for code and technical text (Google, OFL-1.1)
+- **Roboto** — Geometric sans-serif; Regular, Bold, Condensed, Condensed Bold (Google, Apache-2.0)
+- **Source Serif 4** — Transitional serif; Regular, Bold (Adobe, OFL-1.1)
+- **Courier Prime** — Typewriter-style monospace; Regular, Bold (Quote-Unquote Apps, OFL-1.1)
 - **Noto Sans JP** / **Noto Serif JP** — Japanese, regular and bold (Google, OFL-1.1)
 - **Noto Sans KR** / **Noto Serif KR** — Korean, regular and bold (Google, OFL-1.1)
 - **Noto Sans SC** / **Noto Serif SC** — Chinese Simplified, regular and bold (Google, OFL-1.1)

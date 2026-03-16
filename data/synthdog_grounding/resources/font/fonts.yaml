@@ -58,6 +58,25 @@ fonts:
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
+  # ── English: Noto Sans Condensed (v2.014) ────────────────────────────
+  - filename: NotoSans-Condensed.ttf
+    lang: en
+    name: Noto Sans Condensed
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-Condensed.ttf
+    sha256: 71f242994b807cc7ab6fcc35760d03d46095c4b4accc4cd98bfbec45018c5389
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSans-CondensedBold.ttf
+    lang: en
+    name: Noto Sans Condensed Bold
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-CondensedBold.ttf
+    sha256: b0d8eb1d438dc35e057886ddb95cb6fb6a604eec237d4d84974be566bbf4a4b4
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
   # ── English: Noto Sans Mono (v2.014) ───────────────────────────────
   - filename: NotoSansMono-Regular.ttf
     lang: en
@@ -67,6 +86,79 @@ fonts:
     sha256: 74fd536351d0f30a73410e1bd223a0ebf763dd4808eb844aa2aed18c0d6e3c84
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── English: Roboto (v2.138) ───────────────────────────────────────
+  - filename: Roboto-Regular.ttf
+    lang: en
+    name: Roboto
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: Roboto-Regular.ttf
+    sha256: 797e35f7f5d6020a5c6ea13b42ecd668bcfb3bbc4baa0e74773527e5b6cb3174
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: Roboto-Bold.ttf
+    lang: en
+    name: Roboto Bold
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: Roboto-Bold.ttf
+    sha256: 36f3709dea3e3ce3c6aedc058079e55980825f898f1e901d091c73c40de8bab1
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: RobotoCondensed-Regular.ttf
+    lang: en
+    name: Roboto Condensed
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: RobotoCondensed-Regular.ttf
+    sha256: 936069d5e46da383bff37b629a73e0bfb8b8ac7bc54cfb927fb700f6a890e9aa
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  - filename: RobotoCondensed-Bold.ttf
+    lang: en
+    name: Roboto Condensed Bold
+    url: https://github.com/googlefonts/roboto/releases/download/v2.138/roboto-android.zip
+    zip_path: RobotoCondensed-Bold.ttf
+    sha256: 7f109b2b6d72e7563522d3c3d2c6c8b79ec5a711bfdf483b93e345eab5b5ef94
+    license: Apache-2.0
+    source: Google Fonts (googlefonts/roboto)
+
+  # ── English: Source Serif 4 (v4.005) ───────────────────────────────
+  - filename: SourceSerif4-Regular.ttf
+    lang: en
+    name: Source Serif 4
+    url: https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
+    zip_path: source-serif-4.005_Desktop/TTF/SourceSerif4-Regular.ttf
+    sha256: e5a4ee6a3d87bb9024796be390c6771e2a0eb1883dae25effaf57ca01668e24b
+    license: OFL-1.1
+    source: Adobe Fonts (adobe-fonts/source-serif)
+
+  - filename: SourceSerif4-Bold.ttf
+    lang: en
+    name: Source Serif 4 Bold
+    url: https://github.com/adobe-fonts/source-serif/releases/download/4.005R/source-serif-4.005_Desktop.zip
+    zip_path: source-serif-4.005_Desktop/TTF/SourceSerif4-Bold.ttf
+    sha256: 7cf4f4e1ad74f45058d5bc61716b82560442fbdcd9d3654d2dea96bf6c683d86
+    license: OFL-1.1
+    source: Adobe Fonts (adobe-fonts/source-serif)
+
+  # ── English: Courier Prime (typewriter monospace) ──────────────────
+  - filename: CourierPrime-Regular.ttf
+    lang: en
+    name: Courier Prime
+    url: https://github.com/quoteunquoteapps/CourierPrime/raw/master/fonts/ttf/CourierPrime-Regular.ttf
+    sha256: 72f793376f8e2841656bf21d77a5de010f2929bd6956a22ee848ad0c7eb978af
+    license: OFL-1.1
+    source: Quote-Unquote Apps (quoteunquoteapps/CourierPrime)
+
+  - filename: CourierPrime-Bold.ttf
+    lang: en
+    name: Courier Prime Bold
+    url: https://github.com/quoteunquoteapps/CourierPrime/raw/master/fonts/ttf/CourierPrime-Bold.ttf
+    sha256: ff1f38786c849d1c41fa8e447960abdb2bd75fdfb0cfcdeb524fad65a5af3638
+    license: OFL-1.1
+    source: Quote-Unquote Apps (quoteunquoteapps/CourierPrime)
 
   # ── Japanese: Noto CJK (Sans 2.004, Serif 2.002) ──────────────────
   - filename: NotoSansJP-Regular.otf
