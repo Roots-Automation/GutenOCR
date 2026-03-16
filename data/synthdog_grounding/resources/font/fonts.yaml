@@ -6,6 +6,7 @@
 #   filename  - target filename within lang/ subdirectory
 #   lang      - language subdirectory (en, ja, ko, zh)
 #   url       - stable download URL (for downloadable fonts)
+#   zip_path  - path inside zip archive (when url points to a zip)
 #   sha256    - integrity checksum
 #   license   - SPDX license identifier
 #   source    - human-readable origin
@@ -19,73 +20,162 @@ fonts:
   # DOWNLOADABLE — fetched on demand via fetch_fonts.py
   # ══════════════════════════════════════════════════════════════════════
 
-  # ── English: Noto fonts (Google Fonts) ──────────────────────────────
+  # ── English: Noto Sans (v2.014) ────────────────────────────────────
   - filename: NotoSans-Regular.ttf
     lang: en
     name: Noto Sans
     url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
-    zip_path: NotoSans/googlefonts/ttf/NotoSans-Regular.ttf
-    sha256: 2ddeaed07f6483f7831b23faa32cf85a04c3406eb4bb2925530894805a05d4fb
+    zip_path: NotoSans/full/ttf/NotoSans-Regular.ttf
+    sha256: 7f5a908610bf27c48f336c73e10b881dcce6ea1c7113e1e207c9e9833c86eb46
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
+  - filename: NotoSans-Bold.ttf
+    lang: en
+    name: Noto Sans Bold
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/full/ttf/NotoSans-Bold.ttf
+    sha256: 808b5dc93fe0ac398911e9013697ad5fb0de2d80a85ba34192976efb113a83d5
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── English: Noto Serif (v2.014) ───────────────────────────────────
   - filename: NotoSerif-Regular.ttf
     lang: en
     name: Noto Serif
     url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
-    zip_path: NotoSerif/googlefonts/ttf/NotoSerif-Regular.ttf
-    sha256: 3dd6bd89c716d265347ba7b0fa674d0d9e587b2fa8a438febf3a1be7aeb831e4
+    zip_path: NotoSerif/hinted/ttf/NotoSerif-Regular.ttf
+    sha256: 1d827280482b0c38dc220acaa80d3f377bda185c81252bf3039f073488bc6ecb
     license: OFL-1.1
     source: Google Fonts (notofonts/latin-greek-cyrillic)
 
-  # ── Japanese: Noto CJK fonts ───────────────────────────────────────
+  - filename: NotoSerif-Bold.ttf
+    lang: en
+    name: Noto Serif Bold
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
+    zip_path: NotoSerif/hinted/ttf/NotoSerif-Bold.ttf
+    sha256: baf359a59a08edf1db112994b523e5c50c5d80c72bd7619cb027991311341dbb
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── English: Noto Sans Mono (v2.014) ───────────────────────────────
+  - filename: NotoSansMono-Regular.ttf
+    lang: en
+    name: Noto Sans Mono
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSansMono-v2.014/NotoSansMono-v2.014.zip
+    zip_path: NotoSansMono/googlefonts/ttf/NotoSansMono-Regular.ttf
+    sha256: 74fd536351d0f30a73410e1bd223a0ebf763dd4808eb844aa2aed18c0d6e3c84
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── Japanese: Noto CJK (Sans 2.004, Serif 2.002) ──────────────────
   - filename: NotoSansJP-Regular.otf
     lang: ja
     name: Noto Sans JP
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansJP-Regular.otf
-    sha256: 47c29251c03bd7731461efd9aff279d04058025c24fc08ed49552aeec20adc6d
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/16_NotoSansJP.zip
+    zip_path: NotoSansJP-Regular.otf
+    sha256: dff723ba59d57d136764a04b9b2d03205544f7cd785a711442d6d2d085ac5073
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSansJP-Bold.otf
+    lang: ja
+    name: Noto Sans JP Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/16_NotoSansJP.zip
+    zip_path: NotoSansJP-Bold.otf
+    sha256: 1b0edfb500b73a4fa8a4fcaae1bbbd403994e08e73e3e0da37e70d3853f42c5f
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
   - filename: NotoSerifJP-Regular.otf
     lang: ja
     name: Noto Serif JP
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifJP-Regular.otf
-    sha256: 9a0f0ab1c97dc9b1bb857f3259f5de23c6caa224c14d12878575b0a84676db8f
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/12_NotoSerifJP.zip
+    zip_path: SubsetOTF/JP/NotoSerifJP-Regular.otf
+    sha256: 257d51778d7adb5104bf113fbf2fe064279039583efe7f818f5de6cc7739f82f
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
-  # ── Korean: Noto CJK fonts ─────────────────────────────────────────
+  - filename: NotoSerifJP-Bold.otf
+    lang: ja
+    name: Noto Serif JP Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/12_NotoSerifJP.zip
+    zip_path: SubsetOTF/JP/NotoSerifJP-Bold.otf
+    sha256: dfc77fd889b557b0d79f7b1a339164e19c4d5159affb8b85afd669c9e2ad2381
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  # ── Korean: Noto CJK (Sans 2.004, Serif 2.002) ────────────────────
   - filename: NotoSansKR-Regular.otf
     lang: ko
     name: Noto Sans KR
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansKR-Regular.otf
-    sha256: 2f62e282b5ff3694c09af182d0dfc29d46ce6b85303c0da74f159c098e75991b
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/17_NotoSansKR.zip
+    zip_path: NotoSansKR-Regular.otf
+    sha256: 69975a0ac8472717870aefeab0a4d52739308d90856b9955313b2ad5e0148d68
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSansKR-Bold.otf
+    lang: ko
+    name: Noto Sans KR Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/17_NotoSansKR.zip
+    zip_path: NotoSansKR-Bold.otf
+    sha256: 5a6ceb287ed2fc6cfc6213144ebea68cbd94b20fc9eb873d8486493bf02d9bda
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
   - filename: NotoSerifKR-Regular.otf
     lang: ko
     name: Noto Serif KR
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifKR-Regular.otf
-    sha256: 13196f84ee798b18eddd80077051e5d88ff869696c43200dc54c66807884f74e
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/13_NotoSerifKR.zip
+    zip_path: SubsetOTF/KR/NotoSerifKR-Regular.otf
+    sha256: 03b36b1927525d93f35227a8816c8bf82d751b89ac4122b40f74949004ccfa69
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
-  # ── Chinese (Simplified): Noto CJK fonts ───────────────────────────
+  - filename: NotoSerifKR-Bold.otf
+    lang: ko
+    name: Noto Serif KR Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/13_NotoSerifKR.zip
+    zip_path: SubsetOTF/KR/NotoSerifKR-Bold.otf
+    sha256: 8d727747fecb76e883937cdaf35fb0d0be4869c2fa685242607bd9237ca1ff68
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  # ── Chinese Simplified: Noto CJK (Sans 2.004, Serif 2.002) ────────
   - filename: NotoSansSC-Regular.otf
     lang: zh
     name: Noto Sans SC
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansSC-Regular.otf
-    sha256: 63fdadb47c21197170f3cda6c60e98e481b8a1eb28e5f44102da51bec17d123b
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/18_NotoSansSC.zip
+    zip_path: NotoSansSC-Regular.otf
+    sha256: faa6c9df652116dde789d351359f3d7e5d2285a2b2a1f04a2d7244df706d5ea9
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSansSC-Bold.otf
+    lang: zh
+    name: Noto Sans SC Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/18_NotoSansSC.zip
+    zip_path: NotoSansSC-Bold.otf
+    sha256: c6cb5a93abaa9edc8ee7463b7ebb7f42d618d40e6ed2f7a5371c97b0b64767c0
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
   - filename: NotoSerifSC-Regular.otf
     lang: zh
     name: Noto Serif SC
-    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifSC-Regular.otf
-    sha256: 66080541a111a7a31179700496013aac4b64a53cc41f570bd21c2628c75e4628
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/14_NotoSerifSC.zip
+    zip_path: SubsetOTF/SC/NotoSerifSC-Regular.otf
+    sha256: b634f451523f7e1cdacf4afd2143cf5913dbab8979f753921de759e0243989bd
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSerifSC-Bold.otf
+    lang: zh
+    name: Noto Serif SC Bold
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/14_NotoSerifSC.zip
+    zip_path: SubsetOTF/SC/NotoSerifSC-Bold.otf
+    sha256: 8a33287e70a7a84fd3dd0c9de58b1a1a4b8bfcdf27b7ef9d71ecb2ccaccbab93
     license: OFL-1.1
     source: Google Fonts (googlefonts/noto-cjk)
 
