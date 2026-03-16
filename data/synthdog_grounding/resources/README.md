@@ -94,8 +94,8 @@ verifies SHA-256 checksums. Use `--force` to re-download all fonts.
 
 **Included fonts (bundled in git):**
 - **[Erratic Cursive](https://www.fontspace.com/erratic-cursive-font-f121261)** — Handwritten cursive with irregular letterforms (GGBotNet, CC0-1.0)
-- **[Gib Font Plox](https://www.fontspace.com/gib-font-plox-font-f29395)** — Stylized display font (Cannot Into Space Fonts, Public Domain)
-- **[Public Pixel](https://www.fontspace.com/public-pixel-font-f72785)** — Bitmap pixel font (GGBotNet, CC0-1.0)
+- **[Gib Font Plox](https://www.fontspace.com/gib-font-plox-f22438)** — Stylized display font (Cannot Into Space Fonts, Public Domain)
+- **[Public Pixel](https://www.fontspace.com/public-pixel-font-f72305)** — Bitmap pixel font (GGBotNet, CC0-1.0)
 - **[Scabber](https://www.fontspace.com/scabber-font-f140130)** — Casual hand-drawn typeface (GGBotNet, CC0-1.0)
 
 ---

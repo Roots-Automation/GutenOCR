@@ -119,7 +119,7 @@ fonts:
     sha256: 93aab75a74f7239b266c1f93e88ef53fc48cf368c2820cd0661bb60b55554145
     license: Public Domain
     source: Cannot Into Space Fonts (Robert Jablonski)
-    homepage: https://www.fontspace.com/gib-font-plox-font-f29395
+    homepage: https://www.fontspace.com/gib-font-plox-f22438
 
   - filename: GibItalicFontPlox.otf
     lang: en
@@ -128,7 +128,7 @@ fonts:
     sha256: 57e2c6c4a8d1cf5629f54c03a88b2c749b7efe05c7257910e6adc859a7ea3a0c
     license: Public Domain
     source: Cannot Into Space Fonts (Robert Jablonski)
-    homepage: https://www.fontspace.com/gib-font-plox-font-f29395
+    homepage: https://www.fontspace.com/gib-font-plox-f22438
 
   - filename: PublicPixel.ttf
     lang: en
@@ -137,7 +137,7 @@ fonts:
     sha256: 931eb4bf9ef25a6d4bb31783b8681712a42b7408988d53971a3070a2f7443ccf
     license: CC0-1.0
     source: GGBotNet
-    homepage: https://www.fontspace.com/public-pixel-font-f72785
+    homepage: https://www.fontspace.com/public-pixel-font-f72305
 
   - filename: Scabber.ttf
     lang: en
