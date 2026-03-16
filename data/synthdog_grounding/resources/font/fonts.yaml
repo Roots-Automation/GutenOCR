@@ -1,0 +1,77 @@
+# Font manifest for SynthDoG.
+# Run `uv run python fetch_fonts.py` from the synthdog_grounding/ directory
+# to download all fonts listed here.
+#
+# Each entry specifies:
+#   filename  - target filename within lang/ subdirectory
+#   lang      - language subdirectory (en, ja, ko, zh)
+#   url       - stable download URL
+#   sha256    - integrity checksum
+#   license   - SPDX license identifier
+#   source    - human-readable origin
+#
+# Non-Noto English fonts (ErraticCursive, GibFontPlox, PublicPixel, Scabber)
+# are small (~1.6 MB) and committed directly to git.
+
+fonts:
+  # ── English: Noto fonts (Google Fonts) ──────────────────────────────
+  - filename: NotoSans-Regular.ttf
+    lang: en
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSans-v2.014/NotoSans-v2.014.zip
+    zip_path: NotoSans/googlefonts/ttf/NotoSans-Regular.ttf
+    sha256: 2ddeaed07f6483f7831b23faa32cf85a04c3406eb4bb2925530894805a05d4fb
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  - filename: NotoSerif-Regular.ttf
+    lang: en
+    url: https://github.com/notofonts/latin-greek-cyrillic/releases/download/NotoSerif-v2.014/NotoSerif-v2.014.zip
+    zip_path: NotoSerif/googlefonts/ttf/NotoSerif-Regular.ttf
+    sha256: 3dd6bd89c716d265347ba7b0fa674d0d9e587b2fa8a438febf3a1be7aeb831e4
+    license: OFL-1.1
+    source: Google Fonts (notofonts/latin-greek-cyrillic)
+
+  # ── Japanese: Noto CJK fonts ───────────────────────────────────────
+  - filename: NotoSansJP-Regular.otf
+    lang: ja
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansJP-Regular.otf
+    sha256: 47c29251c03bd7731461efd9aff279d04058025c24fc08ed49552aeec20adc6d
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSerifJP-Regular.otf
+    lang: ja
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifJP-Regular.otf
+    sha256: 9a0f0ab1c97dc9b1bb857f3259f5de23c6caa224c14d12878575b0a84676db8f
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  # ── Korean: Noto CJK fonts ─────────────────────────────────────────
+  - filename: NotoSansKR-Regular.otf
+    lang: ko
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansKR-Regular.otf
+    sha256: 2f62e282b5ff3694c09af182d0dfc29d46ce6b85303c0da74f159c098e75991b
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSerifKR-Regular.otf
+    lang: ko
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifKR-Regular.otf
+    sha256: 13196f84ee798b18eddd80077051e5d88ff869696c43200dc54c66807884f74e
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  # ── Chinese (Simplified): Noto CJK fonts ───────────────────────────
+  - filename: NotoSansSC-Regular.otf
+    lang: zh
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Sans2.004/NotoSansSC-Regular.otf
+    sha256: 63fdadb47c21197170f3cda6c60e98e481b8a1eb28e5f44102da51bec17d123b
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)
+
+  - filename: NotoSerifSC-Regular.otf
+    lang: zh
+    url: https://github.com/googlefonts/noto-cjk/releases/download/Serif2.002/NotoSerifSC-Regular.otf
+    sha256: 66080541a111a7a31179700496013aac4b64a53cc41f570bd21c2628c75e4628
+    license: OFL-1.1
+    source: Google Fonts (googlefonts/noto-cjk)

@@ -121,6 +121,22 @@ def _package_data(
     return data
 
 
+def _check_font_dirs(config: dict) -> None:
+    """Raise if any configured font directory is empty (no .ttf/.otf files)."""
+    font_cfg = config.get("document", {}).get("content", {}).get("font", {})
+    for font_dir in font_cfg.get("paths", []):
+        p = Path(font_dir)
+        if not p.is_dir():
+            continue
+        has_fonts = any(p.glob("*.ttf")) or any(p.glob("*.otf"))
+        if not has_fonts:
+            raise FileNotFoundError(
+                f"No font files found in {p}.\n"
+                f"Run 'uv run python fetch_fonts.py' from the synthdog_grounding/ "
+                f"directory to download the required fonts."
+            )
+
+
 class SynthDoG(templates.Template):
     def __init__(self, config=None, split_ratio: list[float] | None = None):
         super().__init__(config)
@@ -143,6 +159,9 @@ class SynthDoG(templates.Template):
         # Resolve relative resource paths to absolute so that SynthTiger
         # worker processes (which may have a different cwd) can find them.
         config = _resolve_config_paths(config, Path(__file__).resolve().parent)
+
+        # Verify font directories aren't empty before proceeding.
+        _check_font_dirs(config)
 
         if split_ratio is None:
             split_ratio = config.get("split_ratio", [0.8, 0.1, 0.1])
