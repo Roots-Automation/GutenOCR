@@ -46,7 +46,7 @@ document:
       fill: [0.5, 1]
       full: 0.1
       align: [left, right, center]
-      stack_spacing: [0.0334, 0.0334]
+      stack_spacing: [0.02, 0.06]
       stack_fill: [0.5, 1]
       stack_full: 0.1
     textbox:
