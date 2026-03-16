@@ -102,7 +102,7 @@ class TextBox:
                 continue
 
             char_layer = layers.TextLayer(char, **font)
-            char_scale = height / char_layer.height
+            char_scale = height / char_layer.height if char_layer.height > 0 else 1.0
             char_layer.bbox = [left, top, *(char_layer.size * char_scale)]
             if char_layer.right > width:
                 break
