@@ -96,12 +96,6 @@ class TextReader:
         return char
 
 
-# Virtual length returned by HuggingFaceTextReader.__len__; the reader is
-# streaming so the true length is unknown.  This must be large enough that
-# np.random.randint(len(reader)) produces a varied starting position.
-_HF_READER_VIRTUAL_LENGTH = 10**8
-
-
 class HuggingFaceTextReader:
     def __init__(
         self, dataset_name="HuggingFaceFW/finepdfs", split="train", streaming=True, buffer_size=1000, subset=None
@@ -175,7 +169,7 @@ class HuggingFaceTextReader:
         return self._joined_text_cache
 
     def __len__(self):
-        return _HF_READER_VIRTUAL_LENGTH
+        return len(self._get_current_text())
 
     def __iter__(self):
         return self
@@ -191,12 +185,6 @@ class HuggingFaceTextReader:
             self._refresh_buffer()
             self._needs_refresh = False
         current_text = self._get_current_text()
-        if idx >= len(current_text):
-            # If we need more text, refresh the buffer
-            self._refresh_buffer()
-            current_text = self._get_current_text()
-        # _refresh_buffer already clamps self.idx, but move() sets an
-        # explicit target position so we override it here.
         self.idx = idx % len(current_text) if current_text else 0
 
     def next(self):
