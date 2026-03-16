@@ -143,27 +143,28 @@ def _iter_tar(tar_path: Path) -> Iterator[tuple[str, dict[str, Any]]]:
             f = tar.extractfile(member)
             if f is None:
                 continue
-            try:
-                data = json.loads(f.read().decode("utf-8"))
-            except (json.JSONDecodeError, UnicodeDecodeError) as e:
-                print(f"[warning] Error reading {member.name}: {e}", file=sys.stderr)
-                continue
+            with f:
+                try:
+                    data = json.loads(f.read().decode("utf-8"))
+                except (json.JSONDecodeError, UnicodeDecodeError) as e:
+                    print(f"[warning] Error reading {member.name}: {e}", file=sys.stderr)
+                    continue
 
-            sample_id = member.name.replace(".json", "")
+                sample_id = member.name.replace(".json", "")
 
-            # Handle old tar format gracefully
-            text_data = data.get("text", {})
-            normalized = _normalize_sample(
-                text_lines=text_data.get("lines", []),
-                text_words=text_data.get("words", []),
-                text_blocks=text_data.get("blocks", []),
-                quality_metrics=data.get("quality_metrics", {}),
-                image_path=data.get("image", {}).get("path", ""),
-                image_width=data.get("image", {}).get("width"),
-                image_height=data.get("image", {}).get("height"),
-                image_dpi=data.get("image", {}).get("dpi"),
-            )
-            yield sample_id, normalized
+                # Handle old tar format gracefully
+                text_data = data.get("text", {})
+                normalized = _normalize_sample(
+                    text_lines=text_data.get("lines", []),
+                    text_words=text_data.get("words", []),
+                    text_blocks=text_data.get("blocks", []),
+                    quality_metrics=data.get("quality_metrics", {}),
+                    image_path=data.get("image", {}).get("path", ""),
+                    image_width=data.get("image", {}).get("width"),
+                    image_height=data.get("image", {}).get("height"),
+                    image_dpi=data.get("image", {}).get("dpi"),
+                )
+                yield sample_id, normalized
 
 
 def iter_samples(path: Path) -> Iterator[tuple[str, dict[str, Any]]]:
