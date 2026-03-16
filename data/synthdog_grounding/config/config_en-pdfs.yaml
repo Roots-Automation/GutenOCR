@@ -1,9 +1,14 @@
-# Alias for config_en.yaml — kept for backward compatibility.
+# English config using HuggingFace FinePDFs corpus (PDF-extracted text).
 _base: config/config_base.yaml
 
 document:
   content:
     text:
-      path: resources/corpus/enwiki.txt
+      type: huggingface
+      dataset_name: "HuggingFaceFW/finepdfs"
+      split: "train"
+      streaming: true
+      buffer_size: 1000
+      charset: ascii
     font:
       paths: [resources/font/en]

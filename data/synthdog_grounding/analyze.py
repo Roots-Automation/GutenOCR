@@ -11,7 +11,6 @@ import argparse
 import csv
 import io
 import json
-import math
 import statistics
 import sys
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -293,24 +292,12 @@ def _stats_for(values: list[float]) -> dict[str, float]:
     """Compute min/max/mean/median/std for a list of floats."""
     if not values:
         return {"min": 0.0, "max": 0.0, "mean": 0.0, "median": 0.0, "std": 0.0}
-    n = len(values)
-    sorted_vals = sorted(values)
-    mean = sum(sorted_vals) / n
-    if n % 2 == 0:
-        median = (sorted_vals[n // 2 - 1] + sorted_vals[n // 2]) / 2
-    else:
-        median = sorted_vals[n // 2]
-    if n > 1:
-        variance = sum((x - mean) ** 2 for x in sorted_vals) / (n - 1)
-        std = math.sqrt(variance)
-    else:
-        std = 0.0
     return {
-        "min": round(sorted_vals[0], 4),
-        "max": round(sorted_vals[-1], 4),
-        "mean": round(mean, 4),
-        "median": round(median, 4),
-        "std": round(std, 4),
+        "min": round(min(values), 4),
+        "max": round(max(values), 4),
+        "mean": round(statistics.mean(values), 4),
+        "median": round(statistics.median(values), 4),
+        "std": round(statistics.stdev(values), 4) if len(values) > 1 else 0.0,
     }
 
 
