@@ -53,9 +53,23 @@ class Document:
         self.aspect_ratio = config.get("aspect_ratio", [1, 2])
         self.paper = Paper(config.get("paper", {}))
         self.content = Content(config.get("content", {}))
+
+        # Separate elastic distortion from the per-layer effect pipeline.
+        # Elastic distortion warps pixels but cannot update layer quads, so
+        # applying it per-layer before annotation capture produces misaligned
+        # bboxes.  Instead, expose it as a standalone component for the caller
+        # to apply to the composited image *after* annotations are captured.
+        effect_config = config.get("effect", {})
+        effect_args = effect_config.get("args", [{}, {}, {}])
+        elastic_config = effect_args[0] if len(effect_args) > 0 else {}
+        remaining_args = effect_args[1:] if len(effect_args) > 1 else []
+
+        self.elastic_distortion = components.Switch(components.ElasticDistortion())
+        if elastic_config:
+            self.elastic_distortion._init(**elastic_config)
+
         self.effect = components.Iterator(
             [
-                components.Switch(components.ElasticDistortion()),
                 components.Switch(components.AdditiveGaussianNoise()),
                 components.Switch(
                     components.Selector(
@@ -72,7 +86,7 @@ class Document:
                     )
                 ),
             ],
-            **config.get("effect", {}),
+            args=remaining_args if remaining_args else None,
         )
 
     def _compute_document_size(self, size: tuple[int, int]) -> tuple[int, int]:

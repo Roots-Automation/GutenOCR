@@ -183,6 +183,10 @@ class SynthDoG(templates.Template):
     def _render(self, document_group, bg_layer, size: tuple[int, int]) -> np.ndarray:
         """Merge layers, apply effects, and rasterize to a numpy array."""
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
+        # Apply elastic distortion to the composited image. This runs *after*
+        # annotations are captured from per-layer quads, avoiding the bbox-pixel
+        # misalignment that occurred when distortion was applied per-layer.
+        self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
         return layer.output(bbox=[0, 0, *size])
 
