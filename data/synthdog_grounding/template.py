@@ -167,9 +167,6 @@ class SynthDoG(templates.Template):
             **config.get("effect", {}),
         )
 
-        # Per-sample RNG seeding counter (see generate())
-        self._gen_counter = 0
-
         # config for splits
         self.splits = SPLITS
         if any(r < 0 for r in split_ratio):
@@ -191,14 +188,6 @@ class SynthDoG(templates.Template):
         return layer.output(bbox=[0, 0, *size])
 
     def generate(self):
-        # Seed per-sample so that workers sharing the global NumPy RNG don't
-        # produce correlated sequences.  Not perfectly reproducible across
-        # different worker counts, but prevents shared-state RNG drift.
-        # np.random.seed requires a 32-bit unsigned int (max 2**32 - 1).
-        self._gen_counter += 1
-        seed = (os.getpid() * 1_000_000 + self._gen_counter) % (2**32)
-        np.random.seed(seed)
-
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
         aspect_ratio = np.random.uniform(self.aspect_ratio[0], self.aspect_ratio[1])
