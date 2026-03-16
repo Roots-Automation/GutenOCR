@@ -627,15 +627,6 @@ fonts:
     source: GGBotNet
     homepage: https://www.fontspace.com/gotfridus-font-f128569
 
-  - filename: LeipzigFraktur.ttf
-    lang: en
-    name: Leipzig Fraktur
-    bundled: true
-    sha256: 76ac70f4968c77ea363c8a9b3040657fa142d004d1b50d5a0cdb75c80476e5d2
-    license: OFL-1.1
-    source: Peter Wiegel
-    homepage: https://www.fontspace.com/leipzig-fraktur-font-f7833
-
   - filename: LeipzigFrakturBold.ttf
     lang: en
     name: Leipzig Fraktur Bold
