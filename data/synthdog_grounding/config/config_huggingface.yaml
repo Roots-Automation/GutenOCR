@@ -9,5 +9,6 @@ document:
       split: "train"
       streaming: true
       buffer_size: 1000
+      charset: ascii
     font:
       paths: [resources/font/en]

@@ -98,7 +98,13 @@ class TextReader:
 
 class HuggingFaceTextReader:
     def __init__(
-        self, dataset_name="HuggingFaceFW/finepdfs", split="train", streaming=True, buffer_size=1000, subset=None
+        self,
+        dataset_name="HuggingFaceFW/finepdfs",
+        split="train",
+        streaming=True,
+        buffer_size=1000,
+        subset=None,
+        charset: str | None = "ascii",
     ):
         from datasets import load_dataset
 
@@ -107,6 +113,7 @@ class HuggingFaceTextReader:
         self.streaming = streaming
         self.buffer_size = buffer_size
         self.subset = subset
+        self.charset = charset
         self._warned_unrecognized = False
 
         # Load the dataset in streaming mode
@@ -124,6 +131,12 @@ class HuggingFaceTextReader:
 
         # Pre-load some text
         self._fill_buffer()
+
+    def _filter_charset(self, text: str) -> str:
+        """Strip characters that cannot be encoded in the target charset."""
+        if self.charset is None:
+            return text
+        return text.encode(self.charset, errors="ignore").decode(self.charset)
 
     def _extract_text(self, sample):
         """Extract text from a HuggingFace sample, returning None for unrecognized formats."""
@@ -150,6 +163,7 @@ class HuggingFaceTextReader:
 
                     # Clean the text - remove excessive whitespace, keep only printable chars
                     text = re.sub(r"\s+", " ", text).strip()
+                    text = self._filter_charset(text)
                     if text:
                         self.text_buffer.append(text)
                 break  # successfully filled
@@ -227,6 +241,7 @@ class HuggingFaceTextReader:
                     continue
 
                 text = re.sub(r"\s+", " ", text).strip()
+                text = self._filter_charset(text)
                 if text:
                     self.text_buffer.append(text)
         except StopIteration:
