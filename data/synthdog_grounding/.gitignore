@@ -48,6 +48,11 @@ check_sample/
 *.tar
 *.tar.gz
 
+# Paper textures downloaded on demand via fetch_papers.py.
+# Bundled paper photos (paper_1.jpg … paper_6.jpg) are tracked in git.
+resources/paper/*.png
+resources/paper/*.jpg
+
 # Font binaries downloaded on demand via fetch_fonts.py.
 # Bundled stylized fonts (small, no stable download URL) are tracked in git.
 resources/font/**/Noto*.ttf

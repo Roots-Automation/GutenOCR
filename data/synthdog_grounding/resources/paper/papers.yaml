@@ -1,0 +1,78 @@
+# Paper texture manifest for SynthDoG.
+# Run `uv run python fetch_papers.py` from the synthdog_grounding/ directory
+# to download all textures listed here.
+#
+# Each entry specifies:
+#   filename  - target filename within resources/paper/
+#   url       - stable download URL
+#   sha256    - integrity checksum
+#   license   - SPDX license identifier or plain description
+#   source    - human-readable origin / Wikimedia Commons page URL
+#   notes     - optional description of the texture
+
+papers:
+  # ── Aged / worn paper ─────────────────────────────────────────────────
+  - filename: old_paper_aged.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/9/9b/Old_Paper_texture.jpg
+    sha256: d846ac0d1c82b8ff61281092abf86ea65afc1c0d3ce11c2ef70572d032ef4f49
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Old_Paper_texture.jpg
+    notes: >
+      Aged/yellowed paper texture with visible wear and fibrous grain.
+      AI-generated (Leonardo AI), CC0. Author: leonardoai / Arka09185
+      (Wikimedia Commons).
+
+  # ── Ruled / lined paper ───────────────────────────────────────────────
+  - filename: lined_paper_1941.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/9/95/Schreibpapier_1941_mit_schraegen_Hilfslinien_2.JPG
+    sha256: aea5593caf9ff4f7d693b84355f7f14d4efb0af96d6ba9f271931b826b745fb2
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Schreibpapier_1941_mit_schraegen_Hilfslinien_2.JPG
+    notes: >
+      Photo of real 1941 German writing paper with ruled lines and diagonal
+      helper lines. Genuine paper grain and age. Public domain (author died
+      70+ years ago). 5155x3744px.
+
+  # ── Newsprint / vintage paper ─────────────────────────────────────────
+  - filename: newsprint_1918.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/1/16/The_Howler_%281918%29_-_DPLA_-_b4e815671fc8ec7e8ae252c7916b3a13_%28page_6%29.jpg
+    sha256: d996813a7ffe4104fb14a2fe7b185622393a6e60ed33d9f8d7e900f577967c48
+    license: PD-US
+    source: https://commons.wikimedia.org/wiki/File:The_Howler_(1918)_-_DPLA_-_b4e815671fc8ec7e8ae252c7916b3a13_(page_6).jpg
+    notes: >
+      Blank page from The Howler (1918 Wake Forest College yearbook), digitized
+      via DPLA. Aged newsprint texture. Public domain (US, pre-1931).
+      1855x2479px.
+
+  # ── Crumpled paper ────────────────────────────────────────────────────
+  - filename: crumpled_paper.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/7/74/Crumpled_olive_green_paper.jpg
+    sha256: 73718a1127cf094a44f8fb6fc00a5130b41ae378884a34ff4758ee73c9270467
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Crumpled_olive_green_paper.jpg
+    notes: >
+      Crumpled olive green paper. Grayscale conversion retains crumple/shadow
+      detail. Public domain. Author: Photos Public Domain. 3888x2592px.
+
+  # ── Cardboard ─────────────────────────────────────────────────────────
+  - filename: cardboard.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/5/57/Cardboard-546867.jpg
+    sha256: a65cec7ee715d03c0945074b74632d4ac0b7d646bcfe19b0641243f86fd1d99a
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Cardboard-546867.jpg
+    notes: >
+      Close-up cardboard texture. CC0. Author: Humusak (Pixabay).
+      6016x4000px.
+
+  - filename: medical_minutes_1902.jpg
+    url: https://upload.wikimedia.org/wikipedia/commons/5/5d/Minutes_of_the_Union_County_Medical_Society_-_DPLA_-_3782c38d992fb11c4f5d0516ec0b1558_%28page_205%29.jpg
+    raw_sha256: 6b5028d280944b48906e344ceca925d464e5d4b6fa82c0feb4e30c30257da76b
+    sha256: 543fa9f9a38ed5a19de87d47f12ba4fa063c50c368b58a531bf20d45b46b0e88
+    center_crop: 0.9
+    license: PD-US
+    source: https://commons.wikimedia.org/wiki/File:Minutes_of_the_Union_County_Medical_Society_-_DPLA_-_3782c38d992fb11c4f5d0516ec0b1558_(page_205).jpg
+    notes: >
+      Blank page from Minutes of the Union County Medical Society (1902-1922),
+      digitized via DPLA / NC Digital Heritage Center. Aged document paper.
+      Public domain (US, pre-1931). Cropped to inner 90% to remove scan
+      margins. 2400x3000px.
