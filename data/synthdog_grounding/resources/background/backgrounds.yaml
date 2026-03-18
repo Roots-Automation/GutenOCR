@@ -374,6 +374,63 @@ backgrounds:
     notes: >
       Close-up of gravel stones. CC0 (Saral Shots).
 
+  # ── Carpet / floor coverings ──────────────────────────────────────────
+  - filename: carpet_ardabil.jpg
+    wikimedia_title: "File:The_Ardabil_Carpet_-_Google_Art_Project.jpg"
+    thumbnail_width: 1920
+    sha256: d4f1155a72f06d5747ad410095cf0817e735fdbf0ec35915418badbd8a2342db
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:The_Ardabil_Carpet_-_Google_Art_Project.jpg
+    notes: >
+      The Ardabil Carpet (16th century, V&A Museum), photographed via
+      Google Art Project. Public domain.
+
+  - filename: carpet_grey_texture.jpg
+    wikimedia_title: "File:Hard_wearing_grey_carpet_texture.jpg"
+    thumbnail_width: 1920
+    sha256: d7c67cb566bca4bd40b610762389e03a5bc6b5833e1661ed184fd0f193d60689
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Hard_wearing_grey_carpet_texture.jpg
+    notes: >
+      Close-up of hard-wearing grey carpet texture. CC0.
+
+  - filename: carpet_home_snapshot.jpg
+    wikimedia_title: "File:March_18,_2025;_Picture_of_My_Carpet.jpg"
+    thumbnail_width: 1920
+    sha256: a6b5d1f2b32c8797ef997c031e6e4683841adfc6796516b94cf99c5662d9a619
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:March_18,_2025;_Picture_of_My_Carpet.jpg
+    notes: >
+      Personal snapshot of home carpet, 2025.
+
+  - filename: carpet_pattern_design.jpg
+    wikimedia_title: "File:Carpet_Design_(30014223375).jpg"
+    thumbnail_width: 1920
+    sha256: 1fc2a3703f235aee9956153bffc523f2b7d2e7e581d0c11d9541798d14aaaa9d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Carpet_Design_(30014223375).jpg
+    notes: >
+      Carpet design pattern (Flickr / CC-BY-2.0).
+
+  - filename: carpet_garden_met.jpeg
+    wikimedia_title: "File:Garden_Carpet_MET_67.156m.jpeg"
+    thumbnail_width: 1920
+    sha256: 45128b2775040228ff678e025500fd4269e371015e4670027700b3b29e482ccf
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Garden_Carpet_MET_67.156m.jpeg
+    notes: >
+      Garden Carpet, Metropolitan Museum of Art (accession 67.156m).
+      Public domain (MET open access).
+
+  - filename: carpet_dragon.jpg
+    wikimedia_title: "File:Carpet_with_a_Dragon_Figure.jpg"
+    thumbnail_width: 1920
+    sha256: 8ee3e358480698b7855cd5d1e51861d96a6e7e5f0df920261bf8cf6a1622cca6
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Carpet_with_a_Dragon_Figure.jpg
+    notes: >
+      Carpet with a dragon figure motif. Public domain.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
