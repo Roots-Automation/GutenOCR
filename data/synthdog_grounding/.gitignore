@@ -48,10 +48,15 @@ check_sample/
 *.tar
 *.tar.gz
 
-# Paper textures downloaded on demand via fetch_papers.py.
+# Paper textures downloaded on demand via fetch_wikimedia.py.
 # Bundled paper photos (paper_1.jpg … paper_6.jpg) are tracked in git.
 resources/paper/*.png
 resources/paper/*.jpg
+
+# Background images downloaded on demand via fetch_wikimedia.py.
+# The original 9 NAVER-curated backgrounds are tracked in git.
+resources/background/*.jpg
+resources/background/*.jpeg
 
 # Font binaries downloaded on demand via fetch_fonts.py.
 # Bundled stylized fonts (small, no stable download URL) are tracked in git.

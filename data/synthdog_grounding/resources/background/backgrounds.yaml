@@ -1,0 +1,385 @@
+# Background image manifest for SynthDoG.
+# Run `uv run python fetch_wikimedia.py --manifest resources/background/backgrounds.yaml --root resources/background`
+# from the synthdog_grounding/ directory to download all images listed here.
+#
+# Each entry specifies:
+#   filename         - target filename within resources/background/
+#   wikimedia_title  - Wikimedia Commons file title (e.g. "File:Foo.jpg")
+#   thumbnail_width  - thumbnail width in px to request via the action API
+#   sha256           - integrity checksum of the final on-disk file (null = needs first download)
+#   license          - SPDX license identifier or plain description
+#   source           - human-readable origin / Wikimedia Commons page URL
+#   notes            - optional description of the scene
+#
+# Optional fields:
+#   raw_sha256   - checksum of the raw downloaded file (before center_crop)
+#   center_crop  - crop to this fraction of width/height, centred (e.g. 0.9)
+#
+# The original 9 NAVER-curated backgrounds (bedroom_83.jpg, bob+dylan_83.jpg,
+# coffee_122.jpg, coffee_18.jpeg, crater_141.jpg, cream_124.jpg, eagle_110.jpg,
+# farm_25.jpg, hiking_18.jpg) are committed directly and do not appear here.
+
+backgrounds:
+  # ── Wood / desk surfaces ───────────────────────────────────────────────
+  - filename: wood_grains_nps.jpg
+    wikimedia_title: "File:Grains_(14699594123).jpg"
+    thumbnail_width: 1920
+    sha256: d88c31417f5c321dbcc72dbad129f7efb3e9a7173331932137e9af3d4c5efdf6
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Grains_(14699594123).jpg
+    notes: >
+      Close-up of wood grain texture. U.S. National Park Service photo by
+      Emily Brouwer (Mount Rainier NPS / Flickr). Public domain (U.S.
+      government work).
+
+  - filename: wood_texture_light.jpg
+    wikimedia_title: "File:Wood_texture,_light.jpg"
+    thumbnail_width: 1920
+    sha256: 91fdfab9ff47c5a08fc92cf52014cda71aa555e54a38dcd4832996b91ac4c3d8
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Wood_texture,_light.jpg
+    notes: >
+      Light-coloured wood surface texture. CC0 (Kurt Kaiser, own work).
+
+  - filename: wood_fake_grain.jpg
+    wikimedia_title: "File:Fake_Wood_Grain_20160712.jpg"
+    thumbnail_width: 1920
+    sha256: fccb63d99c0288bec4a7c8baedf6e1596e097c57f53c7a03ef1a66d5d5d5939a
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Fake_Wood_Grain_20160712.jpg
+    notes: >
+      Faux/printed wood-grain surface texture. CC0 (MHaensel73, own work).
+
+  # ── Fabric / textile surfaces ─────────────────────────────────────────
+  - filename: felt_feutre.jpg
+    wikimedia_title: "File:Feutre.jpg"
+    thumbnail_width: 1920
+    sha256: 8b9c7a5cbaebd03733afb9a797cc63e8a9d05da828a05ecefb1364977d1b33e4
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Feutre.jpg
+    notes: >
+      Close-up of felt fabric surface texture. CC0 (Briqueloup, own work).
+
+  # ── Countertop / hard surfaces ────────────────────────────────────────
+  - filename: laminate_countertop_beige.jpg
+    wikimedia_title: "File:Laminate_Kitchen_Countertop_Beige.jpg"
+    thumbnail_width: 1920
+    sha256: 2f0774270dd28aa960797d52e863427c9b9da3a3e26b6fb9a2fe26eb223ee9b4
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Laminate_Kitchen_Countertop_Beige.jpg
+    notes: >
+      Beige laminate kitchen countertop surface. CC0 (Kurtkaiser, own work).
+
+  # ── Marble / stone surfaces ────────────────────────────────────────────
+  - filename: marble_wall_closeup.jpg
+    wikimedia_title: "File:Surfaces_wall_marble_closeup_view.JPG"
+    thumbnail_width: 1920
+    sha256: deba874cbf735c57ff9e3f6b3eab336d2416dd91fee7383b80dd8f736bcdca65
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Surfaces_wall_marble_closeup_view.JPG
+    notes: >
+      Close-up of marble wall surface with veining. CC0 (Tomwsulcer, own
+      work).
+
+  - filename: marble_microscope.jpg
+    wikimedia_title: "File:Marble_01_10x_(39617691701).jpg"
+    thumbnail_width: 1920
+    sha256: dafc14c14076ca3db214567c0701a44b04b6f2ed57d1ab6d2461f935f78f3b53
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Marble_01_10x_(39617691701).jpg
+    notes: >
+      Marble thin section under 10x magnification. Public Domain Mark
+      (Randolph Black, Grass Lake MI).
+
+  - filename: marble_cipollino.jpg
+    wikimedia_title: "File:MarmoCipollino_FustoBasMassenzioRoma.jpg"
+    thumbnail_width: 1920
+    sha256: b015fe7d135298f7595f00fa752b86f05fb7b132f7f5b0ec2171de54e05c9bfb
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:MarmoCipollino_FustoBasMassenzioRoma.jpg
+    notes: >
+      Cipollino marble column detail, Basilica of Maxentius, Rome. Public
+      domain (MM).
+
+  - filename: marble_kymi_greece.jpg
+    wikimedia_title: "File:Marble_Kymi_Euboea_Greece.jpg"
+    thumbnail_width: 1920
+    sha256: 4f2894f5c5ef66e93e52a39d3fd6dff519b2e075c187539532277c1153ded508
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Marble_Kymi_Euboea_Greece.jpg
+    notes: >
+      Marble surface from Kymi, Euboea, Greece. CC0 (Jebulon, own work).
+
+  - filename: marble_top.jpg
+    wikimedia_title: "File:Marble_Top.jpg"
+    thumbnail_width: 1920
+    sha256: 9a2bcc172ae093195d68229d4815d3c589da41412ab829bb0bb294bccfc388e5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Marble_Top.jpg
+    notes: >
+      Marble tabletop surface. CC0 (Ambadyanands, own work).
+
+  # ── Space / astronomical imagery ──────────────────────────────────────
+  - filename: space_sun_sdo.jpg
+    wikimedia_title: "File:The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA's_Solar_Dynamics_Observatory_-_20100819.jpg"
+    thumbnail_width: 1920
+    sha256: bdad996f80c2c00a49c312cb2cd23697df8fe4434ae577af2a5e394dd2e91b17
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg
+    notes: >
+      Full-disk image of the Sun in extreme ultraviolet, NASA SDO/AIA,
+      2010-08-19. Public domain (NASA).
+
+  - filename: space_jupiter_brown_barge.jpg
+    wikimedia_title: "File:PIA22939_-_Jupiter's_Brown_Barge.jpg"
+    thumbnail_width: 1920
+    sha256: a746ad9f25fa86afdc50fb14fe57638de99868dc4d92216a88633db539d77503
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:PIA22939_-_Jupiter%27s_Brown_Barge.jpg
+    notes: >
+      Jupiter's Brown Barge region, Juno/JunoCam image (PIA22939).
+      Public domain (NASA/JPL-Caltech/SwRI/MSSS/Kevin M. Gill).
+
+  - filename: space_jupiter_cylindrical.jpg
+    wikimedia_title: "File:Jupiter_Cylindrical_Map_-_Dec_2000_PIA07782.jpg"
+    thumbnail_width: 1920
+    sha256: c7ee49d02bacf8b8ba755aeb3134a2c29927c0e18c97e13b10339e1c9adda8ac
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Jupiter_Cylindrical_Map_-_Dec_2000_PIA07782.jpg
+    notes: >
+      Cylindrical map of Jupiter, Cassini flyby Dec 2000 (PIA07782).
+      Public domain (NASA/JPL/Space Science Institute).
+
+  - filename: space_jupiter_blues.jpg
+    wikimedia_title: "File:PIA21972_Jupiter_Blues.jpg"
+    thumbnail_width: 1920
+    sha256: ace410230d7ac95a254f8178d92ba003c3700fd65cc58831cb9beb21d3fec83a
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:PIA21972_Jupiter_Blues.jpg
+    notes: >
+      Jupiter's north polar region, enhanced colour (PIA21972). Public
+      domain (NASA/JPL-Caltech/SwRI/MSSS/Gerald Eichstadt/Sean Doran).
+
+  - filename: space_blue_marble.jpg
+    wikimedia_title: "File:Blue_Marble_December_1972_and_Blue_Marble_December_2022.jpg"
+    thumbnail_width: 1920
+    sha256: 62f95d12e764d66f51c6be663ba9eb3c4ce1c83faad9adcd80b378231a0b3f50
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Blue_Marble_December_1972_and_Blue_Marble_December_2022.jpg
+    notes: >
+      Earth "Blue Marble" composite side-by-side, Dec 1972 and Dec 2022.
+      Public domain (NASA).
+
+  - filename: space_antarctica_blue_marble.jpg
+    wikimedia_title: "File:Antarctica_6400px_from_Blue_Marble.jpg"
+    thumbnail_width: 1920
+    sha256: f76545cb0f1a0ae493c0e5da11d3681f78e68d4bd728d7163230f2922f9a3f6e
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Antarctica_6400px_from_Blue_Marble.jpg
+    notes: >
+      Antarctica from NASA Blue Marble 2002 data. Public domain (Dave
+      Pape / NASA Blue Marble).
+
+  # ── Outdoor / grass & ground ──────────────────────────────────────────
+  - filename: grass_dirt_dollar_weed.jpg
+    wikimedia_title: "File:Grass_dirt_and_dollar_weed.jpg"
+    thumbnail_width: 1920
+    sha256: 482a7af83a83127fbf76dba4477e188b64d3e22d12b035f08daa0839feb16619
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_dirt_and_dollar_weed.jpg
+    notes: >
+      Grass, dirt, and dollar weed ground-level view. Public domain
+      (John Harvey).
+
+  - filename: grass_tufts_bulrush.jpg
+    wikimedia_title: "File:Tufts_of_grass_and_lakeshore_bulrush.jpg"
+    thumbnail_width: 1920
+    sha256: f51c8a8c311a6ef7dc819cd087be28eea47de1bbe51ab381723c5351f72e8462
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Tufts_of_grass_and_lakeshore_bulrush.jpg
+    notes: >
+      Tufts of grass and lakeshore bulrush. CC0 (W.carter, own work).
+
+  - filename: grass_wetland_gullmarsvik.jpg
+    wikimedia_title: "File:Wetland_grass_at_the_edge_of_Gullmarsvik_mudflats_2.jpg"
+    thumbnail_width: 1920
+    sha256: eec1b33e2dcd6f93b80cfa04691fe9514b03960aa06a485d4a6aa558f2f4b389
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Wetland_grass_at_the_edge_of_Gullmarsvik_mudflats_2.jpg
+    notes: >
+      Wetland grass at Gullmarsvik mudflats, Sweden. Public domain
+      (W.carter, own work).
+
+  - filename: grass_green.jpg
+    wikimedia_title: "File:Green_grass_(23163935546).jpg"
+    thumbnail_width: 1920
+    sha256: 0d28cf943cea087e084a923b25ad8c33f44d77c368d0c748194c7526a144b53e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_grass_(23163935546).jpg
+    notes: >
+      Lush green grass close-up. CC0 (StockyPics).
+
+  - filename: grass_weeds_sand.jpg
+    wikimedia_title: "File:Grass_weeds_and_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 9f21ff3596802c0f0493bc2ea15f0746e50e29dfceafb4e75e5b49fc8e46bcbe
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_weeds_and_sand.jpg
+    notes: >
+      Grass, weeds, and sand ground cover. Public domain (John Harvey).
+
+  - filename: grass_original.jpg
+    wikimedia_title: "File:Grass_original.jpg"
+    thumbnail_width: 1920
+    sha256: ca66ea39e519d96aa6a350f69ebf377b3e8088be60a7afd2ae2a40b3e53c54bb
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grass_original.jpg
+    notes: >
+      Green grass close-up. CC0 (Blendergeek).
+
+  - filename: grass_moss.jpg
+    wikimedia_title: "File:Grass_moss.jpg"
+    thumbnail_width: 1920
+    sha256: 7f5e486dde7460931247a7980fd40c6f49a2b69d2bc1be5d682d52416537f2f1
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_moss.jpg
+    notes: >
+      Grass and moss ground-level mix. Public domain (Gregory Schick /
+      leadgolem).
+
+  - filename: grass_field_winter.jpg
+    wikimedia_title: "File:Grass_Field_in_winter.jpg"
+    thumbnail_width: 1920
+    sha256: 11cdecd9901b4659761bf508bd592e1e86ba09f594d7cf06495ff7b44183ec05
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_Field_in_winter.jpg
+    notes: >
+      Grass field in winter, sparse and frosty. Public domain
+      (sakib454590).
+
+  - filename: grass_from_above.jpg
+    wikimedia_title: "File:Grass_seen_from_above.jpg"
+    thumbnail_width: 1920
+    sha256: d746277428e5c90e822efaf5a6d665981270ccfee61a035fc2abced48aedc3a2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grass_seen_from_above.jpg
+    notes: >
+      Grass seen from directly above, overhead view. CC0 (CommonScenes).
+
+  # ── Outdoor / pavement & stone ────────────────────────────────────────
+  - filename: pavement_tessellated_1.jpg
+    wikimedia_title: "File:Eaglehawk_Neck_tessellated_pavement_20201115-023.jpg"
+    thumbnail_width: 1920
+    sha256: e1bb2d0246e36f57c13a0a586eda26335857cecb0d381904e1f689f04ea5b57f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Eaglehawk_Neck_tessellated_pavement_20201115-023.jpg
+    notes: >
+      Tessellated rock pavement at Eaglehawk Neck, Tasmania. CC0
+      (Gary Houston).
+
+  - filename: pavement_tessellated_2.jpg
+    wikimedia_title: "File:Eaglehawk_Neck_tessellated_pavement_20201115-020.jpg"
+    thumbnail_width: 1920
+    sha256: 92bb8113266acbefb68c2fbd53a220a80efd3686fdd7af8d5bce3a56d0afbc78
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Eaglehawk_Neck_tessellated_pavement_20201115-020.jpg
+    notes: >
+      Tessellated rock pavement at Eaglehawk Neck, Tasmania (alternate
+      angle). CC0 (Gary Houston).
+
+  - filename: pavement_portuguese_calcada.jpg
+    wikimedia_title: "File:Calçada_portuguesa_num_passeio_em_São_Roque,_na_Ilha_do_Pico.jpg"
+    thumbnail_width: 1920
+    sha256: 3b7c7cb9838d21603028d2cbb9334297b52fc139d079ef078f71a485f9eb8ecd
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Calçada_portuguesa_num_passeio_em_São_Roque,_na_Ilha_do_Pico.jpg
+    notes: >
+      Portuguese calçada cobblestone pavement, São Roque, Pico Island.
+      CC0 (Girassolei).
+
+  - filename: pavement_old_massachusetts_1.jpg
+    wikimedia_title: "File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_01.jpg"
+    thumbnail_width: 1920
+    sha256: c4692089db0ac00e7ecebffc38e65d60570691a066ed0ee25d1d882e209257c8
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_01.jpg
+    notes: >
+      Old worn asphalt pavement, Massachusetts Ave, Arlington MA. CC0
+      (Daderot).
+
+  - filename: pavement_rosetti_bucharest.jpg
+    wikimedia_title: "File:Pavement_around_the_C.A._Rosetti_Monument_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: 38477bbada17c650e11ee6e60ca569d4d7047ad688f4f5f42f509afcc95ed49d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Pavement_around_the_C.A._Rosetti_Monument_in_Bucharest.jpg
+    notes: >
+      Decorative stone tile pavement, C.A. Rosetti Monument, Bucharest.
+      CC0 (Neoclassicism Enthusiast).
+
+  - filename: pavement_old_massachusetts_2.jpg
+    wikimedia_title: "File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_02.jpg"
+    thumbnail_width: 1920
+    sha256: 076de7be91fba765108b140186813b0f3f17511e6e6891445df7a3d53fb6b374
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_02.jpg
+    notes: >
+      Old worn asphalt pavement, Massachusetts Ave, Arlington MA (second
+      shot). CC0 (Daderot).
+
+  - filename: pavement_limestone_orton.jpg
+    wikimedia_title: "File:Orton_Scar_Limestone_Pavement.jpg"
+    thumbnail_width: 1920
+    sha256: 8076c194ebc701251a0fee85a358f628de828fc7c4409927c998b2582af1ef64
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Orton_Scar_Limestone_Pavement.jpg
+    notes: >
+      Limestone pavement at Orton Scar, Cumbria. CC0 (Northernhenge).
+
+  - filename: pavement_sand_covered.jpg
+    wikimedia_title: "File:Pavement_covered_with_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 7811d82c75552841de3cedfe36b994cedf501bf059e412784e4ecc47330c6840
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Pavement_covered_with_sand.jpg
+    notes: >
+      Pavement partially covered with sand. Public domain (John Harvey).
+
+  # ── Outdoor / gravel ──────────────────────────────────────────────────
+  - filename: gravel_driveway.jpg
+    wikimedia_title: "File:Gravel_driveway_(28119645366).jpg"
+    thumbnail_width: 1920
+    sha256: 1ce280ac1fb3dc4bb08dfc337243a0bb344b06a016f7a5f22a29cef94b878671
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_driveway_(28119645366).jpg
+    notes: >
+      Gravel driveway surface. CC0 (dankeck via Flickr).
+
+  - filename: gravel_beach.jpg
+    wikimedia_title: "File:Gravel_on_beach_Cape_Poge_Martha's_Vineyard_2020.jpg"
+    thumbnail_width: 1920
+    sha256: 684867c629ee8a4a16904bd2819df4b4629ca9be9ee96dc8df0ad39592386910
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_on_beach_Cape_Poge_Martha%27s_Vineyard_2020.jpg
+    notes: >
+      Gravel and pebbles on beach, Cape Poge, Martha's Vineyard. CC0
+      (Jstuby).
+
+  - filename: gravel_stones.jpg
+    wikimedia_title: "File:Gravel_Stones.jpg"
+    thumbnail_width: 1920
+    sha256: c8aa4cbd35b0874dc8f9fe7426f339bb96f76df64aa689ee844192c924517d8f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_Stones.jpg
+    notes: >
+      Close-up of gravel stones. CC0 (Saral Shots).
+
+  # ── Outdoor / environmental surfaces ──────────────────────────────────
+  - filename: purple_rain_roof.jpg
+    wikimedia_title: "File:Purple_rain_on_roof.jpg"
+    thumbnail_width: 1920
+    sha256: 7c5a51fbe6ff0c8e1cc89cba3eddefac1b192b8ce4b207acd335f5e731aafb38
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Purple_rain_on_roof.jpg
+    notes: >
+      Wet roof surface with rain, purple tones. CC0 (W.carter, own work).
