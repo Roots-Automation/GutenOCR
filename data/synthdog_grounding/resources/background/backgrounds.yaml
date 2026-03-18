@@ -431,6 +431,88 @@ backgrounds:
     notes: >
       Carpet with a dragon figure motif. Public domain.
 
+  # ── Bathroom / tile floors ────────────────────────────────────────────
+  - filename: floor_cork_bathroom.jpg
+    wikimedia_title: "File:Cork_bathroom_flooring.jpg"
+    thumbnail_width: 1920
+    sha256: f87abd22deb1b7a23cf468718ee50b817626a5d7af8ce86b7ae6d6200019b8cb
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Cork_bathroom_flooring.jpg
+    notes: >
+      Cork bathroom flooring texture.
+
+  - filename: floor_wilanow_bathroom.jpg
+    wikimedia_title: "File:Queen's_Bathroom_in_the_Wilanów_Palace_04.jpg"
+    thumbnail_width: 1920
+    sha256: f809a3112e9d602a97d16329babc7561bbf1d9fedc8a0844573baca56accdad3
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Queen%27s_Bathroom_in_the_Wilan%C3%B3w_Palace_04.jpg
+    notes: >
+      Queen's Bathroom floor, Wilanów Palace, Poland.
+
+  - filename: tile_popeyes_bathroom.jpg
+    wikimedia_title: "File:Colorful_tiles_in_the_corner_of_a_Popeyes_bathroom.jpg"
+    thumbnail_width: 1920
+    sha256: ae0310fbbcb8e5848335634bbc2bc44ccc8f8b58c4ad5ecad9bdf54e07e1276c
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Colorful_tiles_in_the_corner_of_a_Popeyes_bathroom.jpg
+    notes: >
+      Colorful tiles in the corner of a Popeyes bathroom. CC0.
+
+  - filename: tile_floor_brownish.jpg
+    wikimedia_title: "File:Brownish_floor_tiles.jpg"
+    thumbnail_width: 1920
+    sha256: d8a73bd96e339e4d94fb2cb187e70b1a160cc966714f946237c7e78023ea9f0d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Brownish_floor_tiles.jpg
+    notes: >
+      Brownish floor tiles. CC0.
+
+  - filename: tile_floor_parklake.jpg
+    wikimedia_title: "File:Tile_floor_in_the_ParkLake_Mall_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: 49a26ec4e4e3b8fb3324150dfb5e5cac113a6e776978867e4695542aaee0ea73
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Tile_floor_in_the_ParkLake_Mall_in_Bucharest.jpg
+    notes: >
+      Tile floor in the ParkLake Mall, Bucharest.
+
+  - filename: tile_floor_pattern_gfp.jpg
+    wikimedia_title: "File:Gfp-floor-tile-pattern.jpg"
+    thumbnail_width: 1920
+    sha256: 512083051c025d707fb40e0352523e5a096d420820f475713487d8d158cf2f5f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gfp-floor-tile-pattern.jpg
+    notes: >
+      Floor tile pattern. CC0 (Yinan Chen).
+
+  - filename: tile_floor_peacock_marble.jpg
+    wikimedia_title: "File:Green_peacock_multicolor_cream_ivory_marble_windmill_pattern_seamless_tile_floor_paving_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 9364863239fa383a0ce54643eebf3b564bb2f9baea31e5ebf5149d91b373eb44
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_peacock_multicolor_cream_ivory_marble_windmill_pattern_seamless_tile_floor_paving_texture.jpg
+    notes: >
+      Green peacock marble windmill pattern seamless tile floor texture. CC0.
+
+  - filename: tile_floor_lcd_tokyo.jpg
+    wikimedia_title: "File:LCD_floor,_at_Perfume_exhibition_in_Tokyo_Node_2.jpg"
+    thumbnail_width: 1920
+    sha256: 598565f9b798603cf0560849dbb77f01d4458a7626c0c931b8deeec5103c9b4d
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:LCD_floor,_at_Perfume_exhibition_in_Tokyo_Node_2.jpg
+    notes: >
+      LCD floor at Perfume exhibition, Tokyo Node.
+
+  - filename: tile_floor_green_mosaic.jpg
+    wikimedia_title: "File:Green_mosaic_square_seamless_tiled_floor_texture.jpg"
+    thumbnail_width: 1920
+    sha256: aa40fc807ca6f164cc971082bf01feb87e9b0ae8b22a212fb9ca33e74856efb2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_mosaic_square_seamless_tiled_floor_texture.jpg
+    notes: >
+      Green mosaic square seamless tiled floor texture. CC0.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
