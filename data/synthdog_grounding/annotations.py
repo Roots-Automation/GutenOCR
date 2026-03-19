@@ -127,27 +127,25 @@ def build_word_annotations(
 def filter_degenerate(
     lines: list[LineAnnotation],
     words: list[WordAnnotation],
-    blocks: list[BlockAnnotation],
     min_area: float,
     w: int,
     h: int,
 ) -> tuple[
     list[LineAnnotation],
     list[WordAnnotation],
-    list[BlockAnnotation],
     int,
     int,
 ]:
     """Remove lines/words whose bbox area is below *min_area* pixels.
 
-    Returns (lines, words, blocks, degenerate_line_count, degenerate_word_count).
+    Returns (lines, words, degenerate_line_count, degenerate_word_count).
     """
     degenerate_mask = [_bbox_area_px(ln.bbox, w, h) < min_area for ln in lines]
     deg_line_ct = sum(degenerate_mask)
     deg_word_ct = sum(1 for wd in words if degenerate_mask[wd.line_id]) if deg_line_ct else 0
 
     if not deg_line_ct:
-        return lines, words, blocks, 0, 0
+        return lines, words, 0, 0
 
     survive = [i for i, degen in enumerate(degenerate_mask) if not degen]
     old_to_new = {old: new for new, old in enumerate(survive)}
@@ -166,12 +164,7 @@ def filter_degenerate(
         new_words.append(wd)
         new_word_id += 1
 
-    # Rebuild blocks from surviving lines
-    block_ids = [ln.block_id for ln in lines]
-    line_bboxes = [ln.bbox for ln in lines]
-    blocks = build_block_annotations(block_ids, line_bboxes)
-
-    return lines, new_words, blocks, deg_line_ct, deg_word_ct
+    return lines, new_words, deg_line_ct, deg_word_ct
 
 
 def compute_quality_metrics(
@@ -252,10 +245,11 @@ def build_annotations(
         )
 
     words = build_word_annotations(text_layers, words_per_line, image_width, image_height, emit_quads)
-    blocks = build_block_annotations(block_ids, line_bboxes)
 
-    lines, words, blocks, deg_line_ct, deg_word_ct = filter_degenerate(
-        lines, words, blocks, min_bbox_area, image_width, image_height
-    )
+    lines, words, deg_line_ct, deg_word_ct = filter_degenerate(lines, words, min_bbox_area, image_width, image_height)
+
+    surviving_block_ids = [ln.block_id for ln in lines]
+    surviving_line_bboxes = [ln.bbox for ln in lines]
+    blocks = build_block_annotations(surviving_block_ids, surviving_line_bboxes)
 
     return lines, words, blocks, deg_line_ct, deg_word_ct

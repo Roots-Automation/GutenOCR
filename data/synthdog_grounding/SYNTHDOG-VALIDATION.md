@@ -74,7 +74,12 @@ uv run python analyze_luminance_threshold.py
 
 ---
 
-## Thread 2 · `build_block_annotations` is called twice; first result is discarded
+## Thread 2 · `build_block_annotations` is called twice; first result is discarded — RESOLVED
+
+**Status: RESOLVED** — `filter_degenerate` no longer builds or accepts blocks;
+`build_annotations` calls `build_block_annotations` once, after filtering, on surviving lines only.
+
+### Original problem statement
 
 **File:** `annotations.py:255` and `annotations.py:172`
 
@@ -92,9 +97,12 @@ The first `build_block_annotations` call is dead work. Its output is passed into
 `filter_degenerate` only to be discarded when blocks are rebuilt from the surviving
 lines.
 
-**Resolution:** Remove the first call from `build_annotations` and let
-`filter_degenerate` be the sole place blocks are built (it already handles the
-no-degenerate fast path at line 149).
+### Fix applied
+
+- `filter_degenerate` signature changed: `blocks` parameter removed, return type narrowed from
+  5-tuple to 4-tuple (no `list[BlockAnnotation]`). Internal `build_block_annotations` call removed.
+- `build_annotations` updated: dead `blocks = build_block_annotations(...)` line removed;
+  `build_block_annotations` now called once after `filter_degenerate`, using surviving lines only.
 
 ---
 
@@ -237,3 +245,48 @@ config that `textbox_color` only has visible effect when `content_color` does no
 - Document the interaction explicitly in the config and code.
 - Rethink the two-stage color model: does `textbox_color` serve a purpose distinct
   from `content_color`, or can one be removed?
+
+---
+
+## Thread 9 · Post-processing shadow renders text unreadable regardless of text color (quality impact)
+
+**Files:** `config/config_base.yaml:97-100`, `elements/content.py:75-82`
+
+### Problem statement
+
+Text color is chosen at generation time against the raw paper color. Post-processing
+effects — specifically the shadow and brightness steps — are applied afterwards with
+no awareness of text readability.
+
+The shadow effect is configured as:
+
+```yaml
+- prob: 1
+  args:
+    intensity: [0, 160]
+    amount:    [0, 1]
+    bidirectional: 0
+```
+
+At high intensity + high amount, a unidirectional shadow darkens large regions of
+the image close to pure black. Dark text that was correctly chosen for a light
+background becomes dark-on-dark and near-invisible in those regions. The brightness
+step (`beta: [-48, 48]`) can compound this further.
+
+The luminance threshold fix (Thread 1) provides no protection here: it reasons about
+the original paper color, not the final composited scene.
+
+### Observed failure
+
+A muted pink background (lum > 0.179) correctly received dark text [0, 64]. After
+compositing, the shadow reduced the left half and bottom third of the image to
+near-black, making the dark text unreadable in those regions.
+
+### Resolution options
+
+- **Clamp shadow parameters** — reduce the upper bounds (e.g. `intensity: [0, 80]`,
+  `amount: [0, 0.5]`) so the worst-case shadow cannot obscure text.
+- **Post-hoc contrast check** — after compositing, sample contrast in the text
+  regions and reject (regenerate) samples below a threshold.
+- **Shadow-aware color selection** — estimate the effective background luminance
+  after shadow and choose text color against that instead of the raw paper color.
