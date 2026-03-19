@@ -51,6 +51,144 @@ backgrounds:
       Faux/printed wood-grain surface texture. CC0 (MHaensel73, own work).
 
   # ── Fabric / textile surfaces ─────────────────────────────────────────
+  # Denim
+  - filename: denim_levis_501.jpg
+    wikimedia_title: "File:Levi's_501_'Plant_Based'_Red_Tab_(2026-01-24).jpg"
+    thumbnail_width: 1920
+    sha256: 406c2a705f8a0b9a2a9e3ad31492d208cf51180906428de6b17d4f6d4f9e2a2f
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Levi%27s_501_%27Plant_Based%27_Red_Tab_(2026-01-24).jpg
+    notes: >
+      Levi's 501 'Plant Based' jeans fabric, 2026.
+
+  - filename: denim_jeans_1.jpg
+    wikimedia_title: "File:Jeans_(1).jpg"
+    thumbnail_width: 1920
+    sha256: 75f2917936c35df53604094363a64599e66fef4f00f28bf4bdf86aedc3f5b15e
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Jeans_(1).jpg
+    notes: >
+      Denim jeans fabric close-up.
+
+  - filename: denim_jeans_detail.jpeg
+    wikimedia_title: "File:Jeans_Detail_(184193271).jpeg"
+    thumbnail_width: 1920
+    sha256: 8cca71a5b778ce815655e9727213fc922d63509c223f1eb12900993f4906fe1d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Jeans_Detail_(184193271).jpeg
+    notes: >
+      Denim jeans fabric detail (Flickr).
+
+  - filename: denim_fabric_diff.jpg
+    wikimedia_title: "File:Denim_fabric_03_diff_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: a97779dea14efd0b7c71a9f534d1ba9129153eaf25bee7c21147395c7abbf5dc
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Denim_fabric_03_diff_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg
+    notes: >
+      Denim fabric diffuse texture (8K, Rico Cilliers / Poly Haven). CC0.
+
+  - filename: denim_pouch_page28.jpg
+    wikimedia_title: "File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_28).jpg"
+    thumbnail_width: 1920
+    sha256: 7f95d2446bf573ce3cfca42a6cd23a701d4b41ca43acb118859d2f70a4f1fb10
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_28).jpg
+    notes: >
+      Blue denim pouch style purse, DPLA digitized (page 28). Public domain.
+
+  - filename: denim_pouch_page13.jpg
+    wikimedia_title: "File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_13).jpg"
+    thumbnail_width: 1920
+    sha256: 9b3f44282bde90a8419bbeaab96ae152101d866ba28a4057d7a7987b865a78ed
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_13).jpg
+    notes: >
+      Blue denim pouch style purse, DPLA digitized (page 13). Public domain.
+
+  # Linen
+  - filename: fabric_irish_linen.jpeg
+    wikimedia_title: "File:Irish_linen.jpeg"
+    thumbnail_width: 1920
+    sha256: a815e2c15ad30882043c875efe699602f0851004655e865f1da230ceaff7b74d
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Irish_linen.jpeg
+    notes: >
+      Irish linen fabric texture.
+
+  - filename: fabric_linen_met.jpg
+    wikimedia_title: "File:Linen_Sheet_MET_C.I.50.52_d1.jpg"
+    thumbnail_width: 1920
+    sha256: f5b3bcde47990264a785365715b500c72ab1323b0fe5f9b0058f0c286ee255a6
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Linen_Sheet_MET_C.I.50.52_d1.jpg
+    notes: >
+      Linen sheet, Metropolitan Museum of Art (C.I.50.52). Public domain.
+
+  # Woven / knit
+  - filename: fabric_woven_pattern.jpg
+    wikimedia_title: "File:Woven_pattern.jpg"
+    thumbnail_width: 1920
+    sha256: 7a32a3b78a0284bc374db8e4de4c74555685995e2f0ed1f7f6753645284b4b33
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Woven_pattern.jpg
+    notes: >
+      Woven fabric pattern. CC0.
+
+  - filename: fabric_woven_hanging_met.jpeg
+    wikimedia_title: "File:Woven_Hanging_MET_wb-17.123.3g.jpeg"
+    thumbnail_width: 1920
+    sha256: cbb5f39b0b345097daf5b3c74f32960372f41cddbf62351d860a8b18a90d138d
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Woven_Hanging_MET_wb-17.123.3g.jpeg
+    notes: >
+      Woven hanging, Metropolitan Museum of Art (wb-17.123.3g). Public domain.
+
+  - filename: fabric_clothpack01.jpg
+    wikimedia_title: "File:ClothPack01.jpg"
+    thumbnail_width: 1920
+    sha256: 820c9e4fd49e6b30bbef7afde1832688543dd88a1f9616b65e903fa8b7484336
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:ClothPack01.jpg
+    notes: >
+      Cloth fabric texture pack 01. CC0.
+
+  - filename: fabric_hand_woven_carpet.jpg
+    wikimedia_title: "File:Hand_woven_carpet.jpg"
+    thumbnail_width: 1920
+    sha256: 0df6893df0a3eafedd38543db8a8e937079ba0f7c806ffed26775d00fbf6fe5a
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Hand_woven_carpet.jpg
+    notes: >
+      Hand-woven carpet fabric texture.
+
+  - filename: fabric_woven_unsplash.jpg
+    wikimedia_title: "File:Woven_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: 48e00e30898e3256a715a8079b6f546570aa895584e9272d38a3fb93531cea7c
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Woven_(Unsplash).jpg
+    notes: >
+      Woven fabric texture (Unsplash). CC0.
+
+  - filename: fabric_knit_blue_gray.jpg
+    wikimedia_title: "File:Blue_Gray_knit_texture.jpg"
+    thumbnail_width: 1920
+    sha256: e47c66bd93434b137a8bce3d30f262f071a869798e2eeb1e15986d651ba9c403
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Blue_Gray_knit_texture.jpg
+    notes: >
+      Blue-gray knit fabric texture. CC0.
+
+  - filename: fabric_clothpack15.jpg
+    wikimedia_title: "File:ClothPack15.jpg"
+    thumbnail_width: 1920
+    sha256: e9be73c265e9464dbbbd5cfb0192930952e112088741203f3370ffff4880e17e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:ClothPack15.jpg
+    notes: >
+      Cloth fabric texture pack 15. CC0.
+
   - filename: felt_feutre.jpg
     wikimedia_title: "File:Feutre.jpg"
     thumbnail_width: 1920
