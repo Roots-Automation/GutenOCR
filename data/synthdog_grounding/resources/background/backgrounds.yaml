@@ -513,6 +513,136 @@ backgrounds:
     notes: >
       Green mosaic square seamless tiled floor texture. CC0.
 
+  # ── Walls ─────────────────────────────────────────────────────────────
+  - filename: wall_indoor_tokyo.jpg
+    wikimedia_title: "File:Indoor_stairs_wall_at_University_of_Tokyo,_Komaba_Campus.jpg"
+    thumbnail_width: 1920
+    sha256: a89d8bf85f4e68f2eeb26c47a6d83d77cde301ec73494f1ac28ea93002ee6bdd
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Indoor_stairs_wall_at_University_of_Tokyo,_Komaba_Campus.jpg
+    notes: >
+      Indoor stairwell wall, University of Tokyo Komaba Campus.
+
+  - filename: wall_sandstone_limestone.jpg
+    wikimedia_title: "File:Polygonal_sandstone_and_limestone_wall.jpg"
+    thumbnail_width: 1920
+    sha256: cc1ea5f333b6f856aafb39f12f21c727dd0727902fcea48c963c594aef3d5bc1
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Polygonal_sandstone_and_limestone_wall.jpg
+    notes: >
+      Polygonal sandstone and limestone wall texture.
+
+  - filename: wall_painted_red_brick.jpg
+    wikimedia_title: "File:Painted_red_brick_wall.jpg"
+    thumbnail_width: 1920
+    sha256: 6f60e45bf5451f1f1d2800e29623af6c9fb118cca40281902d8e64b2a7005cfa
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Painted_red_brick_wall.jpg
+    notes: >
+      Painted red brick wall texture. CC0.
+
+  - filename: wall_pompeii_painted.jpg
+    wikimedia_title: "File:House_of_the_Vettii_VI_15,1_Pompeii_2023_Detail_from_painted_panel_on_lower_north_wall_at_west_end_room_q_(Mau_plan)_courtesy_of_Johannes_Eber.jpg"
+    thumbnail_width: 1920
+    sha256: 859698a1f181effbe8cb18c2deb04da3a82d84f81d161338b28a798e39f6b31d
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:House_of_the_Vettii_VI_15,1_Pompeii_2023_Detail_from_painted_panel_on_lower_north_wall_at_west_end_room_q_(Mau_plan)_courtesy_of_Johannes_Eber.jpg
+    notes: >
+      Painted wall panel detail, House of the Vettii, Pompeii (2023).
+
+  # ── Interior design / furniture surfaces ──────────────────────────────
+  - filename: interior_hermia_design.jpg
+    wikimedia_title: "File:JAAKDESIGN_HERMIA_interior_design.jpg"
+    thumbnail_width: 1920
+    sha256: 5fd57bafabc133d03cc4bbed594b53eee4375771178367695c5cd19b3cd19db8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:JAAKDESIGN_HERMIA_interior_design.jpg
+    notes: >
+      JAAK Design Hermia interior design scene.
+
+  - filename: floor_decor_shop.jpg
+    wikimedia_title: "File:Even_better_combo_-_Floor_&_Decor_shop,_Greensboro,_North_Carolina.jpg"
+    thumbnail_width: 1920
+    sha256: e07542b1c1386b3198e0d1ef1f25d5ffce72d4d5b7c1afea3da26f4a4276c0fe
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Even_better_combo_-_Floor_%26_Decor_shop,_Greensboro,_North_Carolina.jpg
+    notes: >
+      Floor and decor surface combination, shop in Greensboro NC.
+
+  - filename: furniture_red_wood_texture.jpg
+    wikimedia_title: "File:Red_wooden_furniture_interior_design_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 4656dbe36862d962226bffffb838ce08931766715bb274123222f976ca01ba54
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Red_wooden_furniture_interior_design_texture.jpg
+    notes: >
+      Red wooden furniture interior design texture.
+
+  # ── Mirrors ───────────────────────────────────────────────────────────
+  - filename: mirror_met.jpg
+    wikimedia_title: "File:Mirror_MET_DP105758.jpg"
+    thumbnail_width: 1920
+    sha256: c23c062d4cf9373e97f381c4ca47532bd5cb753231b9f72bbbfbf1109b7dfaa7
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Mirror_MET_DP105758.jpg
+    notes: >
+      Mirror, Metropolitan Museum of Art (DP105758). Public domain (MET open access).
+
+  - filename: mirror_safranbolu.jpg
+    wikimedia_title: "File:El_Yapımı_Ayna,_Yörük_Evi,_Safranbolu_2014.jpg"
+    thumbnail_width: 1920
+    sha256: c1413a412cd3b289c0ead69b55ccecc32c23e8aa3556ad749ceded1aacabc0cd
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:El_Yap%C4%B1m%C4%B1_Ayna,_Y%C3%B6r%C3%BCk_Evi,_Safranbolu_2014.jpg
+    notes: >
+      Handmade mirror, Yörük House, Safranbolu, Turkey (2014).
+
+  - filename: mirror_snapshot.jpg
+    wikimedia_title: "File:Mirror_img_0267.jpg"
+    thumbnail_width: 1920
+    sha256: 4ba29723b4378391100420dc3c22de0142ebdda7844c058dcca5737609596fd3
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Mirror_img_0267.jpg
+    notes: >
+      Mirror surface photograph.
+
+  # ── Wallpaper ─────────────────────────────────────────────────────────
+  - filename: wallpaper_3.jpg
+    wikimedia_title: "File:Wallpaper_3.jpg"
+    thumbnail_width: 1920
+    sha256: c479effa17f06955d57dd6ae1aa98d6e24a73278f9ee231bfe5bd9e7f0b0e403
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Wallpaper_3.jpg
+    notes: >
+      Wallpaper texture. CC0.
+
+  - filename: wallpaper_met.jpg
+    wikimedia_title: "File:Wallpaper_MET_SF1993_298.jpg"
+    thumbnail_width: 1920
+    sha256: 1bd96e532cfd1bd804568c2717a6679e556ef2ed7d875f746ea225bc2bc41999
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Wallpaper_MET_SF1993_298.jpg
+    notes: >
+      Wallpaper, Metropolitan Museum of Art (SF1993.298). Public domain (MET open access).
+
+  - filename: wallpaper_texture.jpg
+    wikimedia_title: "File:Tapetentextur_20190822.jpg"
+    thumbnail_width: 1920
+    sha256: 649094e433131ec9f38da063f3c2a515a1fd59a9e63a7446e28721615d1436c5
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Tapetentextur_20190822.jpg
+    notes: >
+      Wallpaper texture (Tapetentextur), 2019.
+
+  - filename: wallpaper_paulbalin.jpg
+    wikimedia_title: "File:PaulBalin2008BT7170Crop.jpg"
+    thumbnail_width: 1920
+    sha256: 026e535c03c6debd5d112ad7ee4ee886686725a7b12e5b3cf4839e6ab75cb44e
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:PaulBalin2008BT7170Crop.jpg
+    notes: >
+      Wallpaper by Paul Balin (2008), cropped.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
