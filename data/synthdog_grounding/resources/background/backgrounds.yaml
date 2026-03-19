@@ -643,6 +643,254 @@ backgrounds:
     notes: >
       Wallpaper by Paul Balin (2008), cropped.
 
+  # ── Hardwood / wood floors ────────────────────────────────────────────
+  - filename: floor_wood_tiles.jpg
+    wikimedia_title: "File:Wooden-floor-tiles.JPG"
+    thumbnail_width: 1920
+    sha256: 33e3a8afa2aa133dd6dcbd94cf5cc1de24327434a18ac589420ddac51132a444
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Wooden-floor-tiles.JPG
+    notes: >
+      Wooden floor tiles.
+
+  - filename: floor_oak_hawley.jpg
+    wikimedia_title: "File:Ephraim_Hawley_House_oak_flooring_2010.JPG"
+    thumbnail_width: 1920
+    sha256: 9db6db94691029a100d8eebb03d625d27ba05a4b62b0a095aa1501dd9b68f3c6
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Ephraim_Hawley_House_oak_flooring_2010.JPG
+    notes: >
+      Oak flooring, Ephraim Hawley House (2010).
+
+  - filename: floor_wood_rearranged.jpg
+    wikimedia_title: "File:RearanĝitajPlanktabuloj.jpg"
+    thumbnail_width: 1920
+    sha256: 5d6f452cd3978881285b02f2c7e438ca963a3594130b1af726cd38b398b12de4
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Rearan%C4%9DitajPlanktabuloj.jpg
+    notes: >
+      Rearranged wood floor planks.
+
+  - filename: floor_wood_001_color.jpg
+    wikimedia_title: "File:WoodFloor001_9K_Color.jpg"
+    thumbnail_width: 1920
+    sha256: 87ccccd3e0aac34a4e2088163cc1dbc2e46426e3efcd6350a41a43a624069c79
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor001_9K_Color.jpg
+    notes: >
+      Wood floor colour texture (9K, CC0).
+
+  - filename: floor_wood_002_color.jpg
+    wikimedia_title: "File:WoodFloor002_12K_Color.jpg"
+    thumbnail_width: 1920
+    sha256: 4a5c7e06be43571792e0cc9be10b4174342f400811cdd5d82ca5b1eedd97842d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor002_12K_Color.jpg
+    notes: >
+      Wood floor colour texture (12K, CC0).
+
+  - filename: floor_wood_002_displacement.jpg
+    wikimedia_title: "File:WoodFloor002_12K_Displacement.jpg"
+    thumbnail_width: 1920
+    sha256: 5f3a94c581fe7bb79a2a2b772b3fb02246104228da89894eb8787d6936b11f22
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor002_12K_Displacement.jpg
+    notes: >
+      Wood floor displacement map texture (12K, CC0).
+
+  - filename: floor_wood_pew_honolulu.jpg
+    wikimedia_title: "File:Honolulu-CBrewer-pew-floor.JPG"
+    thumbnail_width: 1920
+    sha256: 31c6e2884c3421fceabb5c3460894ea591768ff8ea0a8915df6d25e912835389
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Honolulu-CBrewer-pew-floor.JPG
+    notes: >
+      Pew and wood floor, C. Brewer building, Honolulu.
+
+  - filename: floor_timber_bridge.jpg
+    wikimedia_title: "File:Second_Lavrsky_Bridge_-_timber_floor_of_bridge.jpg"
+    thumbnail_width: 1920
+    sha256: c900aecca519b65bb311023b46b0e0d02ca9b8b4415f2979fae720ed3308fe0b
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Second_Lavrsky_Bridge_-_timber_floor_of_bridge.jpg
+    notes: >
+      Timber floor of the Second Lavrsky Bridge.
+
+  - filename: floor_ballroom_dancing.jpg
+    wikimedia_title: "File:The_city's_Dancing_Assembly_held_weekly_balls_in_the_second_floor_ballroom._(6e689bb7-5c46-4cf0-840b-f149f3d3ebcb).jpg"
+    thumbnail_width: 1920
+    sha256: ad41d102a4748e069fc782b92f8de107f99dea5c2a85e3eb548507205647e874
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:The_city%27s_Dancing_Assembly_held_weekly_balls_in_the_second_floor_ballroom._(6e689bb7-5c46-4cf0-840b-f149f3d3ebcb).jpg
+    notes: >
+      Second-floor ballroom hardwood floor, historic dancing assembly.
+
+  # ── Wood surfaces / textures ──────────────────────────────────────────
+  - filename: wood_mango_1.jpg
+    wikimedia_title: "File:Mango_Wood_-_lumber,_table,_floor,_desk.jpg"
+    thumbnail_width: 1920
+    sha256: d9a6b10251cc545c21c90a948cb7c7597d6ce19116d9b83a37b19c3fe263c90c
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Mango_Wood_-_lumber,_table,_floor,_desk.jpg
+    notes: >
+      Mango wood surface — lumber, table, floor, desk (shot 1).
+
+  - filename: wood_mango_2.jpg
+    wikimedia_title: "File:Mango_Wood_-_lumber,_table,_floor,_desk_2.jpg"
+    thumbnail_width: 1920
+    sha256: 8468c82ef8fbdd26fd1613653e136eea5be5f12d3abd7c64c259b111bf66854a
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Mango_Wood_-_lumber,_table,_floor,_desk_2.jpg
+    notes: >
+      Mango wood surface — lumber, table, floor, desk (shot 2).
+
+  - filename: wood_pine_table.jpg
+    wikimedia_title: "File:Pine_Wooden_Table_Tap.jpg"
+    thumbnail_width: 1920
+    sha256: f466601f6b62273d0a00a127a21f5e5a64c2dd6d23c9a99b507d3191de9cf550
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Pine_Wooden_Table_Tap.jpg
+    notes: >
+      Pine wooden table surface.
+
+  - filename: wood_pine_spruce_comparison.jpg
+    wikimedia_title: "File:PinusSylvestris&PiceaAbies-comparingWood.JPG"
+    thumbnail_width: 1920
+    sha256: 4677c6fca97b288d3e774fe934027a1291672012e3f4b9b3f4f4af9cfbe7e481
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:PinusSylvestris%26PiceaAbies-comparingWood.JPG
+    notes: >
+      Scots pine vs Norway spruce wood comparison.
+
+  - filename: wood_egyptian_coffin.jpg
+    wikimedia_title: "File:Middle_coffin_of_Mentuirdis,_wood_-_Museo_Egizio_(Turin)_S_5220_p05.jpg"
+    thumbnail_width: 1920
+    sha256: a67fa5a9c85d7a8b0269d64a28491ee826b8d593e9b9ba7a79bdeb03330785d8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Middle_coffin_of_Mentuirdis,_wood_-_Museo_Egizio_(Turin)_S_5220_p05.jpg
+    notes: >
+      Wood surface of an ancient Egyptian coffin, Museo Egizio, Turin.
+
+  # ── Forest scenes ─────────────────────────────────────────────────────
+  - filename: forest_floor_spruce_cone.jpg
+    wikimedia_title: "File:Red_spruce_cone_on_the_forest_floor_(22384651510).jpg"
+    thumbnail_width: 1920
+    sha256: 73e7c6bbd3f5fb0cc244191588417ee37b0780d9dd8239a6128f6f47733ff77d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Red_spruce_cone_on_the_forest_floor_(22384651510).jpg
+    notes: >
+      Red spruce cone on the forest floor. CC-BY-2.0.
+
+  - filename: forest_heavy_fog.jpg
+    wikimedia_title: "File:Heavy_fog_in_the_woods_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: e5644efe56807143bf335ce65d33f3e88ea221a1c8e31f7dbd058a6df87652a5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Heavy_fog_in_the_woods_(Unsplash).jpg
+    notes: >
+      Heavy fog in the woods (Unsplash). CC0.
+
+  - filename: forest_sunlit_roots.jpg
+    wikimedia_title: "File:Sunlit_roots_in_the_woods_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: 3b24da7ee7816bbfebb8fce2a1f68c3b8fa2c692c2c0b15ed0e41210664f12ff
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Sunlit_roots_in_the_woods_(Unsplash).jpg
+    notes: >
+      Sunlit roots in the woods (Unsplash). CC0.
+
+  - filename: forest_pine_sunlight.jpg
+    wikimedia_title: "File:Sunlight_and_shadow_in_Pine_woods._(51189235963).jpg"
+    thumbnail_width: 1920
+    sha256: 258276d44d1b674acedbeab07b389158ec5564d1f1531698c35b3fb968d6dd48
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Sunlight_and_shadow_in_Pine_woods._(51189235963).jpg
+    notes: >
+      Sunlight and shadow in pine woods. CC-BY-2.0.
+
+  - filename: forest_track_zehdenick.jpg
+    wikimedia_title: "File:Track_in_Zehdenick-Neuhof_2021-09-02_01.jpg"
+    thumbnail_width: 1920
+    sha256: 36c911b3119e8fd5513132f6af4a13088d484473ac7afc9c793724e62c205c8c
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Track_in_Zehdenick-Neuhof_2021-09-02_01.jpg
+    notes: >
+      Forest track in Zehdenick-Neuhof, Germany (2021).
+
+  - filename: forest_indiana_regeneration.jpg
+    wikimedia_title: "File:Indiana_Forest_Regeneration_(20220524-NRCS-BJOC-057).jpg"
+    thumbnail_width: 1920
+    sha256: 8d34e2b4e26a3c83d3a48b36b9963715d6669f2a367245449f738dac6443bda4
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Indiana_Forest_Regeneration_(20220524-NRCS-BJOC-057).jpg
+    notes: >
+      Indiana forest regeneration (USDA NRCS, 2022). Public domain.
+
+  # ── Sand / beach ──────────────────────────────────────────────────────
+  - filename: sand_rock_texture.jpg
+    wikimedia_title: "File:Sand_Rock_Texture.jpg"
+    thumbnail_width: 1920
+    sha256: d4eff02ab03888a98131e0a0ce8f1a7e45f4e6bfcd1f8b8fceeeeef5abefd8aa
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Sand_Rock_Texture.jpg
+    notes: >
+      Sand and rock texture. CC0.
+
+  - filename: sand_beach_shore.jpg
+    wikimedia_title: "File:Beach_sandy_shore_seamless_ground_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 38b7add888d9abb8b8ffaa9a243b16912d78461fe3c687c18d709df384121525
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Beach_sandy_shore_seamless_ground_texture.jpg
+    notes: >
+      Beach sandy shore seamless ground texture. CC0.
+
+  - filename: sand_closeup.jpg
+    wikimedia_title: "File:Close-up_zand_foto_3.JPG"
+    thumbnail_width: 1920
+    sha256: 680853d496d97dadc647a2136167ee6142d50469bfe3f2b7cca3842ed6fc245b
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Close-up_zand_foto_3.JPG
+    notes: >
+      Close-up of sand (Dutch).
+
+  - filename: sand_hard.jpg
+    wikimedia_title: "File:Hard_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 0e43f5a28675367d64b614675671b4af59dd748feb2b894c5d805a75a2e10db5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Hard_sand.jpg
+    notes: >
+      Hard compact sand surface. CC0.
+
+  - filename: sand_cromer_beach_1.jpg
+    wikimedia_title: "File:Cromer_beach_sand_2016_01.JPG"
+    thumbnail_width: 1920
+    sha256: d1d45f570400bf869b784edd3cb52d7f1044af63de60ab784411403dbbd1ae0d
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Cromer_beach_sand_2016_01.JPG
+    notes: >
+      Sand at Cromer beach, Norfolk (2016, shot 1).
+
+  - filename: sand_cromer_beach_3.jpg
+    wikimedia_title: "File:Cromer_beach_sand_2016_03.JPG"
+    thumbnail_width: 1920
+    sha256: 7a7aade7f00c08590dd2a21ecb0ce10374a7da556367296e5aa8ce2cd4fce627
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Cromer_beach_sand_2016_03.JPG
+    notes: >
+      Sand at Cromer beach, Norfolk (2016, shot 3).
+
+  # ── Other ─────────────────────────────────────────────────────────────
+  - filename: tarantula_brachypelma.jpg
+    wikimedia_title: "File:Brachypelma_smithi_2009_G03.jpg"
+    thumbnail_width: 1920
+    sha256: aae215c1deea9f8a8a8b8ccf70b93a7892399bf777bdabead162c701f1c45641
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Brachypelma_smithi_2009_G03.jpg
+    notes: >
+      Mexican red-knee tarantula (Brachypelma smithi), 2009.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
