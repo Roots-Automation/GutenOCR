@@ -891,6 +891,25 @@ backgrounds:
     notes: >
       Mexican red-knee tarantula (Brachypelma smithi), 2009.
 
+  # ── Linoleum / vinyl flooring ─────────────────────────────────────────
+  - filename: linoleum_brown_diff.jpg
+    wikimedia_title: "File:Linoleum_brown_diff_8k_(Rob_Tuytel_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: 77284e9e01bccc034a41f369d050e35deb38ea49fbee577ed2c089206d34de2d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Linoleum_brown_diff_8k_(Rob_Tuytel_via_Poly_Haven).jpg
+    notes: >
+      Brown linoleum diffuse/albedo texture (8K, Rob Tuytel / Poly Haven). CC0.
+
+  - filename: linoleum_brown_rough.jpg
+    wikimedia_title: "File:Linoleum_brown_rough_8k_(Rob_Tuytel_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: d397c46b0f89fc30fb6790fb79417dbc749309a6d5aa1bdf86219cde054ee23b
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Linoleum_brown_rough_8k_(Rob_Tuytel_via_Poly_Haven).jpg
+    notes: >
+      Brown linoleum roughness texture (8K, Rob Tuytel / Poly Haven). CC0.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
