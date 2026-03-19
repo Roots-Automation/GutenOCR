@@ -99,9 +99,6 @@ def _package_data(
     emit_quads: bool,
 ) -> dict[str, Any]:
     """Assemble the final data dict returned by generate()."""
-    text_blocks_dicts = [block_annotation_to_dict(b) for b in blocks]
-    text_words_dicts = [word_annotation_to_dict(wd) for wd in words]
-
     data: dict[str, Any] = {
         "image": image,
         "label": label,
@@ -110,8 +107,6 @@ def _package_data(
         "lines": lines,
         "words": words,
         "blocks": blocks,
-        "text_blocks": text_blocks_dicts,
-        "text_words": text_words_dicts,
         "quality_metrics": quality_metrics,
     }
 
@@ -289,8 +284,8 @@ class SynthDoG(templates.Template):
 
         image = data["image"]
         quality = data["quality"]
-        text_blocks = data.get("text_blocks", [])
-        text_words = data.get("text_words", [])
+        words = data.get("words", [])
+        blocks = data.get("blocks", [])
         quality_metrics = data.get("quality_metrics", {})
 
         # Content-based split: hash the label so the same text always lands
@@ -312,9 +307,11 @@ class SynthDoG(templates.Template):
         os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
         text_lines_data = [line_annotation_to_dict(ln) for ln in lines]
+        text_words_data = [word_annotation_to_dict(wd) for wd in words]
+        text_blocks_data = [block_annotation_to_dict(b) for b in blocks]
 
         keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
-        values = [text_lines_data, text_blocks, text_words, quality_metrics]
+        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics]
 
         metadata = self.format_metadata(
             image_filename=image_filename,
