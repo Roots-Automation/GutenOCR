@@ -133,25 +133,51 @@ mutating existing ones.
 
 ---
 
-## Thread 4 · `document.py` pokes SynthTiger's private `_init` method
+## Thread 4 · `document.py` pokes SynthTiger's private `_init` method — RESOLVED
+
+**Status: RESOLVED** — two-step construction + `_init` call collapsed to a single
+`Switch(ElasticDistortion(), **elastic_config)` constructor call.
+
+### Original problem statement
 
 **File:** `elements/document.py:69`
 
 ```python
-self.elastic_distortion._init(**elastic_config)
+# OLD:
+self.elastic_distortion = components.Switch(components.ElasticDistortion())
+if elastic_config:
+    self.elastic_distortion._init(**elastic_config)
 ```
 
-`_init` is a private SynthTiger method. If SynthTiger renames or changes it,
-this line silently no-ops — the elastic distortion config stops being applied and
-there is no error or warning.
+### Findings
 
-**Questions to resolve:**
-- What is the correct public API to configure a SynthTiger component post-construction?
-- Can the component be constructed with the config in the first place to avoid this?
+`_init` is not truly private — it is explicitly defined on the `Component` base class
+and overridden on `Switch` as an intentional re-initialization hook. It would raise
+`AttributeError` (not silently no-op) if removed. The original concern was overstated.
+
+The real issue is unnecessary: `Switch.__init__` already accepts `prob` and `args`
+directly, which are exactly the keys in `elastic_config`. The two-step pattern is
+redundant and slightly fragile (would break if the wrapper were swapped for one that
+doesn't override `_init`).
+
+### Fix applied
+
+```python
+# NEW:
+self.elastic_distortion = components.Switch(
+    components.ElasticDistortion(), **elastic_config
+)
+```
+
+Works correctly for both empty and populated `elastic_config`; no conditional needed.
 
 ---
 
-## Thread 5 · `TextReader` file handle is never explicitly closed
+## Thread 5 · `TextReader` file handle is never explicitly closed — RESOLVED
+
+**Status: RESOLVED** — `close()` + `__enter__`/`__exit__` propagated up the ownership
+chain: `Content` → `Document` → `SynthDoG.__del__`. Duck typing (`hasattr`) used when
+delegating to the reader so `HuggingFaceTextReader` (which has no `close()`) is unaffected.
 
 **File:** `elements/readers.py:30`
 
@@ -166,13 +192,52 @@ generation run. The `noqa: SIM115` suppresses the linter hint to use a context m
 One open file handle per worker process is not a crisis, but it is a correctness
 issue, and it is what the linter is flagging.
 
-**Resolution options:**
-- Pass the file path to `Content` and open it inside a `with` block for the
-  duration of `generate()`.
-- Make `TextReader` a proper context manager and ensure it is entered/exited at
-  the `Document` level.
-- Alternatively: accept the leak and document it, since the OS reclaims handles
-  on process exit and workers are short-lived.
+### Fix applied
+
+`elements/readers.py:30` — improved `# noqa` comment to explain the intentional long-lived handle:
+
+```python
+self.fp = open(path, encoding="utf-8")  # noqa: SIM115 — long-lived handle; closed via close() / __exit__
+```
+
+`elements/content.py` — added `close()`, `__enter__`, `__exit__` delegating to the reader
+via duck typing:
+
+```python
+def close(self):
+    if hasattr(self.reader, "close"):
+        self.reader.close()
+
+def __enter__(self):
+    return self
+
+def __exit__(self, exc_type, exc_val, exc_tb):
+    self.close()
+    return False
+```
+
+`elements/document.py` — added `close()`, `__enter__`, `__exit__` delegating to `content`:
+
+```python
+def close(self):
+    self.content.close()
+
+def __enter__(self):
+    return self
+
+def __exit__(self, exc_type, exc_val, exc_tb):
+    self.close()
+    return False
+```
+
+`template.py` — added `__del__` to `SynthDoG` so the file handle is released when the
+template is torn down (synthtiger controls template lifetime externally):
+
+```python
+def __del__(self):
+    if hasattr(self, "document"):
+        self.document.close()
+```
 
 ---
 

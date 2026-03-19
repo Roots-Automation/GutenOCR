@@ -64,9 +64,7 @@ class Document:
         elastic_config = effect_args[0] if len(effect_args) > 0 else {}
         remaining_args = effect_args[1:] if len(effect_args) > 1 else []
 
-        self.elastic_distortion = components.Switch(components.ElasticDistortion())
-        if elastic_config:
-            self.elastic_distortion._init(**elastic_config)
+        self.elastic_distortion = components.Switch(components.ElasticDistortion(), **elastic_config)
 
         self.effect = components.Iterator(
             [
@@ -88,6 +86,16 @@ class Document:
             ],
             args=remaining_args if remaining_args else None,
         )
+
+    def close(self):
+        self.content.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
 
     def _compute_document_size(self, size: tuple[int, int]) -> tuple[int, int]:
         """Optionally shrink *size* based on fullscreen, landscape, and aspect-ratio config."""

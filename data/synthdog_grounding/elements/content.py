@@ -69,6 +69,17 @@ class Content:
         self.textbox_color_config = config.get("textbox_color", {})
         self.content_color_config = config.get("content_color", {})
 
+    def close(self):
+        if hasattr(self.reader, "close"):
+            self.reader.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
+
     def generate(self, size, bg_color=(255, 255, 255)):
         width, height = size
 

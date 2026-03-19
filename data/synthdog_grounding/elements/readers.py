@@ -27,7 +27,7 @@ class TextCursor(Protocol):
 
 class TextReader:
     def __init__(self, path, cache_size=2**28, block_size=2**20):
-        self.fp = open(path, encoding="utf-8")  # noqa: SIM115
+        self.fp = open(path, encoding="utf-8")  # noqa: SIM115 — long-lived handle; closed via close() / __exit__
         self.length = 0
         self.offsets = [0]
         self.cache = OrderedDict()

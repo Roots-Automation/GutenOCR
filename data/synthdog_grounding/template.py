@@ -196,6 +196,10 @@ class SynthDoG(templates.Template):
         self.split_ratio = [r / ratio_sum for r in split_ratio]
         self._split_thresholds = np.cumsum(self.split_ratio)
 
+    def __del__(self):
+        if hasattr(self, "document"):
+            self.document.close()
+
     def _render(self, document_group, bg_layer, size: tuple[int, int]) -> np.ndarray:
         """Merge layers, apply effects, and rasterize to a numpy array."""
         layer = layers.Group([*document_group.layers, bg_layer]).merge()
