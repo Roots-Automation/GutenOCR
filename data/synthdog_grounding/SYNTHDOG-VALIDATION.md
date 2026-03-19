@@ -283,7 +283,12 @@ all in `_package_data`, or all in `save()`.
 
 ---
 
-## Thread 8 · `content_color` silently overwrites `textbox_color` (undocumented interaction)
+## Thread 8 · `content_color` silently overwrites `textbox_color` (undocumented interaction) — RESOLVED
+
+**Status: RESOLVED** — the two color modes are now mutually exclusive; `content_color`
+is sampled first and if it fires, `textbox_color` is skipped entirely.
+
+### Original problem statement
 
 **File:** `elements/content.py:112-118`
 
@@ -298,13 +303,27 @@ When `content_color` fires it overwrites whatever `textbox_color` set on individ
 lines. On dark backgrounds both are forced to `prob=1.0`, so `content_color` always
 wins and all per-line color variation from `textbox_color` is discarded.
 
-The net behavior is correct (unified document color), but it is not obvious from the
-config that `textbox_color` only has visible effect when `content_color` does not fire.
+### Fix applied
 
-**Resolution options:**
-- Document the interaction explicitly in the config and code.
-- Rethink the two-stage color model: does `textbox_color` serve a purpose distinct
-  from `content_color`, or can one be removed?
+`elements/content.py` — color application moved after the layout loop; `content_color`
+is sampled once and if it fires its meta is reused to apply the uniform color; otherwise
+`textbox_color` applies per-line:
+
+```python
+content_meta = content_color.sample()
+if content_meta["state"]:
+    content_color.apply(text_layers, meta=content_meta)
+else:
+    for text_layer in text_layers:
+        textbox_color.apply([text_layer])
+```
+
+`config/config_base.yaml` — clarifying comment added above the two color blocks
+explaining the mutual-exclusion semantics.
+
+On dark backgrounds `content_color` fires with `prob=1.0`, so `textbox_color` is
+cleanly skipped (correct behavior: uniform light text). On light backgrounds ~20%
+of samples get uniform color, ~16% get per-line variation, ~64% get the default color.
 
 ---
 

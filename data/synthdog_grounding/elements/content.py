@@ -136,12 +136,19 @@ class Content:
                     col_key_to_block_id[col_key] = next_block_id
                     next_block_id += 1
 
-                textbox_color.apply([text_layer])
                 text_layers.append(text_layer)
                 texts.append(text)
                 block_ids.append(col_key_to_block_id[col_key])
                 words_per_line.append(word_local_data)
 
-        content_color.apply(text_layers)
+        # Apply color: content_color (uniform) takes priority; if it does not fire,
+        # textbox_color applies per-line variation instead. The two modes are mutually
+        # exclusive so neither silently discards the other's work.
+        content_meta = content_color.sample()
+        if content_meta["state"]:
+            content_color.apply(text_layers, meta=content_meta)
+        else:
+            for text_layer in text_layers:
+                textbox_color.apply([text_layer])
 
         return text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count

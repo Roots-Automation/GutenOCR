@@ -51,8 +51,13 @@ document:
       stack_full: 0.1
     textbox:
       fill: [0.5, 1]
+    # Text color has two mutually exclusive modes:
+    #   content_color: fires first; if it fires, all lines share one color (uniform document look).
+    #   textbox_color: only fires when content_color does not; each line gets its own shade (varied look).
+    # textbox_color prob=1.0 makes per-line variation the default when content_color does not fire.
+    # On dark backgrounds both are forced to prob=1.0, so content_color always wins (uniform light text).
     textbox_color:
-      prob: 0.2
+      prob: 1.0
       args:
         colorize: 1
     content_color:
