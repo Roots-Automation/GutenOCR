@@ -105,6 +105,7 @@ class TextBox:
             char_scale = height / char_layer.height if char_layer.height > 0 else 1.0
             char_layer.bbox = [left, top, *(char_layer.size * char_scale)]
             if char_layer.right > width:
+                text.prev()  # undo consumption of the character that didn't fit
                 break
 
             char_layers.append(char_layer)
