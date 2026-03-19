@@ -1048,6 +1048,229 @@ backgrounds:
     notes: >
       Brown linoleum roughness texture (8K, Rob Tuytel / Poly Haven). CC0.
 
+  # ── Concrete ──────────────────────────────────────────────────────────
+  - filename: concrete_poured_foundation.jpg
+    wikimedia_title: "File:Elm_Place_-_poured_concrete_foundation.jpg"
+    thumbnail_width: 1920
+    sha256: f4a3d05018effe5ac20b1f64e5c63a422973fab35978d75aa2e67cb36cdb825b
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Elm_Place_-_poured_concrete_foundation.jpg
+    notes: >
+      Poured concrete foundation surface, Elm Place.
+
+  - filename: concrete_floor_grey_dirty.jpg
+    wikimedia_title: "File:Grey_moderately_dirty_worn_grubby_dusty_poured_concrete_seamless_floor_texture.jpg"
+    thumbnail_width: 1920
+    sha256: b59258185c3eecc837ee2f2fb63825262cc9539c7172eca665bd698570c768f2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grey_moderately_dirty_worn_grubby_dusty_poured_concrete_seamless_floor_texture.jpg
+    notes: >
+      Grey dirty worn poured concrete seamless floor texture. CC0.
+
+  - filename: concrete_road_closeup.jpg
+    wikimedia_title: "File:Closeup_of_concrete_road.jpg"
+    thumbnail_width: 1920
+    sha256: 8f58b475a4f37ee5d40f315e8341d3ade29238bfa90252c8c8e5da7628f02513
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Closeup_of_concrete_road.jpg
+    notes: >
+      Close-up of concrete road surface.
+
+  - filename: concrete_rusted_rebars.jpg
+    wikimedia_title: "File:Reinforced_concrete_rusted_rebars_german_bunkers_Pointe_du_Hoc.jpg"
+    thumbnail_width: 1920
+    sha256: 43d3b7c823b3a7a41283bb3f7276d4b8ce7edf5247a8e984e3f96b5d3ba2a419
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Reinforced_concrete_rusted_rebars_german_bunkers_Pointe_du_Hoc.jpg
+    notes: >
+      Reinforced concrete with rusted rebars, German bunkers, Pointe du Hoc.
+
+  - filename: concrete_dust_wirbler.jpg
+    wikimedia_title: "File:Wirbler_und_Staubsack.JPG"
+    thumbnail_width: 1920
+    sha256: f8272a94a0bafff408129d7dcb80ec5c5fd3f8ece718fc70f6b4ff0929b212fc
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Wirbler_und_Staubsack.JPG
+    notes: >
+      Wirbler und Staubsack (concrete dust surface).
+
+  # ── Asphalt ───────────────────────────────────────────────────────────
+  - filename: asphalt_bucharest.jpg
+    wikimedia_title: "File:Asphalt_texture_on_Bulevardul_Bucureștii_Noi_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: ec391d96f386388f1a9b1d7334dfa240a17da15f390fe7385c8561488191feb8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_texture_on_Bulevardul_Bucure%C8%99tii_Noi_in_Bucharest.jpg
+    notes: >
+      Asphalt texture, Bulevardul Bucureștii Noi, Bucharest.
+
+  - filename: asphalt_closeup.jpg
+    wikimedia_title: "File:Asphalt_Close_Up_(24337981232).jpg"
+    thumbnail_width: 1920
+    sha256: 12ca3e99902e0714266f72c43d04324daeeefa00e368740afbc896a20a8399f3
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_Close_Up_(24337981232).jpg
+    notes: >
+      Close-up of asphalt surface (Flickr). CC-BY-2.0.
+
+  - filename: asphalt_fresh.jpg
+    wikimedia_title: "File:Asphalt_frisch.jpg"
+    thumbnail_width: 1920
+    sha256: 2308807f084b9ebf36b15e9d7fb111c1e48eb5e6fc7148ff72cee86f065a9a40
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_frisch.jpg
+    notes: >
+      Fresh asphalt surface texture.
+
+  # ── Rust / metal ──────────────────────────────────────────────────────
+  - filename: rust_weathered_paper.jpg
+    wikimedia_title: "File:Weathered_Paper_Rust_Background_Ornamental.jpg"
+    thumbnail_width: 1920
+    sha256: b3d4f4e42720259b37a89f760d64a377e0df871e39aa94b455cec5e2a6936619
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Weathered_Paper_Rust_Background_Ornamental.jpg
+    notes: >
+      Weathered paper and rust ornamental background. CC0.
+
+  - filename: rust_on_metal.jpg
+    wikimedia_title: "File:Rust_on_metal.jpg"
+    thumbnail_width: 1920
+    sha256: ee8454dd71f80cd3f382123717d07b1b3a2b34f682c8fdb9b716173eb67151ee
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Rust_on_metal.jpg
+    notes: >
+      Rust on metal surface. CC0.
+
+  - filename: rust_old_metal.jpg
+    wikimedia_title: "File:Rust_old_metal.jpg"
+    thumbnail_width: 1920
+    sha256: c33a8eb2b2e041953666b90ffaa6b02b2f85c8cc15e6ec7a725e78cc0019ef0e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Rust_old_metal.jpg
+    notes: >
+      Old rusted metal surface. CC0.
+
+  # ── Granite / countertop ──────────────────────────────────────────────
+  - filename: granite_microscope_10x.jpg
+    wikimedia_title: "File:Granite_01_10x_(39627399402).jpg"
+    thumbnail_width: 1920
+    sha256: 50f46c3ce668654d1a69a164c5c70d65e58d1d1352bf6e05ffdafc1ac59f3a5e
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Granite_01_10x_(39627399402).jpg
+    notes: >
+      Granite thin section under 10x magnification. Public domain.
+
+  - filename: granite_slab.jpg
+    wikimedia_title: "File:Granite_slab_up_close.jpg"
+    thumbnail_width: 1920
+    sha256: 7fa4c5bd60c2faf1d12f785bf921d14f7eedc4be6289b80899489e504dc6e546
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Granite_slab_up_close.jpg
+    notes: >
+      Granite slab up close. CC0.
+
+  - filename: granite_100x.jpg
+    wikimedia_title: "File:Granite_100x_M2_(42042896065).jpg"
+    thumbnail_width: 1920
+    sha256: d3da8f616a0ce2792b0e726119dfccf79d5f4fd6095fa1d3f935abe19f0d5c8b
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Granite_100x_M2_(42042896065).jpg
+    notes: >
+      Granite thin section under 100x magnification. Public domain.
+
+  - filename: granite_gravel_water.jpg
+    wikimedia_title: "File:Granite_gravel_in_shallow_water_3.jpg"
+    thumbnail_width: 1920
+    sha256: d4f44012c971347b5cdcc46d3dd17ac0bc74085e5a96e7d8735ca7b2f41d9a31
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Granite_gravel_in_shallow_water_3.jpg
+    notes: >
+      Granite gravel in shallow water.
+
+  # ── Water surfaces ────────────────────────────────────────────────────
+  - filename: water_greeny.jpg
+    wikimedia_title: "File:Greeny_water.jpg"
+    thumbnail_width: 1920
+    sha256: 9b6f50abaa15d004944e9acdc75fe68117625cd80c31f50e4f5f7297c7de939b
+    license: CC0-1.0
+    source: http://commons.wikimedia.org/wiki/File:Greeny_water.jpg
+    notes: >
+      Green water surface. CC0.
+
+  - filename: water_ocean_surface.jpg
+    wikimedia_title: "File:Blue_ocean_surface_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: eda529ca4b7e214922afc3434dc33ecc53e41a1b8811a158878558100f0627d3
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Blue_ocean_surface_(Unsplash).jpg
+    notes: >
+      Blue ocean surface (Unsplash). CC0.
+
+  - filename: water_brofjorden_surface.jpg
+    wikimedia_title: "File:Surface_of_Brofjorden.jpg"
+    thumbnail_width: 1920
+    sha256: 5e89f0cd8a57bb896356e112aea426919f27f05140d123d7130c1f881f845fc1
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Surface_of_Brofjorden.jpg
+    notes: >
+      Water surface of Brofjorden, Sweden.
+
+  - filename: water_surface_tension.jpg
+    wikimedia_title: "File:Surface_tension_at_work.jpg"
+    thumbnail_width: 1920
+    sha256: d515377853d953572ae389e96db4ee71afcd0178d50bf4cb0f03bb78b3b9eb58
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Surface_tension_at_work.jpg
+    notes: >
+      Water surface tension close-up.
+
+  - filename: water_brofjorden_below.jpg
+    wikimedia_title: "File:Below_the_surface_of_Brofjorden.jpg"
+    thumbnail_width: 1920
+    sha256: 0073cd0af38da7ce4e8fd24a19efb0b8df60dbba3d28d286dab4c2fe68106394
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Below_the_surface_of_Brofjorden.jpg
+    notes: >
+      Below the water surface of Brofjorden, Sweden.
+
+  # ── Rock ──────────────────────────────────────────────────────────────
+  - filename: rock_bare_trail.jpg
+    wikimedia_title: "File:Bare_Rock_Trail_Surface_at_Lake_Roland.jpg"
+    thumbnail_width: 1920
+    sha256: 17dc8f99aaa86fd8c21eda7bed6be9ae2bc9291c3e661fae27e59c76f7cfcbde
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Bare_Rock_Trail_Surface_at_Lake_Roland.jpg
+    notes: >
+      Bare rock trail surface at Lake Roland.
+
+  # ── Sky / clouds ──────────────────────────────────────────────────────
+  - filename: sky_clouds_jo.jpg
+    wikimedia_title: "File:IMG_sky_jo.jpg"
+    thumbnail_width: 1920
+    sha256: b9d76f8abdd5552fe05c4fa4e7636f239767d8fa461a2defd91426588ae02477
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:IMG_sky_jo.jpg
+    notes: >
+      Sky and clouds photograph.
+
+  - filename: sky_nesjavellir.jpg
+    wikimedia_title: "File:NesjavellirPowerPlant_edit2.jpg"
+    thumbnail_width: 1920
+    sha256: 257ec13f9bca074fffe5b1fcca0010d833b9142accaba5cfff1edd13c0f09848
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:NesjavellirPowerPlant_edit2.jpg
+    notes: >
+      Sky over Nesjavellir geothermal power plant, Iceland.
+
+  - filename: sky_clear_summer.jpg
+    wikimedia_title: "File:Clear_Sky_,_Amazing_Summer.jpg"
+    thumbnail_width: 1920
+    sha256: cda5ab2ae6bcd77d222d5bf109c2e6ef07baa7a59e4a68e56656d5536e083215
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Clear_Sky_,_Amazing_Summer.jpg
+    notes: >
+      Clear blue summer sky.
+
   # ── Outdoor / environmental surfaces ──────────────────────────────────
   - filename: purple_rain_roof.jpg
     wikimedia_title: "File:Purple_rain_on_roof.jpg"
