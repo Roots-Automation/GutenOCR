@@ -106,7 +106,11 @@ lines.
 
 ---
 
-## Thread 3 · `filter_degenerate` mutates annotation objects in-place
+## Thread 3 · `filter_degenerate` mutates annotation objects in-place — RESOLVED
+
+**Status: RESOLVED** — `filter_degenerate` now uses `dataclasses.replace()` to
+produce new `LineAnnotation` / `WordAnnotation` instances with updated IDs; input
+objects are never mutated.
 
 **File:** `annotations.py:156-167`
 

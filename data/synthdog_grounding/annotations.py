@@ -1,5 +1,6 @@
 """Annotation construction, filtering, and quality metrics for SynthDoG."""
 
+import dataclasses
 from collections import defaultdict
 
 import numpy as np
@@ -138,6 +139,7 @@ def filter_degenerate(
 ]:
     """Remove lines/words whose bbox area is below *min_area* pixels.
 
+    Returns new annotation instances with reassigned IDs; input objects are not mutated.
     Returns (lines, words, degenerate_line_count, degenerate_word_count).
     """
     degenerate_mask = [_bbox_area_px(ln.bbox, w, h) < min_area for ln in lines]
@@ -150,18 +152,14 @@ def filter_degenerate(
     survive = [i for i, degen in enumerate(degenerate_mask) if not degen]
     old_to_new = {old: new for new, old in enumerate(survive)}
 
-    lines = [lines[i] for i in survive]
-    for new_idx, ln in enumerate(lines):
-        ln.line_id = new_idx
+    lines = [dataclasses.replace(lines[i], line_id=new_idx) for new_idx, i in enumerate(survive)]
 
     new_words = []
     new_word_id = 0
     for wd in words:
         if wd.line_id not in old_to_new:
             continue
-        wd.line_id = old_to_new[wd.line_id]
-        wd.word_id = new_word_id
-        new_words.append(wd)
+        new_words.append(dataclasses.replace(wd, line_id=old_to_new[wd.line_id], word_id=new_word_id))
         new_word_id += 1
 
     return lines, new_words, deg_line_ct, deg_word_ct
