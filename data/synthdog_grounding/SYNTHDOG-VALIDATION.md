@@ -241,31 +241,22 @@ def __del__(self):
 
 ---
 
-## Thread 6 · Leading-space textbox artifact causes bbox offset
+## Thread 6 · Leading-space textbox artifact causes bbox offset — RESOLVED
 
-**File:** `elements/textbox.py:119-124`
+**Status: RESOLVED** — `text.prev()` removed from the trailing-space discard block
+in `elements/textbox.py:119-123`. The reader is already positioned after the space
+when the block executes; backing up caused the next `generate()` call to re-read the
+space at `left=0`, misaligning the bbox with the stripped text string.
+
+**File:** `elements/textbox.py:119-123`
 
 ```python
 if len(chars):
-    text.prev()   # backs reader up to point AT the space
+    # Discard the trailing space; reader is already positioned after it,
+    # so the next textbox starts at the first real character.
     chars.pop()
     char_layers.pop()
 ```
-
-After this, the reader cursor sits on the boundary space character. The next call
-to `generate()` reads that space first. Since spaces are not `\r\n` they are not
-skipped (line 101); a `TextLayer` is created for the space and placed at `left=0`.
-The line's bounding box left edge is therefore the space character's left edge,
-not the first visible character's left edge.
-
-The text string (`.strip()`'d at line 126) has no leading space, so the stored
-text and its bbox are slightly misaligned horizontally.
-
-**Questions to resolve:**
-- How wide is a space character in practice relative to line height? Is the offset
-  measurable?
-- Should the reader be advanced past the space so the next textbox starts at the
-  first non-space character?
 
 ---
 
@@ -359,3 +350,45 @@ near-black, making the dark text unreadable in those regions.
   regions and reject (regenerate) samples below a threshold.
 - **Shadow-aware color selection** — estimate the effective background luminance
   after shadow and choose text color against that instead of the raw paper color.
+
+---
+
+## Thread 10 · Random corpus jump can land mid-word — RESOLVED
+
+**Status: RESOLVED** — `content.py` now advances to a word boundary after the
+random `move()` call; see fix details below.
+
+### Problem statement
+
+**File:** `elements/content.py` (line 100)
+
+```python
+self.reader.move(np.random.randint(len(self.reader)))
+```
+
+`move()` jumps to a random character index. That index can land anywhere in the
+corpus — including mid-word. The first textbox of every sample therefore sometimes
+starts at an arbitrary character inside a word, producing broken text at the
+beginning of the image.
+
+### Fix applied
+
+After the `move()` call, two loops align the reader to the next word boundary:
+
+```python
+# Align to a word boundary: skip to the end of the current word, then
+# past any whitespace, so the first textbox starts at a clean word start.
+for _ in range(len(self.reader)):
+    if self.reader.get().isspace():
+        break
+    self.reader.next()
+for _ in range(len(self.reader)):
+    if not self.reader.get().isspace():
+        break
+    self.reader.next()
+```
+
+The first loop advances past any remaining non-whitespace characters (finishing the
+current word). The second loop advances past any whitespace run (handles `\r\n`
+and multi-space sequences). After both loops the reader sits at the first character
+of a word.

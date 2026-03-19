@@ -98,6 +98,16 @@ class Content:
         textbox_null_count = 0
         layouts = self.layout.generate(layout_bbox)
         self.reader.move(np.random.randint(len(self.reader)))
+        # Align to a word boundary: skip to the end of the current word, then
+        # past any whitespace, so the first textbox starts at a clean word start.
+        for _ in range(len(self.reader)):
+            if self.reader.get().isspace():
+                break
+            self.reader.next()
+        for _ in range(len(self.reader)):
+            if not self.reader.get().isspace():
+                break
+            self.reader.next()
 
         # Each (grid_idx, col_idx) pair is a distinct visual block
         col_key_to_block_id = {}
