@@ -7,6 +7,8 @@ Computation is done in float32 internally.
 """
 
 import numpy as np
+from PIL import Image as PILImage
+from PIL import ImageDraw, ImageFont
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -263,9 +265,6 @@ class WatermarkEffect:
 
     @staticmethod
     def apply(image: np.ndarray, args: dict) -> np.ndarray:
-        from PIL import Image as PILImage
-        from PIL import ImageDraw, ImageFont
-
         H, W = image.shape[:2]
         words = args.get("words", ["DRAFT", "CONFIDENTIAL", "COPY", "VOID", "SAMPLE"])
         font_path = args.get("font_path", None)
@@ -281,7 +280,7 @@ class WatermarkEffect:
 
         try:
             pil_font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
-        except Exception:
+        except OSError:
             pil_font = ImageFont.load_default()
 
         overlay = PILImage.new("RGBA", (W, H), (0, 0, 0, 0))

@@ -5,7 +5,7 @@ Subcommands:
     python analyze.py stats <input>              # per-sample stats CSV
     python analyze.py aggregate -d <dir>         # aggregate .stats.csv files
     python analyze.py batch <dir> [--workers N]  # batch process all sources
-    python analyze.py report <dir>               # quality metric distribution report
+    python analyze.py report <dir>               # quality metric distribution report (single-threaded)
 """
 
 import argparse
@@ -20,6 +20,7 @@ from typing import Any
 
 import numpy as np
 from data_readers import iter_samples
+from serialization import QUALITY_FILTER_DEFAULTS
 from tqdm import tqdm
 
 # ---------------------------------------------------------------------------
@@ -33,7 +34,15 @@ def count_words(text: str) -> int:
 
 
 def calculate_iou(bbox1: list[float], bbox2: list[float]) -> float:
-    """Calculate Intersection over Union between two [x1, y1, x2, y2] bounding boxes."""
+    """Calculate Intersection over Union between two [x1, y1, x2, y2] bounding boxes.
+
+    Computes standard IoU (intersection / union).  Note: this differs from
+    ``max_intra_block_line_overlap`` / ``max_cross_block_line_overlap`` in
+    quality_metrics, which use containment fraction (intersection / min_area).
+    Both metrics are stored in the stats CSV; they answer different questions —
+    IoU penalizes large mutual overlap regardless of box sizes, while containment
+    fraction detects when a small box is subsumed by a larger one.
+    """
     x1_inter = max(bbox1[0], bbox2[0])
     y1_inter = max(bbox1[1], bbox2[1])
     x2_inter = min(bbox1[2], bbox2[2])
@@ -51,7 +60,12 @@ def calculate_iou(bbox1: list[float], bbox2: list[float]) -> float:
 
 
 def analyze_line_overlaps(lines: list[dict]) -> dict[str, Any]:
-    """Analyze overlaps between text lines in a single sample."""
+    """Analyze overlaps between text lines in a single sample using standard IoU.
+
+    Uses ``calculate_iou`` (intersection / union) — see its docstring for the
+    distinction from the containment-fraction metric stored as
+    ``max_intra/cross_block_line_overlap`` in quality_metrics.
+    """
     overlaps = []
     high_overlap_pairs = 0
 
@@ -167,7 +181,12 @@ def analyze_sample(data: dict[str, Any], sample_id: str) -> dict[str, Any]:
             }
         )
 
-        if img_width > 0 and img_height > 0:
+        if img_width <= 0 or img_height <= 0:
+            # Populate all dimension keys with zeros so every sample has the
+            # same fieldnames — prevents csv.DictWriter from crashing when the
+            # first sample is complete but a later one is missing keys.
+            sample_stats.update({k: v for k, v in _ZERO_BBOX_STATS.items() if k not in sample_stats})
+        else:
             widths, heights, aspect_ratios = [], [], []
             x_centers, y_centers = [], []
 
@@ -412,30 +431,31 @@ def aggregate_stats(stats_files: list[Path], output_path: Path | None = None) ->
         high_overlap = int(r.get("high_overlap_pairs", 0) or 0)
         max_iou = _safe_float(r.get("max_iou", "")) or 0.0
         num_lines = int(r.get("num_lines", 0) or 0)
-        word_count = _safe_float(r.get("word_count", ""))
-        null_frac = _safe_float(r.get("textbox_null_frac", ""))
-        sharpness = _safe_float(r.get("sharpness", ""))
-        is_problematic = (
-            high_overlap > 10
-            or max_iou > 0.5
-            or num_lines > 100
-            or (word_count is not None and word_count <= 5)
-            or (null_frac is not None and null_frac > 0.9)
-            or (sharpness is not None and sharpness < 20)
-        )
+
+        is_quality_problematic = False
+        for metric_key, op, threshold in QUALITY_FILTER_DEFAULTS:
+            val = _safe_float(r.get(metric_key, ""))
+            if val is None:
+                continue
+            if op == "<" and val < threshold:
+                is_quality_problematic = True
+                break
+            elif op == ">" and val > threshold:
+                is_quality_problematic = True
+                break
+
+        is_problematic = high_overlap > 10 or max_iou > 0.5 or num_lines > 100 or is_quality_problematic
         if is_problematic:
-            problematic.append(
-                {
-                    "sample_id": r.get("sample_id", ""),
-                    "source": r.get("source", ""),
-                    "high_overlap_pairs": high_overlap,
-                    "max_iou": max_iou,
-                    "num_lines": num_lines,
-                    "word_count": word_count,
-                    "textbox_null_frac": null_frac,
-                    "sharpness": sharpness,
-                }
-            )
+            entry: dict[str, Any] = {
+                "sample_id": r.get("sample_id", ""),
+                "source": r.get("source", ""),
+                "high_overlap_pairs": high_overlap,
+                "max_iou": max_iou,
+                "num_lines": num_lines,
+            }
+            for metric_key, _op, _thr in QUALITY_FILTER_DEFAULTS:
+                entry[metric_key] = _safe_float(r.get(metric_key, ""))
+            problematic.append(entry)
     problematic.sort(key=lambda x: x["max_iou"], reverse=True)
     summary["problematic_samples"] = {
         "count": len(problematic),
@@ -496,19 +516,10 @@ def _process_one(source: Path, force: bool) -> str:
 # Report subcommand
 # ---------------------------------------------------------------------------
 
-_REPORT_FILTER_THRESHOLDS = [
-    ("word_count", "<", 5),
-    ("textbox_null_frac", ">", 0.90),
-    ("min_line_height_px", "<", 8.0),
-    ("sharpness", "<", 20),
-    ("max_intra_block_line_overlap", ">", 0.95),
-    ("max_cross_block_line_overlap", ">", 0.30),
-]
-
 _PERCENTILES = [0, 5, 25, 50, 75, 95, 99, 100]
 
 
-def _build_report(input_path: Path, workers: int = 1) -> str:
+def _build_report(input_path: Path) -> str:
     """Collect quality_metrics from all samples and return a formatted report string."""
     # Determine whether input_path is a single split dir or a parent with multiple splits.
     splits_to_scan: list[Path] = []
@@ -562,7 +573,7 @@ def _build_report(input_path: Path, workers: int = 1) -> str:
     lines_out.append("")
     lines_out.append("FILTER IMPACT (samples that would be discarded per threshold):")
 
-    for metric, op, threshold in _REPORT_FILTER_THRESHOLDS:
+    for metric, op, threshold in QUALITY_FILTER_DEFAULTS:
         vals = metric_values[metric]
         n = len(vals)
         if n == 0:
@@ -587,7 +598,7 @@ def _cmd_report(args: argparse.Namespace) -> None:
     if not input_path.exists():
         print(f"Input not found: {input_path}", file=sys.stderr)
         sys.exit(1)
-    print(_build_report(input_path, workers=args.workers))
+    print(_build_report(input_path))
 
 
 # ---------------------------------------------------------------------------
@@ -713,7 +724,6 @@ def main() -> None:
         type=str,
         help="Split directory (contains metadata.jsonl) or parent directory (scans all splits)",
     )
-    p_report.add_argument("--workers", type=int, default=1, help="Number of parallel workers (default: 1)")
     p_report.set_defaults(func=_cmd_report)
 
     args = parser.parse_args()

@@ -44,6 +44,7 @@ from serialization import (  # noqa: E402
     KEY_TEXT_BLOCKS,
     KEY_TEXT_LINES,
     KEY_TEXT_WORDS,
+    QUALITY_FILTER_DEFAULTS,
     SPLITS,
     LineAnnotation,
     block_annotation_to_dict,
@@ -195,12 +196,17 @@ class SynthDoG(templates.Template):
         self.emit_quads = config.get("emit_quads", False)
         self.min_bbox_area = config.get("min_bbox_area", 16)
         self.min_contrast_ratio: float = float(config.get("min_contrast_ratio", 3.0))
-        self.min_word_count: int = int(config.get("min_word_count", 0))
-        self.max_textbox_null_frac: float = float(config.get("max_textbox_null_frac", 1.0))
-        self.min_line_height_px: float = float(config.get("min_line_height_px", 0.0))
-        self.min_sharpness: float = float(config.get("min_sharpness", 0.0))
-        self.max_intra_block_line_overlap: float = float(config.get("max_intra_block_line_overlap", 1.0))
-        self.max_cross_block_line_overlap: float = float(config.get("max_cross_block_line_overlap", 1.0))
+        _fd = {k: v for k, _op, v in QUALITY_FILTER_DEFAULTS}
+        self.min_word_count: int = int(config.get("min_word_count", _fd["word_count"]))
+        self.max_textbox_null_frac: float = float(config.get("max_textbox_null_frac", _fd["textbox_null_frac"]))
+        self.min_line_height_px: float = float(config.get("min_line_height_px", _fd["min_line_height_px"]))
+        self.min_sharpness: float = float(config.get("min_sharpness", _fd["sharpness"]))
+        self.max_intra_block_line_overlap: float = float(
+            config.get("max_intra_block_line_overlap", _fd["max_intra_block_line_overlap"])
+        )
+        self.max_cross_block_line_overlap: float = float(
+            config.get("max_cross_block_line_overlap", _fd["max_cross_block_line_overlap"])
+        )
         # Shadow applied to bg layer only, before merge
         self.bg_effect = components.Iterator(
             [components.Switch(components.Shadow())],
@@ -271,7 +277,7 @@ class SynthDoG(templates.Template):
         # annotations are captured from per-layer quads, so saved bboxes reflect
         # the pre-distortion geometry.
         #
-        # Empirical analysis (check_elastic_distortion.py, n=50) confirmed this
+        # Empirical analysis (SYNTHDOG-VALIDATION.md Thread 11, n=50) confirmed this
         # misalignment is negligible with config params alpha=[0,1], sigma=[0,0.5]:
         #   mean pixel delta   1.4  (vs motion blur 2.6,  Gaussian blur 2.1)
         #   p95 pixel delta   10.1  (vs motion blur 24.1, Gaussian blur 27.5)
@@ -428,7 +434,6 @@ class SynthDoG(templates.Template):
         # save metadata
         metadata_filename = "metadata.jsonl"
         metadata_filepath = os.path.join(output_dirpath, metadata_filename)
-        os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
         text_lines_data = [line_annotation_to_dict(ln) for ln in lines]
         text_words_data = [word_annotation_to_dict(wd) for wd in words]

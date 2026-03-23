@@ -93,6 +93,69 @@ class Content:
         self.close()
         return False
 
+    def _render_cells(
+        self,
+        cells: list[tuple],
+        cursor,
+        font,
+        region_type: str,
+        next_block_id: int,
+        block_region_types: dict[int, str],
+        text_layers: list,
+        texts: list,
+        block_ids: list,
+        words_per_line: list,
+    ) -> tuple[int, int, int]:
+        """Render a sequence of layout cells and append results to the output lists.
+
+        Args:
+            cells: Sequence of (bbox, align, col_key) tuples from a Grid layout.
+                   col_key can be any hashable — zones pass plain col_idx (int),
+                   the body loop passes (grid_idx, col_idx) tuples.
+            cursor: TextCursor or LiteralTextCursor to read text from.
+            font: Sampled BaseFont instance.
+            region_type: Annotation region type string (e.g. "body", "header").
+            next_block_id: Next available block ID counter.
+            block_region_types: Dict to populate with {block_id: region_type}.
+            text_layers: Output list (mutated in-place).
+            texts: Output list (mutated in-place).
+            block_ids: Output list (mutated in-place).
+            words_per_line: Output list (mutated in-place).
+
+        Returns:
+            (next_block_id, null_count, total_count)
+        """
+        col_key_to_block_id: dict = {}
+        null_count = 0
+        total_count = 0
+
+        for cell_bbox, align, col_key in cells:
+            total_count += 1
+            x, y, w, h = cell_bbox
+            text_layer, text, word_local_data = self.textbox.generate((w, h), cursor, font)
+
+            if text_layer is None:
+                null_count += 1
+                continue
+
+            text_layer.center = (x + w / 2, y + h / 2)
+            if align == "left":
+                text_layer.left = x
+            if align == "right":
+                text_layer.right = x + w
+
+            if col_key not in col_key_to_block_id:
+                col_key_to_block_id[col_key] = next_block_id
+                block_region_types[next_block_id] = region_type
+                next_block_id += 1
+
+            text_layers.append(text_layer)
+            texts.append(text)
+            block_ids.append(col_key_to_block_id[col_key])
+            words_per_line.append(word_local_data)
+
+        return next_block_id, null_count, total_count
+
     def _render_zone(
         self,
         cfg: dict,
@@ -146,34 +209,19 @@ class Content:
         texts: list[str] = []
         block_ids: list[int] = []
         words_per_line: list[list[dict]] = []
-        col_key_to_block_id: dict[int, int] = {}
-        null_count = 0
-        total_count = 0
 
-        for cell_bbox, align, col_idx in layout:
-            total_count += 1
-            x, y, w, h = cell_bbox
-            text_layer, text, word_local_data = self.textbox.generate((w, h), cursor, font)
-
-            if text_layer is None:
-                null_count += 1
-                continue
-
-            text_layer.center = (x + w / 2, y + h / 2)
-            if align == "left":
-                text_layer.left = x
-            if align == "right":
-                text_layer.right = x + w
-
-            if col_idx not in col_key_to_block_id:
-                col_key_to_block_id[col_idx] = next_block_id
-                block_region_types[next_block_id] = region_type
-                next_block_id += 1
-
-            text_layers.append(text_layer)
-            texts.append(text)
-            block_ids.append(col_key_to_block_id[col_idx])
-            words_per_line.append(word_local_data)
+        next_block_id, null_count, total_count = self._render_cells(
+            list(layout),
+            cursor,
+            font,
+            region_type,
+            next_block_id,
+            block_region_types,
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+        )
 
         return text_layers, texts, block_ids, words_per_line, next_block_id, null_count, total_count
 
@@ -297,38 +345,25 @@ class Content:
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
 
         # ── Body GridStack ────────────────────────────────────────────────────
-        col_key_to_block_id: dict[tuple[int, int], int] = {}
-
         layouts = self.layout.generate(layout_bbox)
 
         for grid_idx, layout in enumerate(layouts):
             font = self.font.sample()
-
-            for bbox, align, col_idx in layout:
-                textbox_total_count += 1
-                x, y, w, h = bbox
-                text_layer, text, word_local_data = self.textbox.generate((w, h), self.reader, font)
-
-                if text_layer is None:
-                    textbox_null_count += 1
-                    continue
-
-                text_layer.center = (x + w / 2, y + h / 2)
-                if align == "left":
-                    text_layer.left = x
-                if align == "right":
-                    text_layer.right = x + w
-
-                col_key = (grid_idx, col_idx)
-                if col_key not in col_key_to_block_id:
-                    col_key_to_block_id[col_key] = next_block_id
-                    block_region_types[next_block_id] = "body"
-                    next_block_id += 1
-
-                text_layers.append(text_layer)
-                texts.append(text)
-                block_ids.append(col_key_to_block_id[col_key])
-                words_per_line.append(word_local_data)
+            cells = [(bbox, align, (grid_idx, col_idx)) for bbox, align, col_idx in layout]
+            next_block_id, gnull, gtot = self._render_cells(
+                cells,
+                self.reader,
+                font,
+                "body",
+                next_block_id,
+                block_region_types,
+                text_layers,
+                texts,
+                block_ids,
+                words_per_line,
+            )
+            textbox_null_count += gnull
+            textbox_total_count += gtot
 
         # Apply color: content_color (uniform) takes priority; if it does not fire,
         # textbox_color applies per-line variation instead. The two modes are mutually

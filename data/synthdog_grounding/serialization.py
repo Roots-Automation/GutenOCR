@@ -12,6 +12,19 @@ from typing import Any
 # ── Dataset splits ───────────────────────────────────────────────────
 SPLITS = ["train", "validation", "test"]
 
+# ── Canonical quality-filter defaults ────────────────────────────────
+# Single source of truth for save-time filter thresholds.  Config YAML
+# overrides these at runtime; all consumers (template.py, analyze.py)
+# import from here so tuning one place propagates everywhere.
+QUALITY_FILTER_DEFAULTS: list[tuple[str, str, float]] = [
+    ("word_count", "<", 5.0),
+    ("textbox_null_frac", ">", 0.95),
+    ("min_line_height_px", "<", 15.0),
+    ("sharpness", "<", 10.0),
+    ("max_intra_block_line_overlap", ">", 0.95),
+    ("max_cross_block_line_overlap", ">", 0.50),
+]
+
 
 # ── Annotation dataclasses ───────────────────────────────────────────
 @dataclass

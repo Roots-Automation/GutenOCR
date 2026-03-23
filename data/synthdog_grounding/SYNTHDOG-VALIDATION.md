@@ -510,6 +510,51 @@ layer = layers.Group([doc_layer, bg_layer]).merge()
 
 ---
 
+## Thread 11 · Elastic distortion applied post-annotation — bbox misalignment study — RESOLVED
+
+**Status: RESOLVED** — misalignment confirmed negligible; no code change warranted.
+
+### Problem statement
+
+Elastic distortion is applied to the composited image *after* annotation bboxes are
+captured from per-layer quads (see `template.py:_render()`).  In principle this could
+cause saved bboxes to describe text positions on the *pre-distortion* image, which no
+longer matches the final rendered pixels.
+
+### Methodology
+
+Script: `check_elastic_distortion.py` (n=50 samples).
+
+For each sample, corresponding pixels at each annotated line-bbox corner were sampled
+before and after elastic distortion.  Three comparisons were made:
+- **Mean/p95 pixel delta**: how many pixels did the corner coordinates shift?
+- **Centroid drift**: did the text block centroid move (measures bulk translation)?
+- **Text coverage**: fraction of annotated bbox area that still contains text pixels
+  after distortion (measures how well the bbox still "contains" the rendered text).
+
+All comparisons were repeated for motion blur and Gaussian blur (also applied
+post-annotation) to establish a baseline — if elastic distortion is at or below
+those levels, it does not warrant special treatment.
+
+### Results (config params: `alpha=[0,1]`, `sigma=[0,0.5]`)
+
+| Effect | mean pixel delta | p95 pixel delta | centroid drift | text coverage |
+|--------|-----------------|-----------------|----------------|---------------|
+| Elastic distortion | 1.4 px | 10.1 px | 2.3 px | 0.90 |
+| Motion blur | 2.6 px | 24.1 px | 2.6 px | 0.92 |
+| Gaussian blur | 2.1 px | 27.5 px | 2.2 px | 0.93 |
+
+Elastic distortion is at or below the level of both blur effects, which are also
+applied post-annotation and are widely accepted as non-problematic for OCR training.
+The misalignment introduced is negligible for training purposes.
+
+### Resolution
+
+No code change.  The comment in `template.py:_render()` documents the study results
+and references this thread.
+
+---
+
 ## Thread 10 · Random corpus jump can land mid-word — RESOLVED
 
 **Status: RESOLVED** — `content.py` now advances to a word boundary after the

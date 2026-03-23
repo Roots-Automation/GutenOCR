@@ -255,9 +255,8 @@ moire:
   prob: 0.10
   args:
     frequency: [0.02, 0.06]  # cycles per pixel
-    amplitude: [0.3, 0.7]
     angle: [0, 90]
-    alpha: [0.05, 0.15]
+    alpha: [0.05, 0.15]      # moiré overlay intensity (0 = invisible, 1 = full darkening)
 
 low_toner_streaks:
   prob: 0.15

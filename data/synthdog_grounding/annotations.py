@@ -200,7 +200,7 @@ def compute_quality_metrics(
     total_ct: int,
 ) -> dict:
     """Compute per-sample quality metrics from the rendered image."""
-    gray = 0.2989 * image[..., 0] + 0.5870 * image[..., 1] + 0.1140 * image[..., 2]
+    gray = (0.2989 * image[..., 0] + 0.5870 * image[..., 1] + 0.1140 * image[..., 2]).astype(np.float32)
     line_contrasts = []
     line_contrast_ratios = []
     line_bbox_areas_px = []
