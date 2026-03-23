@@ -246,6 +246,42 @@ class HuggingFaceTextReader:
             self.idx = 0
 
 
+class LiteralTextCursor:
+    """A cursor that cycles through a fixed literal string.
+
+    Useful for rendering page numbers or other fixed labels in zone cells.
+    A trailing space is appended to act as a word boundary so TextBox can
+    cleanly stop after consuming the literal text.
+    """
+
+    def __init__(self, text: str) -> None:
+        self._buf = text + " "  # trailing space = word boundary
+        self._idx = 0
+
+    def __len__(self) -> int:
+        return len(self._buf)
+
+    def __iter__(self) -> "LiteralTextCursor":
+        return self
+
+    def __next__(self) -> str:
+        char = self.get()
+        self.next()
+        return char
+
+    def move(self, idx: int) -> None:
+        self._idx = idx % len(self._buf)
+
+    def next(self) -> None:
+        self._idx = (self._idx + 1) % len(self._buf)
+
+    def prev(self) -> None:
+        self._idx = (self._idx - 1) % len(self._buf)
+
+    def get(self) -> str:
+        return self._buf[self._idx]
+
+
 _READER_TYPES: dict[str, type[TextCursor]] = {
     "file": TextReader,
     "huggingface": HuggingFaceTextReader,

@@ -37,6 +37,7 @@ class BlockAnnotation:
     block_id: int
     bbox: list[float]
     line_ids: list[int]
+    region_type: str = "body"  # "body" | "header" | "footer" | "heading" | "footnote"
 
 
 # ── Canonical key names ──────────────────────────────────────────────
@@ -70,7 +71,7 @@ def word_annotation_to_dict(wd: WordAnnotation) -> dict[str, Any]:
 
 def block_annotation_to_dict(blk: BlockAnnotation) -> dict[str, Any]:
     """Convert a BlockAnnotation to a JSON-serializable dict."""
-    return {"block_id": blk.block_id, "bbox": blk.bbox, "line_ids": blk.line_ids}
+    return {"block_id": blk.block_id, "bbox": blk.bbox, "line_ids": blk.line_ids, "region_type": blk.region_type}
 
 
 def encode_metadata(

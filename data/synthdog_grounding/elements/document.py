@@ -128,20 +128,30 @@ class Document:
 
         Returns:
             Tuple of (paper_layer, text_layers, texts, block_ids,
-            words_per_line, textbox_null_count, textbox_total_count) where:
+            words_per_line, block_region_types, textbox_null_count, textbox_total_count) where:
                 - paper_layer: A Layer containing the paper texture
                 - text_layers: List of Layers, one per text line
                 - texts: List of strings corresponding to each text layer
                 - block_ids: List of int block IDs, one per text line
                 - words_per_line: List of word-detail dicts per line
+                - block_region_types: Dict mapping block_id → region_type string
                 - textbox_null_count: Number of textbox slots that produced no text
                 - textbox_total_count: Total textbox slots attempted
         """
         size = self._compute_document_size(size)
         paper_layer, bg_color = self.paper.generate(size)
-        text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count = self.content.generate(
-            size, bg_color
+        text_layers, texts, block_ids, words_per_line, block_region_types, textbox_null_count, textbox_total_count = (
+            self.content.generate(size, bg_color)
         )
         self.effect.apply([*text_layers, paper_layer])
 
-        return paper_layer, text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count
+        return (
+            paper_layer,
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+        )

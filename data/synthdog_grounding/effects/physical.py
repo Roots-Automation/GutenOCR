@@ -256,3 +256,48 @@ class MoireOverlayEffect:
         img = image.astype(np.float32)
         img[..., :3] = np.clip(img[..., :3] - pattern[..., np.newaxis] * alpha * 255, 0, 255)
         return img.astype(np.uint8)
+
+
+class WatermarkEffect:
+    """Semi-transparent rotated text stamp (DRAFT, CONFIDENTIAL, etc.) overlaid on the page."""
+
+    @staticmethod
+    def apply(image: np.ndarray, args: dict) -> np.ndarray:
+        from PIL import Image as PILImage
+        from PIL import ImageDraw, ImageFont
+
+        H, W = image.shape[:2]
+        words = args.get("words", ["DRAFT", "CONFIDENTIAL", "COPY", "VOID", "SAMPLE"])
+        font_path = args.get("font_path", None)
+        font_size_frac = args.get("font_size_frac", [0.12, 0.20])
+        alpha_range = args.get("alpha", [0.08, 0.25])
+        angle_range = args.get("angle", [-45, 45])
+        color = tuple(int(c) for c in args.get("color", [60, 60, 60]))
+
+        word = words[np.random.randint(len(words))]
+        angle = float(np.random.uniform(angle_range[0], angle_range[1]))
+        alpha = float(np.random.uniform(alpha_range[0], alpha_range[1]))
+        font_size = max(int(min(H, W) * np.random.uniform(font_size_frac[0], font_size_frac[1])), 12)
+
+        try:
+            pil_font = ImageFont.truetype(font_path, font_size) if font_path else ImageFont.load_default()
+        except Exception:
+            pil_font = ImageFont.load_default()
+
+        overlay = PILImage.new("RGBA", (W, H), (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
+
+        bbox = draw.textbbox((0, 0), word, font=pil_font)
+        text_w = bbox[2] - bbox[0]
+        text_h = bbox[3] - bbox[1]
+        x = (W - text_w) / 2 - bbox[0]
+        y = (H - text_h) / 2 - bbox[1]
+
+        alpha_int = int(alpha * 255)
+        draw.text((x, y), word, fill=(*color, alpha_int), font=pil_font)
+
+        overlay = overlay.rotate(-angle, expand=False)
+
+        base = PILImage.fromarray(np.clip(image, 0, 255).astype(np.uint8), "RGBA")
+        result = PILImage.alpha_composite(base, overlay)
+        return np.array(result).astype(np.uint8)

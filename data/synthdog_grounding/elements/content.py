@@ -7,9 +7,9 @@ MIT License
 import numpy as np
 from synthtiger import components
 
-from layouts import GridStack, Layout
+from layouts import Grid, GridStack, Layout
 
-from .readers import _READER_TYPES, TextCursor
+from .readers import _READER_TYPES, LiteralTextCursor, TextCursor
 from .textbox import TextBox
 
 
@@ -73,6 +73,15 @@ class Content:
             **config.get("text_sprinkle", {}),
         )
 
+        # Zone configs
+        self.page_header_cfg = config.get("page_header", {})
+        self.page_footer_cfg = config.get("page_footer", {})
+        self.footnote_cfg = config.get("footnote", {})
+        section_heading_cfg = config.get("section_heading", {})
+        self.section_heading_cfg = section_heading_cfg
+        self.heading_prob = section_heading_cfg.get("prob", 0.0)
+        self.heading_font = components.BaseFont(**section_heading_cfg.get("font", config.get("font", {})))
+
     def close(self):
         if hasattr(self.reader, "close"):
             self.reader.close()
@@ -83,6 +92,90 @@ class Content:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.close()
         return False
+
+    def _render_zone(
+        self,
+        cfg: dict,
+        zone_bbox: list[float],
+        region_type: str,
+        canvas_ref: float,
+        next_block_id: int,
+        block_region_types: dict[int, str],
+        font_override=None,
+        use_page_number: bool = False,
+    ) -> tuple[list, list[str], list[int], list[list[dict]], int, int, int]:
+        """Render a 1-row zone and return accumulated data.
+
+        Args:
+            cfg: Zone config dict (text_scale, max_col, etc.)
+            zone_bbox: [x, y, w, h] for the zone area
+            region_type: Annotation region type string
+            canvas_ref: min(canvas_w, canvas_h) used as text-scale reference dimension
+            next_block_id: Next available block ID counter
+            block_region_types: Dict to populate with {block_id: region_type}
+            font_override: Optional BaseFont to use instead of self.font
+            use_page_number: If True, use a LiteralTextCursor with a random page number
+
+        Returns:
+            (text_layers, texts, block_ids, words_per_line,
+             next_block_id, null_count, total_count)
+        """
+        zone_x, zone_y, zone_w, zone_h = zone_bbox
+        if zone_w <= 0 or zone_h <= 0:
+            return [], [], [], [], next_block_id, 0, 0
+
+        text_scale_range = cfg.get("text_scale", [0.5, 0.9])
+        # Convert canvas-relative scale to an absolute font size, then to zone-relative
+        text_size = canvas_ref * np.random.uniform(text_scale_range[0], text_scale_range[1])
+        zone_min = min(zone_w, zone_h)
+        # Cap at 0.99 × zone_min so Grid can always fit at least 1 row
+        zone_text_scale = min(text_size / zone_min, 0.99)
+
+        max_col = cfg.get("max_col", 3)
+        grid = Grid({"max_row": 1, "max_col": max_col, "align": cfg.get("align", ["left", "right", "center"])})
+        layout = grid.generate(zone_bbox, fill_range=(0.5, 1.0), text_scale_range=(zone_text_scale, zone_text_scale))
+        if layout is None:
+            return [], [], [], [], next_block_id, 0, 1  # 1 total, 1 null
+
+        cursor: TextCursor = LiteralTextCursor(str(np.random.randint(1, 500))) if use_page_number else self.reader
+
+        font_sampler = font_override if font_override is not None else self.font
+        font = font_sampler.sample()
+
+        text_layers: list = []
+        texts: list[str] = []
+        block_ids: list[int] = []
+        words_per_line: list[list[dict]] = []
+        col_key_to_block_id: dict[int, int] = {}
+        null_count = 0
+        total_count = 0
+
+        for cell_bbox, align, col_idx in layout:
+            total_count += 1
+            x, y, w, h = cell_bbox
+            text_layer, text, word_local_data = self.textbox.generate((w, h), cursor, font)
+
+            if text_layer is None:
+                null_count += 1
+                continue
+
+            text_layer.center = (x + w / 2, y + h / 2)
+            if align == "left":
+                text_layer.left = x
+            if align == "right":
+                text_layer.right = x + w
+
+            if col_idx not in col_key_to_block_id:
+                col_key_to_block_id[col_idx] = next_block_id
+                block_region_types[next_block_id] = region_type
+                next_block_id += 1
+
+            text_layers.append(text_layer)
+            texts.append(text)
+            block_ids.append(col_key_to_block_id[col_idx])
+            words_per_line.append(word_local_data)
+
+        return text_layers, texts, block_ids, words_per_line, next_block_id, null_count, total_count
 
     def generate(self, size, bg_color=(255, 255, 255)):
         width, height = size
@@ -95,15 +188,19 @@ class Content:
 
         textbox_color = _make_adaptive_color(self.textbox_color_config, gray_range, lum)
         content_color = _make_adaptive_color(self.content_color_config, gray_range, lum)
-        layout_bbox = _compute_layout_bbox(width, height, self.margin)
+        layout_bbox = list(_compute_layout_bbox(width, height, self.margin))
 
         text_layers, texts, block_ids, words_per_line = [], [], [], []
+        block_region_types: dict[int, str] = {}
         textbox_total_count = 0
         textbox_null_count = 0
-        layouts = self.layout.generate(layout_bbox)
+        next_block_id = 0
+
+        # Reference dimension for text-scale calculations (same convention as GridStack)
+        canvas_ref = float(min(width, height))
+
+        # Advance reader to a random word boundary once, shared by all zones and body
         self.reader.move(np.random.randint(len(self.reader)))
-        # Align to a word boundary: skip to the end of the current word, then
-        # past any whitespace, so the first textbox starts at a clean word start.
         for _ in range(len(self.reader)):
             if self.reader.get().isspace():
                 break
@@ -113,9 +210,96 @@ class Content:
                 break
             self.reader.next()
 
-        # Each (grid_idx, col_idx) pair is a distinct visual block
-        col_key_to_block_id = {}
-        next_block_id = 0
+        # ── Page header ───────────────────────────────────────────────────────
+        if np.random.rand() < self.page_header_cfg.get("prob", 0.0):
+            h_frac = np.random.uniform(*self.page_header_cfg.get("height", [0.04, 0.08]))
+            zone_h = min(height * h_frac, layout_bbox[3])
+            if zone_h > 0:
+                zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
+                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                    self.page_header_cfg, zone_bbox, "header", canvas_ref, next_block_id, block_region_types
+                )
+                text_layers.extend(zl)
+                texts.extend(zt)
+                block_ids.extend(zbi)
+                words_per_line.extend(zwpl)
+                textbox_null_count += znull
+                textbox_total_count += ztot
+                layout_bbox[1] += zone_h
+                layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
+
+        # ── Page footer ───────────────────────────────────────────────────────
+        if np.random.rand() < self.page_footer_cfg.get("prob", 0.0):
+            h_frac = np.random.uniform(*self.page_footer_cfg.get("height", [0.04, 0.08]))
+            zone_h = min(height * h_frac, layout_bbox[3])
+            if zone_h > 0:
+                footer_top = layout_bbox[1] + layout_bbox[3] - zone_h
+                zone_bbox = [layout_bbox[0], footer_top, layout_bbox[2], zone_h]
+                pn_cfg = self.page_footer_cfg.get("page_number", {})
+                use_pn = np.random.rand() < pn_cfg.get("prob", 0.0)
+                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                    self.page_footer_cfg,
+                    zone_bbox,
+                    "footer",
+                    canvas_ref,
+                    next_block_id,
+                    block_region_types,
+                    use_page_number=use_pn,
+                )
+                text_layers.extend(zl)
+                texts.extend(zt)
+                block_ids.extend(zbi)
+                words_per_line.extend(zwpl)
+                textbox_null_count += znull
+                textbox_total_count += ztot
+                layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
+
+        # ── Footnote ─────────────────────────────────────────────────────────
+        if np.random.rand() < self.footnote_cfg.get("prob", 0.0):
+            h_frac = np.random.uniform(*self.footnote_cfg.get("height", [0.05, 0.12]))
+            zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
+            if zone_h > 0:
+                footnote_top = layout_bbox[1] + layout_bbox[3] - zone_h
+                zone_bbox = [layout_bbox[0], footnote_top, layout_bbox[2], zone_h]
+                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                    self.footnote_cfg, zone_bbox, "footnote", canvas_ref, next_block_id, block_region_types
+                )
+                text_layers.extend(zl)
+                texts.extend(zt)
+                block_ids.extend(zbi)
+                words_per_line.extend(zwpl)
+                textbox_null_count += znull
+                textbox_total_count += ztot
+                layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
+
+        # ── Section heading ───────────────────────────────────────────────────
+        if np.random.rand() < self.heading_prob:
+            h_frac = np.random.uniform(*self.section_heading_cfg.get("height", [0.06, 0.14]))
+            zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
+            if zone_h > 0:
+                zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
+                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                    self.section_heading_cfg,
+                    zone_bbox,
+                    "heading",
+                    canvas_ref,
+                    next_block_id,
+                    block_region_types,
+                    font_override=self.heading_font,
+                )
+                text_layers.extend(zl)
+                texts.extend(zt)
+                block_ids.extend(zbi)
+                words_per_line.extend(zwpl)
+                textbox_null_count += znull
+                textbox_total_count += ztot
+                layout_bbox[1] += zone_h
+                layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
+
+        # ── Body GridStack ────────────────────────────────────────────────────
+        col_key_to_block_id: dict[tuple[int, int], int] = {}
+
+        layouts = self.layout.generate(layout_bbox)
 
         for grid_idx, layout in enumerate(layouts):
             font = self.font.sample()
@@ -138,6 +322,7 @@ class Content:
                 col_key = (grid_idx, col_idx)
                 if col_key not in col_key_to_block_id:
                     col_key_to_block_id[col_key] = next_block_id
+                    block_region_types[next_block_id] = "body"
                     next_block_id += 1
 
                 text_layers.append(text_layer)
@@ -158,4 +343,12 @@ class Content:
         for text_layer in text_layers:
             self.text_sprinkle.apply([text_layer])
 
-        return text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count
+        return (
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+        )
