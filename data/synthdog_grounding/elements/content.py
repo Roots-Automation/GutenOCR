@@ -68,6 +68,10 @@ class Content:
         self.textbox = TextBox(config.get("textbox", {}))
         self.textbox_color_config = config.get("textbox_color", {})
         self.content_color_config = config.get("content_color", {})
+        self.text_sprinkle = components.Switch(
+            components.TextSprinkle(),
+            **config.get("text_sprinkle", {}),
+        )
 
     def close(self):
         if hasattr(self.reader, "close"):
@@ -150,5 +154,8 @@ class Content:
         else:
             for text_layer in text_layers:
                 textbox_color.apply([text_layer])
+
+        for text_layer in text_layers:
+            self.text_sprinkle.apply([text_layer])
 
         return text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count

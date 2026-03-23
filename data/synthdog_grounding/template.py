@@ -18,6 +18,7 @@ import pillow_compat  # noqa: E402, F401, I001
 import copy  # noqa: E402
 import hashlib  # noqa: E402
 import json  # noqa: E402
+import math  # noqa: E402
 import os  # noqa: E402
 import re  # noqa: E402
 from typing import Any  # noqa: E402
@@ -132,6 +133,18 @@ def _check_font_dirs(config: dict) -> None:
             )
 
 
+def _rotate_point(px, py, cx, cy, angle_deg):
+    """Rotate (px, py) around (cx, cy) by angle_deg degrees."""
+    rad = math.radians(angle_deg)
+    cos_a, sin_a = math.cos(rad), math.sin(rad)
+    dx, dy = px - cx, py - cy
+    return cx + dx * cos_a - dy * sin_a, cy + dx * sin_a + dy * cos_a
+
+
+def _rotate_quad(quad, cx, cy, angle_deg):
+    return [list(_rotate_point(p[0], p[1], cx, cy, angle_deg)) for p in quad]
+
+
 class SynthDoG(templates.Template):
     def __init__(self, config=None, split_ratio: list[float] | None = None):
         super().__init__(config)
@@ -182,17 +195,22 @@ class SynthDoG(templates.Template):
             [components.Switch(components.Shadow())],
             **config.get("doc_effect", {}),
         )
-        # Shadow removed; 5 components now
         self.effect = components.Iterator(
             [
                 components.Switch(components.RGB()),
+                components.Switch(components.Grayscale()),
                 components.Switch(components.Contrast()),
                 components.Switch(components.Brightness()),
                 components.Switch(components.MotionBlur()),
                 components.Switch(components.GaussianBlur()),
+                components.Switch(components.Resample()),
+                components.Switch(components.JpegCompression()),
             ],
             **config.get("effect", {}),
         )
+
+        self.skew_angle: tuple = config.get("skew", {}).get("angle", [0, 0])
+        self.skew_prob: float = config.get("skew", {}).get("prob", 0.0)
 
         # config for splits
         self.splits = SPLITS
@@ -208,7 +226,7 @@ class SynthDoG(templates.Template):
         if hasattr(self, "document"):
             self.document.close()
 
-    def _render(self, document_group, bg_layer, size: tuple[int, int]) -> np.ndarray:
+    def _render(self, document_group, bg_layer, size: tuple[int, int], skew_angle: float = 0.0) -> np.ndarray:
         """Merge layers, apply effects, and rasterize to a numpy array."""
         # Apply shadow to background only.
         self.bg_effect.apply([bg_layer])
@@ -232,7 +250,14 @@ class SynthDoG(templates.Template):
         # also applied post-annotation, so no fix is warranted.
         self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
-        return layer.output(bbox=[0, 0, *size])
+        result = layer.output(bbox=[0, 0, *size])
+        if skew_angle != 0.0:
+            n_ch = result.shape[2] if result.ndim == 3 else 1
+            fill = (255, 255, 255, 255) if n_ch == 4 else (255, 255, 255)
+            pil_img = Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
+            pil_img = pil_img.rotate(-skew_angle, expand=False, fillcolor=fill)
+            result = np.array(pil_img)
+        return result
 
     def generate(self):
         landscape = np.random.rand() < self.landscape
@@ -252,6 +277,14 @@ class SynthDoG(templates.Template):
         document_group.top = np.random.randint(document_space[1] + 1)
         roi = np.array(paper_layer.quad, dtype=int)
 
+        skew_angle = 0.0
+        if np.random.rand() < self.skew_prob:
+            skew_angle = float(np.random.uniform(self.skew_angle[0], self.skew_angle[1]))
+            cx = document_group.left + document_group.width / 2
+            cy = document_group.top + document_group.height / 2
+            for layer in [*text_layers, paper_layer]:
+                layer.quad = _rotate_quad(layer.quad, cx, cy, skew_angle)
+
         image_width, image_height = size
 
         lines, words, blocks, deg_line_ct, deg_word_ct = build_annotations(
@@ -265,7 +298,7 @@ class SynthDoG(templates.Template):
             self.min_bbox_area,
         )
 
-        image = self._render(document_group, bg_layer, size)
+        image = self._render(document_group, bg_layer, size, skew_angle=skew_angle)
 
         quality_metrics = compute_quality_metrics(
             image,

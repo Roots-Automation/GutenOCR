@@ -69,6 +69,9 @@ class Document:
         self.effect = components.Iterator(
             [
                 components.Switch(components.AdditiveGaussianNoise()),
+                components.Switch(components.Erode()),
+                components.Switch(components.Dilate()),
+                components.Switch(components.CoarseDropout()),
                 components.Switch(
                     components.Selector(
                         [

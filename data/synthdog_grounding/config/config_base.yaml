@@ -69,20 +69,42 @@ document:
       prob: 0.2
       args:
         colorize: 1
+    # TextSprinkle — printer registration jitter, anti-aliasing artifacts
+    text_sprinkle:
+      prob: 0.3
+      args:
+        prob: [0.05, 0.15]
+        offset: [-1, 1]
 
   effect:
     args:
-      # elastic distortion
+      # elastic distortion (index 0, extracted separately)
       - prob: 1
         args:
           alpha: [0, 1]
           sigma: [0, 0.5]
-      # gaussian noise
+      # gaussian noise (index 1)
       - prob: 1
         args:
           scale: [0, 8]
           per_channel: 0
-      # perspective
+      # erode — worn/faded strokes (index 2)
+      - prob: 0.15
+        args:
+          k: [1, 2]
+      # dilate — ink bleed (index 3)
+      - prob: 0.15
+        args:
+          k: [1, 2]
+      # coarse dropout — ink dropout, scanning holes (index 4)
+      # size_percent is the mask downscale factor; block_size ≈ 1/size_percent px.
+      # 0.05 → ~20px blocks, 0.2 → ~5px blocks.
+      - prob: 0.2
+        args:
+          p: [0.003, 0.015]
+          size_percent: [0.05, 0.2]
+          per_channel: 0
+      # perspective (index 5)
       - prob: 1
         args:
           weights: [750, 50, 50, 25, 25, 25, 25, 50]
@@ -124,25 +146,41 @@ doc_effect:
 
 effect:
   args:
-    # color
+    # color (0)
     - prob: 0.2
       args:
         rgb: [[0, 255], [0, 255], [0, 255]]
         alpha: [0, 0.2]
-    # contrast
+    # grayscale (1) — B&W scanning
+    - prob: 0.05
+      args: {}
+    # contrast (2)
     - prob: 1
       args:
         alpha: [1, 1.5]
-    # brightness
+    # brightness (3)
     - prob: 1
       args:
         beta: [-32, 32]
-    # motion blur
+    # motion blur (4)
     - prob: 0.5
       args:
         k: [3, 5]
         angle: [0, 360]
-    # gaussian blur
+    # gaussian blur (5)
     - prob: 1
       args:
         sigma: [0, 1.5]
+    # resample (6) — low-DPI, fax resolution loss
+    - prob: 0.2
+      args:
+        size: [0.4, 0.7]
+    # jpeg compression (7) — compression artifacts, photocopier
+    - prob: 0.3
+      args:
+        compression: [10, 40]
+
+# Whole-page skew — simulates a misaligned document in a scanner
+skew:
+  prob: 0.3
+  angle: [-3, 3]
