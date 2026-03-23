@@ -1,7 +1,7 @@
 quality: [50, 95]
 landscape: 0.5
-short_size: [720, 1024]
-aspect_ratio: [1, 2]
+short_size: [720, 1440]
+aspect_ratio: [1.0, 2.5]
 emit_quads: false
 min_bbox_area: 16
 # Minimum WCAG-proxy contrast ratio across all text lines (10th vs 90th percentile
@@ -9,6 +9,14 @@ min_bbox_area: 16
 # WCAG AA = 4.5, WCAG A = 3.0. Set to 1.5 as a backstop; the primary guard is
 # moving shadow to bg_effect so it cannot collapse text-vs-paper contrast.
 min_contrast_ratio: 1.5
+# Per-sample save filters — permissive defaults preserve current behaviour.
+# Tighten to discard low-quality samples at generation time.
+min_word_count: 5                    # minimum words required to save a sample
+max_textbox_null_frac: 0.95          # discard if >X fraction of textbox slots were empty
+min_line_height_px: 15.0             # discard if any line renders below X pixels tall
+min_sharpness: 10.0                  # discard if Laplacian variance < X (blur detection)
+max_intra_block_line_overlap: 0.95   # discard if within-column row bleeding exceeds X
+max_cross_block_line_overlap: 0.50   # discard if zone-vs-body spatial collision exceeds X
 
 background:
   image:
@@ -25,8 +33,8 @@ background:
 document:
   fullscreen: 0.5
   landscape: 0.5
-  short_size: [480, 1024]
-  aspect_ratio: [1, 2]
+  short_size: [480, 1440]
+  aspect_ratio: [1.0, 2.5]
 
   paper:
     color:
@@ -84,6 +92,38 @@ document:
       args:
         prob: [0.05, 0.15]
         offset: [-1, 1]
+
+    # ── Complex layout zones ──────────────────────────────────────────────────
+    # All zone text_scale values are relative to min(canvas_w, canvas_h).
+
+    # Page header (thin strip at top of layout area)
+    page_header:
+      prob: 0.25
+      height: [0.04, 0.08]        # fraction of canvas height
+      text_scale: [0.020, 0.040]  # smaller than body [0.0334, 0.1]
+      max_col: 3
+
+    # Page footer (thin strip at bottom of layout area)
+    page_footer:
+      prob: 0.30
+      height: [0.04, 0.08]
+      text_scale: [0.020, 0.040]
+      max_col: 3
+      page_number:
+        prob: 0.50              # when footer fires, 50% chance it becomes a page number
+
+    # Section heading (first zone of body, larger font)
+    section_heading:
+      prob: 0.30
+      text_scale: [0.10, 0.18]    # larger than body max of 0.1
+      height: [0.06, 0.14]        # fraction of body height
+
+    # Footnote zone (bottom of body, smaller font)
+    footnote:
+      prob: 0.20
+      height: [0.05, 0.12]
+      text_scale: [0.020, 0.040]
+      max_col: 1                  # footnotes are typically single-column
 
   effect:
     args:
@@ -233,3 +273,14 @@ vignetting:
     intensity: [30, 80]
     shape: [1.5, 3.0]
     mode: radial        # radial (rectangular not yet implemented)
+
+# Watermark / stamp overlay (global post-skew effect)
+watermark:
+  prob: 0.10
+  args:
+    words: [DRAFT, CONFIDENTIAL, COPY, VOID, SAMPLE, APPROVED, RECEIVED]
+    font_path: resources/font/en/regular/NotoSans-Regular.ttf
+    font_size_frac: [0.12, 0.22]
+    alpha: [0.08, 0.25]
+    angle: [-45, 45]
+    color: [60, 60, 60]

@@ -5,6 +5,7 @@ Subcommands:
     python analyze.py stats <input>              # per-sample stats CSV
     python analyze.py aggregate -d <dir>         # aggregate .stats.csv files
     python analyze.py batch <dir> [--workers N]  # batch process all sources
+    python analyze.py report <dir>               # quality metric distribution report
 """
 
 import argparse
@@ -17,6 +18,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from data_readers import iter_samples
 from tqdm import tqdm
 
@@ -98,12 +100,21 @@ _ZERO_BBOX_STATS: dict[str, int | float] = {
 _QUALITY_METRIC_KEYS = [
     "min_line_contrast",
     "mean_line_contrast",
+    "min_line_contrast_ratio",
     "degenerate_line_count",
     "degenerate_word_count",
     "textbox_null_count",
     "textbox_total_count",
+    "textbox_null_frac",
     "min_line_bbox_area_px",
     "min_word_bbox_area_px",
+    "line_count",
+    "word_count",
+    "min_line_height_px",
+    "mean_line_height_px",
+    "sharpness",
+    "max_intra_block_line_overlap",
+    "max_cross_block_line_overlap",
 ]
 
 # ---------------------------------------------------------------------------
@@ -369,12 +380,21 @@ def aggregate_stats(stats_files: list[Path], output_path: Path | None = None) ->
         # Quality metric columns
         "min_line_contrast",
         "mean_line_contrast",
+        "min_line_contrast_ratio",
         "min_line_bbox_area_px",
         "min_word_bbox_area_px",
         "degenerate_line_count",
         "degenerate_word_count",
         "textbox_null_count",
         "textbox_total_count",
+        "textbox_null_frac",
+        "line_count",
+        "word_count",
+        "min_line_height_px",
+        "mean_line_height_px",
+        "sharpness",
+        "max_intra_block_line_overlap",
+        "max_cross_block_line_overlap",
     ]
 
     for col in numeric_cols:
@@ -392,7 +412,18 @@ def aggregate_stats(stats_files: list[Path], output_path: Path | None = None) ->
         high_overlap = int(r.get("high_overlap_pairs", 0) or 0)
         max_iou = _safe_float(r.get("max_iou", "")) or 0.0
         num_lines = int(r.get("num_lines", 0) or 0)
-        if high_overlap > 10 or max_iou > 0.5 or num_lines > 100:
+        word_count = _safe_float(r.get("word_count", ""))
+        null_frac = _safe_float(r.get("textbox_null_frac", ""))
+        sharpness = _safe_float(r.get("sharpness", ""))
+        is_problematic = (
+            high_overlap > 10
+            or max_iou > 0.5
+            or num_lines > 100
+            or (word_count is not None and word_count <= 5)
+            or (null_frac is not None and null_frac > 0.9)
+            or (sharpness is not None and sharpness < 20)
+        )
+        if is_problematic:
             problematic.append(
                 {
                     "sample_id": r.get("sample_id", ""),
@@ -400,6 +431,9 @@ def aggregate_stats(stats_files: list[Path], output_path: Path | None = None) ->
                     "high_overlap_pairs": high_overlap,
                     "max_iou": max_iou,
                     "num_lines": num_lines,
+                    "word_count": word_count,
+                    "textbox_null_frac": null_frac,
+                    "sharpness": sharpness,
                 }
             )
     problematic.sort(key=lambda x: x["max_iou"], reverse=True)
@@ -456,6 +490,104 @@ def _process_one(source: Path, force: bool) -> str:
         return f"OK   {source.name}"
     except Exception as e:
         return f"FAIL {source.name}: {e}"
+
+
+# ---------------------------------------------------------------------------
+# Report subcommand
+# ---------------------------------------------------------------------------
+
+_REPORT_FILTER_THRESHOLDS = [
+    ("word_count", "<", 5),
+    ("textbox_null_frac", ">", 0.90),
+    ("min_line_height_px", "<", 8.0),
+    ("sharpness", "<", 20),
+    ("max_intra_block_line_overlap", ">", 0.95),
+    ("max_cross_block_line_overlap", ">", 0.30),
+]
+
+_PERCENTILES = [0, 5, 25, 50, 75, 95, 99, 100]
+
+
+def _build_report(input_path: Path, workers: int = 1) -> str:
+    """Collect quality_metrics from all samples and return a formatted report string."""
+    # Determine whether input_path is a single split dir or a parent with multiple splits.
+    splits_to_scan: list[Path] = []
+    if (input_path / "metadata.jsonl").exists():
+        splits_to_scan = [input_path]
+    else:
+        for child in sorted(input_path.iterdir()):
+            if child.is_dir() and (child / "metadata.jsonl").exists():
+                splits_to_scan.append(child)
+
+    if not splits_to_scan:
+        return f"No metadata.jsonl found under {input_path}"
+
+    # Collect quality_metrics from all samples
+    metric_values: dict[str, list[float]] = {k: [] for k in _QUALITY_METRIC_KEYS}
+    total_samples = 0
+
+    for split_dir in splits_to_scan:
+        for _sample_id, data in iter_samples(split_dir):
+            qm = data.get("quality_metrics", {})
+            total_samples += 1
+            for key in _QUALITY_METRIC_KEYS:
+                v = qm.get(key)
+                if v is not None:
+                    try:
+                        metric_values[key].append(float(v))
+                    except (TypeError, ValueError):
+                        pass
+
+    lines_out: list[str] = []
+    lines_out.append(f"=== Quality Report: {input_path} ({total_samples} samples) ===")
+    lines_out.append("")
+
+    # Percentile table header
+    col_w = 34
+    pct_w = 7
+    hdr = f"{'METRIC':<{col_w}}" + "".join(f"{'p' + str(p):>{pct_w}}" for p in _PERCENTILES)
+    lines_out.append(hdr)
+    lines_out.append("-" * col_w + "+" + (("-" * (pct_w - 1) + "+") * len(_PERCENTILES)).rstrip("+"))
+
+    for key in _QUALITY_METRIC_KEYS:
+        vals = metric_values[key]
+        if not vals:
+            row = f"{key:<{col_w}}" + f"{'N/A':>{pct_w}}"
+        else:
+            arr = np.array(vals)
+            pcts = np.percentile(arr, _PERCENTILES)
+            row = f"{key:<{col_w}}" + "".join(f"{v:>{pct_w}.2f}" if abs(v) < 1000 else f"{v:>{pct_w}.0f}" for v in pcts)
+        lines_out.append(row)
+
+    lines_out.append("")
+    lines_out.append("FILTER IMPACT (samples that would be discarded per threshold):")
+
+    for metric, op, threshold in _REPORT_FILTER_THRESHOLDS:
+        vals = metric_values[metric]
+        n = len(vals)
+        if n == 0:
+            lines_out.append(f"  {metric} {op} {threshold:<10}  N/A")
+            continue
+        arr = np.array(vals)
+        if op == "<":
+            discarded = int(np.sum(arr < threshold))
+            label = f"{metric} < {threshold}"
+        else:
+            discarded = int(np.sum(arr > threshold))
+            label = f"{metric} > {threshold}"
+        pct = 100.0 * discarded / n
+        lines_out.append(f"  {label:<45}  {discarded:>4} / {n:>5}  ({pct:.1f}%)")
+
+    return "\n".join(lines_out)
+
+
+def _cmd_report(args: argparse.Namespace) -> None:
+    """Handle the 'report' subcommand."""
+    input_path = Path(args.directory).resolve()
+    if not input_path.exists():
+        print(f"Input not found: {input_path}", file=sys.stderr)
+        sys.exit(1)
+    print(_build_report(input_path, workers=args.workers))
 
 
 # ---------------------------------------------------------------------------
@@ -570,6 +702,19 @@ def main() -> None:
     p_batch.add_argument("--workers", type=int, default=1, help="Number of parallel workers (default: 1)")
     p_batch.add_argument("--force", action="store_true", help="Regenerate existing stats files")
     p_batch.set_defaults(func=_cmd_batch)
+
+    # --- report subcommand ---
+    p_report = subparsers.add_parser(
+        "report",
+        help="Print a human-readable quality metric distribution report",
+    )
+    p_report.add_argument(
+        "directory",
+        type=str,
+        help="Split directory (contains metadata.jsonl) or parent directory (scans all splits)",
+    )
+    p_report.add_argument("--workers", type=int, default=1, help="Number of parallel workers (default: 1)")
+    p_report.set_defaults(func=_cmd_report)
 
     args = parser.parse_args()
     args.func(args)

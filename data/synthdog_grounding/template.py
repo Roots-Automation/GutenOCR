@@ -35,6 +35,7 @@ from effects.physical import (  # noqa: E402
     LowTonerStreakEffect,
     MoireOverlayEffect,
     VignettingEffect,
+    WatermarkEffect,
     apply_if_enabled,
 )
 from elements import Background, Document  # noqa: E402
@@ -70,6 +71,9 @@ def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
             if "path" in node and isinstance(node["path"], str):
                 if not os.path.isabs(node["path"]):
                     node["path"] = str((base_dir / node["path"]).resolve())
+            if "font_path" in node and isinstance(node["font_path"], str):
+                if not os.path.isabs(node["font_path"]):
+                    node["font_path"] = str((base_dir / node["font_path"]).resolve())
             for v in node.values():
                 _resolve(v)
         elif isinstance(node, list):
@@ -191,6 +195,12 @@ class SynthDoG(templates.Template):
         self.emit_quads = config.get("emit_quads", False)
         self.min_bbox_area = config.get("min_bbox_area", 16)
         self.min_contrast_ratio: float = float(config.get("min_contrast_ratio", 3.0))
+        self.min_word_count: int = int(config.get("min_word_count", 0))
+        self.max_textbox_null_frac: float = float(config.get("max_textbox_null_frac", 1.0))
+        self.min_line_height_px: float = float(config.get("min_line_height_px", 0.0))
+        self.min_sharpness: float = float(config.get("min_sharpness", 0.0))
+        self.max_intra_block_line_overlap: float = float(config.get("max_intra_block_line_overlap", 1.0))
+        self.max_cross_block_line_overlap: float = float(config.get("max_cross_block_line_overlap", 1.0))
         # Shadow applied to bg layer only, before merge
         self.bg_effect = components.Iterator(
             [components.Switch(components.Shadow())],
@@ -225,6 +235,7 @@ class SynthDoG(templates.Template):
         self.fold_crease_cfg = config.get("fold_crease", {})
         self.low_toner_cfg = config.get("low_toner_streaks", {})
         self.moire_cfg = config.get("moire", {})
+        self.watermark_cfg = config.get("watermark", {})
 
         # config for splits
         self.splits = SPLITS
@@ -277,9 +288,10 @@ class SynthDoG(templates.Template):
             pil_img = Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
             pil_img = pil_img.rotate(-skew_angle, expand=False, fillcolor=fill)
             result = np.array(pil_img)
-        # Global post-skew physical effects: moiré → streaks → vignetting
+        # Global post-skew physical effects: moiré → streaks → watermark → vignetting
         result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
         result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
+        result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
         result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
         return result
 
@@ -291,9 +303,16 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts, block_ids, words_per_line, textbox_null_count, textbox_total_count = (
-            self.document.generate(size)
-        )
+        (
+            paper_layer,
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+        ) = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -320,6 +339,7 @@ class SynthDoG(templates.Template):
             image_height,
             self.emit_quads,
             self.min_bbox_area,
+            block_region_types=block_region_types,
         )
 
         image = self._render(document_group, bg_layer, size, skew_angle=skew_angle)
@@ -362,6 +382,29 @@ class SynthDoG(templates.Template):
         quality_metrics = data.get("quality_metrics", {})
         min_contrast = quality_metrics.get("min_line_contrast_ratio")
         if min_contrast is not None and min_contrast < self.min_contrast_ratio:
+            return
+
+        if quality_metrics.get("word_count", 0) < self.min_word_count:
+            return
+
+        null_frac = quality_metrics.get("textbox_null_frac", 0.0) or 0.0
+        if null_frac > self.max_textbox_null_frac:
+            return
+
+        min_h = quality_metrics.get("min_line_height_px")
+        if min_h is not None and min_h < self.min_line_height_px:
+            return
+
+        sharpness = quality_metrics.get("sharpness")
+        if sharpness is not None and sharpness < self.min_sharpness:
+            return
+
+        max_overlap = quality_metrics.get("max_intra_block_line_overlap")
+        if max_overlap is not None and max_overlap > self.max_intra_block_line_overlap:
+            return
+
+        cross_overlap = quality_metrics.get("max_cross_block_line_overlap")
+        if cross_overlap is not None and cross_overlap > self.max_cross_block_line_overlap:
             return
 
         image = data["image"]

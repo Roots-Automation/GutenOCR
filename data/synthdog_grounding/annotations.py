@@ -38,7 +38,11 @@ def _bbox_area_px(bbox: list[float], image_width: int, image_height: int) -> flo
     return (bbox[2] - bbox[0]) * image_width * (bbox[3] - bbox[1]) * image_height
 
 
-def build_block_annotations(block_ids: list[int], line_bboxes: list[list[float]]) -> list[BlockAnnotation]:
+def build_block_annotations(
+    block_ids: list[int],
+    line_bboxes: list[list[float]],
+    block_region_types: dict[int, str] | None = None,
+) -> list[BlockAnnotation]:
     """Build block-level annotations by grouping lines that share a block_id."""
     block_to_lines: dict[int, list[int]] = defaultdict(list)
     for i, bid in enumerate(block_ids):
@@ -51,11 +55,13 @@ def build_block_annotations(block_ids: list[int], line_bboxes: list[list[float]]
         by1 = _clamp01(min(b[1] for b in bboxes))
         bx2 = _clamp01(max(b[2] for b in bboxes))
         by2 = _clamp01(max(b[3] for b in bboxes))
+        region_type = (block_region_types or {}).get(bid, "body")
         blocks.append(
             BlockAnnotation(
                 block_id=bid,
                 bbox=[round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
                 line_ids=line_indices,
+                region_type=region_type,
             )
         )
     return blocks
@@ -176,6 +182,12 @@ def filter_degenerate(
     return lines, new_words, deg_line_ct, deg_word_ct
 
 
+def _laplacian_variance(gray: np.ndarray) -> float:
+    """Laplacian variance of a 2-D grayscale array — blur detection proxy."""
+    lap = gray[:-2, 1:-1] + gray[2:, 1:-1] + gray[1:-1, :-2] + gray[1:-1, 2:] - 4 * gray[1:-1, 1:-1]
+    return float(np.var(lap))
+
+
 def compute_quality_metrics(
     image: np.ndarray,
     lines: list[LineAnnotation],
@@ -192,6 +204,7 @@ def compute_quality_metrics(
     line_contrasts = []
     line_contrast_ratios = []
     line_bbox_areas_px = []
+    line_heights_px: list[float] = []
     for ln in lines:
         bbox = ln.bbox
         x1_px = int(round(bbox[0] * w))
@@ -205,6 +218,7 @@ def compute_quality_metrics(
             continue
         line_contrasts.append(float(np.std(region)))
         line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
+        line_heights_px.append(float(y2_px - y1_px))
         p10 = _gray_lum(float(np.percentile(region, 10)))
         p90 = _gray_lum(float(np.percentile(region, 90)))
         line_contrast_ratios.append(_contrast_ratio(p10, p90))
@@ -216,6 +230,33 @@ def compute_quality_metrics(
         wy = int(round(wb[3] * h)) - int(round(wb[1] * h))
         if wx > 0 and wy > 0:
             word_bbox_areas_px.append(wx * wy)
+
+    # Pairwise intra/cross block line overlap (normalized bbox fractions)
+    max_intra = 0.0
+    max_cross = 0.0
+    for i in range(len(lines)):
+        bi = lines[i].bbox
+        area_i = (bi[2] - bi[0]) * (bi[3] - bi[1])
+        for j in range(i + 1, len(lines)):
+            bj = lines[j].bbox
+            area_j = (bj[2] - bj[0]) * (bj[3] - bj[1])
+            ix1 = max(bi[0], bj[0])
+            iy1 = max(bi[1], bj[1])
+            ix2 = min(bi[2], bj[2])
+            iy2 = min(bi[3], bj[3])
+            if ix2 <= ix1 or iy2 <= iy1:
+                continue
+            inter = (ix2 - ix1) * (iy2 - iy1)
+            min_area = min(area_i, area_j)
+            if min_area <= 0:
+                continue
+            frac = inter / min_area
+            if lines[i].block_id == lines[j].block_id:
+                if frac > max_intra:
+                    max_intra = frac
+            else:
+                if frac > max_cross:
+                    max_cross = frac
 
     return {
         "min_line_contrast": round(min(line_contrasts), 3) if line_contrasts else None,
@@ -229,6 +270,14 @@ def compute_quality_metrics(
         "textbox_total_count": int(total_ct),
         "image_size": [int(w), int(h)],
         "word_segmentation_method": "whitespace",
+        "line_count": int(len(lines)),
+        "word_count": int(len(words)),
+        "textbox_null_frac": round(null_ct / total_ct, 3) if total_ct > 0 else 0.0,
+        "min_line_height_px": round(min(line_heights_px), 1) if line_heights_px else None,
+        "mean_line_height_px": round(float(np.mean(line_heights_px)), 1) if line_heights_px else None,
+        "sharpness": round(_laplacian_variance(gray), 1),
+        "max_intra_block_line_overlap": round(max_intra, 3),
+        "max_cross_block_line_overlap": round(max_cross, 3),
     }
 
 
@@ -241,6 +290,7 @@ def build_annotations(
     image_height: int,
     emit_quads: bool,
     min_bbox_area: float,
+    block_region_types: dict[int, str] | None = None,
 ) -> tuple[list[LineAnnotation], list[WordAnnotation], list[BlockAnnotation], int, int]:
     """Orchestrate line/word/block annotation construction and degenerate filtering."""
     line_bboxes = capture_line_bboxes(text_layers, image_width, image_height)
@@ -264,6 +314,6 @@ def build_annotations(
 
     surviving_block_ids = [ln.block_id for ln in lines]
     surviving_line_bboxes = [ln.bbox for ln in lines]
-    blocks = build_block_annotations(surviving_block_ids, surviving_line_bboxes)
+    blocks = build_block_annotations(surviving_block_ids, surviving_line_bboxes, block_region_types)
 
     return lines, words, blocks, deg_line_ct, deg_word_ct
