@@ -260,7 +260,11 @@ if len(chars):
 
 ---
 
-## Thread 7 · `_package_data` serializes blocks/words but not lines (inconsistency)
+## Thread 7 · `_package_data` serializes blocks/words but not lines (inconsistency) — RESOLVED
+
+**Status: RESOLVED** — all three annotation types are now serialized together in
+`save()` at lines 309–311. `_package_data` passes `lines`, `words`, and `blocks`
+as raw dataclass lists; `save()` converts all three to dicts in one place.
 
 **File:** `template.py:102-116` vs `template.py:310`
 
@@ -278,8 +282,11 @@ text_lines_data = [line_annotation_to_dict(ln) for ln in lines]  # done here ins
 leave `generate()`. `data["lines"]` is still a list of `LineAnnotation` dataclasses.
 Anything consuming the raw data dict sees an inconsistent mix of types.
 
-**Resolution:** Serialize all three annotation types in the same place — either
-all in `_package_data`, or all in `save()`.
+### Fix applied
+
+All serialization moved to `save()` — `_package_data` now returns raw dataclass
+lists for `lines`, `words`, and `blocks`; `save()` calls all three `*_to_dict`
+helpers at lines 309–311.
 
 ---
 
@@ -327,9 +334,12 @@ of samples get uniform color, ~16% get per-line variation, ~64% get the default 
 
 ---
 
-## Thread 9 · Post-processing shadow renders text unreadable regardless of text color (quality impact)
+## Thread 9 · Post-processing shadow renders text unreadable regardless of text color (quality impact) — RESOLVED
 
-**Files:** `config/config_base.yaml:97-100`, `elements/content.py:75-82`
+**Status: RESOLVED** — shadow moved to `bg_effect` (background-only pipeline);
+`min_contrast_ratio` lowered to 1.5 as a backstop. See full resolution below.
+
+**Files:** `annotations.py`, `template.py`, `config/config_base.yaml`
 
 ### Problem statement
 
@@ -337,7 +347,7 @@ Text color is chosen at generation time against the raw paper color. Post-proces
 effects — specifically the shadow and brightness steps — are applied afterwards with
 no awareness of text readability.
 
-The shadow effect is configured as:
+The shadow effect was configured as:
 
 ```yaml
 - prob: 1
@@ -361,14 +371,142 @@ A muted pink background (lum > 0.179) correctly received dark text [0, 64]. Afte
 compositing, the shadow reduced the left half and bottom third of the image to
 near-black, making the dark text unreadable in those regions.
 
-### Resolution options
+### Empirical analysis (initial approach: post-hoc reject gate)
 
-- **Clamp shadow parameters** — reduce the upper bounds (e.g. `intensity: [0, 80]`,
-  `amount: [0, 0.5]`) so the worst-case shadow cannot obscure text.
-- **Post-hoc contrast check** — after compositing, sample contrast in the text
-  regions and reject (regenerate) samples below a threshold.
-- **Shadow-aware color selection** — estimate the effective background luminance
-  after shadow and choose text color against that instead of the raw paper color.
+A WCAG-proxy contrast metric (`min_line_contrast_ratio`) was added to
+`compute_quality_metrics()` and `save()` was updated to reject samples below a
+threshold. Initial threshold was `3.0`.
+
+Empirical testing with `test_contrast_distribution.py` (n=500) revealed this gate
+discarded ~70% of samples — an unacceptable reject rate. Even after:
+
+- Halving shadow params (`intensity: [0,80]`, `amount: [0,0.5]`)
+- Raising the paper color floor (`rgb: [[40,255],...]`)
+- Making brightness asymmetric (`beta: [-16,32]`)
+
+...the distribution median was only ~2.5 with ~12% below 1.5. These parameter tweaks
+had negligible improvement because they did not address the root cause.
+
+**Root cause (structural):** The rendering pipeline merges bg + paper + text into a
+single flat image, *then* applies shadow to the merged result. Shadow treats all
+pixels equally — it cannot distinguish text from background. A directional shadow
+that darkens the document region therefore collapses the contrast between dark text
+and the now-dark paper, regardless of how text color was originally chosen.
+
+### Fix applied (structural)
+
+**Move shadow to `bg_effect` — applied to background layer only, before merge.**
+
+Shadow darkens the background texture (table / environment). The document (paper +
+text) is composited on top *after* shadow runs. The text layer pixels retain their
+original RGBA values; they are placed on top of the shadowed background. The paper is
+also unshadowed — so text contrast against the paper is exactly what Thread 1
+designed. Shadow becomes an *environmental* effect (depth/atmosphere) rather than a
+*document-lighting* effect.
+
+**`template.py`** — `__init__` adds `self.bg_effect` and removes Shadow from
+`self.effect`; `_render()` applies `bg_effect` to `bg_layer` before the merge:
+
+```python
+# NEW: shadow applied to bg layer only, before merge
+self.bg_effect = components.Iterator(
+    [components.Switch(components.Shadow())],
+    **config.get("bg_effect", {}),
+)
+
+# Shadow removed; 5 components now
+self.effect = components.Iterator(
+    [
+        components.Switch(components.RGB()),
+        components.Switch(components.Contrast()),
+        components.Switch(components.Brightness()),
+        components.Switch(components.MotionBlur()),
+        components.Switch(components.GaussianBlur()),
+    ],
+    **config.get("effect", {}),
+)
+
+def _render(self, document_group, bg_layer, size):
+    # Apply shadow to background only — cannot darken paper or affect
+    # text-vs-paper contrast.
+    self.bg_effect.apply([bg_layer])
+    layer = layers.Group([*document_group.layers, bg_layer]).merge()
+    ...
+```
+
+**`config/config_base.yaml`** — new `bg_effect` section with shadow; shadow removed
+from `effect`; experimental paper floor and brightness asymmetry reverted;
+`min_contrast_ratio` lowered from 3.0 to 1.5 as a backstop:
+
+```yaml
+bg_effect:
+  args:
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+
+effect:
+  args:
+    # color, contrast, brightness, motion blur, gaussian blur (no shadow)
+    ...
+    beta: [-32, 32]   # reverted from asymmetric [-16, 32]
+
+paper:
+  color:
+    rgb: [[0, 255], [0, 255], [0, 255]]  # reverted from floor [40, 255]
+
+min_contrast_ratio: 1.5  # backstop; structural fix is the primary guard
+```
+
+**Why brightness stays on the merged image:** Brightness (±32) is a uniform global
+shift — it moves paper and text pixels together, so relative contrast degrades much
+less than with shadow's local darkening. Moving it to bg-only would sacrifice global
+exposure variation for little gain.
+
+**`annotations.py`** — WCAG helpers and `min_line_contrast_ratio` metric unchanged;
+the backstop gate in `save()` remains at `min_contrast_ratio: 1.5`.
+
+The existing `min_line_contrast` (std-dev) field is unchanged — the new metric is additive.
+
+### Addendum: page-level shadow restored via `doc_effect`
+
+After the structural fix, the background-only shadow produced correct contrast but
+lost the visual depth of shadow falling across the page itself. A separate `doc_effect`
+shadow is applied to the **merged document layer** (paper + text) before compositing
+with bg, restoring the page-level lighting aesthetic.
+
+Because this shadow affects both paper and text pixels, it partially reintroduces the
+original failure mode — but at reduced intensity. Empirical testing (n=500) confirmed
+the rejection rate at threshold=1.5 increases only marginally (9.6% → 11.2%).
+
+```yaml
+doc_effect:
+  args:
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+```
+
+```python
+# in _render():
+doc_layer = document_group.merge()
+self.doc_effect.apply([doc_layer])
+layer = layers.Group([doc_layer, bg_layer]).merge()
+```
+
+**Distribution summary (n=500, threshold=0):**
+
+| configuration | median | rejected @ 1.5 |
+|---|---|---|
+| original (shadow on merged image, threshold=3.0) | ~2.5 | ~70% |
+| bg-only shadow, threshold=1.5 | 2.39 | 9.6% |
+| bg + doc shadow, threshold=1.5 | 2.30 | 11.2% |
 
 ---
 

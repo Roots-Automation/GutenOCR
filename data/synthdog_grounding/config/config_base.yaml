@@ -4,6 +4,11 @@ short_size: [720, 1024]
 aspect_ratio: [1, 2]
 emit_quads: false
 min_bbox_area: 16
+# Minimum WCAG-proxy contrast ratio across all text lines (10th vs 90th percentile
+# grayscale luminance). Samples below this threshold are discarded at save time.
+# WCAG AA = 4.5, WCAG A = 3.0. Set to 1.5 as a backstop; the primary guard is
+# moving shadow to bg_effect so it cannot collapse text-vs-paper contrast.
+min_contrast_ratio: 1.5
 
 background:
   image:
@@ -91,6 +96,32 @@ document:
             - percents: [[1, 1], [1, 1], [1, 1], [0.75, 1]]
             - percents: [[1, 1], [1, 1], [1, 1], [1, 1]]
 
+# Applied to the background layer only, BEFORE compositing paper and text.
+# Shadow here is environmental (depth/atmosphere); it cannot darken the paper
+# or text and therefore cannot collapse text-vs-paper contrast.
+bg_effect:
+  args:
+    # shadow
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+
+# Applied to the merged document layer (paper + text), BEFORE compositing with bg.
+# Weaker than the original shadow to restore page-level depth while limiting
+# contrast collapse. The backstop in save() catches remaining failures.
+doc_effect:
+  args:
+    # shadow
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+
 effect:
   args:
     # color
@@ -98,13 +129,6 @@ effect:
       args:
         rgb: [[0, 255], [0, 255], [0, 255]]
         alpha: [0, 0.2]
-    # shadow
-    - prob: 1
-      args:
-        intensity: [0, 160]
-        amount: [0, 1]
-        smoothing: [0.5, 1]
-        bidirectional: 0
     # contrast
     - prob: 1
       args:
@@ -112,7 +136,7 @@ effect:
     # brightness
     - prob: 1
       args:
-        beta: [-48, 48]
+        beta: [-32, 32]
     # motion blur
     - prob: 0.5
       args:

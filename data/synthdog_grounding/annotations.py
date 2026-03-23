@@ -12,6 +12,17 @@ def _clamp01(v: float) -> float:
     return max(0.0, min(1.0, v))
 
 
+def _gray_lum(v: float) -> float:
+    """WCAG relative luminance of a single grayscale value in [0, 255]."""
+    c = v / 255.0
+    return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
+
+
+def _contrast_ratio(lum_a: float, lum_b: float) -> float:
+    lighter, darker = max(lum_a, lum_b), min(lum_a, lum_b)
+    return (lighter + 0.05) / (darker + 0.05)
+
+
 def _norm(val: float, dim: int) -> float:
     """Normalize a pixel coordinate by a dimension and clamp to [0, 1]."""
     return round(_clamp01(val / dim), 3)
@@ -179,6 +190,7 @@ def compute_quality_metrics(
     """Compute per-sample quality metrics from the rendered image."""
     gray = 0.2989 * image[..., 0] + 0.5870 * image[..., 1] + 0.1140 * image[..., 2]
     line_contrasts = []
+    line_contrast_ratios = []
     line_bbox_areas_px = []
     for ln in lines:
         bbox = ln.bbox
@@ -193,6 +205,9 @@ def compute_quality_metrics(
             continue
         line_contrasts.append(float(np.std(region)))
         line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
+        p10 = _gray_lum(float(np.percentile(region, 10)))
+        p90 = _gray_lum(float(np.percentile(region, 90)))
+        line_contrast_ratios.append(_contrast_ratio(p10, p90))
 
     word_bbox_areas_px = []
     for wd in words:
@@ -205,6 +220,7 @@ def compute_quality_metrics(
     return {
         "min_line_contrast": round(min(line_contrasts), 3) if line_contrasts else None,
         "mean_line_contrast": round(float(np.mean(line_contrasts)), 3) if line_contrasts else None,
+        "min_line_contrast_ratio": round(min(line_contrast_ratios), 3) if line_contrast_ratios else None,
         "min_line_bbox_area_px": int(min(line_bbox_areas_px)) if line_bbox_areas_px else None,
         "min_word_bbox_area_px": int(min(word_bbox_areas_px)) if word_bbox_areas_px else None,
         "degenerate_line_count": int(deg_lines),

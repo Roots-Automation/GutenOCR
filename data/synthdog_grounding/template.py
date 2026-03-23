@@ -169,10 +169,23 @@ class SynthDoG(templates.Template):
         self.document = Document(config.get("document", {}))
         self.emit_quads = config.get("emit_quads", False)
         self.min_bbox_area = config.get("min_bbox_area", 16)
+        self.min_contrast_ratio: float = float(config.get("min_contrast_ratio", 3.0))
+        # Shadow applied to bg layer only, before merge
+        self.bg_effect = components.Iterator(
+            [components.Switch(components.Shadow())],
+            **config.get("bg_effect", {}),
+        )
+        # Weaker shadow applied to the merged document layer (paper + text),
+        # before compositing with bg. Restores page-level shadow depth while
+        # keeping intensity low enough that the contrast backstop rarely fires.
+        self.doc_effect = components.Iterator(
+            [components.Switch(components.Shadow())],
+            **config.get("doc_effect", {}),
+        )
+        # Shadow removed; 5 components now
         self.effect = components.Iterator(
             [
                 components.Switch(components.RGB()),
-                components.Switch(components.Shadow()),
                 components.Switch(components.Contrast()),
                 components.Switch(components.Brightness()),
                 components.Switch(components.MotionBlur()),
@@ -197,7 +210,14 @@ class SynthDoG(templates.Template):
 
     def _render(self, document_group, bg_layer, size: tuple[int, int]) -> np.ndarray:
         """Merge layers, apply effects, and rasterize to a numpy array."""
-        layer = layers.Group([*document_group.layers, bg_layer]).merge()
+        # Apply shadow to background only.
+        self.bg_effect.apply([bg_layer])
+        # Merge paper + text into a single doc layer, then apply a weaker shadow
+        # for page-level depth. This partially affects text-vs-paper contrast but
+        # at reduced intensity; the backstop in save() catches any failures.
+        doc_layer = document_group.merge()
+        self.doc_effect.apply([doc_layer])
+        layer = layers.Group([doc_layer, bg_layer]).merge()
         # Apply elastic distortion to the composited image. This runs *after*
         # annotations are captured from per-layer quads, so saved bboxes reflect
         # the pre-distortion geometry.
@@ -282,11 +302,15 @@ class SynthDoG(templates.Template):
         if not lines:
             return
 
+        quality_metrics = data.get("quality_metrics", {})
+        min_contrast = quality_metrics.get("min_line_contrast_ratio")
+        if min_contrast is not None and min_contrast < self.min_contrast_ratio:
+            return
+
         image = data["image"]
         quality = data["quality"]
         words = data.get("words", [])
         blocks = data.get("blocks", [])
-        quality_metrics = data.get("quality_metrics", {})
 
         # Content-based split: hash the label so the same text always lands
         # in the same split regardless of generation order or worker count.
