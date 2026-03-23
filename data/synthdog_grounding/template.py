@@ -29,6 +29,14 @@ from PIL import Image  # noqa: E402
 from synthtiger import components, layers, templates  # noqa: E402
 
 from annotations import build_annotations, compute_quality_metrics  # noqa: E402
+from effects.physical import (  # noqa: E402
+    BookSpineShadowEffect,
+    FoldCreaseEffect,
+    LowTonerStreakEffect,
+    MoireOverlayEffect,
+    VignettingEffect,
+    apply_if_enabled,
+)
 from elements import Background, Document  # noqa: E402
 from serialization import (  # noqa: E402
     KEY_QUALITY_METRICS,
@@ -212,6 +220,12 @@ class SynthDoG(templates.Template):
         self.skew_angle: tuple = config.get("skew", {}).get("angle", [0, 0])
         self.skew_prob: float = config.get("skew", {}).get("prob", 0.0)
 
+        self.vignetting_cfg = config.get("vignetting", {})
+        self.book_spine_cfg = config.get("book_spine_shadow", {})
+        self.fold_crease_cfg = config.get("fold_crease", {})
+        self.low_toner_cfg = config.get("low_toner_streaks", {})
+        self.moire_cfg = config.get("moire", {})
+
         # config for splits
         self.splits = SPLITS
         if any(r < 0 for r in split_ratio):
@@ -235,6 +249,12 @@ class SynthDoG(templates.Template):
         # at reduced intensity; the backstop in save() catches any failures.
         doc_layer = document_group.merge()
         self.doc_effect.apply([doc_layer])
+        # Apply doc-layer physical effects (operate on the paper+text composite,
+        # before compositing with the background).
+        doc_img = np.clip(doc_layer.image, 0, 255).astype(np.uint8)
+        doc_img = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, doc_img)
+        doc_img = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, doc_img)
+        doc_layer.image = doc_img.astype(np.float32)
         layer = layers.Group([doc_layer, bg_layer]).merge()
         # Apply elastic distortion to the composited image. This runs *after*
         # annotations are captured from per-layer quads, so saved bboxes reflect
@@ -257,6 +277,10 @@ class SynthDoG(templates.Template):
             pil_img = Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
             pil_img = pil_img.rotate(-skew_angle, expand=False, fillcolor=fill)
             result = np.array(pil_img)
+        # Global post-skew physical effects: moiré → streaks → vignetting
+        result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
+        result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
+        result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
         return result
 
     def generate(self):

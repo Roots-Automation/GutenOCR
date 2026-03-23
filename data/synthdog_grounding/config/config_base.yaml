@@ -38,6 +38,15 @@ document:
       alpha: [0, 0.2]
       grayscale: 1
       crop: 1
+    stain:
+      prob: 0.15
+      args:
+        count: [1, 3]
+        size: [0.03, 0.12]    # fraction of min(H,W)
+        alpha: [0.05, 0.20]
+        color_r: [110, 180]
+        color_g: [80, 140]
+        color_b: [50, 110]
 
   content:
     margin: [0, 0.1]
@@ -184,3 +193,43 @@ effect:
 skew:
   prob: 0.3
   angle: [-3, 3]
+
+# ── Tier 3 physical noise effects ──────────────────────────────────────────
+
+book_spine_shadow:
+  prob: 0.25
+  args:
+    side: random        # left | right | random
+    intensity: [30, 100]
+    width: [0.05, 0.20]
+
+fold_crease:
+  prob: 0.15
+  args:
+    count: [1, 2]
+    orientation: random # horizontal | vertical | diagonal | random
+    width: [1, 4]       # half-width in pixels
+    intensity: [10, 45]
+
+moire:
+  prob: 0.10
+  args:
+    frequency: [0.02, 0.06]  # cycles per pixel
+    amplitude: [0.3, 0.7]
+    angle: [0, 90]
+    alpha: [0.05, 0.15]
+
+low_toner_streaks:
+  prob: 0.15
+  args:
+    orientation: random
+    count: [1, 4]
+    width: [3, 20]
+    intensity: [0.05, 0.20]
+
+vignetting:
+  prob: 0.30
+  args:
+    intensity: [30, 80]
+    shape: [1.5, 3.0]
+    mode: radial        # radial (rectangular not yet implemented)
