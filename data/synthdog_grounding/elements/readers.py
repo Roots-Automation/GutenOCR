@@ -247,16 +247,19 @@ class HuggingFaceTextReader:
 
 
 class LiteralTextCursor:
-    """A cursor that cycles through a fixed literal string.
+    """A cursor that emits a fixed literal string exactly once.
 
     Useful for rendering page numbers or other fixed labels in zone cells.
     A trailing space is appended to act as a word boundary so TextBox can
-    cleanly stop after consuming the literal text.
+    cleanly stop after consuming the literal text.  Raises StopIteration
+    after the full buffer has been consumed so the TextBox loop terminates
+    instead of cycling and repeating the literal indefinitely.
     """
 
     def __init__(self, text: str) -> None:
         self._buf = text + " "  # trailing space = word boundary
         self._idx = 0
+        self._consumed = 0
 
     def __len__(self) -> int:
         return len(self._buf)
@@ -265,8 +268,11 @@ class LiteralTextCursor:
         return self
 
     def __next__(self) -> str:
+        if self._consumed >= len(self._buf):
+            raise StopIteration
         char = self.get()
-        self.next()
+        self._idx = (self._idx + 1) % len(self._buf)
+        self._consumed += 1
         return char
 
     def move(self, idx: int) -> None:
@@ -274,9 +280,11 @@ class LiteralTextCursor:
 
     def next(self) -> None:
         self._idx = (self._idx + 1) % len(self._buf)
+        self._consumed += 1
 
     def prev(self) -> None:
         self._idx = (self._idx - 1) % len(self._buf)
+        self._consumed = max(0, self._consumed - 1)
 
     def get(self) -> str:
         return self._buf[self._idx]

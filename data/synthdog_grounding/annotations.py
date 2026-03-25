@@ -68,14 +68,36 @@ def build_block_annotations(
 
 
 def capture_line_bboxes(text_layers, w: int, h: int) -> list[list[float]]:
-    """Compute normalized [x1, y1, x2, y2] bboxes for each text layer."""
+    """Compute normalized [x1, y1, x2, y2] bboxes for each text layer.
+
+    Derives the bounding box from the layer's quad corners so that perspective
+    and skew transforms (which update layer.quad but not layer.left/top/width/height)
+    are reflected in the bounding box.
+
+    For the y-axis we average the top-edge y-values and the bottom-edge y-values
+    rather than taking the global min/max of all four corners.  Under perspective
+    warp, long text lines become slightly tilted: the left and right ends sit at
+    different image-space y-coordinates.  Taking global min/max inflates the bbox
+    height to cover the full tilt range (e.g. 42 px for a 20 px-tall line), which
+    causes adjacent lines' bboxes to overlap by up to 57 % even when the text
+    itself does not overlap.  Averaging the top-edge and bottom-edge y-values
+    collapses that inflation, giving a tight strip around the text and eliminating
+    the false overlap between consecutive lines.
+
+    Quad corner order (synthtiger convention): [tl, tr, br, bl].
+    """
     bboxes = []
     for text_layer in text_layers:
+        quad = text_layer.quad
+        xs = [float(pt[0]) for pt in quad]
+        # Average top-edge y (corners 0,1) and bottom-edge y (corners 3,2)
+        y_top = (float(quad[0][1]) + float(quad[1][1])) / 2
+        y_bottom = (float(quad[3][1]) + float(quad[2][1])) / 2
         bbox = [
-            _norm(text_layer.left, w),
-            _norm(text_layer.top, h),
-            _norm(text_layer.left + text_layer.width, w),
-            _norm(text_layer.top + text_layer.height, h),
+            _norm(min(xs), w),
+            _norm(min(y_top, y_bottom), h),
+            _norm(max(xs), w),
+            _norm(max(y_top, y_bottom), h),
         ]
         bboxes.append(bbox)
     return bboxes

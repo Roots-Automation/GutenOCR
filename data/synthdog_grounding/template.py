@@ -257,7 +257,12 @@ class SynthDoG(templates.Template):
         if hasattr(self, "document"):
             self.document.close()
 
-    def _render(self, document_group, bg_layer, size: tuple[int, int], skew_angle: float = 0.0) -> np.ndarray:
+    def _render(
+        self,
+        document_group,
+        bg_layer,
+        size: tuple[int, int],
+    ) -> np.ndarray:
         """Merge layers, apply effects, and rasterize to a numpy array."""
         # Apply shadow to background only.
         self.bg_effect.apply([bg_layer])
@@ -288,13 +293,7 @@ class SynthDoG(templates.Template):
         self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
         result = layer.output(bbox=[0, 0, *size])
-        if skew_angle != 0.0:
-            n_ch = result.shape[2] if result.ndim == 3 else 1
-            fill = (255, 255, 255, 255) if n_ch == 4 else (255, 255, 255)
-            pil_img = Image.fromarray(np.clip(result, 0, 255).astype(np.uint8))
-            pil_img = pil_img.rotate(-skew_angle, expand=False, fillcolor=fill)
-            result = np.array(pil_img)
-        # Global post-skew physical effects: moiré → streaks → watermark → vignetting
+        # Global physical effects applied to the final composite: moiré → streaks → watermark → vignetting
         result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
         result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
         result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
@@ -348,7 +347,7 @@ class SynthDoG(templates.Template):
             block_region_types=block_region_types,
         )
 
-        image = self._render(document_group, bg_layer, size, skew_angle=skew_angle)
+        image = self._render(document_group, bg_layer, size)
 
         quality_metrics = compute_quality_metrics(
             image,
@@ -361,6 +360,7 @@ class SynthDoG(templates.Template):
             textbox_null_count,
             textbox_total_count,
         )
+        quality_metrics["skew_angle"] = round(skew_angle, 3)
 
         label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
