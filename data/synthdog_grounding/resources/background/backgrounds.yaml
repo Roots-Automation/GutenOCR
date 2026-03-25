@@ -1,0 +1,1282 @@
+# Background image manifest for SynthDoG.
+# Run `uv run python fetch_wikimedia.py --manifest resources/background/backgrounds.yaml --root resources/background`
+# from the synthdog_grounding/ directory to download all images listed here.
+#
+# Each entry specifies:
+#   filename         - target filename within resources/background/
+#   wikimedia_title  - Wikimedia Commons file title (e.g. "File:Foo.jpg")
+#   thumbnail_width  - thumbnail width in px to request via the action API
+#   sha256           - integrity checksum of the final on-disk file (null = needs first download)
+#   license          - SPDX license identifier or plain description
+#   source           - human-readable origin / Wikimedia Commons page URL
+#   notes            - optional description of the scene
+#
+# Optional fields:
+#   raw_sha256   - checksum of the raw downloaded file (before center_crop)
+#   center_crop  - crop to this fraction of width/height, centred (e.g. 0.9)
+#
+# The original 9 NAVER-curated backgrounds (bedroom_83.jpg, bob+dylan_83.jpg,
+# coffee_122.jpg, coffee_18.jpeg, crater_141.jpg, cream_124.jpg, eagle_110.jpg,
+# farm_25.jpg, hiking_18.jpg) are committed directly and do not appear here.
+
+backgrounds:
+  # ── Wood / desk surfaces ───────────────────────────────────────────────
+  - filename: wood_grains_nps.jpg
+    wikimedia_title: "File:Grains_(14699594123).jpg"
+    thumbnail_width: 1920
+    sha256: d88c31417f5c321dbcc72dbad129f7efb3e9a7173331932137e9af3d4c5efdf6
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Grains_(14699594123).jpg
+    notes: >
+      Close-up of wood grain texture. U.S. National Park Service photo by
+      Emily Brouwer (Mount Rainier NPS / Flickr). Public domain (U.S.
+      government work).
+
+  - filename: wood_texture_light.jpg
+    wikimedia_title: "File:Wood_texture,_light.jpg"
+    thumbnail_width: 1920
+    sha256: 91fdfab9ff47c5a08fc92cf52014cda71aa555e54a38dcd4832996b91ac4c3d8
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Wood_texture,_light.jpg
+    notes: >
+      Light-coloured wood surface texture. CC0 (Kurt Kaiser, own work).
+
+  - filename: wood_fake_grain.jpg
+    wikimedia_title: "File:Fake_Wood_Grain_20160712.jpg"
+    thumbnail_width: 1920
+    sha256: fccb63d99c0288bec4a7c8baedf6e1596e097c57f53c7a03ef1a66d5d5d5939a
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Fake_Wood_Grain_20160712.jpg
+    notes: >
+      Faux/printed wood-grain surface texture. CC0 (MHaensel73, own work).
+
+  # ── Fabric / textile surfaces ─────────────────────────────────────────
+  # Denim
+  - filename: denim_levis_501.jpg
+    wikimedia_title: "File:Levi's_501_'Plant_Based'_Red_Tab_(2026-01-24).jpg"
+    thumbnail_width: 1920
+    sha256: 406c2a705f8a0b9a2a9e3ad31492d208cf51180906428de6b17d4f6d4f9e2a2f
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Levi%27s_501_%27Plant_Based%27_Red_Tab_(2026-01-24).jpg
+    notes: >
+      Levi's 501 'Plant Based' jeans fabric, 2026.
+
+  - filename: denim_jeans_1.jpg
+    wikimedia_title: "File:Jeans_(1).jpg"
+    thumbnail_width: 1920
+    sha256: 75f2917936c35df53604094363a64599e66fef4f00f28bf4bdf86aedc3f5b15e
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Jeans_(1).jpg
+    notes: >
+      Denim jeans fabric close-up.
+
+  - filename: denim_jeans_detail.jpeg
+    wikimedia_title: "File:Jeans_Detail_(184193271).jpeg"
+    thumbnail_width: 1920
+    sha256: 8cca71a5b778ce815655e9727213fc922d63509c223f1eb12900993f4906fe1d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Jeans_Detail_(184193271).jpeg
+    notes: >
+      Denim jeans fabric detail (Flickr).
+
+  - filename: denim_fabric_diff.jpg
+    wikimedia_title: "File:Denim_fabric_03_diff_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: a97779dea14efd0b7c71a9f534d1ba9129153eaf25bee7c21147395c7abbf5dc
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Denim_fabric_03_diff_8k_(Rico_Cilliers_and_colormass_via_Poly_Haven).jpg
+    notes: >
+      Denim fabric diffuse texture (8K, Rico Cilliers / Poly Haven). CC0.
+
+  - filename: denim_pouch_page28.jpg
+    wikimedia_title: "File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_28).jpg"
+    thumbnail_width: 1920
+    sha256: 7f95d2446bf573ce3cfca42a6cd23a701d4b41ca43acb118859d2f70a4f1fb10
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_28).jpg
+    notes: >
+      Blue denim pouch style purse, DPLA digitized (page 28). Public domain.
+
+  - filename: denim_pouch_page13.jpg
+    wikimedia_title: "File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_13).jpg"
+    thumbnail_width: 1920
+    sha256: 9b3f44282bde90a8419bbeaab96ae152101d866ba28a4057d7a7987b865a78ed
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Blue_Denim_Pouch_Style_Purse_-_DPLA_-_dc240d4f5750d80263b2b8af20caa6d3_(page_13).jpg
+    notes: >
+      Blue denim pouch style purse, DPLA digitized (page 13). Public domain.
+
+  # Linen
+  - filename: fabric_irish_linen.jpeg
+    wikimedia_title: "File:Irish_linen.jpeg"
+    thumbnail_width: 1920
+    sha256: a815e2c15ad30882043c875efe699602f0851004655e865f1da230ceaff7b74d
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Irish_linen.jpeg
+    notes: >
+      Irish linen fabric texture.
+
+  - filename: fabric_linen_met.jpg
+    wikimedia_title: "File:Linen_Sheet_MET_C.I.50.52_d1.jpg"
+    thumbnail_width: 1920
+    sha256: f5b3bcde47990264a785365715b500c72ab1323b0fe5f9b0058f0c286ee255a6
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Linen_Sheet_MET_C.I.50.52_d1.jpg
+    notes: >
+      Linen sheet, Metropolitan Museum of Art (C.I.50.52). Public domain.
+
+  # Woven / knit
+  - filename: fabric_woven_pattern.jpg
+    wikimedia_title: "File:Woven_pattern.jpg"
+    thumbnail_width: 1920
+    sha256: 7a32a3b78a0284bc374db8e4de4c74555685995e2f0ed1f7f6753645284b4b33
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Woven_pattern.jpg
+    notes: >
+      Woven fabric pattern. CC0.
+
+  - filename: fabric_woven_hanging_met.jpeg
+    wikimedia_title: "File:Woven_Hanging_MET_wb-17.123.3g.jpeg"
+    thumbnail_width: 1920
+    sha256: cbb5f39b0b345097daf5b3c74f32960372f41cddbf62351d860a8b18a90d138d
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Woven_Hanging_MET_wb-17.123.3g.jpeg
+    notes: >
+      Woven hanging, Metropolitan Museum of Art (wb-17.123.3g). Public domain.
+
+  - filename: fabric_clothpack01.jpg
+    wikimedia_title: "File:ClothPack01.jpg"
+    thumbnail_width: 1920
+    sha256: 820c9e4fd49e6b30bbef7afde1832688543dd88a1f9616b65e903fa8b7484336
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:ClothPack01.jpg
+    notes: >
+      Cloth fabric texture pack 01. CC0.
+
+  - filename: fabric_hand_woven_carpet.jpg
+    wikimedia_title: "File:Hand_woven_carpet.jpg"
+    thumbnail_width: 1920
+    sha256: 0df6893df0a3eafedd38543db8a8e937079ba0f7c806ffed26775d00fbf6fe5a
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Hand_woven_carpet.jpg
+    notes: >
+      Hand-woven carpet fabric texture.
+
+  - filename: fabric_woven_unsplash.jpg
+    wikimedia_title: "File:Woven_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: 48e00e30898e3256a715a8079b6f546570aa895584e9272d38a3fb93531cea7c
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Woven_(Unsplash).jpg
+    notes: >
+      Woven fabric texture (Unsplash). CC0.
+
+  - filename: fabric_knit_blue_gray.jpg
+    wikimedia_title: "File:Blue_Gray_knit_texture.jpg"
+    thumbnail_width: 1920
+    sha256: e47c66bd93434b137a8bce3d30f262f071a869798e2eeb1e15986d651ba9c403
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Blue_Gray_knit_texture.jpg
+    notes: >
+      Blue-gray knit fabric texture. CC0.
+
+  - filename: fabric_clothpack15.jpg
+    wikimedia_title: "File:ClothPack15.jpg"
+    thumbnail_width: 1920
+    sha256: e9be73c265e9464dbbbd5cfb0192930952e112088741203f3370ffff4880e17e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:ClothPack15.jpg
+    notes: >
+      Cloth fabric texture pack 15. CC0.
+
+  - filename: felt_feutre.jpg
+    wikimedia_title: "File:Feutre.jpg"
+    thumbnail_width: 1920
+    sha256: 8b9c7a5cbaebd03733afb9a797cc63e8a9d05da828a05ecefb1364977d1b33e4
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Feutre.jpg
+    notes: >
+      Close-up of felt fabric surface texture. CC0 (Briqueloup, own work).
+
+  # ── Countertop / hard surfaces ────────────────────────────────────────
+  - filename: laminate_countertop_beige.jpg
+    wikimedia_title: "File:Laminate_Kitchen_Countertop_Beige.jpg"
+    thumbnail_width: 1920
+    sha256: 2f0774270dd28aa960797d52e863427c9b9da3a3e26b6fb9a2fe26eb223ee9b4
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Laminate_Kitchen_Countertop_Beige.jpg
+    notes: >
+      Beige laminate kitchen countertop surface. CC0 (Kurtkaiser, own work).
+
+  # ── Marble / stone surfaces ────────────────────────────────────────────
+  - filename: marble_wall_closeup.jpg
+    wikimedia_title: "File:Surfaces_wall_marble_closeup_view.JPG"
+    thumbnail_width: 1920
+    sha256: deba874cbf735c57ff9e3f6b3eab336d2416dd91fee7383b80dd8f736bcdca65
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Surfaces_wall_marble_closeup_view.JPG
+    notes: >
+      Close-up of marble wall surface with veining. CC0 (Tomwsulcer, own
+      work).
+
+  - filename: marble_microscope.jpg
+    wikimedia_title: "File:Marble_01_10x_(39617691701).jpg"
+    thumbnail_width: 1920
+    sha256: dafc14c14076ca3db214567c0701a44b04b6f2ed57d1ab6d2461f935f78f3b53
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Marble_01_10x_(39617691701).jpg
+    notes: >
+      Marble thin section under 10x magnification. Public Domain Mark
+      (Randolph Black, Grass Lake MI).
+
+  - filename: marble_cipollino.jpg
+    wikimedia_title: "File:MarmoCipollino_FustoBasMassenzioRoma.jpg"
+    thumbnail_width: 1920
+    sha256: b015fe7d135298f7595f00fa752b86f05fb7b132f7f5b0ec2171de54e05c9bfb
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:MarmoCipollino_FustoBasMassenzioRoma.jpg
+    notes: >
+      Cipollino marble column detail, Basilica of Maxentius, Rome. Public
+      domain (MM).
+
+  - filename: marble_kymi_greece.jpg
+    wikimedia_title: "File:Marble_Kymi_Euboea_Greece.jpg"
+    thumbnail_width: 1920
+    sha256: 4f2894f5c5ef66e93e52a39d3fd6dff519b2e075c187539532277c1153ded508
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Marble_Kymi_Euboea_Greece.jpg
+    notes: >
+      Marble surface from Kymi, Euboea, Greece. CC0 (Jebulon, own work).
+
+  - filename: marble_top.jpg
+    wikimedia_title: "File:Marble_Top.jpg"
+    thumbnail_width: 1920
+    sha256: 9a2bcc172ae093195d68229d4815d3c589da41412ab829bb0bb294bccfc388e5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Marble_Top.jpg
+    notes: >
+      Marble tabletop surface. CC0 (Ambadyanands, own work).
+
+  # ── Space / astronomical imagery ──────────────────────────────────────
+  - filename: space_sun_sdo.jpg
+    wikimedia_title: "File:The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA's_Solar_Dynamics_Observatory_-_20100819.jpg"
+    thumbnail_width: 1920
+    sha256: bdad996f80c2c00a49c312cb2cd23697df8fe4434ae577af2a5e394dd2e91b17
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg
+    notes: >
+      Full-disk image of the Sun in extreme ultraviolet, NASA SDO/AIA,
+      2010-08-19. Public domain (NASA).
+
+  - filename: space_jupiter_brown_barge.jpg
+    wikimedia_title: "File:PIA22939_-_Jupiter's_Brown_Barge.jpg"
+    thumbnail_width: 1920
+    sha256: a746ad9f25fa86afdc50fb14fe57638de99868dc4d92216a88633db539d77503
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:PIA22939_-_Jupiter%27s_Brown_Barge.jpg
+    notes: >
+      Jupiter's Brown Barge region, Juno/JunoCam image (PIA22939).
+      Public domain (NASA/JPL-Caltech/SwRI/MSSS/Kevin M. Gill).
+
+  - filename: space_jupiter_cylindrical.jpg
+    wikimedia_title: "File:Jupiter_Cylindrical_Map_-_Dec_2000_PIA07782.jpg"
+    thumbnail_width: 1920
+    sha256: c7ee49d02bacf8b8ba755aeb3134a2c29927c0e18c97e13b10339e1c9adda8ac
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Jupiter_Cylindrical_Map_-_Dec_2000_PIA07782.jpg
+    notes: >
+      Cylindrical map of Jupiter, Cassini flyby Dec 2000 (PIA07782).
+      Public domain (NASA/JPL/Space Science Institute).
+
+  - filename: space_jupiter_blues.jpg
+    wikimedia_title: "File:PIA21972_Jupiter_Blues.jpg"
+    thumbnail_width: 1920
+    sha256: ace410230d7ac95a254f8178d92ba003c3700fd65cc58831cb9beb21d3fec83a
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:PIA21972_Jupiter_Blues.jpg
+    notes: >
+      Jupiter's north polar region, enhanced colour (PIA21972). Public
+      domain (NASA/JPL-Caltech/SwRI/MSSS/Gerald Eichstadt/Sean Doran).
+
+  - filename: space_blue_marble.jpg
+    wikimedia_title: "File:Blue_Marble_December_1972_and_Blue_Marble_December_2022.jpg"
+    thumbnail_width: 1920
+    sha256: 62f95d12e764d66f51c6be663ba9eb3c4ce1c83faad9adcd80b378231a0b3f50
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Blue_Marble_December_1972_and_Blue_Marble_December_2022.jpg
+    notes: >
+      Earth "Blue Marble" composite side-by-side, Dec 1972 and Dec 2022.
+      Public domain (NASA).
+
+  - filename: space_antarctica_blue_marble.jpg
+    wikimedia_title: "File:Antarctica_6400px_from_Blue_Marble.jpg"
+    thumbnail_width: 1920
+    sha256: f76545cb0f1a0ae493c0e5da11d3681f78e68d4bd728d7163230f2922f9a3f6e
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Antarctica_6400px_from_Blue_Marble.jpg
+    notes: >
+      Antarctica from NASA Blue Marble 2002 data. Public domain (Dave
+      Pape / NASA Blue Marble).
+
+  # ── Outdoor / grass & ground ──────────────────────────────────────────
+  - filename: grass_dirt_dollar_weed.jpg
+    wikimedia_title: "File:Grass_dirt_and_dollar_weed.jpg"
+    thumbnail_width: 1920
+    sha256: 482a7af83a83127fbf76dba4477e188b64d3e22d12b035f08daa0839feb16619
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_dirt_and_dollar_weed.jpg
+    notes: >
+      Grass, dirt, and dollar weed ground-level view. Public domain
+      (John Harvey).
+
+  - filename: grass_tufts_bulrush.jpg
+    wikimedia_title: "File:Tufts_of_grass_and_lakeshore_bulrush.jpg"
+    thumbnail_width: 1920
+    sha256: f51c8a8c311a6ef7dc819cd087be28eea47de1bbe51ab381723c5351f72e8462
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Tufts_of_grass_and_lakeshore_bulrush.jpg
+    notes: >
+      Tufts of grass and lakeshore bulrush. CC0 (W.carter, own work).
+
+  - filename: grass_wetland_gullmarsvik.jpg
+    wikimedia_title: "File:Wetland_grass_at_the_edge_of_Gullmarsvik_mudflats_2.jpg"
+    thumbnail_width: 1920
+    sha256: eec1b33e2dcd6f93b80cfa04691fe9514b03960aa06a485d4a6aa558f2f4b389
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Wetland_grass_at_the_edge_of_Gullmarsvik_mudflats_2.jpg
+    notes: >
+      Wetland grass at Gullmarsvik mudflats, Sweden. Public domain
+      (W.carter, own work).
+
+  - filename: grass_green.jpg
+    wikimedia_title: "File:Green_grass_(23163935546).jpg"
+    thumbnail_width: 1920
+    sha256: 0d28cf943cea087e084a923b25ad8c33f44d77c368d0c748194c7526a144b53e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_grass_(23163935546).jpg
+    notes: >
+      Lush green grass close-up. CC0 (StockyPics).
+
+  - filename: grass_weeds_sand.jpg
+    wikimedia_title: "File:Grass_weeds_and_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 9f21ff3596802c0f0493bc2ea15f0746e50e29dfceafb4e75e5b49fc8e46bcbe
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_weeds_and_sand.jpg
+    notes: >
+      Grass, weeds, and sand ground cover. Public domain (John Harvey).
+
+  - filename: grass_original.jpg
+    wikimedia_title: "File:Grass_original.jpg"
+    thumbnail_width: 1920
+    sha256: ca66ea39e519d96aa6a350f69ebf377b3e8088be60a7afd2ae2a40b3e53c54bb
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grass_original.jpg
+    notes: >
+      Green grass close-up. CC0 (Blendergeek).
+
+  - filename: grass_moss.jpg
+    wikimedia_title: "File:Grass_moss.jpg"
+    thumbnail_width: 1920
+    sha256: 7f5e486dde7460931247a7980fd40c6f49a2b69d2bc1be5d682d52416537f2f1
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_moss.jpg
+    notes: >
+      Grass and moss ground-level mix. Public domain (Gregory Schick /
+      leadgolem).
+
+  - filename: grass_field_winter.jpg
+    wikimedia_title: "File:Grass_Field_in_winter.jpg"
+    thumbnail_width: 1920
+    sha256: 11cdecd9901b4659761bf508bd592e1e86ba09f594d7cf06495ff7b44183ec05
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Grass_Field_in_winter.jpg
+    notes: >
+      Grass field in winter, sparse and frosty. Public domain
+      (sakib454590).
+
+  - filename: grass_from_above.jpg
+    wikimedia_title: "File:Grass_seen_from_above.jpg"
+    thumbnail_width: 1920
+    sha256: d746277428e5c90e822efaf5a6d665981270ccfee61a035fc2abced48aedc3a2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grass_seen_from_above.jpg
+    notes: >
+      Grass seen from directly above, overhead view. CC0 (CommonScenes).
+
+  # ── Outdoor / pavement & stone ────────────────────────────────────────
+  - filename: pavement_tessellated_1.jpg
+    wikimedia_title: "File:Eaglehawk_Neck_tessellated_pavement_20201115-023.jpg"
+    thumbnail_width: 1920
+    sha256: e1bb2d0246e36f57c13a0a586eda26335857cecb0d381904e1f689f04ea5b57f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Eaglehawk_Neck_tessellated_pavement_20201115-023.jpg
+    notes: >
+      Tessellated rock pavement at Eaglehawk Neck, Tasmania. CC0
+      (Gary Houston).
+
+  - filename: pavement_tessellated_2.jpg
+    wikimedia_title: "File:Eaglehawk_Neck_tessellated_pavement_20201115-020.jpg"
+    thumbnail_width: 1920
+    sha256: 92bb8113266acbefb68c2fbd53a220a80efd3686fdd7af8d5bce3a56d0afbc78
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Eaglehawk_Neck_tessellated_pavement_20201115-020.jpg
+    notes: >
+      Tessellated rock pavement at Eaglehawk Neck, Tasmania (alternate
+      angle). CC0 (Gary Houston).
+
+  - filename: pavement_portuguese_calcada.jpg
+    wikimedia_title: "File:Calçada_portuguesa_num_passeio_em_São_Roque,_na_Ilha_do_Pico.jpg"
+    thumbnail_width: 1920
+    sha256: 3b7c7cb9838d21603028d2cbb9334297b52fc139d079ef078f71a485f9eb8ecd
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Calçada_portuguesa_num_passeio_em_São_Roque,_na_Ilha_do_Pico.jpg
+    notes: >
+      Portuguese calçada cobblestone pavement, São Roque, Pico Island.
+      CC0 (Girassolei).
+
+  - filename: pavement_old_massachusetts_1.jpg
+    wikimedia_title: "File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_01.jpg"
+    thumbnail_width: 1920
+    sha256: c4692089db0ac00e7ecebffc38e65d60570691a066ed0ee25d1d882e209257c8
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_01.jpg
+    notes: >
+      Old worn asphalt pavement, Massachusetts Ave, Arlington MA. CC0
+      (Daderot).
+
+  - filename: pavement_rosetti_bucharest.jpg
+    wikimedia_title: "File:Pavement_around_the_C.A._Rosetti_Monument_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: 38477bbada17c650e11ee6e60ca569d4d7047ad688f4f5f42f509afcc95ed49d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Pavement_around_the_C.A._Rosetti_Monument_in_Bucharest.jpg
+    notes: >
+      Decorative stone tile pavement, C.A. Rosetti Monument, Bucharest.
+      CC0 (Neoclassicism Enthusiast).
+
+  - filename: pavement_old_massachusetts_2.jpg
+    wikimedia_title: "File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_02.jpg"
+    thumbnail_width: 1920
+    sha256: 076de7be91fba765108b140186813b0f3f17511e6e6891445df7a3d53fb6b374
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Old_pavement,_Massachusetts_Ave_-_Arlington,_MA_-_02.jpg
+    notes: >
+      Old worn asphalt pavement, Massachusetts Ave, Arlington MA (second
+      shot). CC0 (Daderot).
+
+  - filename: pavement_limestone_orton.jpg
+    wikimedia_title: "File:Orton_Scar_Limestone_Pavement.jpg"
+    thumbnail_width: 1920
+    sha256: 8076c194ebc701251a0fee85a358f628de828fc7c4409927c998b2582af1ef64
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Orton_Scar_Limestone_Pavement.jpg
+    notes: >
+      Limestone pavement at Orton Scar, Cumbria. CC0 (Northernhenge).
+
+  - filename: pavement_sand_covered.jpg
+    wikimedia_title: "File:Pavement_covered_with_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 7811d82c75552841de3cedfe36b994cedf501bf059e412784e4ecc47330c6840
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Pavement_covered_with_sand.jpg
+    notes: >
+      Pavement partially covered with sand. Public domain (John Harvey).
+
+  # ── Outdoor / gravel ──────────────────────────────────────────────────
+  - filename: gravel_driveway.jpg
+    wikimedia_title: "File:Gravel_driveway_(28119645366).jpg"
+    thumbnail_width: 1920
+    sha256: 1ce280ac1fb3dc4bb08dfc337243a0bb344b06a016f7a5f22a29cef94b878671
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_driveway_(28119645366).jpg
+    notes: >
+      Gravel driveway surface. CC0 (dankeck via Flickr).
+
+  - filename: gravel_beach.jpg
+    wikimedia_title: "File:Gravel_on_beach_Cape_Poge_Martha's_Vineyard_2020.jpg"
+    thumbnail_width: 1920
+    sha256: 684867c629ee8a4a16904bd2819df4b4629ca9be9ee96dc8df0ad39592386910
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_on_beach_Cape_Poge_Martha%27s_Vineyard_2020.jpg
+    notes: >
+      Gravel and pebbles on beach, Cape Poge, Martha's Vineyard. CC0
+      (Jstuby).
+
+  - filename: gravel_stones.jpg
+    wikimedia_title: "File:Gravel_Stones.jpg"
+    thumbnail_width: 1920
+    sha256: c8aa4cbd35b0874dc8f9fe7426f339bb96f76df64aa689ee844192c924517d8f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gravel_Stones.jpg
+    notes: >
+      Close-up of gravel stones. CC0 (Saral Shots).
+
+  # ── Carpet / floor coverings ──────────────────────────────────────────
+  - filename: carpet_ardabil.jpg
+    wikimedia_title: "File:The_Ardabil_Carpet_-_Google_Art_Project.jpg"
+    thumbnail_width: 1920
+    sha256: d4f1155a72f06d5747ad410095cf0817e735fdbf0ec35915418badbd8a2342db
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:The_Ardabil_Carpet_-_Google_Art_Project.jpg
+    notes: >
+      The Ardabil Carpet (16th century, V&A Museum), photographed via
+      Google Art Project. Public domain.
+
+  - filename: carpet_grey_texture.jpg
+    wikimedia_title: "File:Hard_wearing_grey_carpet_texture.jpg"
+    thumbnail_width: 1920
+    sha256: d7c67cb566bca4bd40b610762389e03a5bc6b5833e1661ed184fd0f193d60689
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Hard_wearing_grey_carpet_texture.jpg
+    notes: >
+      Close-up of hard-wearing grey carpet texture. CC0.
+
+  - filename: carpet_home_snapshot.jpg
+    wikimedia_title: "File:March_18,_2025;_Picture_of_My_Carpet.jpg"
+    thumbnail_width: 1920
+    sha256: a6b5d1f2b32c8797ef997c031e6e4683841adfc6796516b94cf99c5662d9a619
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:March_18,_2025;_Picture_of_My_Carpet.jpg
+    notes: >
+      Personal snapshot of home carpet, 2025.
+
+  - filename: carpet_pattern_design.jpg
+    wikimedia_title: "File:Carpet_Design_(30014223375).jpg"
+    thumbnail_width: 1920
+    sha256: 1fc2a3703f235aee9956153bffc523f2b7d2e7e581d0c11d9541798d14aaaa9d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Carpet_Design_(30014223375).jpg
+    notes: >
+      Carpet design pattern (Flickr / CC-BY-2.0).
+
+  - filename: carpet_garden_met.jpeg
+    wikimedia_title: "File:Garden_Carpet_MET_67.156m.jpeg"
+    thumbnail_width: 1920
+    sha256: 45128b2775040228ff678e025500fd4269e371015e4670027700b3b29e482ccf
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Garden_Carpet_MET_67.156m.jpeg
+    notes: >
+      Garden Carpet, Metropolitan Museum of Art (accession 67.156m).
+      Public domain (MET open access).
+
+  - filename: carpet_dragon.jpg
+    wikimedia_title: "File:Carpet_with_a_Dragon_Figure.jpg"
+    thumbnail_width: 1920
+    sha256: 8ee3e358480698b7855cd5d1e51861d96a6e7e5f0df920261bf8cf6a1622cca6
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Carpet_with_a_Dragon_Figure.jpg
+    notes: >
+      Carpet with a dragon figure motif. Public domain.
+
+  # ── Bathroom / tile floors ────────────────────────────────────────────
+  - filename: floor_cork_bathroom.jpg
+    wikimedia_title: "File:Cork_bathroom_flooring.jpg"
+    thumbnail_width: 1920
+    sha256: f87abd22deb1b7a23cf468718ee50b817626a5d7af8ce86b7ae6d6200019b8cb
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Cork_bathroom_flooring.jpg
+    notes: >
+      Cork bathroom flooring texture.
+
+  - filename: floor_wilanow_bathroom.jpg
+    wikimedia_title: "File:Queen's_Bathroom_in_the_Wilanów_Palace_04.jpg"
+    thumbnail_width: 1920
+    sha256: f809a3112e9d602a97d16329babc7561bbf1d9fedc8a0844573baca56accdad3
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Queen%27s_Bathroom_in_the_Wilan%C3%B3w_Palace_04.jpg
+    notes: >
+      Queen's Bathroom floor, Wilanów Palace, Poland.
+
+  - filename: tile_popeyes_bathroom.jpg
+    wikimedia_title: "File:Colorful_tiles_in_the_corner_of_a_Popeyes_bathroom.jpg"
+    thumbnail_width: 1920
+    sha256: ae0310fbbcb8e5848335634bbc2bc44ccc8f8b58c4ad5ecad9bdf54e07e1276c
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Colorful_tiles_in_the_corner_of_a_Popeyes_bathroom.jpg
+    notes: >
+      Colorful tiles in the corner of a Popeyes bathroom. CC0.
+
+  - filename: tile_floor_brownish.jpg
+    wikimedia_title: "File:Brownish_floor_tiles.jpg"
+    thumbnail_width: 1920
+    sha256: d8a73bd96e339e4d94fb2cb187e70b1a160cc966714f946237c7e78023ea9f0d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Brownish_floor_tiles.jpg
+    notes: >
+      Brownish floor tiles. CC0.
+
+  - filename: tile_floor_parklake.jpg
+    wikimedia_title: "File:Tile_floor_in_the_ParkLake_Mall_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: 49a26ec4e4e3b8fb3324150dfb5e5cac113a6e776978867e4695542aaee0ea73
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Tile_floor_in_the_ParkLake_Mall_in_Bucharest.jpg
+    notes: >
+      Tile floor in the ParkLake Mall, Bucharest.
+
+  - filename: tile_floor_pattern_gfp.jpg
+    wikimedia_title: "File:Gfp-floor-tile-pattern.jpg"
+    thumbnail_width: 1920
+    sha256: 512083051c025d707fb40e0352523e5a096d420820f475713487d8d158cf2f5f
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Gfp-floor-tile-pattern.jpg
+    notes: >
+      Floor tile pattern. CC0 (Yinan Chen).
+
+  - filename: tile_floor_peacock_marble.jpg
+    wikimedia_title: "File:Green_peacock_multicolor_cream_ivory_marble_windmill_pattern_seamless_tile_floor_paving_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 9364863239fa383a0ce54643eebf3b564bb2f9baea31e5ebf5149d91b373eb44
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_peacock_multicolor_cream_ivory_marble_windmill_pattern_seamless_tile_floor_paving_texture.jpg
+    notes: >
+      Green peacock marble windmill pattern seamless tile floor texture. CC0.
+
+  - filename: tile_floor_lcd_tokyo.jpg
+    wikimedia_title: "File:LCD_floor,_at_Perfume_exhibition_in_Tokyo_Node_2.jpg"
+    thumbnail_width: 1920
+    sha256: 598565f9b798603cf0560849dbb77f01d4458a7626c0c931b8deeec5103c9b4d
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:LCD_floor,_at_Perfume_exhibition_in_Tokyo_Node_2.jpg
+    notes: >
+      LCD floor at Perfume exhibition, Tokyo Node.
+
+  - filename: tile_floor_green_mosaic.jpg
+    wikimedia_title: "File:Green_mosaic_square_seamless_tiled_floor_texture.jpg"
+    thumbnail_width: 1920
+    sha256: aa40fc807ca6f164cc971082bf01feb87e9b0ae8b22a212fb9ca33e74856efb2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Green_mosaic_square_seamless_tiled_floor_texture.jpg
+    notes: >
+      Green mosaic square seamless tiled floor texture. CC0.
+
+  # ── Walls ─────────────────────────────────────────────────────────────
+  - filename: wall_indoor_tokyo.jpg
+    wikimedia_title: "File:Indoor_stairs_wall_at_University_of_Tokyo,_Komaba_Campus.jpg"
+    thumbnail_width: 1920
+    sha256: a89d8bf85f4e68f2eeb26c47a6d83d77cde301ec73494f1ac28ea93002ee6bdd
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Indoor_stairs_wall_at_University_of_Tokyo,_Komaba_Campus.jpg
+    notes: >
+      Indoor stairwell wall, University of Tokyo Komaba Campus.
+
+  - filename: wall_sandstone_limestone.jpg
+    wikimedia_title: "File:Polygonal_sandstone_and_limestone_wall.jpg"
+    thumbnail_width: 1920
+    sha256: cc1ea5f333b6f856aafb39f12f21c727dd0727902fcea48c963c594aef3d5bc1
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Polygonal_sandstone_and_limestone_wall.jpg
+    notes: >
+      Polygonal sandstone and limestone wall texture.
+
+  - filename: wall_painted_red_brick.jpg
+    wikimedia_title: "File:Painted_red_brick_wall.jpg"
+    thumbnail_width: 1920
+    sha256: 6f60e45bf5451f1f1d2800e29623af6c9fb118cca40281902d8e64b2a7005cfa
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Painted_red_brick_wall.jpg
+    notes: >
+      Painted red brick wall texture. CC0.
+
+  - filename: wall_pompeii_painted.jpg
+    wikimedia_title: "File:House_of_the_Vettii_VI_15,1_Pompeii_2023_Detail_from_painted_panel_on_lower_north_wall_at_west_end_room_q_(Mau_plan)_courtesy_of_Johannes_Eber.jpg"
+    thumbnail_width: 1920
+    sha256: 859698a1f181effbe8cb18c2deb04da3a82d84f81d161338b28a798e39f6b31d
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:House_of_the_Vettii_VI_15,1_Pompeii_2023_Detail_from_painted_panel_on_lower_north_wall_at_west_end_room_q_(Mau_plan)_courtesy_of_Johannes_Eber.jpg
+    notes: >
+      Painted wall panel detail, House of the Vettii, Pompeii (2023).
+
+  # ── Interior design / furniture surfaces ──────────────────────────────
+  - filename: interior_hermia_design.jpg
+    wikimedia_title: "File:JAAKDESIGN_HERMIA_interior_design.jpg"
+    thumbnail_width: 1920
+    sha256: 5fd57bafabc133d03cc4bbed594b53eee4375771178367695c5cd19b3cd19db8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:JAAKDESIGN_HERMIA_interior_design.jpg
+    notes: >
+      JAAK Design Hermia interior design scene.
+
+  - filename: floor_decor_shop.jpg
+    wikimedia_title: "File:Even_better_combo_-_Floor_&_Decor_shop,_Greensboro,_North_Carolina.jpg"
+    thumbnail_width: 1920
+    sha256: e07542b1c1386b3198e0d1ef1f25d5ffce72d4d5b7c1afea3da26f4a4276c0fe
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Even_better_combo_-_Floor_%26_Decor_shop,_Greensboro,_North_Carolina.jpg
+    notes: >
+      Floor and decor surface combination, shop in Greensboro NC.
+
+  - filename: furniture_red_wood_texture.jpg
+    wikimedia_title: "File:Red_wooden_furniture_interior_design_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 4656dbe36862d962226bffffb838ce08931766715bb274123222f976ca01ba54
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Red_wooden_furniture_interior_design_texture.jpg
+    notes: >
+      Red wooden furniture interior design texture.
+
+  # ── Mirrors ───────────────────────────────────────────────────────────
+  - filename: mirror_met.jpg
+    wikimedia_title: "File:Mirror_MET_DP105758.jpg"
+    thumbnail_width: 1920
+    sha256: c23c062d4cf9373e97f381c4ca47532bd5cb753231b9f72bbbfbf1109b7dfaa7
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Mirror_MET_DP105758.jpg
+    notes: >
+      Mirror, Metropolitan Museum of Art (DP105758). Public domain (MET open access).
+
+  - filename: mirror_safranbolu.jpg
+    wikimedia_title: "File:El_Yapımı_Ayna,_Yörük_Evi,_Safranbolu_2014.jpg"
+    thumbnail_width: 1920
+    sha256: c1413a412cd3b289c0ead69b55ccecc32c23e8aa3556ad749ceded1aacabc0cd
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:El_Yap%C4%B1m%C4%B1_Ayna,_Y%C3%B6r%C3%BCk_Evi,_Safranbolu_2014.jpg
+    notes: >
+      Handmade mirror, Yörük House, Safranbolu, Turkey (2014).
+
+  - filename: mirror_snapshot.jpg
+    wikimedia_title: "File:Mirror_img_0267.jpg"
+    thumbnail_width: 1920
+    sha256: 4ba29723b4378391100420dc3c22de0142ebdda7844c058dcca5737609596fd3
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Mirror_img_0267.jpg
+    notes: >
+      Mirror surface photograph.
+
+  # ── Wallpaper ─────────────────────────────────────────────────────────
+  - filename: wallpaper_3.jpg
+    wikimedia_title: "File:Wallpaper_3.jpg"
+    thumbnail_width: 1920
+    sha256: c479effa17f06955d57dd6ae1aa98d6e24a73278f9ee231bfe5bd9e7f0b0e403
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Wallpaper_3.jpg
+    notes: >
+      Wallpaper texture. CC0.
+
+  - filename: wallpaper_met.jpg
+    wikimedia_title: "File:Wallpaper_MET_SF1993_298.jpg"
+    thumbnail_width: 1920
+    sha256: 1bd96e532cfd1bd804568c2717a6679e556ef2ed7d875f746ea225bc2bc41999
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Wallpaper_MET_SF1993_298.jpg
+    notes: >
+      Wallpaper, Metropolitan Museum of Art (SF1993.298). Public domain (MET open access).
+
+  - filename: wallpaper_texture.jpg
+    wikimedia_title: "File:Tapetentextur_20190822.jpg"
+    thumbnail_width: 1920
+    sha256: 649094e433131ec9f38da063f3c2a515a1fd59a9e63a7446e28721615d1436c5
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Tapetentextur_20190822.jpg
+    notes: >
+      Wallpaper texture (Tapetentextur), 2019.
+
+  - filename: wallpaper_paulbalin.jpg
+    wikimedia_title: "File:PaulBalin2008BT7170Crop.jpg"
+    thumbnail_width: 1920
+    sha256: 026e535c03c6debd5d112ad7ee4ee886686725a7b12e5b3cf4839e6ab75cb44e
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:PaulBalin2008BT7170Crop.jpg
+    notes: >
+      Wallpaper by Paul Balin (2008), cropped.
+
+  # ── Hardwood / wood floors ────────────────────────────────────────────
+  - filename: floor_wood_tiles.jpg
+    wikimedia_title: "File:Wooden-floor-tiles.JPG"
+    thumbnail_width: 1920
+    sha256: 33e3a8afa2aa133dd6dcbd94cf5cc1de24327434a18ac589420ddac51132a444
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Wooden-floor-tiles.JPG
+    notes: >
+      Wooden floor tiles.
+
+  - filename: floor_oak_hawley.jpg
+    wikimedia_title: "File:Ephraim_Hawley_House_oak_flooring_2010.JPG"
+    thumbnail_width: 1920
+    sha256: 9db6db94691029a100d8eebb03d625d27ba05a4b62b0a095aa1501dd9b68f3c6
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Ephraim_Hawley_House_oak_flooring_2010.JPG
+    notes: >
+      Oak flooring, Ephraim Hawley House (2010).
+
+  - filename: floor_wood_rearranged.jpg
+    wikimedia_title: "File:RearanĝitajPlanktabuloj.jpg"
+    thumbnail_width: 1920
+    sha256: 5d6f452cd3978881285b02f2c7e438ca963a3594130b1af726cd38b398b12de4
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Rearan%C4%9DitajPlanktabuloj.jpg
+    notes: >
+      Rearranged wood floor planks.
+
+  - filename: floor_wood_001_color.jpg
+    wikimedia_title: "File:WoodFloor001_9K_Color.jpg"
+    thumbnail_width: 1920
+    sha256: 87ccccd3e0aac34a4e2088163cc1dbc2e46426e3efcd6350a41a43a624069c79
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor001_9K_Color.jpg
+    notes: >
+      Wood floor colour texture (9K, CC0).
+
+  - filename: floor_wood_002_color.jpg
+    wikimedia_title: "File:WoodFloor002_12K_Color.jpg"
+    thumbnail_width: 1920
+    sha256: 4a5c7e06be43571792e0cc9be10b4174342f400811cdd5d82ca5b1eedd97842d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor002_12K_Color.jpg
+    notes: >
+      Wood floor colour texture (12K, CC0).
+
+  - filename: floor_wood_002_displacement.jpg
+    wikimedia_title: "File:WoodFloor002_12K_Displacement.jpg"
+    thumbnail_width: 1920
+    sha256: 5f3a94c581fe7bb79a2a2b772b3fb02246104228da89894eb8787d6936b11f22
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:WoodFloor002_12K_Displacement.jpg
+    notes: >
+      Wood floor displacement map texture (12K, CC0).
+
+  - filename: floor_wood_pew_honolulu.jpg
+    wikimedia_title: "File:Honolulu-CBrewer-pew-floor.JPG"
+    thumbnail_width: 1920
+    sha256: 31c6e2884c3421fceabb5c3460894ea591768ff8ea0a8915df6d25e912835389
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Honolulu-CBrewer-pew-floor.JPG
+    notes: >
+      Pew and wood floor, C. Brewer building, Honolulu.
+
+  - filename: floor_timber_bridge.jpg
+    wikimedia_title: "File:Second_Lavrsky_Bridge_-_timber_floor_of_bridge.jpg"
+    thumbnail_width: 1920
+    sha256: c900aecca519b65bb311023b46b0e0d02ca9b8b4415f2979fae720ed3308fe0b
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Second_Lavrsky_Bridge_-_timber_floor_of_bridge.jpg
+    notes: >
+      Timber floor of the Second Lavrsky Bridge.
+
+  - filename: floor_ballroom_dancing.jpg
+    wikimedia_title: "File:The_city's_Dancing_Assembly_held_weekly_balls_in_the_second_floor_ballroom._(6e689bb7-5c46-4cf0-840b-f149f3d3ebcb).jpg"
+    thumbnail_width: 1920
+    sha256: ad41d102a4748e069fc782b92f8de107f99dea5c2a85e3eb548507205647e874
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:The_city%27s_Dancing_Assembly_held_weekly_balls_in_the_second_floor_ballroom._(6e689bb7-5c46-4cf0-840b-f149f3d3ebcb).jpg
+    notes: >
+      Second-floor ballroom hardwood floor, historic dancing assembly.
+
+  # ── Wood surfaces / textures ──────────────────────────────────────────
+  - filename: wood_mango_1.jpg
+    wikimedia_title: "File:Mango_Wood_-_lumber,_table,_floor,_desk.jpg"
+    thumbnail_width: 1920
+    sha256: d9a6b10251cc545c21c90a948cb7c7597d6ce19116d9b83a37b19c3fe263c90c
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Mango_Wood_-_lumber,_table,_floor,_desk.jpg
+    notes: >
+      Mango wood surface — lumber, table, floor, desk (shot 1).
+
+  - filename: wood_mango_2.jpg
+    wikimedia_title: "File:Mango_Wood_-_lumber,_table,_floor,_desk_2.jpg"
+    thumbnail_width: 1920
+    sha256: 8468c82ef8fbdd26fd1613653e136eea5be5f12d3abd7c64c259b111bf66854a
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Mango_Wood_-_lumber,_table,_floor,_desk_2.jpg
+    notes: >
+      Mango wood surface — lumber, table, floor, desk (shot 2).
+
+  - filename: wood_pine_table.jpg
+    wikimedia_title: "File:Pine_Wooden_Table_Tap.jpg"
+    thumbnail_width: 1920
+    sha256: f466601f6b62273d0a00a127a21f5e5a64c2dd6d23c9a99b507d3191de9cf550
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Pine_Wooden_Table_Tap.jpg
+    notes: >
+      Pine wooden table surface.
+
+  - filename: wood_pine_spruce_comparison.jpg
+    wikimedia_title: "File:PinusSylvestris&PiceaAbies-comparingWood.JPG"
+    thumbnail_width: 1920
+    sha256: 4677c6fca97b288d3e774fe934027a1291672012e3f4b9b3f4f4af9cfbe7e481
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:PinusSylvestris%26PiceaAbies-comparingWood.JPG
+    notes: >
+      Scots pine vs Norway spruce wood comparison.
+
+  - filename: wood_egyptian_coffin.jpg
+    wikimedia_title: "File:Middle_coffin_of_Mentuirdis,_wood_-_Museo_Egizio_(Turin)_S_5220_p05.jpg"
+    thumbnail_width: 1920
+    sha256: a67fa5a9c85d7a8b0269d64a28491ee826b8d593e9b9ba7a79bdeb03330785d8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Middle_coffin_of_Mentuirdis,_wood_-_Museo_Egizio_(Turin)_S_5220_p05.jpg
+    notes: >
+      Wood surface of an ancient Egyptian coffin, Museo Egizio, Turin.
+
+  # ── Forest scenes ─────────────────────────────────────────────────────
+  - filename: forest_floor_spruce_cone.jpg
+    wikimedia_title: "File:Red_spruce_cone_on_the_forest_floor_(22384651510).jpg"
+    thumbnail_width: 1920
+    sha256: 73e7c6bbd3f5fb0cc244191588417ee37b0780d9dd8239a6128f6f47733ff77d
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Red_spruce_cone_on_the_forest_floor_(22384651510).jpg
+    notes: >
+      Red spruce cone on the forest floor. CC-BY-2.0.
+
+  - filename: forest_heavy_fog.jpg
+    wikimedia_title: "File:Heavy_fog_in_the_woods_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: e5644efe56807143bf335ce65d33f3e88ea221a1c8e31f7dbd058a6df87652a5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Heavy_fog_in_the_woods_(Unsplash).jpg
+    notes: >
+      Heavy fog in the woods (Unsplash). CC0.
+
+  - filename: forest_sunlit_roots.jpg
+    wikimedia_title: "File:Sunlit_roots_in_the_woods_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: 3b24da7ee7816bbfebb8fce2a1f68c3b8fa2c692c2c0b15ed0e41210664f12ff
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Sunlit_roots_in_the_woods_(Unsplash).jpg
+    notes: >
+      Sunlit roots in the woods (Unsplash). CC0.
+
+  - filename: forest_pine_sunlight.jpg
+    wikimedia_title: "File:Sunlight_and_shadow_in_Pine_woods._(51189235963).jpg"
+    thumbnail_width: 1920
+    sha256: 258276d44d1b674acedbeab07b389158ec5564d1f1531698c35b3fb968d6dd48
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Sunlight_and_shadow_in_Pine_woods._(51189235963).jpg
+    notes: >
+      Sunlight and shadow in pine woods. CC-BY-2.0.
+
+  - filename: forest_track_zehdenick.jpg
+    wikimedia_title: "File:Track_in_Zehdenick-Neuhof_2021-09-02_01.jpg"
+    thumbnail_width: 1920
+    sha256: 36c911b3119e8fd5513132f6af4a13088d484473ac7afc9c793724e62c205c8c
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Track_in_Zehdenick-Neuhof_2021-09-02_01.jpg
+    notes: >
+      Forest track in Zehdenick-Neuhof, Germany (2021).
+
+  - filename: forest_indiana_regeneration.jpg
+    wikimedia_title: "File:Indiana_Forest_Regeneration_(20220524-NRCS-BJOC-057).jpg"
+    thumbnail_width: 1920
+    sha256: 8d34e2b4e26a3c83d3a48b36b9963715d6669f2a367245449f738dac6443bda4
+    license: PD-US-Gov
+    source: https://commons.wikimedia.org/wiki/File:Indiana_Forest_Regeneration_(20220524-NRCS-BJOC-057).jpg
+    notes: >
+      Indiana forest regeneration (USDA NRCS, 2022). Public domain.
+
+  # ── Sand / beach ──────────────────────────────────────────────────────
+  - filename: sand_rock_texture.jpg
+    wikimedia_title: "File:Sand_Rock_Texture.jpg"
+    thumbnail_width: 1920
+    sha256: d4eff02ab03888a98131e0a0ce8f1a7e45f4e6bfcd1f8b8fceeeeef5abefd8aa
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Sand_Rock_Texture.jpg
+    notes: >
+      Sand and rock texture. CC0.
+
+  - filename: sand_beach_shore.jpg
+    wikimedia_title: "File:Beach_sandy_shore_seamless_ground_texture.jpg"
+    thumbnail_width: 1920
+    sha256: 38b7add888d9abb8b8ffaa9a243b16912d78461fe3c687c18d709df384121525
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Beach_sandy_shore_seamless_ground_texture.jpg
+    notes: >
+      Beach sandy shore seamless ground texture. CC0.
+
+  - filename: sand_closeup.jpg
+    wikimedia_title: "File:Close-up_zand_foto_3.JPG"
+    thumbnail_width: 1920
+    sha256: 680853d496d97dadc647a2136167ee6142d50469bfe3f2b7cca3842ed6fc245b
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Close-up_zand_foto_3.JPG
+    notes: >
+      Close-up of sand (Dutch).
+
+  - filename: sand_hard.jpg
+    wikimedia_title: "File:Hard_sand.jpg"
+    thumbnail_width: 1920
+    sha256: 0e43f5a28675367d64b614675671b4af59dd748feb2b894c5d805a75a2e10db5
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Hard_sand.jpg
+    notes: >
+      Hard compact sand surface. CC0.
+
+  - filename: sand_cromer_beach_1.jpg
+    wikimedia_title: "File:Cromer_beach_sand_2016_01.JPG"
+    thumbnail_width: 1920
+    sha256: d1d45f570400bf869b784edd3cb52d7f1044af63de60ab784411403dbbd1ae0d
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Cromer_beach_sand_2016_01.JPG
+    notes: >
+      Sand at Cromer beach, Norfolk (2016, shot 1).
+
+  - filename: sand_cromer_beach_3.jpg
+    wikimedia_title: "File:Cromer_beach_sand_2016_03.JPG"
+    thumbnail_width: 1920
+    sha256: 7a7aade7f00c08590dd2a21ecb0ce10374a7da556367296e5aa8ce2cd4fce627
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Cromer_beach_sand_2016_03.JPG
+    notes: >
+      Sand at Cromer beach, Norfolk (2016, shot 3).
+
+  # ── Other ─────────────────────────────────────────────────────────────
+  - filename: tarantula_brachypelma.jpg
+    wikimedia_title: "File:Brachypelma_smithi_2009_G03.jpg"
+    thumbnail_width: 1920
+    sha256: aae215c1deea9f8a8a8b8ccf70b93a7892399bf777bdabead162c701f1c45641
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Brachypelma_smithi_2009_G03.jpg
+    notes: >
+      Mexican red-knee tarantula (Brachypelma smithi), 2009.
+
+  # ── Linoleum / vinyl flooring ─────────────────────────────────────────
+  - filename: linoleum_brown_diff.jpg
+    wikimedia_title: "File:Linoleum_brown_diff_8k_(Rob_Tuytel_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: 77284e9e01bccc034a41f369d050e35deb38ea49fbee577ed2c089206d34de2d
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Linoleum_brown_diff_8k_(Rob_Tuytel_via_Poly_Haven).jpg
+    notes: >
+      Brown linoleum diffuse/albedo texture (8K, Rob Tuytel / Poly Haven). CC0.
+
+  - filename: linoleum_brown_rough.jpg
+    wikimedia_title: "File:Linoleum_brown_rough_8k_(Rob_Tuytel_via_Poly_Haven).jpg"
+    thumbnail_width: 1920
+    sha256: d397c46b0f89fc30fb6790fb79417dbc749309a6d5aa1bdf86219cde054ee23b
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Linoleum_brown_rough_8k_(Rob_Tuytel_via_Poly_Haven).jpg
+    notes: >
+      Brown linoleum roughness texture (8K, Rob Tuytel / Poly Haven). CC0.
+
+  # ── Concrete ──────────────────────────────────────────────────────────
+  - filename: concrete_poured_foundation.jpg
+    wikimedia_title: "File:Elm_Place_-_poured_concrete_foundation.jpg"
+    thumbnail_width: 1920
+    sha256: f4a3d05018effe5ac20b1f64e5c63a422973fab35978d75aa2e67cb36cdb825b
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Elm_Place_-_poured_concrete_foundation.jpg
+    notes: >
+      Poured concrete foundation surface, Elm Place.
+
+  - filename: concrete_floor_grey_dirty.jpg
+    wikimedia_title: "File:Grey_moderately_dirty_worn_grubby_dusty_poured_concrete_seamless_floor_texture.jpg"
+    thumbnail_width: 1920
+    sha256: b59258185c3eecc837ee2f2fb63825262cc9539c7172eca665bd698570c768f2
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Grey_moderately_dirty_worn_grubby_dusty_poured_concrete_seamless_floor_texture.jpg
+    notes: >
+      Grey dirty worn poured concrete seamless floor texture. CC0.
+
+  - filename: concrete_road_closeup.jpg
+    wikimedia_title: "File:Closeup_of_concrete_road.jpg"
+    thumbnail_width: 1920
+    sha256: 8f58b475a4f37ee5d40f315e8341d3ade29238bfa90252c8c8e5da7628f02513
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Closeup_of_concrete_road.jpg
+    notes: >
+      Close-up of concrete road surface.
+
+  - filename: concrete_rusted_rebars.jpg
+    wikimedia_title: "File:Reinforced_concrete_rusted_rebars_german_bunkers_Pointe_du_Hoc.jpg"
+    thumbnail_width: 1920
+    sha256: 43d3b7c823b3a7a41283bb3f7276d4b8ce7edf5247a8e984e3f96b5d3ba2a419
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Reinforced_concrete_rusted_rebars_german_bunkers_Pointe_du_Hoc.jpg
+    notes: >
+      Reinforced concrete with rusted rebars, German bunkers, Pointe du Hoc.
+
+  - filename: concrete_dust_wirbler.jpg
+    wikimedia_title: "File:Wirbler_und_Staubsack.JPG"
+    thumbnail_width: 1920
+    sha256: f8272a94a0bafff408129d7dcb80ec5c5fd3f8ece718fc70f6b4ff0929b212fc
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Wirbler_und_Staubsack.JPG
+    notes: >
+      Wirbler und Staubsack (concrete dust surface).
+
+  # ── Asphalt ───────────────────────────────────────────────────────────
+  - filename: asphalt_bucharest.jpg
+    wikimedia_title: "File:Asphalt_texture_on_Bulevardul_Bucureștii_Noi_in_Bucharest.jpg"
+    thumbnail_width: 1920
+    sha256: ec391d96f386388f1a9b1d7334dfa240a17da15f390fe7385c8561488191feb8
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_texture_on_Bulevardul_Bucure%C8%99tii_Noi_in_Bucharest.jpg
+    notes: >
+      Asphalt texture, Bulevardul Bucureștii Noi, Bucharest.
+
+  - filename: asphalt_closeup.jpg
+    wikimedia_title: "File:Asphalt_Close_Up_(24337981232).jpg"
+    thumbnail_width: 1920
+    sha256: 12ca3e99902e0714266f72c43d04324daeeefa00e368740afbc896a20a8399f3
+    license: CC-BY-2.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_Close_Up_(24337981232).jpg
+    notes: >
+      Close-up of asphalt surface (Flickr). CC-BY-2.0.
+
+  - filename: asphalt_fresh.jpg
+    wikimedia_title: "File:Asphalt_frisch.jpg"
+    thumbnail_width: 1920
+    sha256: 2308807f084b9ebf36b15e9d7fb111c1e48eb5e6fc7148ff72cee86f065a9a40
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Asphalt_frisch.jpg
+    notes: >
+      Fresh asphalt surface texture.
+
+  # ── Rust / metal ──────────────────────────────────────────────────────
+  - filename: rust_weathered_paper.jpg
+    wikimedia_title: "File:Weathered_Paper_Rust_Background_Ornamental.jpg"
+    thumbnail_width: 1920
+    sha256: b3d4f4e42720259b37a89f760d64a377e0df871e39aa94b455cec5e2a6936619
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Weathered_Paper_Rust_Background_Ornamental.jpg
+    notes: >
+      Weathered paper and rust ornamental background. CC0.
+
+  - filename: rust_on_metal.jpg
+    wikimedia_title: "File:Rust_on_metal.jpg"
+    thumbnail_width: 1920
+    sha256: ee8454dd71f80cd3f382123717d07b1b3a2b34f682c8fdb9b716173eb67151ee
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Rust_on_metal.jpg
+    notes: >
+      Rust on metal surface. CC0.
+
+  - filename: rust_old_metal.jpg
+    wikimedia_title: "File:Rust_old_metal.jpg"
+    thumbnail_width: 1920
+    sha256: c33a8eb2b2e041953666b90ffaa6b02b2f85c8cc15e6ec7a725e78cc0019ef0e
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Rust_old_metal.jpg
+    notes: >
+      Old rusted metal surface. CC0.
+
+  # ── Granite / countertop ──────────────────────────────────────────────
+  - filename: granite_microscope_10x.jpg
+    wikimedia_title: "File:Granite_01_10x_(39627399402).jpg"
+    thumbnail_width: 1920
+    sha256: 50f46c3ce668654d1a69a164c5c70d65e58d1d1352bf6e05ffdafc1ac59f3a5e
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Granite_01_10x_(39627399402).jpg
+    notes: >
+      Granite thin section under 10x magnification. Public domain.
+
+  - filename: granite_slab.jpg
+    wikimedia_title: "File:Granite_slab_up_close.jpg"
+    thumbnail_width: 1920
+    sha256: 7fa4c5bd60c2faf1d12f785bf921d14f7eedc4be6289b80899489e504dc6e546
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Granite_slab_up_close.jpg
+    notes: >
+      Granite slab up close. CC0.
+
+  - filename: granite_100x.jpg
+    wikimedia_title: "File:Granite_100x_M2_(42042896065).jpg"
+    thumbnail_width: 1920
+    sha256: d3da8f616a0ce2792b0e726119dfccf79d5f4fd6095fa1d3f935abe19f0d5c8b
+    license: PD
+    source: https://commons.wikimedia.org/wiki/File:Granite_100x_M2_(42042896065).jpg
+    notes: >
+      Granite thin section under 100x magnification. Public domain.
+
+  - filename: granite_gravel_water.jpg
+    wikimedia_title: "File:Granite_gravel_in_shallow_water_3.jpg"
+    thumbnail_width: 1920
+    sha256: d4f44012c971347b5cdcc46d3dd17ac0bc74085e5a96e7d8735ca7b2f41d9a31
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Granite_gravel_in_shallow_water_3.jpg
+    notes: >
+      Granite gravel in shallow water.
+
+  # ── Water surfaces ────────────────────────────────────────────────────
+  - filename: water_greeny.jpg
+    wikimedia_title: "File:Greeny_water.jpg"
+    thumbnail_width: 1920
+    sha256: 9b6f50abaa15d004944e9acdc75fe68117625cd80c31f50e4f5f7297c7de939b
+    license: CC0-1.0
+    source: http://commons.wikimedia.org/wiki/File:Greeny_water.jpg
+    notes: >
+      Green water surface. CC0.
+
+  - filename: water_ocean_surface.jpg
+    wikimedia_title: "File:Blue_ocean_surface_(Unsplash).jpg"
+    thumbnail_width: 1920
+    sha256: eda529ca4b7e214922afc3434dc33ecc53e41a1b8811a158878558100f0627d3
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Blue_ocean_surface_(Unsplash).jpg
+    notes: >
+      Blue ocean surface (Unsplash). CC0.
+
+  - filename: water_brofjorden_surface.jpg
+    wikimedia_title: "File:Surface_of_Brofjorden.jpg"
+    thumbnail_width: 1920
+    sha256: 5e89f0cd8a57bb896356e112aea426919f27f05140d123d7130c1f881f845fc1
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Surface_of_Brofjorden.jpg
+    notes: >
+      Water surface of Brofjorden, Sweden.
+
+  - filename: water_surface_tension.jpg
+    wikimedia_title: "File:Surface_tension_at_work.jpg"
+    thumbnail_width: 1920
+    sha256: d515377853d953572ae389e96db4ee71afcd0178d50bf4cb0f03bb78b3b9eb58
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Surface_tension_at_work.jpg
+    notes: >
+      Water surface tension close-up.
+
+  - filename: water_brofjorden_below.jpg
+    wikimedia_title: "File:Below_the_surface_of_Brofjorden.jpg"
+    thumbnail_width: 1920
+    sha256: 0073cd0af38da7ce4e8fd24a19efb0b8df60dbba3d28d286dab4c2fe68106394
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:Below_the_surface_of_Brofjorden.jpg
+    notes: >
+      Below the water surface of Brofjorden, Sweden.
+
+  # ── Rock ──────────────────────────────────────────────────────────────
+  - filename: rock_bare_trail.jpg
+    wikimedia_title: "File:Bare_Rock_Trail_Surface_at_Lake_Roland.jpg"
+    thumbnail_width: 1920
+    sha256: 17dc8f99aaa86fd8c21eda7bed6be9ae2bc9291c3e661fae27e59c76f7cfcbde
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Bare_Rock_Trail_Surface_at_Lake_Roland.jpg
+    notes: >
+      Bare rock trail surface at Lake Roland.
+
+  # ── Sky / clouds ──────────────────────────────────────────────────────
+  - filename: sky_clouds_jo.jpg
+    wikimedia_title: "File:IMG_sky_jo.jpg"
+    thumbnail_width: 1920
+    sha256: b9d76f8abdd5552fe05c4fa4e7636f239767d8fa461a2defd91426588ae02477
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:IMG_sky_jo.jpg
+    notes: >
+      Sky and clouds photograph.
+
+  - filename: sky_nesjavellir.jpg
+    wikimedia_title: "File:NesjavellirPowerPlant_edit2.jpg"
+    thumbnail_width: 1920
+    sha256: 257ec13f9bca074fffe5b1fcca0010d833b9142accaba5cfff1edd13c0f09848
+    license: CC-BY-SA-3.0
+    source: https://commons.wikimedia.org/wiki/File:NesjavellirPowerPlant_edit2.jpg
+    notes: >
+      Sky over Nesjavellir geothermal power plant, Iceland.
+
+  - filename: sky_clear_summer.jpg
+    wikimedia_title: "File:Clear_Sky_,_Amazing_Summer.jpg"
+    thumbnail_width: 1920
+    sha256: cda5ab2ae6bcd77d222d5bf109c2e6ef07baa7a59e4a68e56656d5536e083215
+    license: CC-BY-SA-4.0
+    source: https://commons.wikimedia.org/wiki/File:Clear_Sky_,_Amazing_Summer.jpg
+    notes: >
+      Clear blue summer sky.
+
+  # ── Outdoor / environmental surfaces ──────────────────────────────────
+  - filename: purple_rain_roof.jpg
+    wikimedia_title: "File:Purple_rain_on_roof.jpg"
+    thumbnail_width: 1920
+    sha256: 7c5a51fbe6ff0c8e1cc89cba3eddefac1b192b8ce4b207acd335f5e731aafb38
+    license: CC0-1.0
+    source: https://commons.wikimedia.org/wiki/File:Purple_rain_on_roof.jpg
+    notes: >
+      Wet roof surface with rain, purple tones. CC0 (W.carter, own work).

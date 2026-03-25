@@ -7,8 +7,8 @@ MIT License
 import numpy as np
 from synthtiger import components
 
-from elements.content import Content
-from elements.paper import Paper
+from .content import Content
+from .paper import Paper
 
 
 class Document:
@@ -53,10 +53,25 @@ class Document:
         self.aspect_ratio = config.get("aspect_ratio", [1, 2])
         self.paper = Paper(config.get("paper", {}))
         self.content = Content(config.get("content", {}))
+
+        # Separate elastic distortion from the per-layer effect pipeline.
+        # Elastic distortion warps pixels but cannot update layer quads, so
+        # applying it per-layer before annotation capture produces misaligned
+        # bboxes.  Instead, expose it as a standalone component for the caller
+        # to apply to the composited image *after* annotations are captured.
+        effect_config = config.get("effect", {})
+        effect_args = effect_config.get("args", [{}, {}, {}])
+        elastic_config = effect_args[0] if len(effect_args) > 0 else {}
+        remaining_args = effect_args[1:] if len(effect_args) > 1 else []
+
+        self.elastic_distortion = components.Switch(components.ElasticDistortion(), **elastic_config)
+
         self.effect = components.Iterator(
             [
-                components.Switch(components.ElasticDistortion()),
                 components.Switch(components.AdditiveGaussianNoise()),
+                components.Switch(components.Erode()),
+                components.Switch(components.Dilate()),
+                components.Switch(components.CoarseDropout()),
                 components.Switch(
                     components.Selector(
                         [
@@ -72,8 +87,37 @@ class Document:
                     )
                 ),
             ],
-            **config.get("effect", {}),
+            args=remaining_args if remaining_args else None,
         )
+
+    def close(self):
+        self.content.close()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.close()
+        return False
+
+    def _compute_document_size(self, size: tuple[int, int]) -> tuple[int, int]:
+        """Optionally shrink *size* based on fullscreen, landscape, and aspect-ratio config."""
+        width, height = size
+        if np.random.rand() < self.fullscreen:
+            return size
+
+        landscape = np.random.rand() < self.landscape
+        max_size = width if landscape else height
+        short_size = np.random.randint(
+            min(width, height, self.short_size[0]),
+            min(width, height, self.short_size[1]) + 1,
+        )
+        aspect_ratio = np.random.uniform(
+            min(max_size / short_size, self.aspect_ratio[0]),
+            min(max_size / short_size, self.aspect_ratio[1]),
+        )
+        long_size = int(short_size * aspect_ratio)
+        return (long_size, short_size) if landscape else (short_size, long_size)
 
     def generate(self, size):
         """
@@ -83,30 +127,31 @@ class Document:
             size: Tuple of (width, height) for the document canvas
 
         Returns:
-            Tuple of (paper_layer, text_layers, texts) where:
+            Tuple of (paper_layer, text_layers, texts, block_ids,
+            words_per_line, block_region_types, textbox_null_count, textbox_total_count) where:
                 - paper_layer: A Layer containing the paper texture
                 - text_layers: List of Layers, one per text line
                 - texts: List of strings corresponding to each text layer
+                - block_ids: List of int block IDs, one per text line
+                - words_per_line: List of word-detail dicts per line
+                - block_region_types: Dict mapping block_id → region_type string
+                - textbox_null_count: Number of textbox slots that produced no text
+                - textbox_total_count: Total textbox slots attempted
         """
-        width, height = size
-        fullscreen = np.random.rand() < self.fullscreen
-
-        if not fullscreen:
-            landscape = np.random.rand() < self.landscape
-            max_size = width if landscape else height
-            short_size = np.random.randint(
-                min(width, height, self.short_size[0]),
-                min(width, height, self.short_size[1]) + 1,
-            )
-            aspect_ratio = np.random.uniform(
-                min(max_size / short_size, self.aspect_ratio[0]),
-                min(max_size / short_size, self.aspect_ratio[1]),
-            )
-            long_size = int(short_size * aspect_ratio)
-            size = (long_size, short_size) if landscape else (short_size, long_size)
-
+        size = self._compute_document_size(size)
         paper_layer, bg_color = self.paper.generate(size)
-        text_layers, texts, block_ids, words_per_line = self.content.generate(size, bg_color)
+        text_layers, texts, block_ids, words_per_line, block_region_types, textbox_null_count, textbox_total_count = (
+            self.content.generate(size, bg_color)
+        )
         self.effect.apply([*text_layers, paper_layer])
 
-        return paper_layer, text_layers, texts, block_ids, words_per_line
+        return (
+            paper_layer,
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+        )

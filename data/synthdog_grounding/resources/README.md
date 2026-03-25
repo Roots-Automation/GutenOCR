@@ -13,7 +13,8 @@ resources/
 │   ├── en/         # English fonts
 │   ├── ja/         # Japanese fonts
 │   ├── ko/         # Korean fonts
-│   └── zh/         # Chinese fonts
+│   ├── zh/         # Chinese fonts
+│   └── fonts.yaml  # Font manifest (source of truth)
 └── paper/          # Paper texture images
 ```
 
@@ -57,7 +58,8 @@ Add image files to the `paper/` directory.
 ### Fonts (`font/<language>/`)
 
 TrueType (`.ttf`) or OpenType (`.otf`) font files for text rendering,
-organized by language.
+organized by language. Font binaries are **not stored in git** — they are
+downloaded on demand from the URLs listed in `font/fonts.yaml`.
 
 **Supported formats:** TTF, OTF
 
@@ -67,19 +69,40 @@ organized by language.
 - `ko/` - Korean fonts (must support Hangul)
 - `zh/` - Chinese fonts (must support Simplified/Traditional characters)
 
-**Requirements:**
-- Fonts must support the character set of the target language
-- Both serif and sans-serif fonts are recommended for variety
-- Consider including monospace fonts for technical document simulation
-- Font licensing must permit synthetic data generation
+**Downloading fonts:**
 
-**Adding custom fonts:**
-Add `.ttf` or `.otf` files to the appropriate language directory.
+```bash
+cd data/synthdog_grounding
+uv run python fetch_fonts.py
+```
 
-**Included English fonts:**
-- `NotoSans-Regular.ttf` - Clean sans-serif (Google)
-- `NotoSerif-Regular.ttf` - Classic serif (Google)
-- Various stylized fonts for variety
+The script reads `resources/font/fonts.yaml`, downloads any missing fonts, and
+verifies SHA-256 checksums. Use `--force` to re-download all fonts.
+
+**Adding new fonts:**
+
+1. Add the font file to the appropriate `font/<lang>/` directory
+2. Add an entry to `font/fonts.yaml` with the filename, language, download URL,
+   SHA-256 checksum (`shasum -a 256 <file>`), license, and source
+3. The font file itself is gitignored — only the manifest entry is tracked
+
+**Included fonts (downloaded on demand):**
+- **Noto Sans** — Clean sans-serif; Regular, Bold, Italic, Bold Italic, Condensed (×4) (Google, OFL-1.1)
+- **Noto Serif** — Classic serif; Regular, Bold, Italic, Bold Italic (Google, OFL-1.1)
+- **Noto Sans Mono** — Monospace for code and technical text (Google, OFL-1.1)
+- **Open Sans** — Humanist sans-serif; Regular, Bold, Italic, Bold Italic (Google, OFL-1.1)
+- **Roboto** — Geometric sans-serif; Regular, Bold, Italic, Bold Italic, Condensed (×4) (Google, Apache-2.0)
+- **Source Serif 4** — Transitional serif; Regular, Bold, Italic, Bold Italic (Adobe, OFL-1.1)
+- **Courier Prime** — Typewriter-style monospace; Regular, Bold, Italic, Bold Italic (Quote-Unquote Apps, OFL-1.1)
+- **Noto Sans JP** / **Noto Serif JP** — Japanese, regular and bold (Google, OFL-1.1)
+- **Noto Sans KR** / **Noto Serif KR** — Korean, regular and bold (Google, OFL-1.1)
+- **Noto Sans SC** / **Noto Serif SC** — Chinese Simplified, regular and bold (Google, OFL-1.1)
+
+**Included fonts (bundled in git):**
+- **[Erratic Cursive](https://www.fontspace.com/erratic-cursive-font-f121261)** — Handwritten cursive with irregular letterforms (GGBotNet, CC0-1.0)
+- **[Gib Font Plox](https://www.fontspace.com/gib-font-plox-f22438)** — Stylized display font (Cannot Into Space Fonts, Public Domain)
+- **[Public Pixel](https://www.fontspace.com/public-pixel-font-f72305)** — Bitmap pixel font (GGBotNet, CC0-1.0)
+- **[Scabber](https://www.fontspace.com/scabber-font-f140130)** — Casual hand-drawn typeface (GGBotNet, CC0-1.0)
 
 ---
 
@@ -136,8 +159,8 @@ paper:
 ## Obtaining Resources
 
 ### Fonts
-- **Noto Fonts**: https://fonts.google.com/noto (free, open source)
-- **Google Fonts**: https://fonts.google.com/ (free)
+Fonts are managed via the manifest at `font/fonts.yaml`. Run `fetch_fonts.py`
+to download them. See the Fonts section above for details.
 
 ### Backgrounds & Paper
 - Create your own using photo editing software

@@ -1,0 +1,286 @@
+quality: [50, 95]
+landscape: 0.5
+short_size: [720, 1440]
+aspect_ratio: [1.0, 2.5]
+emit_quads: false
+min_bbox_area: 16
+# Minimum WCAG-proxy contrast ratio across all text lines (10th vs 90th percentile
+# grayscale luminance). Samples below this threshold are discarded at save time.
+# WCAG AA = 4.5, WCAG A = 3.0. Set to 1.5 as a backstop; the primary guard is
+# moving shadow to bg_effect so it cannot collapse text-vs-paper contrast.
+min_contrast_ratio: 1.5
+# Per-sample save filters — permissive defaults preserve current behaviour.
+# Tighten to discard low-quality samples at generation time.
+min_word_count: 5                    # minimum words required to save a sample
+max_textbox_null_frac: 0.95          # discard if >X fraction of textbox slots were empty
+min_line_height_px: 15.0             # discard if any line renders below X pixels tall
+min_sharpness: 10.0                  # discard if Laplacian variance < X (blur detection)
+max_intra_block_line_overlap: 0.95   # discard if within-column row bleeding exceeds X
+max_cross_block_line_overlap: 0.50   # discard if zone-vs-body spatial collision exceeds X
+
+background:
+  image:
+    paths: [resources/background]
+    weights: [1]
+
+  effect:
+    args:
+      # gaussian blur
+      - prob: 1
+        args:
+          sigma: [0, 10]
+
+document:
+  fullscreen: 0.5
+  landscape: 0.5
+  short_size: [480, 1440]
+  aspect_ratio: [1.0, 2.5]
+
+  paper:
+    color:
+      prob: 0.5
+      rgb: [[0, 255], [0, 255], [0, 255]]
+    image:
+      paths: [resources/paper]
+      weights: [1]
+      alpha: [0, 0.2]
+      grayscale: 1
+      crop: 1
+    stain:
+      prob: 0.15
+      args:
+        count: [1, 3]
+        size: [0.03, 0.12]    # fraction of min(H,W)
+        alpha: [0.05, 0.20]
+        color_r: [110, 180]
+        color_g: [80, 140]
+        color_b: [50, 110]
+
+  content:
+    margin: [0, 0.1]
+    font:
+      weights: [1]
+      bold: 0
+    layout:
+      text_scale: [0.0334, 0.1]
+      max_row: 10
+      max_col: 3
+      fill: [0.5, 1]
+      full: 0.1
+      align: [left, right, center]
+      stack_spacing: [0.02, 0.06]
+      stack_fill: [0.5, 1]
+      stack_full: 0.1
+    textbox:
+      fill: [0.5, 1]
+    # Text color has two mutually exclusive modes:
+    #   content_color: fires first; if it fires, all lines share one color (uniform document look).
+    #   textbox_color: only fires when content_color does not; each line gets its own shade (varied look).
+    # textbox_color prob=1.0 makes per-line variation the default when content_color does not fire.
+    # On dark backgrounds both are forced to prob=1.0, so content_color always wins (uniform light text).
+    textbox_color:
+      prob: 1.0
+      args:
+        colorize: 1
+    content_color:
+      prob: 0.2
+      args:
+        colorize: 1
+    # TextSprinkle — printer registration jitter, anti-aliasing artifacts
+    text_sprinkle:
+      prob: 0.3
+      args:
+        prob: [0.05, 0.15]
+        offset: [-1, 1]
+
+    # ── Complex layout zones ──────────────────────────────────────────────────
+    # All zone text_scale values are relative to min(canvas_w, canvas_h).
+
+    # Page header (thin strip at top of layout area)
+    page_header:
+      prob: 0.25
+      height: [0.06, 0.10]        # fraction of canvas height
+      text_scale: [0.040, 0.070]  # smaller than body [0.0334, 0.1] but still legible
+      max_col: 3
+
+    # Page footer (thin strip at bottom of layout area)
+    page_footer:
+      prob: 0.30
+      height: [0.06, 0.10]
+      text_scale: [0.040, 0.070]
+      max_col: 3
+      page_number:
+        prob: 0.50              # when footer fires, 50% chance it becomes a page number
+
+    # Section heading (first zone of body, larger font)
+    section_heading:
+      prob: 0.30
+      text_scale: [0.06, 0.12]    # relative to min(canvas_w, canvas_h); kept proportional to zone height
+      height: [0.08, 0.16]        # fraction of body height (wider zone so large font has room)
+      max_col: 1                  # full-width single column — headings don't split into narrow cells
+
+    # Footnote zone (bottom of body, smaller font)
+    footnote:
+      prob: 0.20
+      height: [0.08, 0.15]
+      text_scale: [0.035, 0.060]
+      max_col: 1                  # footnotes are typically single-column
+
+  effect:
+    args:
+      # elastic distortion (index 0, extracted separately)
+      - prob: 1
+        args:
+          alpha: [0, 1]
+          sigma: [0, 0.5]
+      # gaussian noise (index 1)
+      - prob: 1
+        args:
+          scale: [0, 8]
+          per_channel: 0
+      # erode — worn/faded strokes (index 2)
+      - prob: 0.15
+        args:
+          k: [1, 2]
+      # dilate — ink bleed (index 3)
+      - prob: 0.15
+        args:
+          k: [1, 2]
+      # coarse dropout — ink dropout, scanning holes (index 4)
+      # size_percent is the mask downscale factor; block_size ≈ 1/size_percent px.
+      # 0.05 → ~20px blocks, 0.2 → ~5px blocks.
+      - prob: 0.2
+        args:
+          p: [0.003, 0.015]
+          size_percent: [0.05, 0.2]
+          per_channel: 0
+      # perspective (index 5)
+      - prob: 1
+        args:
+          weights: [750, 50, 50, 25, 25, 25, 25, 50]
+          args:
+            - percents: [[0.75, 1], [0.75, 1], [0.75, 1], [0.75, 1]]
+            - percents: [[0.75, 1], [1, 1], [0.75, 1], [1, 1]]
+            - percents: [[1, 1], [0.75, 1], [1, 1], [0.75, 1]]
+            - percents: [[0.75, 1], [1, 1], [1, 1], [1, 1]]
+            - percents: [[1, 1], [0.75, 1], [1, 1], [1, 1]]
+            - percents: [[1, 1], [1, 1], [0.75, 1], [1, 1]]
+            - percents: [[1, 1], [1, 1], [1, 1], [0.75, 1]]
+            - percents: [[1, 1], [1, 1], [1, 1], [1, 1]]
+
+# Applied to the background layer only, BEFORE compositing paper and text.
+# Shadow here is environmental (depth/atmosphere); it cannot darken the paper
+# or text and therefore cannot collapse text-vs-paper contrast.
+bg_effect:
+  args:
+    # shadow
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+
+# Applied to the merged document layer (paper + text), BEFORE compositing with bg.
+# Weaker than the original shadow to restore page-level depth while limiting
+# contrast collapse. The backstop in save() catches remaining failures.
+doc_effect:
+  args:
+    # shadow
+    - prob: 1
+      args:
+        intensity: [0, 80]
+        amount: [0, 0.5]
+        smoothing: [0.5, 1]
+        bidirectional: 0
+
+effect:
+  args:
+    # color (0)
+    - prob: 0.2
+      args:
+        rgb: [[0, 255], [0, 255], [0, 255]]
+        alpha: [0, 0.2]
+    # grayscale (1) — B&W scanning
+    - prob: 0.05
+      args: {}
+    # contrast (2)
+    - prob: 1
+      args:
+        alpha: [1, 1.5]
+    # brightness (3)
+    - prob: 1
+      args:
+        beta: [-32, 32]
+    # motion blur (4)
+    - prob: 0.5
+      args:
+        k: [3, 5]
+        angle: [0, 360]
+    # gaussian blur (5)
+    - prob: 1
+      args:
+        sigma: [0, 1.5]
+    # resample (6) — low-DPI, fax resolution loss
+    - prob: 0.2
+      args:
+        size: [0.4, 0.7]
+    # jpeg compression (7) — compression artifacts, photocopier
+    - prob: 0.3
+      args:
+        compression: [10, 40]
+
+# Whole-page skew — simulates a misaligned document in a scanner
+skew:
+  prob: 0.3
+  angle: [-3, 3]
+
+# ── Tier 3 physical noise effects ──────────────────────────────────────────
+
+book_spine_shadow:
+  prob: 0.25
+  args:
+    side: random        # left | right | random
+    intensity: [30, 100]
+    width: [0.05, 0.20]
+
+fold_crease:
+  prob: 0.15
+  args:
+    count: [1, 2]
+    orientation: random # horizontal | vertical | diagonal | random
+    width: [1, 4]       # half-width in pixels
+    intensity: [10, 45]
+
+moire:
+  prob: 0.10
+  args:
+    frequency: [0.02, 0.06]  # cycles per pixel
+    angle: [0, 90]
+    alpha: [0.05, 0.15]      # moiré overlay intensity (0 = invisible, 1 = full darkening)
+
+low_toner_streaks:
+  prob: 0.15
+  args:
+    orientation: random
+    count: [1, 4]
+    width: [3, 20]
+    intensity: [0.05, 0.20]
+
+vignetting:
+  prob: 0.30
+  args:
+    intensity: [30, 80]
+    shape: [1.5, 3.0]
+    mode: radial        # radial (rectangular not yet implemented)
+
+# Watermark / stamp overlay (global post-skew effect)
+watermark:
+  prob: 0.10
+  args:
+    words: [DRAFT, CONFIDENTIAL, COPY, VOID, SAMPLE, APPROVED, RECEIVED]
+    font_path: resources/font/en/regular/NotoSans-Regular.ttf
+    font_size_frac: [0.12, 0.22]
+    alpha: [0.08, 0.25]
+    angle: [-45, 45]
+    color: [60, 60, 60]
