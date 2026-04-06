@@ -4,36 +4,188 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
-# Ensure Pillow compatibility patch is loaded before anything else
-try:
-    import pillow_compat
-except ImportError:
-    # If running as part of the package vs script, try relative import or assume it's already patched
-    try:
-        from . import pillow_compat  # noqa: F401 (side-effect import)
-    except ImportError:
-        pass
+# When synthtiger loads this file directly (not as a package), the package
+# __init__.py never runs.  Ensure the package root is on sys.path so that
+# sibling modules (pillow_compat, serialization, elements, …) can always
+# be imported with plain bare imports.
+import sys
+from pathlib import Path
 
-import json
-import os
-import re
-from collections import defaultdict
-from typing import Any
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-import numpy as np
-from PIL import Image
-from synthtiger import components, layers, templates
+import pillow_compat  # noqa: E402, F401, I001
 
-from elements import Background, Document
+import copy  # noqa: E402
+import hashlib  # noqa: E402
+import json  # noqa: E402
+import math  # noqa: E402
+import os  # noqa: E402
+import re  # noqa: E402
+from typing import Any  # noqa: E402
+
+import numpy as np  # noqa: E402
+import yaml  # noqa: E402
+from PIL import Image  # noqa: E402
+from synthtiger import components, layers, templates  # noqa: E402
+
+from annotations import build_annotations, compute_quality_metrics  # noqa: E402
+from effects.physical import (  # noqa: E402
+    BookSpineShadowEffect,
+    FoldCreaseEffect,
+    LowTonerStreakEffect,
+    MoireOverlayEffect,
+    VignettingEffect,
+    WatermarkEffect,
+    apply_if_enabled,
+)
+from elements import Background, Document  # noqa: E402
+from serialization import (  # noqa: E402
+    KEY_QUALITY_METRICS,
+    KEY_TEXT_BLOCKS,
+    KEY_TEXT_LINES,
+    KEY_TEXT_WORDS,
+    QUALITY_FILTER_DEFAULTS,
+    SPLITS,
+    LineAnnotation,
+    block_annotation_to_dict,
+    encode_metadata,
+    line_annotation_to_dict,
+    word_annotation_to_dict,
+)
+
+
+def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
+    """Resolve relative resource paths in config to absolute paths.
+
+    SynthTiger's BaseTexture and BaseFont resolve paths via os.path.exists()
+    during __init__.  When the CLI spawns worker processes, the child's cwd
+    may differ from the parent's, breaking relative paths.  Resolving them
+    here (in the main process, where cwd is correct) makes the config
+    portable across processes.
+    """
+    config = copy.deepcopy(config)
+
+    def _resolve(node):
+        if isinstance(node, dict):
+            if "paths" in node and isinstance(node["paths"], list):
+                node["paths"] = [str((base_dir / p).resolve()) if not os.path.isabs(p) else p for p in node["paths"]]
+            if "path" in node and isinstance(node["path"], str):
+                if not os.path.isabs(node["path"]):
+                    node["path"] = str((base_dir / node["path"]).resolve())
+            if "font_path" in node and isinstance(node["font_path"], str):
+                if not os.path.isabs(node["font_path"]):
+                    node["font_path"] = str((base_dir / node["font_path"]).resolve())
+            for v in node.values():
+                _resolve(v)
+        elif isinstance(node, list):
+            for item in node:
+                _resolve(item)
+
+    _resolve(config)
+    return config
+
+
+def _deep_merge(base: dict, overlay: dict) -> dict:
+    """Recursively merge *overlay* into a deep copy of *base*.
+
+    Scalar / list values in *overlay* replace those in *base*;
+    nested dicts are merged recursively.
+    """
+    merged = copy.deepcopy(base)
+    for key, value in overlay.items():
+        if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
+            merged[key] = _deep_merge(merged[key], value)
+        else:
+            merged[key] = copy.deepcopy(value)
+    return merged
+
+
+def _package_data(
+    *,
+    image: np.ndarray,
+    label: str,
+    quality: int,
+    roi: np.ndarray,
+    lines: list[LineAnnotation],
+    words: list,
+    blocks: list,
+    quality_metrics: dict,
+    emit_quads: bool,
+) -> dict[str, Any]:
+    """Assemble the final data dict returned by generate()."""
+    data: dict[str, Any] = {
+        "image": image,
+        "label": label,
+        "quality": quality,
+        "roi": roi,
+        "lines": lines,
+        "words": words,
+        "blocks": blocks,
+        "quality_metrics": quality_metrics,
+    }
+
+    if emit_quads:
+        data["text_quads"] = [ln.quad for ln in lines]
+
+    return data
+
+
+def _check_font_dirs(config: dict) -> None:
+    """Raise if any configured font directory is empty (no .ttf/.otf files)."""
+    font_cfg = config.get("document", {}).get("content", {}).get("font", {})
+    for font_dir in font_cfg.get("paths", []):
+        p = Path(font_dir)
+        if not p.is_dir():
+            continue
+        has_fonts = any(p.glob("*.ttf")) or any(p.glob("*.otf"))
+        if not has_fonts:
+            raise FileNotFoundError(
+                f"No font files found in {p}.\n"
+                f"Run 'uv run python fetch_fonts.py' from the synthdog_grounding/ "
+                f"directory to download the required fonts."
+            )
+
+
+def _rotate_point(px, py, cx, cy, angle_deg):
+    """Rotate (px, py) around (cx, cy) by angle_deg degrees."""
+    rad = math.radians(angle_deg)
+    cos_a, sin_a = math.cos(rad), math.sin(rad)
+    dx, dy = px - cx, py - cy
+    return cx + dx * cos_a - dy * sin_a, cy + dx * sin_a + dy * cos_a
+
+
+def _rotate_quad(quad, cx, cy, angle_deg):
+    return [list(_rotate_point(p[0], p[1], cx, cy, angle_deg)) for p in quad]
 
 
 class SynthDoG(templates.Template):
-    def __init__(self, config=None, split_ratio: list[float] = None):
+    def __init__(self, config=None, split_ratio: list[float] | None = None):
         super().__init__(config)
         if config is None:
             config = {}
+
+        # Deep-copy so we never mutate the caller's dict — SynthTiger
+        # passes the same config object to multiple read_template() calls.
+        config = copy.deepcopy(config)
+
+        # Resolve _base inheritance
+        if "_base" in config:
+            base_path = Path(config.pop("_base"))
+            if not base_path.is_absolute():
+                base_path = Path(__file__).resolve().parent / base_path
+            with open(base_path, encoding="utf-8") as f:
+                base_config = yaml.safe_load(f)
+            config = _deep_merge(base_config, config)
+
+        # Resolve relative resource paths to absolute so that SynthTiger
+        # worker processes (which may have a different cwd) can find them.
+        config = _resolve_config_paths(config, Path(__file__).resolve().parent)
+
+        # Verify font directories aren't empty before proceeding.
+        _check_font_dirs(config)
+
         if split_ratio is None:
-            split_ratio = [0.8, 0.1, 0.1]
+            split_ratio = config.get("split_ratio", [0.8, 0.1, 0.1])
 
         self.quality = config.get("quality", [50, 95])
         self.landscape = config.get("landscape", 0.5)
@@ -41,22 +193,112 @@ class SynthDoG(templates.Template):
         self.aspect_ratio = config.get("aspect_ratio", [1, 2])
         self.background = Background(config.get("background", {}))
         self.document = Document(config.get("document", {}))
+        self.emit_quads = config.get("emit_quads", False)
+        self.min_bbox_area = config.get("min_bbox_area", 16)
+        self.min_contrast_ratio: float = float(config.get("min_contrast_ratio", 3.0))
+        _fd = {k: v for k, _op, v in QUALITY_FILTER_DEFAULTS}
+        self.min_word_count: int = int(config.get("min_word_count", _fd["word_count"]))
+        self.max_textbox_null_frac: float = float(config.get("max_textbox_null_frac", _fd["textbox_null_frac"]))
+        self.min_line_height_px: float = float(config.get("min_line_height_px", _fd["min_line_height_px"]))
+        self.min_sharpness: float = float(config.get("min_sharpness", _fd["sharpness"]))
+        self.max_intra_block_line_overlap: float = float(
+            config.get("max_intra_block_line_overlap", _fd["max_intra_block_line_overlap"])
+        )
+        self.max_cross_block_line_overlap: float = float(
+            config.get("max_cross_block_line_overlap", _fd["max_cross_block_line_overlap"])
+        )
+        # Shadow applied to bg layer only, before merge
+        self.bg_effect = components.Iterator(
+            [components.Switch(components.Shadow())],
+            **config.get("bg_effect", {}),
+        )
+        # Weaker shadow applied to the merged document layer (paper + text),
+        # before compositing with bg. Restores page-level shadow depth while
+        # keeping intensity low enough that the contrast backstop rarely fires.
+        self.doc_effect = components.Iterator(
+            [components.Switch(components.Shadow())],
+            **config.get("doc_effect", {}),
+        )
         self.effect = components.Iterator(
             [
                 components.Switch(components.RGB()),
-                components.Switch(components.Shadow()),
+                components.Switch(components.Grayscale()),
                 components.Switch(components.Contrast()),
                 components.Switch(components.Brightness()),
                 components.Switch(components.MotionBlur()),
                 components.Switch(components.GaussianBlur()),
+                components.Switch(components.Resample()),
+                components.Switch(components.JpegCompression()),
             ],
             **config.get("effect", {}),
         )
 
+        self.skew_angle: tuple = config.get("skew", {}).get("angle", [0, 0])
+        self.skew_prob: float = config.get("skew", {}).get("prob", 0.0)
+
+        self.vignetting_cfg = config.get("vignetting", {})
+        self.book_spine_cfg = config.get("book_spine_shadow", {})
+        self.fold_crease_cfg = config.get("fold_crease", {})
+        self.low_toner_cfg = config.get("low_toner_streaks", {})
+        self.moire_cfg = config.get("moire", {})
+        self.watermark_cfg = config.get("watermark", {})
+
         # config for splits
-        self.splits = ["train", "validation", "test"]
-        self.split_ratio = split_ratio
-        self.split_indexes = np.random.choice(3, size=10000, p=split_ratio)
+        self.splits = SPLITS
+        if any(r < 0 for r in split_ratio):
+            raise ValueError(f"split_ratio values must be non-negative, got {split_ratio}")
+        ratio_sum = sum(split_ratio)
+        if not (0.99 <= ratio_sum <= 1.01):
+            raise ValueError(f"split_ratio must sum to 1.0 (got {ratio_sum})")
+        self.split_ratio = [r / ratio_sum for r in split_ratio]
+        self._split_thresholds = np.cumsum(self.split_ratio)
+
+    def __del__(self):
+        if hasattr(self, "document"):
+            self.document.close()
+
+    def _render(
+        self,
+        document_group,
+        bg_layer,
+        size: tuple[int, int],
+    ) -> np.ndarray:
+        """Merge layers, apply effects, and rasterize to a numpy array."""
+        # Apply shadow to background only.
+        self.bg_effect.apply([bg_layer])
+        # Merge paper + text into a single doc layer, then apply a weaker shadow
+        # for page-level depth. This partially affects text-vs-paper contrast but
+        # at reduced intensity; the backstop in save() catches any failures.
+        doc_layer = document_group.merge()
+        self.doc_effect.apply([doc_layer])
+        # Apply doc-layer physical effects (operate on the paper+text composite,
+        # before compositing with the background).
+        doc_img = np.clip(doc_layer.image, 0, 255).astype(np.uint8)
+        doc_img = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, doc_img)
+        doc_img = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, doc_img)
+        doc_layer.image = doc_img.astype(np.float32)
+        layer = layers.Group([doc_layer, bg_layer]).merge()
+        # Apply elastic distortion to the composited image. This runs *after*
+        # annotations are captured from per-layer quads, so saved bboxes reflect
+        # the pre-distortion geometry.
+        #
+        # Empirical analysis (SYNTHDOG-VALIDATION.md Thread 11, n=50) confirmed this
+        # misalignment is negligible with config params alpha=[0,1], sigma=[0,0.5]:
+        #   mean pixel delta   1.4  (vs motion blur 2.6,  Gaussian blur 2.1)
+        #   p95 pixel delta   10.1  (vs motion blur 24.1, Gaussian blur 27.5)
+        #   centroid drift     2.3px (vs motion blur 2.6px, Gaussian blur 2.2px)
+        #   text coverage      0.90  (vs motion blur 0.92, Gaussian blur 0.93)
+        # Elastic distortion is at or below the level of the blur effects that are
+        # also applied post-annotation, so no fix is warranted.
+        self.document.elastic_distortion.apply([layer])
+        self.effect.apply([layer])
+        result = layer.output(bbox=[0, 0, *size])
+        # Global physical effects applied to the final composite: moiré → streaks → watermark → vignetting
+        result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
+        result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
+        result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
+        result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
+        return result
 
     def generate(self):
         landscape = np.random.rand() < self.landscape
@@ -66,7 +308,16 @@ class SynthDoG(templates.Template):
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
         bg_layer = self.background.generate(size)
-        paper_layer, text_layers, texts, block_ids, words_per_line = self.document.generate(size)
+        (
+            paper_layer,
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+        ) = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
         document_space = np.clip(size - document_group.size, 0, None)
@@ -74,129 +325,127 @@ class SynthDoG(templates.Template):
         document_group.top = np.random.randint(document_space[1] + 1)
         roi = np.array(paper_layer.quad, dtype=int)
 
-        # Capture bounding boxes after effects are applied to text layers
-        text_bboxes = []
+        skew_angle = 0.0
+        if np.random.rand() < self.skew_prob:
+            skew_angle = float(np.random.uniform(self.skew_angle[0], self.skew_angle[1]))
+            cx = document_group.left + document_group.width / 2
+            cy = document_group.top + document_group.height / 2
+            for layer in [*text_layers, paper_layer]:
+                layer.quad = _rotate_quad(layer.quad, cx, cy, skew_angle)
+
         image_width, image_height = size
-        for i, text_layer in enumerate(text_layers):
-            # Get the bounding box as [x1, y1, x2, y2] normalized coordinates
-            x1 = text_layer.left / image_width
-            y1 = text_layer.top / image_height
-            x2 = (text_layer.left + text_layer.width) / image_width
-            y2 = (text_layer.top + text_layer.height) / image_height
 
-            # Round to 3 decimal places
-            bbox = [round(x1, 3), round(y1, 3), round(x2, 3), round(y2, 3)]
-            text_bboxes.append(bbox)
+        lines, words, blocks, deg_line_ct, deg_word_ct = build_annotations(
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            image_width,
+            image_height,
+            self.emit_quads,
+            self.min_bbox_area,
+            block_region_types=block_region_types,
+        )
 
-        # Build block-level bboxes from line bboxes
-        block_to_lines = defaultdict(list)
-        for i, bid in enumerate(block_ids):
-            block_to_lines[bid].append(i)
+        image = self._render(document_group, bg_layer, size)
 
-        text_blocks = []
-        for bid, line_indices in sorted(block_to_lines.items()):
-            bboxes = [text_bboxes[i] for i in line_indices]
-            bx1 = min(b[0] for b in bboxes)
-            by1 = min(b[1] for b in bboxes)
-            bx2 = max(b[2] for b in bboxes)
-            by2 = max(b[3] for b in bboxes)
-            text_blocks.append(
-                {
-                    "block_id": bid,
-                    "bbox": [round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
-                    "line_ids": line_indices,
-                }
-            )
+        quality_metrics = compute_quality_metrics(
+            image,
+            lines,
+            words,
+            image_width,
+            image_height,
+            deg_line_ct,
+            deg_word_ct,
+            textbox_null_count,
+            textbox_total_count,
+        )
+        quality_metrics["skew_angle"] = round(skew_angle, 3)
 
-        # Compute absolute word bboxes using ratios interpolated into final line bbox
-        text_words = []
-        word_global_id = 0
-        for line_idx, (text_layer, word_local_data) in enumerate(zip(text_layers, words_per_line)):
-            lx = text_layer.left
-            ly = text_layer.top
-            lw = text_layer.width
-            lh = text_layer.height
-            for word in word_local_data:
-                wx1 = round((lx + word["x1_ratio"] * lw) / image_width, 3)
-                wy1 = round(ly / image_height, 3)
-                wx2 = round((lx + word["x2_ratio"] * lw) / image_width, 3)
-                wy2 = round((ly + lh) / image_height, 3)
-                text_words.append(
-                    {
-                        "text": word["text"],
-                        "bbox": [wx1, wy1, wx2, wy2],
-                        "word_id": word_global_id,
-                        "line_id": line_idx,
-                    }
-                )
-                word_global_id += 1
-
-        layer = layers.Group([*document_group.layers, bg_layer]).merge()
-        self.effect.apply([layer])
-
-        image = layer.output(bbox=[0, 0, *size])
-        label = " ".join(texts)
-        label = label.strip()
-        label = re.sub(r"\s+", " ", label)
+        label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
 
-        data = {
-            "image": image,
-            "label": label,
-            "quality": quality,
-            "roi": roi,
-            "text_lines": texts,
-            "text_bboxes": text_bboxes,
-            "block_ids": block_ids,
-            "text_blocks": text_blocks,
-            "text_words": text_words,
-        }
-
-        return data
+        return _package_data(
+            image=image,
+            label=label,
+            quality=quality,
+            roi=roi,
+            lines=lines,
+            words=words,
+            blocks=blocks,
+            quality_metrics=quality_metrics,
+            emit_quads=self.emit_quads,
+        )
 
     def init_save(self, root):
-        if not os.path.exists(root):
-            os.makedirs(root, exist_ok=True)
+        os.makedirs(root, exist_ok=True)
 
     def save(self, root, data, idx):
-        image = data["image"]
-        data["label"]
-        quality = data["quality"]
-        data["roi"]
-        text_lines = data.get("text_lines", [])
-        text_bboxes = data.get("text_bboxes", [])
-        block_ids = data.get("block_ids", [])
-        text_blocks = data.get("text_blocks", [])
-        text_words = data.get("text_words", [])
+        lines: list[LineAnnotation] = data.get("lines", [])
+        if not lines:
+            return
 
-        # split
-        split_idx = self.split_indexes[idx % len(self.split_indexes)]
+        quality_metrics = data.get("quality_metrics", {})
+        min_contrast = quality_metrics.get("min_line_contrast_ratio")
+        if min_contrast is not None and min_contrast < self.min_contrast_ratio:
+            return
+
+        if quality_metrics.get("word_count", 0) < self.min_word_count:
+            return
+
+        null_frac = quality_metrics.get("textbox_null_frac", 0.0) or 0.0
+        if null_frac > self.max_textbox_null_frac:
+            return
+
+        min_h = quality_metrics.get("min_line_height_px")
+        if min_h is not None and min_h < self.min_line_height_px:
+            return
+
+        sharpness = quality_metrics.get("sharpness")
+        if sharpness is not None and sharpness < self.min_sharpness:
+            return
+
+        max_overlap = quality_metrics.get("max_intra_block_line_overlap")
+        if max_overlap is not None and max_overlap > self.max_intra_block_line_overlap:
+            return
+
+        cross_overlap = quality_metrics.get("max_cross_block_line_overlap")
+        if cross_overlap is not None and cross_overlap > self.max_cross_block_line_overlap:
+            return
+
+        image = data["image"]
+        quality = data["quality"]
+        words = data.get("words", [])
+        blocks = data.get("blocks", [])
+
+        # Content-based split: hash the label so the same text always lands
+        # in the same split regardless of generation order or worker count.
+        label_hash = int(hashlib.sha256(data["label"].encode()).hexdigest()[:16], 16)
+        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random()))
         output_dirpath = os.path.join(root, self.splits[split_idx])
 
         # save image
         image_filename = f"image_{idx}.jpg"
         image_filepath = os.path.join(output_dirpath, image_filename)
         os.makedirs(os.path.dirname(image_filepath), exist_ok=True)
-        image = Image.fromarray(image[..., :3].astype(np.uint8))
+        image = Image.fromarray(np.clip(image[..., :3], 0, 255).astype(np.uint8))
         image.save(image_filepath, quality=quality)
 
-        # save metadata (gt_json)
+        # save metadata
         metadata_filename = "metadata.jsonl"
         metadata_filepath = os.path.join(output_dirpath, metadata_filename)
-        os.makedirs(os.path.dirname(metadata_filepath), exist_ok=True)
 
-        # Create structured data for text lines with bboxes and block_id
-        text_lines_data = []
-        for i, (text, bbox) in enumerate(zip(text_lines, text_bboxes)):
-            entry = {"text": text, "bbox": bbox, "line_id": i}
-            if i < len(block_ids):
-                entry["block_id"] = block_ids[i]
-            text_lines_data.append(entry)
+        text_lines_data = [line_annotation_to_dict(ln) for ln in lines]
+        text_words_data = [word_annotation_to_dict(wd) for wd in words]
+        text_blocks_data = [block_annotation_to_dict(b) for b in blocks]
+
+        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
+        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics]
 
         metadata = self.format_metadata(
             image_filename=image_filename,
-            keys=["text_lines", "text_bboxes", "text_blocks", "text_words"],
-            values=[text_lines_data, text_bboxes, text_blocks, text_words],
+            keys=keys,
+            values=values,
         )
         with open(metadata_filepath, "a") as fp:
             json.dump(metadata, fp, ensure_ascii=False)
@@ -205,7 +454,7 @@ class SynthDoG(templates.Template):
     def end_save(self, root):
         pass
 
-    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]):
+    def format_metadata(self, image_filename: str, keys: list[str], values: list[Any]) -> dict[str, str]:
         """
         Fit gt_parse contents to huggingface dataset's format
         keys and values, whose lengths are equal, are used to constrcut 'gt_parse' field in 'ground_truth' field
@@ -213,12 +462,4 @@ class SynthDoG(templates.Template):
             keys: List of task_name
             values: List of actual gt data corresponding to each task_name
         """
-        assert len(keys) == len(values), f"Length does not match: keys({len(keys)}), values({len(values)})"
-
-        _gt_parse_v = dict()
-        for k, v in zip(keys, values):
-            _gt_parse_v[k] = v
-        gt_parse = {"gt_parse": _gt_parse_v}
-        gt_parse_str = json.dumps(gt_parse, ensure_ascii=False)
-        metadata = {"file_name": image_filename, "ground_truth": gt_parse_str}
-        return metadata
+        return encode_metadata(image_filename, keys, values)
