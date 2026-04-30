@@ -1,4 +1,5 @@
 """Generate prompts for OCR training from structured data and task definitions."""
+# Schema reference: https://github.com/Roots-Automation/roots-ocr/blob/main/docs/internal-data/training-json-sidecar.md
 
 import random
 from pathlib import Path
