@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "table-generation"
+version = "0.1.0"
+description = "Synthetic table image generator with OTSL structure annotations"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Roots Automation"},
+]
+requires-python = ">=3.10"
+dependencies = [
+    "pillow>=10.0",
+    "numpy>=1.24",
+    "tqdm>=4.65",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[project.scripts]
+table-generate = "generate:main"
+table-package = "packaging:main"
+
+[project.urls]
+"Homepage" = "https://github.com/Roots-Automation/GutenOCR"
+"Bug Tracker" = "https://github.com/Roots-Automation/GutenOCR/issues"
+
+[tool.setuptools.packages.find]
+include = ["table_generation*"]
+
+[tool.setuptools.package-data]
+"*" = ["resources/*.json"]
