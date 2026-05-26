@@ -33,27 +33,21 @@ class TestStructureToOtsl:
 
     def test_colspan_produces_xcel(self):
         # 1×2 table with a single colspan=2 cell
-        s = TableStructure(
-            rows=1, cols=2, spans=[Span(row=0, col=0, rowspan=1, colspan=2)]
-        )
+        s = TableStructure(rows=1, cols=2, spans=[Span(row=0, col=0, rowspan=1, colspan=2)])
         grid = [["Header", ""]]
         otsl = structure_to_otsl(s, grid)
         assert otsl == "FCEL XCEL NL"
 
     def test_rowspan_produces_ycel(self):
         # 2×1 table with a single rowspan=2 cell
-        s = TableStructure(
-            rows=2, cols=1, spans=[Span(row=0, col=0, rowspan=2, colspan=1)]
-        )
+        s = TableStructure(rows=2, cols=1, spans=[Span(row=0, col=0, rowspan=2, colspan=1)])
         grid = [["A"], [""]]
         otsl = structure_to_otsl(s, grid)
         assert otsl == "FCEL NL YCEL NL"
 
     def test_2d_span_produces_xcel_and_ycel(self):
         # 2×2 with single 2×2 span
-        s = TableStructure(
-            rows=2, cols=2, spans=[Span(row=0, col=0, rowspan=2, colspan=2)]
-        )
+        s = TableStructure(rows=2, cols=2, spans=[Span(row=0, col=0, rowspan=2, colspan=2)])
         grid = [["A", ""], ["", ""]]
         otsl = structure_to_otsl(s, grid)
         tokens = otsl.split()

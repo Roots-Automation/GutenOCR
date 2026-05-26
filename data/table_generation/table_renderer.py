@@ -36,16 +36,12 @@ def _get_font(size: int) -> ImageFont.ImageFont:
         return ImageFont.truetype("DejaVuSans.ttf", size)
     except OSError:
         try:
-            return ImageFont.truetype(
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", size
-            )
+            return ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", size)
         except OSError:
             return ImageFont.load_default()
 
 
-def _measure_text(
-    draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont
-) -> tuple[int, int]:
+def _measure_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.ImageFont) -> tuple[int, int]:
     """Return (width, height) of rendered text."""
     bbox = draw.textbbox((0, 0), text, font=font)
     return bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -108,11 +104,7 @@ def render_table(
         for c in range(cols):
             if (r, c) in ext:
                 continue
-            text = (
-                content_grid[r][c]
-                if r < len(content_grid) and c < len(content_grid[r])
-                else ""
-            )
+            text = content_grid[r][c] if r < len(content_grid) and c < len(content_grid[r]) else ""
             if text:
                 tw, th = _measure_text(dummy_draw, text, font)
                 col_widths[c] = max(col_widths[c], tw + cell_padding * 2)
@@ -145,9 +137,7 @@ def render_table(
                 continue
 
             # Determine span extents
-            span_obj = next(
-                (s for s in structure.spans if s.row == r and s.col == c), None
-            )
+            span_obj = next((s for s in structure.spans if s.row == r and s.col == c), None)
             rowspan = span_obj.rowspan if span_obj else 1
             colspan = span_obj.colspan if span_obj else 1
 
@@ -184,11 +174,7 @@ def render_table(
                 draw.line([(x2, y1), (x2, y2)], fill=border_color)
 
             # Draw text and record bboxes
-            text = (
-                content_grid[r][c]
-                if r < len(content_grid) and c < len(content_grid[r])
-                else ""
-            )
+            text = content_grid[r][c] if r < len(content_grid) and c < len(content_grid[r]) else ""
             if text:
                 tx = x1 + cell_padding
                 ty = y1 + cell_padding
@@ -204,9 +190,7 @@ def render_table(
                 cursor_x = tx
                 for word in words:
                     ww, wh = _measure_text(draw, word, font)
-                    word_boxes.append(
-                        WordBox(text=word, box=[cursor_x, ty, cursor_x + ww, ty + wh])
-                    )
+                    word_boxes.append(WordBox(text=word, box=[cursor_x, ty, cursor_x + ww, ty + wh]))
                     # Advance by word width + one space
                     space_w, _ = _measure_text(draw, " ", font)
                     cursor_x += ww + space_w

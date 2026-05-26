@@ -63,9 +63,7 @@ def package_samples(
         return 0
 
     n_shards = ceil(total / samples_per_shard)
-    logger.info(
-        "%d samples → %d shard(s) of up to %d", total, n_shards, samples_per_shard
-    )
+    logger.info("%d samples → %d shard(s) of up to %d", total, n_shards, samples_per_shard)
 
     if dry_run:
         logger.info("Dry run — no files written.")
@@ -76,9 +74,7 @@ def package_samples(
 
     for shard_idx in range(n_shards):
         shard_path = output_dir / f"train-{shard_idx:05d}.tar"
-        batch = img_paths[
-            shard_idx * samples_per_shard : (shard_idx + 1) * samples_per_shard
-        ]
+        batch = img_paths[shard_idx * samples_per_shard : (shard_idx + 1) * samples_per_shard]
 
         with tarfile.open(shard_path, "w") as tf:
             for img_path in tqdm(batch, desc=f"Shard {shard_idx:05d}", leave=False):
@@ -103,19 +99,11 @@ def package_samples(
 
 
 def main() -> None:
-    logging.basicConfig(
-        level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s"
-    )
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    parser = argparse.ArgumentParser(
-        description="Package raw generated samples into tar shards."
-    )
-    parser.add_argument(
-        "raw_dir", type=Path, help="Directory containing .jpg + .json pairs."
-    )
-    parser.add_argument(
-        "output_dir", type=Path, help="Destination directory for tar shards."
-    )
+    parser = argparse.ArgumentParser(description="Package raw generated samples into tar shards.")
+    parser.add_argument("raw_dir", type=Path, help="Directory containing .jpg + .json pairs.")
+    parser.add_argument("output_dir", type=Path, help="Destination directory for tar shards.")
     parser.add_argument("--samples-per-shard", type=int, default=1000)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()

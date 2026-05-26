@@ -65,11 +65,7 @@ def structure_to_otsl(structure: TableStructure, content_grid: list[list[str]]) 
             if (r, c) in all_span_extensions:
                 tokens.append(XCEL if span_types[(r, c)] == "x" else YCEL)
             else:
-                text = (
-                    content_grid[r][c]
-                    if r < len(content_grid) and c < len(content_grid[r])
-                    else ""
-                )
+                text = content_grid[r][c] if r < len(content_grid) and c < len(content_grid[r]) else ""
                 tokens.append(FCEL if text.strip() else ECEL)
         tokens.append(NL)
 

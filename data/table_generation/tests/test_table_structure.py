@@ -19,9 +19,7 @@ class TestGenerateTableStructure:
     def test_dimensions_within_bounds(self):
         rng = _rng(1)
         for _ in range(50):
-            s = generate_table_structure(
-                rng, min_rows=2, max_rows=6, min_cols=2, max_cols=5
-            )
+            s = generate_table_structure(rng, min_rows=2, max_rows=6, min_cols=2, max_cols=5)
             assert 2 <= s.rows <= 6
             assert 2 <= s.cols <= 5
 
@@ -54,15 +52,11 @@ class TestGenerateTableStructure:
 
     def test_header_flag(self):
         rng = _rng(3)
-        results = [
-            generate_table_structure(rng, header_prob=1.0).has_header for _ in range(10)
-        ]
+        results = [generate_table_structure(rng, header_prob=1.0).has_header for _ in range(10)]
         assert all(results)
 
         rng = _rng(3)
-        results = [
-            generate_table_structure(rng, header_prob=0.0).has_header for _ in range(10)
-        ]
+        results = [generate_table_structure(rng, header_prob=0.0).has_header for _ in range(10)]
         assert not any(results)
 
     def test_border_style_is_valid(self):
