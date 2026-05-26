@@ -169,13 +169,13 @@ def generate_sample(
         json_path.write_text(json.dumps(_sidecar(image, img_name), ensure_ascii=False))
         written.extend([img_path, json_path])
 
-    _write(img, sample_id)
+    base_id = sample_id * (augment_count + 1) if augment else sample_id
+    _write(img, base_id)
 
     if augment:
         for i in range(augment_count):
             aug_img = augment_image(img, rng)
-            aug_id = sample_id * (augment_count + 1) + i + 1
-            _write(aug_img, aug_id)
+            _write(aug_img, base_id + i + 1)
 
     return written
 
