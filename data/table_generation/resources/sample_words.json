@@ -1,0 +1,40 @@
+{
+  "words": [
+    "Revenue", "Expenses", "Total", "Net", "Gross", "Balance", "Assets", "Liabilities",
+    "Income", "Loss", "Profit", "Cost", "Value", "Amount", "Price", "Rate", "Count",
+    "Number", "Percent", "Average", "Sum", "Min", "Max", "Mean", "Score", "Rank",
+    "Date", "Year", "Month", "Quarter", "Period", "Region", "Country", "City", "State",
+    "Name", "Code", "ID", "Type", "Category", "Group", "Class", "Level", "Status",
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    "Q1", "Q2", "Q3", "Q4", "FY", "YTD", "MTD", "WTD",
+    "North", "South", "East", "West", "Central", "Global", "Local", "National",
+    "Product", "Service", "Sales", "Marketing", "Finance", "Operations", "HR",
+    "Engineering", "Research", "Development", "Support", "Management", "Executive",
+    "Alpha", "Beta", "Gamma", "Delta", "Sigma", "Omega",
+    "Primary", "Secondary", "Tertiary", "Final", "Initial", "Current", "Previous",
+    "Budget", "Actual", "Forecast", "Variance", "Target", "Goal", "Plan",
+    "Units", "Kg", "Lbs", "Miles", "Km", "Hours", "Days", "Weeks", "Months",
+    "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+    "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
+    "Item", "Entry", "Record", "Row", "Column", "Field", "Header", "Footer",
+    "Sub", "Total", "Grand", "Overall", "Partial", "Full", "Half",
+    "First", "Second", "Third", "Fourth", "Fifth", "Last",
+    "High", "Low", "Medium", "Critical", "Normal", "Warning",
+    "Open", "Closed", "Pending", "Active", "Inactive", "Completed", "Cancelled",
+    "Yes", "No", "N/A", "TBD", "TBC",
+    "Description", "Notes", "Comments", "Remarks", "Details", "Summary",
+    "Approved", "Rejected", "Under", "Review", "Draft", "Final",
+    "Capital", "Labor", "Material", "Overhead", "Fixed", "Variable",
+    "Short", "Long", "Term", "Duration", "Frequency", "Interval"
+  ],
+  "numbers": [
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
+    "10", "25", "50", "75", "100", "150", "200", "500", "1000",
+    "0.5", "1.5", "2.5", "10.0", "25.0", "100.0",
+    "0%", "5%", "10%", "15%", "20%", "25%", "50%", "75%", "100%",
+    "$100", "$500", "$1,000", "$5,000", "$10,000",
+    "1.2M", "2.5M", "10M", "100M",
+    "+5%", "-3%", "+12%", "-8%"
+  ],
+  "symbols": ["-", "N/A", "*"]
+}
