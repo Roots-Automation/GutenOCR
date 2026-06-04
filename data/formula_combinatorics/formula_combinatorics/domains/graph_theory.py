@@ -5,105 +5,414 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, Template, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
-# Inline sub-generators
+# Slot pools
 # ---------------------------------------------------------------------------
 
-
-def _n_graph(rng: random.Random) -> str:
-    return rng.choice(["n", "m"])
-
+_GRAPH_POOL = ("G", "H", r"\Gamma", "D", "T")
+_VTX_POOL = ("u", "v", "w", "x", "y")
+_N_POOL = ("n", "m", "N", "M")
+_R_POOL = ("r", "s", "t", "k")
+_P_POOL = ("p", "q", r"\rho")
+_LAM_POOL = (
+    r"\lambda_1",
+    r"\lambda_2",
+    r"\lambda_n",
+    r"\lambda_{\min}",
+    r"\lambda_{\max}",
+)
 
 # ---------------------------------------------------------------------------
 # Graph theory templates
 # ---------------------------------------------------------------------------
 
 _GRAPH_THEORY_TEMPLATES: list[Template] = [
-    # c=0 — handshaking lemma (fixed)
+    # ------------------------------------------------------------------
+    # Part A: reparameterized originals
+    # ------------------------------------------------------------------
     Template(
         name="handshaking_lemma",
-        latex=r"\sum_{v \in V} \deg(v) = 2|E|",
-        slots={},
+        latex=r"\sum_{{v \in V({gg})}} \deg_{{{gg}}}(v) = 2|E({gg})|",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=1 — complete graph edge count
     Template(
         name="complete_graph_edges",
-        latex=r"|E(K_{{{n}}})| = \binom{{{n}}}{{2}} = \frac{{{n}({n}-1)}}{{2}}",
-        slots={"n": E(_n_graph, n=2)},
+        latex=(
+            r"|E(K_{{{nn}}})| = \binom{{{nn}}}{{2}}"
+            r" = \frac{{{nn}({nn}-1)}}{{2}}"
+        ),
+        slots={"nn": S(_N_POOL)},
     ),
-    # c=2 — chromatic number bound (fixed)
     Template(
         name="chromatic_number_bound",
-        latex=r"\chi(G) \leq \Delta(G) + 1",
-        slots={},
+        latex=r"\chi({gg}) \leq \Delta({gg}) + 1",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=3 — Euler's formula for planar graphs (fixed)
     Template(
         name="euler_planar_formula",
         latex=r"|V| - |E| + |F| = 2",
         slots={},
     ),
-    # c=4 — degree as neighbourhood size (fixed)
     Template(
         name="degree_definition",
-        latex=r"\deg(v) = |\{u \in V : \{u,v\} \in E\}|",
-        slots={},
+        latex=(
+            r"\deg_{{{gg}}}({vv})"
+            r" = |\{{{uu} \in V({gg}) : \{{{uu},{vv}\}} \in E({gg})\}}|"
+        ),
+        slots={"gg": S(_GRAPH_POOL), "vv": S(_VTX_POOL), "uu": X(_VTX_POOL, ("vv",))},
     ),
-    # c=5 — planar graph edge bound (fixed)
     Template(
         name="planar_edge_bound",
-        latex=r"|E| \leq 3|V| - 6",
-        slots={},
+        latex=r"|E({gg})| \leq 3|V({gg})| - 6",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=6 — connectivity inequality (fixed)
     Template(
         name="connectivity_inequality",
-        latex=r"\kappa(G) \leq \kappa'(G) \leq \delta(G)",
-        slots={},
+        latex=r"\kappa({gg}) \leq \kappa'({gg}) \leq \delta({gg})",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=7 — chromatic number of complete graph
     Template(
         name="chromatic_complete_graph",
-        latex=r"\chi(K_{{{n}}}) = {n}",
-        slots={"n": E(_n_graph, n=2)},
+        latex=r"\chi(K_{{{nn}}}) = {nn}",
+        slots={"nn": S(_N_POOL)},
     ),
-    # c=8 — independence number + vertex cover (fixed)
     Template(
         name="independence_vertex_cover",
-        latex=r"\alpha(G) + \tau(G) = |V|",
-        slots={},
+        latex=r"\alpha({gg}) + \tau({gg}) = |V({gg})|",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=9 — metric triangle inequality for graph distance (fixed)
     Template(
         name="graph_distance_triangle",
-        latex=r"d(u,v) \leq d(u,w) + d(w,v)",
-        slots={},
+        latex=r"d_{{{gg}}}({uu},{vv}) \leq d_{{{gg}}}({uu},{ww}) + d_{{{gg}}}({ww},{vv})",
+        slots={
+            "gg": S(_GRAPH_POOL),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+            "ww": X(_VTX_POOL, ("uu", "vv")),
+        },
     ),
-    # c=10 — spectral ordering of eigenvalues (fixed)
     Template(
         name="spectral_ordering",
-        latex=r"\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_n",
-        slots={},
+        latex=(
+            r"\lambda_1({gg}) \geq \lambda_2({gg})"
+            r" \geq \cdots \geq \lambda_{{{nn}}}({gg})"
+        ),
+        slots={"gg": S(_GRAPH_POOL), "nn": S(_N_POOL)},
     ),
-    # c=11 — degree sequence sum (fixed)
     Template(
         name="degree_sequence_sum",
-        latex=r"2|E| = \sum_{k \geq 0} k \cdot n_k",
-        slots={},
+        latex=r"2|E({gg})| = \sum_{{k \geq 0}} k \cdot n_k({gg})",
+        slots={"gg": S(_GRAPH_POOL)},
     ),
-    # c=12 — Ramsey bound (fixed)
     Template(
         name="ramsey_bound",
-        latex=r"R(s,t) \leq \binom{s+t-2}{s-1}",
-        slots={},
+        latex=r"R({ss},{tt}) \leq \binom{{{ss}+{tt}-2}}{{{ss}-1}}",
+        slots={"ss": S(_R_POOL), "tt": X(_R_POOL, ("ss",))},
     ),
-    # c=13 — Turán's theorem
     Template(
         name="turan_theorem",
-        latex=r"ex({n}, K_{{r+1}}) = \left(1 - \frac{{1}}{{r}}\right) \frac{{{n}^2}}{{2}}",
-        slots={"n": E(_n_graph, n=2)},
+        latex=(
+            r"\mathrm{{ex}}({nn}, K_{{{rr}+1}})"
+            r" = \Bigl(1 - \tfrac{{1}}{{{rr}}}\Bigr)\frac{{{nn}^2}}{{2}}"
+        ),
+        slots={"nn": S(_N_POOL), "rr": S(_R_POOL)},
+    ),
+    # ------------------------------------------------------------------
+    # Part B: new flat standalone templates
+    # ------------------------------------------------------------------
+    # Trees
+    Template(
+        name="tree_edge_count",
+        latex=r"|E({gg})| = |V({gg})| - 1",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="matrix_tree_theorem",
+        latex=r"\tau({gg}) = \det\!\bigl(L_{{ij}}({gg})\bigr)",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="cayley_formula",
+        latex=r"\tau(K_{{{nn}}}) = {nn}^{{{nn}-2}}",
+        slots={"nn": S(_N_POOL)},
+    ),
+    # Spectral
+    Template(
+        name="graph_laplacian_def",
+        latex=r"L({gg}) = D({gg}) - A({gg})",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="laplacian_eigenvalue_zero",
+        latex=r"\lambda_{{\min}}\!\bigl(L({gg})\bigr) = 0",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="fiedler_connectivity",
+        latex=(
+            r"\lambda_2\!\bigl(L({gg})\bigr) > 0"
+            r" \iff {gg} \text{{ is connected}}"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="adjacency_eigenvalue_bound",
+        latex=r"|{lam}(A({gg}))| \leq \Delta({gg})",
+        slots={"gg": S(_GRAPH_POOL), "lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="cheeger_inequality",
+        latex=(
+            r"\frac{{h({gg})^2}}{{2}}"
+            r" \leq \lambda_2(L({gg}))"
+            r" \leq 2\,h({gg})"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="path_count_adjacency",
+        latex=(
+            r"\bigl(A({gg})^{{{kk}}}\bigr)_{{{uu}{vv}}}"
+            r" = \#\text{{walks of length }}{kk}"
+            r" \text{{ from }}{uu}\text{{ to }}{vv}"
+        ),
+        slots={
+            "gg": S(_GRAPH_POOL),
+            "kk": S(_R_POOL),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
+    ),
+    # Colorings
+    Template(
+        name="chromatic_polynomial_def",
+        latex=r"P({gg}, k) = \#\text{{proper }}k\text{{-colorings of }}{gg}",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="edge_coloring_vizing",
+        latex=r"\chi'({gg}) \in \{{\Delta({gg}),\;\Delta({gg})+1\}}",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="brooks_theorem",
+        latex=(
+            r"\chi({gg}) \leq \Delta({gg})"
+            r" \text{{ for connected }}{gg}"
+            r" \text{{ not }}K_{{{nn}}}\text{{ or odd cycle}}"
+        ),
+        slots={"gg": S(_GRAPH_POOL), "nn": S(_N_POOL)},
+    ),
+    Template(
+        name="four_color_theorem",
+        latex=r"\chi({gg}) \leq 4 \text{{ for every planar }}{gg}",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    # Bipartite and matchings
+    Template(
+        name="bipartite_edge_bound",
+        latex=r"|E({gg})| \leq \left\lfloor \frac{{|V({gg})|^2}}{{4}} \right\rfloor",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="konig_theorem",
+        latex=r"\nu({gg}) = \tau({gg}) \quad \text{{({gg} bipartite)}}",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="hall_condition",
+        latex=(
+            r"{gg} \text{{ has a perfect matching}}"
+            r" \iff |N(S)| \geq |S|"
+            r" \;\forall\, S \subseteq A"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="matching_gallai",
+        latex=r"\nu({gg}) + \rho({gg}) = |V({gg})|",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    # Flows and cuts
+    Template(
+        name="max_flow_min_cut",
+        latex=(
+            r"\max_f \operatorname{{val}}(f)"
+            r" = \operatorname{{cap}}(S^*, T^*)"
+            r" \quad \text{{in }}{gg}"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="menger_theorem",
+        latex=(
+            r"\kappa({gg}) = \min_{{{uu},{vv}}}"
+            r" \lambda\!\bigl({gg};\,{uu},{vv}\bigr)"
+        ),
+        slots={
+            "gg": S(_GRAPH_POOL),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
+    ),
+    # Random graphs
+    Template(
+        name="erdos_renyi_degree",
+        latex=(
+            r"\mathbb{{E}}[\deg(v)]"
+            r" = ({nn}-1){pp}"
+            r" \quad \text{{in }}G({nn},{pp})"
+        ),
+        slots={"nn": S(_N_POOL), "pp": S(_P_POOL)},
+    ),
+    Template(
+        name="random_graph_connectivity_threshold",
+        latex=(
+            r"G({nn}, p)\text{{ is a.s.\ connected for }}"
+            r"p = \frac{{\ln {nn}}}{{{nn}}}"
+        ),
+        slots={"nn": S(_N_POOL)},
+    ),
+    # Clique / independence
+    Template(
+        name="clique_complement",
+        latex=r"\omega({gg}) = \alpha\!\left(\bar{{{gg}}}\right)",
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    Template(
+        name="ramsey_lower_bound",
+        latex=r"R(k,k) \geq 2^{{{kk}/2}}",
+        slots={"kk": S(_R_POOL)},
+    ),
+    # Diameter / radius
+    Template(
+        name="diameter_eccentricity",
+        latex=(
+            r"\operatorname{{diam}}({gg})"
+            r" = \max_{{{uu} \in V({gg})}} \varepsilon({uu})"
+        ),
+        slots={"gg": S(_GRAPH_POOL), "uu": S(_VTX_POOL)},
+    ),
+    Template(
+        name="radius_diameter_bound",
+        latex=(
+            r"\operatorname{{rad}}({gg})"
+            r" \leq \operatorname{{diam}}({gg})"
+            r" \leq 2\,\operatorname{{rad}}({gg})"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    # Density
+    Template(
+        name="graph_density",
+        latex=(r"d({gg}) = \frac{{2\,|E({gg})|}}{{|V({gg})|\,(|V({gg})|-1)}}"),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    # Isomorphism
+    Template(
+        name="graph_isomorphism_degree_seq",
+        latex=(
+            r"{g1} \cong {g2}"
+            r" \implies \deg\text{{-seq}}({g1}) = \deg\text{{-seq}}({g2})"
+        ),
+        slots={"g1": S(_GRAPH_POOL), "g2": X(_GRAPH_POOL, ("g1",))},
+    ),
+    # Euler circuit
+    Template(
+        name="euler_circuit_condition",
+        latex=(
+            r"{gg} \text{{ has an Euler circuit}}"
+            r" \iff {gg} \text{{ connected, all degrees even}}"
+        ),
+        slots={"gg": S(_GRAPH_POOL)},
+    ),
+    # ------------------------------------------------------------------
+    # Part C: high-n_eff function-pair templates
+    # ------------------------------------------------------------------
+    Template(
+        name="flow_capacity_bound",
+        latex=(
+            r"0 \leq {fn1}({uu},{vv}) \leq {fn2}({uu},{vv})"
+            r" \quad \forall\,({uu},{vv}) \in E({gg})"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+            "gg": S(_GRAPH_POOL),
+        },
+    ),
+    Template(
+        name="distance_weight_relaxation",
+        latex=(
+            r"{fn1}({vv}) \leq {fn1}({uu}) + {fn2}({uu},{vv})"
+            r" \quad \forall\,{uu} \in N({vv})"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
+    ),
+    Template(
+        name="bellman_ford_update",
+        latex=(
+            r"{fn1}({vv}) = \min_{{{uu} \in N({vv})}}"
+            r" \bigl\{{{fn1}({uu}) + {fn2}({uu},{vv})\bigr\}}"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
+    ),
+    Template(
+        name="graph_hom_composition",
+        latex=(
+            r"{fn1} \circ {fn2} : {g1} \to {g3}"
+            r" \text{{ is a graph homomorphism}}"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "g1": S(_GRAPH_POOL),
+            "g3": X(_GRAPH_POOL, ("g1",)),
+        },
+    ),
+    Template(
+        name="kirchhoff_potential",
+        latex=(
+            r"\sum_{{{uu} \sim {vv}}} {fn2}({uu},{vv})"
+            r"\,\bigl({fn1}({uu}) - {fn1}({vv})\bigr) = 0"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
+    ),
+    Template(
+        name="spectral_quadratic_form",
+        latex=(
+            r"{fn1}^\top A({gg})\,{fn2}"
+            r" = \sum_{{({uu},{vv}) \in E({gg})}}"
+            r" \bigl({fn1}({uu}){fn2}({vv})"
+            r" + {fn1}({vv}){fn2}({uu})\bigr)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "gg": S(_GRAPH_POOL),
+            "uu": S(_VTX_POOL),
+            "vv": X(_VTX_POOL, ("uu",)),
+        },
     ),
 ]
 
