@@ -6,43 +6,31 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._templates import _def_integral, _indef_integral, _mixed_partial
-from .._vocab import _VARS, _atom, _expr, _fn_rich, _fn_rich_nosub, _s
+from .._templates import _def_integral, _indef_integral
+from .._vocab import _SCALARS, _VARS, _atom, _expr, _fn_rich, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_FUNC_Z_POOL: tuple[str, ...] = (r"\phi", r"\psi", r"\eta")
-_VEC_FIELD_POOL: tuple[str, ...] = ("F", "G", "v")
-_VOL_DOMAIN_POOL: tuple[str, ...] = ("V", r"\Omega", "D")
-_SURFACE_POOL: tuple[str, ...] = ("S", r"\Sigma")
-_CURVE_POOL: tuple[str, ...] = ("C", r"\partial S", r"\partial \Sigma")
-_MFLD_POOL: tuple[str, ...] = ("M", r"\Omega", r"\Sigma")
-
-# ---------------------------------------------------------------------------
-# Inline sub-generators
-# ---------------------------------------------------------------------------
-
-
-def _order_n(rng: random.Random) -> str:
-    return rng.choice(["2", "3", "n"])
-
-
-def _pt_scalar_inf_zero(rng: random.Random) -> str:
-    return rng.choice([_s(rng), r"\infty", "0"])
-
-
-def _pt_inf_zero_scalar(rng: random.Random) -> str:
-    return rng.choice([r"\infty", "0", _s(rng)])
-
+_VEC_FIELD_POOL: tuple[str, ...] = ("F", "G", "E", "B", "v", "u", "w", "H")
+_VOL_DOMAIN_POOL: tuple[str, ...] = ("V", r"\Omega", "D", "U", r"\mathcal{V}", "R")
+_SURFACE_POOL: tuple[str, ...] = ("S", r"\Sigma", r"\mathcal{S}", "A")
+_CURVE_POOL: tuple[str, ...] = (
+    "C",
+    r"\partial S",
+    r"\partial \Sigma",
+    r"\Gamma",
+    r"\partial D",
+)
+_MFLD_POOL: tuple[str, ...] = ("M", r"\Omega", r"\Sigma", r"\mathcal{M}", "N", "X")
 
 # ---------------------------------------------------------------------------
 # Calculus templates
 # ---------------------------------------------------------------------------
 
 _CALCULUS_TEMPLATES: list[Template] = [
-    # c=0 — first derivative
+    # first derivative
     Template(
         name="first_derivative",
         latex=r"\frac{{d}}{{d{v}}}\left[{expr}\right]",
@@ -51,29 +39,29 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "expr": E(_expr, n=5000),
         },
     ),
-    # c=1 — nth-order derivative
+    # nth-order derivative (expanded pool, was 3-item _order_n)
     Template(
         name="nth_derivative",
         latex=r"\frac{{d^{{{n}}}}}{{d{v}^{{{n}}}}}\left[{expr}\right]",
         slots={
             "v": S(_VARS),
-            "n": E(_order_n, n=3),
+            "n": S(("2", "3", "4", "n", "m")),
             "expr": E(_expr, n=5000),
         },
     ),
-    # c=2 — indefinite integral
+    # indefinite integral
     Template(
         name="indef_integral",
         latex=r"{result}",
         slots={"result": E(_indef_integral, n=5000)},
     ),
-    # c=3 — definite integral
+    # definite integral
     Template(
         name="def_integral",
         latex=r"{result}",
         slots={"result": E(_def_integral, n=5000)},
     ),
-    # c=4 — double integral over D
+    # double integral over D
     Template(
         name="double_integral_domain",
         latex=r"\iint_{{\mathcal{{D}}}} {expr} \, d{v} \, d{v2}",
@@ -83,34 +71,38 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "expr": E(_expr, n=5000),
         },
     ),
-    # c=5 — limit to scalar/inf/0
+    # limit to scalar/inf/0 (fixed sampling bug: was _pt_scalar_inf_zero)
     Template(
         name="limit_simple",
         latex=r"\lim_{{{v} \to {pt}}} {expr}",
         slots={
             "v": S(_VARS),
-            "pt": E(_pt_scalar_inf_zero, n=11),
+            "pt": S(tuple(_SCALARS) + (r"\infty", "0")),
             "expr": E(_expr, n=5000),
         },
     ),
-    # c=6 — limit of ratio
+    # limit of ratio (fixed sampling bug: was _pt_inf_zero_scalar)
     Template(
         name="limit_ratio",
         latex=r"\lim_{{{v} \to {pt}}} \frac{{{num}}}{{{den}}}",
         slots={
             "v": S(_VARS),
-            "pt": E(_pt_inf_zero_scalar, n=11),
+            "pt": S((r"\infty", "0") + tuple(_SCALARS)),
             "num": E(_expr, n=5000),
             "den": E(_expr, n=5000),
         },
     ),
-    # c=7 — mixed partial derivative
+    # mixed partial derivative (proper slotted template, was E(_mixed_partial, n=500))
     Template(
         name="mixed_partial",
-        latex=r"{result}",
-        slots={"result": E(_mixed_partial, n=500)},
+        latex=r"\frac{{\partial^2 {f}}}{{\partial {v} \, \partial {v2}}}",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "v2": X(_VARS, ("v",)),
+        },
     ),
-    # c=8 — Taylor series
+    # Taylor series
     Template(
         name="taylor_series",
         latex=r"\sum_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}({a})}}{{n!}} \left({v} - {a}\right)^n",
@@ -120,7 +112,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "a": E(_atom, n=150),
         },
     ),
-    # — Maclaurin series (Taylor at a=0)
+    # Maclaurin series (Taylor at a=0)
     Template(
         name="maclaurin_series",
         latex=r"\sum_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}(0)}}{{n!}} {v}^n",
@@ -129,7 +121,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v": S(_VARS),
         },
     ),
-    # — Taylor polynomial (finite-terms form)
+    # Taylor polynomial (finite-terms form)
     Template(
         name="taylor_polynomial",
         latex=(
@@ -142,7 +134,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "a": E(_atom, n=150),
         },
     ),
-    # c=9 — fundamental theorem of calculus
+    # fundamental theorem of calculus
     Template(
         name="ftc",
         latex=r"\int_{{{a}}}^{{{b}}} {f}'({v}) \, d{v} = {f}({b}) - {f}({a})",
@@ -153,27 +145,46 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "b": E(_atom, n=150),
         },
     ),
-    # c=10 — chain rule
+    # chain rule — prime notation (standalone; high n_eff, separate from Leibniz group)
     Template(
         name="chain_rule",
-        latex=r"\frac{{d}}{{d{v}}}\left[{f}\!\left({g2}({v})\right)\right] = {f}'\!\left({g2}({v})\right) {g2}'({v})",
+        latex=(
+            r"\frac{{d}}{{d{v}}}\left[{f}\!\left({g2}({v})\right)\right] = "
+            r"{f}'\!\left({g2}({v})\right) {g2}'({v})"
+        ),
         slots={
             "v": S(_VARS),
             "f": E(_fn_rich_nosub, n=100),
             "g2": E(_fn_rich_nosub, n=100),
         },
     ),
-    # — chain rule (Leibniz notation)
+    # chain rule — Leibniz notation (2 variants; expanded z pool, was 3-item _FUNC_Z_POOL)
     Template(
         name="chain_rule_leibniz",
-        latex=r"\frac{{d{z}}}{{d{v}}} = \frac{{d{z}}}{{d{u}}} \cdot \frac{{d{u}}}{{d{v}}}",
-        slots={
-            "z": S(_FUNC_Z_POOL),
-            "v": S(_VARS),
-            "u": X(_VARS, ("v",)),
-        },
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="chain_rule_leibniz_classic",
+                latex=r"\frac{{d{z}}}{{d{v}}} = \frac{{d{z}}}{{d{u}}} \cdot \frac{{d{u}}}{{d{v}}}",
+                slots={
+                    "z": S((r"\phi", r"\psi", r"\eta", r"\zeta", r"\rho", "w")),
+                    "v": S(_VARS),
+                    "u": X(_VARS, ("v",)),
+                },
+            ),
+            Template(
+                name="chain_rule_leibniz_composed",
+                latex=(r"\frac{{d{f}}}{{d{v}}} = \frac{{d{f}}}{{d{gg}}} \cdot \frac{{d{gg}}}{{d{v}}}"),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "gg": E(_fn_rich_nosub, n=100),
+                    "v": S(_VARS),
+                },
+            ),
+        ],
     ),
-    # c=11 — gradient (2D)
+    # gradient (2D e-basis)
     Template(
         name="gradient_2d",
         latex=(
@@ -187,7 +198,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v2": X(_VARS, ("v",)),
         },
     ),
-    # — gradient (2D, ij hat notation)
+    # gradient (2D ij-hat notation)
     Template(
         name="gradient_2d_ij",
         latex=(
@@ -201,7 +212,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v2": X(_VARS, ("v",)),
         },
     ),
-    # — gradient (3D)
+    # gradient (3D e-basis)
     Template(
         name="gradient_3d",
         latex=(
@@ -217,19 +228,48 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v3": X(_VARS, ("v", "v2")),
         },
     ),
-    # c=12 — divergence theorem
+    # divergence theorem (3 notation variants: standard, hat-normal, div-operator)
     Template(
         name="divergence_theorem",
-        latex=(
-            r"\iint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot d\mathbf{{S}} = "
-            r"\iiint_{{{vol}}} \nabla \cdot \mathbf{{{fld}}} \, dV"
-        ),
-        slots={
-            "fld": S(_VEC_FIELD_POOL),
-            "vol": S(_VOL_DOMAIN_POOL),
-        },
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="divergence_standard",
+                latex=(
+                    r"\iint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot d\mathbf{{S}} = "
+                    r"\iiint_{{{vol}}} \nabla \cdot \mathbf{{{fld}}} \, dV"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "vol": S(_VOL_DOMAIN_POOL),
+                },
+            ),
+            Template(
+                name="divergence_hat_normal",
+                latex=(
+                    r"\oiint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, dS = "
+                    r"\iiint_{{{vol}}} \nabla \cdot \mathbf{{{fld}}} \, dV"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "vol": S(_VOL_DOMAIN_POOL),
+                },
+            ),
+            Template(
+                name="divergence_div_operator",
+                latex=(
+                    r"\iint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot d\mathbf{{S}} = "
+                    r"\iiint_{{{vol}}} \operatorname{{div}} \mathbf{{{fld}}} \, dV"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "vol": S(_VOL_DOMAIN_POOL),
+                },
+            ),
+        ],
     ),
-    # c=13 — Laplacian (2D)
+    # Laplacian (2D ∇² notation)
     Template(
         name="laplacian_2d",
         latex=(
@@ -243,7 +283,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v2": X(_VARS, ("v",)),
         },
     ),
-    # — Laplacian (2D, delta notation)
+    # Laplacian (2D Δ notation)
     Template(
         name="laplacian_delta",
         latex=(
@@ -257,7 +297,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v2": X(_VARS, ("v",)),
         },
     ),
-    # — Laplacian (3D)
+    # Laplacian (3D)
     Template(
         name="laplacian_3d",
         latex=(
@@ -273,41 +313,79 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "v3": X(_VARS, ("v", "v2")),
         },
     ),
-    # c=14 — Stokes' theorem
+    # Stokes' theorem (3 variants: ∇×, curl operator, differential forms)
     Template(
         name="stokes_theorem",
-        latex=(
-            r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
-            r"\iint_{{{srf}}} \left(\nabla \times \mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}"
-        ),
-        slots={
-            "fld": S(_VEC_FIELD_POOL),
-            "srf": S(_SURFACE_POOL),
-            "crv": S(_CURVE_POOL),
-        },
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="stokes_standard",
+                latex=(
+                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\iint_{{{srf}}} \left(\nabla \times \mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "srf": S(_SURFACE_POOL),
+                    "crv": S(_CURVE_POOL),
+                },
+            ),
+            Template(
+                name="stokes_curl_operator",
+                latex=(
+                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\iint_{{{srf}}} \operatorname{{curl}}\!\left(\mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "srf": S(_SURFACE_POOL),
+                    "crv": S(_CURVE_POOL),
+                },
+            ),
+            Template(
+                name="stokes_differential_forms",
+                latex=r"\int_{{\partial {mfld}}} \omega = \int_{{{mfld}}} d\omega",
+                slots={
+                    "mfld": S(_MFLD_POOL),
+                },
+            ),
+        ],
     ),
-    # c=15 — Green's theorem (flux form)
+    # Green's theorem (flux and circulation forms)
     Template(
-        name="greens_theorem_flux",
-        latex=(
-            r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, ds = "
-            r"\iint_{{{dom}}} \nabla \cdot \mathbf{{{fld}}} \, dA"
-        ),
-        slots={
-            "fld": S(_VEC_FIELD_POOL),
-            "crv": S(("C", r"\partial D", r"\partial R")),
-            "dom": S(("D", r"\Omega", "R")),
-        },
+        name="greens_theorem",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="greens_theorem_flux",
+                latex=(
+                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, ds = "
+                    r"\iint_{{{dom}}} \nabla \cdot \mathbf{{{fld}}} \, dA"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "crv": S(("C", r"\partial D", r"\partial R")),
+                    "dom": S(("D", r"\Omega", "R")),
+                },
+            ),
+            Template(
+                name="greens_theorem_circulation",
+                latex=(
+                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\iint_{{{dom}}} \left(\frac{{\partial Q}}{{\partial x}} - "
+                    r"\frac{{\partial P}}{{\partial y}}\right) dA"
+                ),
+                slots={
+                    "fld": S(_VEC_FIELD_POOL),
+                    "crv": S(("C", r"\partial D", r"\partial R")),
+                    "dom": S(("D", r"\Omega", "R")),
+                },
+            ),
+        ],
     ),
-    # c=16 — Stokes' theorem (differential forms)
-    Template(
-        name="stokes_differential_forms",
-        latex=r"\int_{{\partial {mfld}}} \omega = \int_{{{mfld}}} d\omega",
-        slots={
-            "mfld": S(_MFLD_POOL),
-        },
-    ),
-    # c=15 (orig) — iterated integral
+    # iterated integral
     Template(
         name="iterated_integral",
         latex=(
@@ -322,10 +400,13 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "b": E(_atom, n=150),
         },
     ),
-    # c=16 — L'Hôpital's rule
+    # L'Hôpital's rule
     Template(
         name="lhopital_rule",
-        latex=r"\lim_{{{v} \to {a}}} \frac{{{f}({v})}}{{{g2}({v})}} = \lim_{{{v} \to {a}}} \frac{{{f}'({v})}}{{{g2}'({v})}}",
+        latex=(
+            r"\lim_{{{v} \to {a}}} \frac{{{f}({v})}}{{{g2}({v})}} = "
+            r"\lim_{{{v} \to {a}}} \frac{{{f}'({v})}}{{{g2}'({v})}}"
+        ),
         slots={
             "v": S(_VARS),
             "f": E(_fn_rich_nosub, n=100),
@@ -333,7 +414,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "a": E(_atom, n=150),
         },
     ),
-    # c=17 — integration by parts (symbolic)
+    # integration by parts (symbolic form)
     Template(
         name="integration_by_parts",
         latex=r"\int {f} \, d{g2} = {f} {g2} - \int {g2} \, d{f}",
@@ -342,7 +423,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "g2": E(_fn_rich_nosub, n=100),
         },
     ),
-    # — integration by parts (definite)
+    # integration by parts (definite form)
     Template(
         name="integration_by_parts_definite",
         latex=(
@@ -356,20 +437,21 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "b": E(_atom, n=150),
         },
     ),
-    # c=18 — Leibniz integral rule
+    # Leibniz integral rule (integration variable now a slot)
     Template(
         name="leibniz_integral_rule",
         latex=(
-            r"\frac{{d}}{{d{v}}} \int_{{a({v})}}^{{b({v})}} {f}({v}, t) \, dt = "
+            r"\frac{{d}}{{d{v}}} \int_{{a({v})}}^{{b({v})}} {f}({v}, {it}) \, d{it} = "
             r"{f}({v}, b({v})) b'({v}) - {f}({v}, a({v})) a'({v}) + "
-            r"\int_{{a({v})}}^{{b({v})}} \frac{{\partial {f}}}{{\partial {v}}} \, dt"
+            r"\int_{{a({v})}}^{{b({v})}} \frac{{\partial {f}}}{{\partial {v}}} \, d{it}"
         ),
         slots={
             "v": S(_VARS),
             "f": E(_fn_rich_nosub, n=100),
+            "it": S(("t", "s", r"\tau", r"\sigma")),
         },
     ),
-    # c=19 — mean value theorem
+    # mean value theorem (derivative form)
     Template(
         name="mean_value_theorem",
         latex=r"\exists c \in ({a}, {b}) : {f}'(c) = \frac{{{f}({b}) - {f}({a})}}{{{b} - {a}}}",
@@ -379,7 +461,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "b": E(_atom, n=150),
         },
     ),
-    # — mean value theorem (integral form)
+    # mean value theorem (integral form)
     Template(
         name="mean_value_theorem_integral",
         latex=r"\frac{{1}}{{{b} - {a}}} \int_{{{a}}}^{{{b}}} {f}({v}) \, d{v} = {f}(c)",
@@ -389,6 +471,195 @@ _CALCULUS_TEMPLATES: list[Template] = [
             "a": E(_atom, n=150),
             "b": E(_atom, n=150),
         },
+    ),
+    # ---- New templates ----
+    # B1: derivative rules (product, quotient, power, generalized power)
+    Template(
+        name="derivative_rules",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="product_rule",
+                latex=(
+                    r"\frac{{d}}{{d{v}}}\left[{f}({v}) \cdot {g2}({v})\right] = "
+                    r"{f}'({v}) {g2}({v}) + {f}({v}) {g2}'({v})"
+                ),
+                slots={
+                    "v": S(_VARS),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g2": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="quotient_rule",
+                latex=(
+                    r"\frac{{d}}{{d{v}}}\left[\frac{{{f}({v})}}{{{g2}({v})}}\right] = "
+                    r"\frac{{{f}'({v}) {g2}({v}) - {f}({v}) {g2}'({v})}}{{{g2}({v})^2}}"
+                ),
+                slots={
+                    "v": S(_VARS),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g2": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="power_rule",
+                latex=r"\frac{{d}}{{d{v}}} {v}^{{{n}}} = {n} {v}^{{{n}-1}}",
+                slots={
+                    "v": S(_VARS),
+                    "n": S(("n", "m", "p", "k", r"\alpha")),
+                },
+            ),
+            Template(
+                name="generalized_power_rule",
+                latex=(
+                    r"\frac{{d}}{{d{v}}} \left[{f}({v})\right]^{{{n}}} = "
+                    r"{n} \left[{f}({v})\right]^{{{n}-1}} {f}'({v})"
+                ),
+                slots={
+                    "v": S(_VARS),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "n": S(("n", "m", "p", "k", r"\alpha")),
+                },
+            ),
+        ],
+    ),
+    # B2: geometric integrals (arc length, surface area of revolution, parametric arc length)
+    Template(
+        name="geometric_integrals",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="arc_length",
+                latex=(
+                    r"L = \int_{{{a}}}^{{{b}}} "
+                    r"\sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "v": S(_VARS),
+                    "a": E(_atom, n=150),
+                    "b": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="surface_area_revolution",
+                latex=(
+                    r"S = 2\pi \int_{{{a}}}^{{{b}}} {f}({v}) "
+                    r"\sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "v": S(_VARS),
+                    "a": E(_atom, n=150),
+                    "b": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="parametric_arc_length",
+                latex=(
+                    r"L = \int_{{{a}}}^{{{b}}} \sqrt{{"
+                    r"\left(\frac{{d{px}}}{{d{v}}}\right)^2 + "
+                    r"\left(\frac{{d{py}}}{{d{v}}}\right)^2}} \, d{v}"
+                ),
+                slots={
+                    "v": S(_VARS),
+                    "px": S((r"\phi", r"\psi", r"\xi", "p", "q")),
+                    "py": S((r"\phi", r"\psi", r"\xi", "p", "q")),
+                    "a": E(_atom, n=150),
+                    "b": E(_atom, n=150),
+                },
+                distinct=[["px", "py"]],
+            ),
+        ],
+    ),
+    # B3: directional derivative (dot-product form and limit-definition form)
+    Template(
+        name="directional_derivative",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="dir_deriv_dot",
+                latex=r"D_{{\mathbf{{{u}}}}} {f} = \nabla {f} \cdot \mathbf{{{u}}}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "u": S(("u", "v", "e", "n")),
+                },
+            ),
+            Template(
+                name="dir_deriv_limit",
+                latex=(
+                    r"D_{{\mathbf{{{u}}}}} {f}({x}) = "
+                    r"\lim_{{h \to 0}} \frac{{{f}({x} + h\mathbf{{{u}}}) - {f}({x})}}{{h}}"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "u": S(("u", "v", "e", "n")),
+                    "x": S(_VARS),
+                },
+            ),
+        ],
+    ),
+    # B4: Rolle's theorem
+    Template(
+        name="rolles_theorem",
+        latex=r"{f}({a}) = {f}({b}) \implies \exists c \in ({a}, {b}) : {f}'(c) = 0",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # B5: change of variables (Jacobian substitution)
+    Template(
+        name="change_of_variables",
+        latex=(
+            r"\iint_{{R}} {f}(x, y) \, dA = "
+            r"\iint_{{S}} {f}\!\left({g2}(u, v), {h}(u, v)\right) "
+            r"\left|\frac{{\partial(x, y)}}{{\partial(u, v)}}\right| \, du \, dv"
+        ),
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "g2": E(_fn_rich_nosub, n=100),
+            "h": E(_fn_rich_nosub, n=100),
+        },
+    ),
+    # B6: implicit differentiation (implicit function theorem and chain-rule form)
+    Template(
+        name="implicit_differentiation",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="implicit_diff_formula",
+                latex=(
+                    r"{ff}({v}, {y}) = 0 \implies "
+                    r"\frac{{d{y}}}{{d{v}}} = -\frac{{{ff}_{{{v}}}}}{{{ff}_{{{y}}}}}"
+                ),
+                slots={
+                    "ff": E(_fn_rich_nosub, n=100),
+                    "v": S(_VARS),
+                    "y": X(_VARS, ("v",)),
+                },
+            ),
+            Template(
+                name="implicit_diff_chain",
+                latex=(
+                    r"\frac{{d}}{{d{v}}} {f}({v}, {g2}({v})) = "
+                    r"\frac{{\partial {f}}}{{\partial {v}}} + "
+                    r"\frac{{\partial {f}}}{{\partial {y}}} {g2}'({v})"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g2": E(_fn_rich_nosub, n=100),
+                    "v": S(_VARS),
+                    "y": X(_VARS, ("v",)),
+                },
+            ),
+        ],
     ),
 ]
 
