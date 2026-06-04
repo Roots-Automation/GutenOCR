@@ -232,38 +232,152 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             Template(
                 name="limsup_def",
                 latex=(
-                    r"\limsup_{{{idx} \to \infty}} {seq}_{{{idx}}} "
+                    r"\limsup_{{{idx} \to {inf}}} {seq}_{{{idx}}} "
                     r"= \inf_{{{idx} \geq 1}} \sup_{{k \geq {idx}}} {seq}_k"
                 ),
                 slots={
                     "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
                     "idx": S(("n", "m", "j", "r"), idx=0.25),
+                    "inf": S((r"\infty", r"+\infty")),
                 },
             ),
             Template(
                 name="liminf_def",
                 latex=(
-                    r"\liminf_{{{idx} \to \infty}} {seq}_{{{idx}}} "
+                    r"\liminf_{{{idx} \to {inf}}} {seq}_{{{idx}}} "
                     r"= \sup_{{{idx} \geq 1}} \inf_{{k \geq {idx}}} {seq}_k"
                 ),
                 slots={
                     "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
                     "idx": S(("n", "m", "j", "r"), idx=0.25),
+                    "inf": S((r"\infty", r"+\infty")),
                 },
             ),
             Template(
                 name="squeeze_theorem",
                 latex=(
-                    r"{a}_n \leq {b}_n \leq {c}_n, \quad "
-                    r"\lim_{{n \to \infty}} {a}_n = \lim_{{n \to \infty}} {c}_n = L "
-                    r"\implies \lim_{{n \to \infty}} {b}_n = L"
+                    r"{a}_{{{idx}}} \leq {b}_{{{idx}}} \leq {c}_{{{idx}}}, \quad "
+                    r"\lim_{{{idx} \to \infty}} {a}_{{{idx}}} = \lim_{{{idx} \to \infty}} {c}_{{{idx}}} = L "
+                    r"\implies \lim_{{{idx} \to \infty}} {b}_{{{idx}}} = L"
                 ),
                 slots={
                     "a": S(("a", "x", "u")),
                     "b": S(("b", "y", "v")),
                     "c": S(("c", "z", "w")),
+                    "idx": S(("n", "m", "j", "k")),
                 },
                 distinct=[["a", "b", "c"]],
+            ),
+        ],
+    ),
+    # --- Limit notation (finite point, one-sided, ±∞, sequence, arithmetic) ---
+    Template(
+        name="limit_notation",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="limit_at_point",
+                latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_right_sided",
+                latex=r"\lim_{{{x} \to {a}^+}} {f}({x}) = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_left_sided",
+                latex=r"\lim_{{{x} \to {a}^-}} {f}({x}) = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_pos_infinity",
+                latex=r"\lim_{{{x} \to +\infty}} {f}({x}) = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_neg_infinity",
+                latex=r"\lim_{{{x} \to -\infty}} {f}({x}) = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_sequence",
+                latex=r"\lim_{{{idx} \to \infty}} {seq}_{{{idx}}} = {L}",
+                slots={
+                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
+                    "idx": S(("n", "m", "j", "k"), idx=0.25),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_newton_quotient",
+                latex=r"\lim_{{{x} \to {a}}} \frac{{{f}({x}) - {f}({a})}}{{{x} - {a}}} = {L}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                    "L": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_sum_rule",
+                latex=(
+                    r"\lim_{{{x} \to {a}}} \bigl({f}({x}) + {g}({x})\bigr) "
+                    r"= \lim_{{{x} \to {a}}} {f}({x}) + \lim_{{{x} \to {a}}} {g}({x})"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_product_rule",
+                latex=(
+                    r"\lim_{{{x} \to {a}}} {f}({x}) {g}({x}) "
+                    r"= \lim_{{{x} \to {a}}} {f}({x}) \cdot \lim_{{{x} \to {a}}} {g}({x})"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="limit_diverges_inf",
+                latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {inf_sym}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": E(_atom, n=150),
+                    "a": E(_atom, n=150),
+                    "inf_sym": S((r"\infty", r"+\infty", r"-\infty")),
+                },
             ),
         ],
     ),
