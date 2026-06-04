@@ -1,4 +1,4 @@
-"""Algebra and trigonometry domain generators."""
+"""Algebra domain generators."""
 
 from __future__ import annotations
 
@@ -8,16 +8,20 @@ from collections.abc import Callable
 from .._template_dsl import E, P, S, Template, X, compute_weights, make_dispatcher
 from .._templates import _poly
 from .._vocab import (
+    _COEFF_POOL,
+    _GEO_N,
     _GREEK,
     _SCALARS,
     _VARS,
+    _VEC_POOL,
     _atom,
+    _eps_sub,
     _expr,
     _fn_rich,
     _fn_rich_nosub,
     _idx_atom,
-    _maybe_idx,
     _s,
+    _tol_sub,
 )
 
 # ---------------------------------------------------------------------------
@@ -25,57 +29,12 @@ from .._vocab import (
 # ---------------------------------------------------------------------------
 
 _UNION: list[str] = sorted(set(_VARS) | set(_SCALARS))
-_VEC_POOL: list[str] = list("abcdefghijklmnopqrstuvwxyz")
-_LOG_BASES: list[str] = ["2", "10", "e"] + _SCALARS
-# Coefficients/ratios: scalars + Greek constants common in series/sequences
-_COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
-    r"\alpha",
-    r"\beta",
-    r"\gamma",
-    r"\lambda",
-    r"\mu",
-    r"\rho",
-    r"\kappa",
-    r"\theta",
-)
-_GEO_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "p", "r")
+_LOG_BASES: list[str] = ["2", "10", "e"] + _SCALARS + [r"\alpha", r"\beta", r"\lambda", r"\mu"]
 _EXP_POOL: tuple[str, ...] = ("2", "3", "4", "m", "n", "p", "q")
 
 # ---------------------------------------------------------------------------
-# Inline sub-generators
+# Inline sub-generators (ParamSub only — simple pools are inlined as S slots)
 # ---------------------------------------------------------------------------
-
-
-def _rel_sub(rng: random.Random) -> str:
-    return rng.choice([">", "=", "<"])
-
-
-def _exp_sym_sub(rng: random.Random) -> str:
-    return rng.choice(["n", "m", "k", "p", "r", "2", "3", "4", "5", "6"])
-
-
-def _fn_7_sub(rng: random.Random) -> str:
-    return rng.choice(["f", "g", "h", "p", "q", "F", "G"])
-
-
-def _fn_3_sub(rng: random.Random) -> str:
-    return rng.choice(["f", "g", "h"])
-
-
-def _eps_sub(rng: random.Random) -> str:
-    return rng.choice([r"\epsilon", r"\varepsilon"])
-
-
-def _tol_sub(rng: random.Random) -> str:
-    return rng.choice([r"\epsilon", r"\varepsilon", r"\delta"])
-
-
-def _scalar_sub(rng: random.Random) -> str:
-    return rng.choice(_SCALARS)
-
-
-def _log_n_sub(rng: random.Random) -> str:
-    return rng.choice(["2", "3", "n", "k"] + _SCALARS)
 
 
 def _poly_mid_3(rng: random.Random, v: str) -> str:
@@ -91,26 +50,6 @@ def _poly_mid_4(rng: random.Random, v: str) -> str:
 def _poly_mid_5(rng: random.Random, v: str) -> str:
     """Middle terms for expanded polynomial of degree 5: three intermediate terms."""
     return rf"{_s(rng)} {v}^{{4}} + {_s(rng)} {v}^{{3}} + {_s(rng)} {v}^{{2}}"
-
-
-def _prod_n_sub(rng: random.Random) -> str:
-    return _maybe_idx(rng, rng.choice(["n", "m", "N", "M", "r"]))
-
-
-def _prod_a_sub(rng: random.Random) -> str:
-    return _maybe_idx(rng, rng.choice([s for s in _SCALARS if s != "k"]))
-
-
-def _prod_start_sub(rng: random.Random) -> str:
-    return rng.choice(["1", "0", "2"])
-
-
-def _cs_idx_sub(rng: random.Random) -> str:
-    return rng.choice(["i", "j", "k", "l", "m", "r"])
-
-
-def _cs_ub_sub(rng: random.Random) -> str:
-    return rng.choice(["n", "m", "N", "M", "K", "L", "P"])
 
 
 # ---------------------------------------------------------------------------
@@ -149,7 +88,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
     Template(
         name="discriminant_condition",
         latex=r"{q}^2 - 4 {p} {r} {rel} 0",
-        slots={**_QUAD_SLOTS, "rel": E(_rel_sub, n=3)},
+        slots={**_QUAD_SLOTS, "rel": S((">", "=", "<", r"\geq", r"\leq", r"\neq"))},
         distinct=_QUAD_DISTINCT,
     ),
     Template(
@@ -170,6 +109,76 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         slots=_QUAD_SLOTS,
         distinct=_QUAD_DISTINCT,
     ),
+    # ── Absolute value equations / inequalities ──────────────────────────────
+    Template(
+        name="abs_value_equations",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="abs_val_eq",
+                latex=r"\left|{a} {v} + {b}\right| = {c}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "a": S(tuple(_SCALARS), 0.35),
+                    "b": S(tuple(_SCALARS), 0.35),
+                    "c": S(tuple(_SCALARS), 0.35),
+                },
+                distinct=[["a", "b", "c"]],
+            ),
+            Template(
+                name="abs_val_lt",
+                latex=r"\left|{a} {v} + {b}\right| < {c}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "a": S(tuple(_SCALARS), 0.35),
+                    "b": S(tuple(_SCALARS), 0.35),
+                    "c": S(tuple(_SCALARS), 0.35),
+                },
+                distinct=[["a", "b", "c"]],
+            ),
+            Template(
+                name="abs_val_gt",
+                latex=r"\left|{a} {v} + {b}\right| > {c}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "a": S(tuple(_SCALARS), 0.35),
+                    "b": S(tuple(_SCALARS), 0.35),
+                    "c": S(tuple(_SCALARS), 0.35),
+                },
+                distinct=[["a", "b", "c"]],
+            ),
+            Template(
+                name="abs_val_leq",
+                latex=r"\left|{a} {v} + {b}\right| \leq {c}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "a": S(tuple(_SCALARS), 0.35),
+                    "b": S(tuple(_SCALARS), 0.35),
+                    "c": S(tuple(_SCALARS), 0.35),
+                },
+                distinct=[["a", "b", "c"]],
+            ),
+            Template(
+                name="abs_val_two_sided",
+                latex=r"{c1} \leq \left|{v} - {pt}\right| \leq {c2}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "pt": E(_idx_atom, n=200),
+                    "c1": S(tuple(_SCALARS), 0.35),
+                    "c2": X(tuple(_SCALARS), ("c1",), 0.35),
+                },
+            ),
+            Template(
+                name="abs_val_expr",
+                latex=r"\left|{expr}\right| = {c}",
+                slots={
+                    "expr": E(_expr, n=5000),
+                    "c": S(tuple(_SCALARS), 0.35),
+                },
+            ),
+        ],
+    ),
     # ── Polynomial family (c=8..16) ──────────────────────────────────────────
     Template(
         name="expanded_polynomial",
@@ -184,7 +193,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "a": S(tuple(_SCALARS), 0.35),
                     "b": X(tuple(_SCALARS), ("a",)),
                     "mid": P(_poly_mid_3, "v", n=9),
-                    "s_lin": E(_scalar_sub, n=9),
+                    "s_lin": S(tuple(_SCALARS)),
                 },
             ),
             Template(
@@ -195,7 +204,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "a": S(tuple(_SCALARS), 0.35),
                     "b": X(tuple(_SCALARS), ("a",)),
                     "mid": P(_poly_mid_4, "v", n=81),
-                    "s_lin": E(_scalar_sub, n=9),
+                    "s_lin": S(tuple(_SCALARS)),
                 },
             ),
             Template(
@@ -206,7 +215,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "a": S(tuple(_SCALARS), 0.35),
                     "b": X(tuple(_SCALARS), ("a",)),
                     "mid": P(_poly_mid_5, "v", n=729),
-                    "s_lin": E(_scalar_sub, n=9),
+                    "s_lin": S(tuple(_SCALARS)),
                 },
             ),
         ],
@@ -338,6 +347,57 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             ),
         ],
     ),
+    # ── Function composition and inverse identities ──────────────────────────
+    Template(
+        name="function_composition",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="composition_two",
+                latex=r"\left({f} \circ {g}\right)({v}) = {f}\!\left({g}({v})\right)",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="composition_three",
+                latex=r"\left({f} \circ {g} \circ {h}\right)({v}) = {f}\!\left({g}\!\left({h}({v})\right)\right)",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "h": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="inverse_cancel_right",
+                latex=r"{f}\!\left({f}^{{-1}}({v})\right) = {v}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "f": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="inverse_cancel_left",
+                latex=r"{f}^{{-1}}\!\left({f}({v})\right) = {v}",
+                slots={
+                    "v": S(tuple(_VARS), 0.35),
+                    "f": E(_fn_rich_nosub, n=100),
+                },
+            ),
+            Template(
+                name="inverse_composition",
+                latex=r"\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                },
+            ),
+        ],
+    ),
     # ── General algebra (c=17..29) ───────────────────────────────────────────
     Template(
         name="binomial_theorem",
@@ -346,7 +406,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             r"\sum_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}"
         ),
         slots={
-            "exp": E(_exp_sym_sub, n=10),
+            "exp": S(("n", "m", "k", "p", "r", "2", "3", "4", "5", "6")),
             "u": E(_expr, n=5000),
             "w": E(_expr, n=5000),
         },
@@ -374,7 +434,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"\log_{{{base}}}\!\left(\left({arg}\right)^{{{n}}}\right) = {n} \log_{{{base}}} {arg}",
                 slots={
                     "base": S(tuple(_LOG_BASES)),
-                    "n": E(_log_n_sub, n=13),
+                    "n": S(("2", "3", "n", "k", "a", "b", "c", "d", "m", "p", "q")),
                     "arg": E(_expr, n=5000),
                 },
             ),
@@ -397,6 +457,32 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "base": S(tuple(_LOG_BASES)),
                     "u": E(_expr, n=5000),
                     "w": E(_expr, n=5000),
+                },
+            ),
+            Template(
+                name="log_base_one",
+                latex=r"\log_{{{base}}} 1 = 0",
+                slots={"base": S(tuple(_LOG_BASES), idx=0.35)},
+            ),
+            Template(
+                name="log_base_self",
+                latex=r"\log_{{{base}}} {base} = 1",
+                slots={"base": S(tuple(_LOG_BASES), idx=0.35)},
+            ),
+            Template(
+                name="log_exp_cancel",
+                latex=r"\log_{{{base}}} {base}^{{{n}}} = {n}",
+                slots={
+                    "base": S(tuple(_LOG_BASES), idx=0.35),
+                    "n": S(("2", "3", "n", "k", "m", "p")),
+                },
+            ),
+            Template(
+                name="log_base_power_cancel",
+                latex=r"{base}^{{\log_{{{base}}} {arg}}} = {arg}",
+                slots={
+                    "base": S(tuple(_LOG_BASES), idx=0.35),
+                    "arg": E(_expr, n=5000),
                 },
             ),
         ],
@@ -504,12 +590,48 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         ],
     ),
     Template(
-        name="floor_fraction",
-        latex=r"\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor",
-        slots={
-            "num": E(_expr, n=5000),
-            "den": E(_atom, n=150),
-        },
+        name="floor_ceil",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="floor_fraction",
+                latex=r"\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor",
+                slots={
+                    "num": E(_expr, n=5000),
+                    "den": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="ceil_fraction",
+                latex=r"\left\lceil \frac{{{num}}}{{{den}}} \right\rceil",
+                slots={
+                    "num": E(_expr, n=5000),
+                    "den": E(_atom, n=150),
+                },
+            ),
+            Template(
+                name="floor_add_int",
+                latex=r"\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}",
+                slots={
+                    "v": E(_atom, n=150),
+                    "n": S(tuple(_SCALARS)),
+                },
+            ),
+            Template(
+                name="ceil_neg_floor",
+                latex=r"\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor",
+                slots={"v": E(_atom, n=150)},
+            ),
+            Template(
+                name="floor_sum_bound",
+                latex=r"\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor",
+                slots={
+                    "u": E(_expr, n=5000),
+                    "w": E(_expr, n=5000),
+                },
+            ),
+        ],
     ),
     Template(
         name="exponential_growth",
@@ -560,9 +682,9 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         latex=r"\prod_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)",
         slots={
             "v": S(tuple(_VARS), 0.35),
-            "n": E(_prod_n_sub, n=40),
-            "a11": E(_prod_a_sub, n=70),
-            "start": E(_prod_start_sub, n=3),
+            "n": S(("n", "m", "N", "M", "r"), idx=0.35),
+            "a11": S(("a", "b", "c", "d", "m", "n", "p", "q"), idx=0.35),
+            "start": S(("1", "0", "2")),
         },
     ),
     Template(
@@ -591,8 +713,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             "v": S(tuple(_VARS), 0.35),
             "a": S(tuple(_SCALARS), 0.35),
             "b": X(tuple(_SCALARS), ("a",)),
-            "s1": E(_scalar_sub, n=9),
-            "s2": E(_scalar_sub, n=9),
+            "s1": S(tuple(_SCALARS)),
+            "s2": S(tuple(_SCALARS)),
         },
     ),
     Template(
@@ -731,8 +853,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"\cdot \sum_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2"
                 ),
                 slots={
-                    "idx": E(_cs_idx_sub, n=6),
-                    "ub": E(_cs_ub_sub, n=7),
+                    "idx": S(("i", "j", "k", "l", "m", "r")),
+                    "ub": S(("n", "m", "N", "M", "K", "L", "P")),
                     "p1": S(tuple(_SCALARS)),
                     "p2": X(tuple(_SCALARS), ("p1",)),
                 },
@@ -808,10 +930,11 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="polynomial_division_uniqueness",
                 latex=(
-                    r"\exists!\, {q}, {r} : {f} = {g} \cdot {q} + {r}, "
+                    r"\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), "
                     r"\quad \deg {r} < \deg {g}"
                 ),
                 slots={
+                    "v": S(tuple(_VARS), 0.35),
                     "f": E(_fn_rich_nosub, n=100),
                     "g": E(_fn_rich_nosub, n=100),
                     "q": E(_fn_rich_nosub, n=100),
@@ -1182,6 +1305,26 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "b": S(_COEFF_POOL),
                 },
                 distinct=[["a", "b"]],
+            ),
+            Template(
+                name="rationalize_scalar_plus_radical",
+                latex=r"\frac{{{a}}}{{{b} + \sqrt{{{c}}}}} = \frac{{{a}({b} - \sqrt{{{c}}})}}{{ {b}^2 - {c} }}",
+                slots={
+                    "a": S(_COEFF_POOL, idx=0.35),
+                    "b": S(_COEFF_POOL, idx=0.35),
+                    "c": S(_COEFF_POOL),
+                },
+                distinct=[["a", "b", "c"]],
+            ),
+            Template(
+                name="rationalize_two_radicals",
+                latex=r"\frac{{{a}}}{{\sqrt{{{b}}} + \sqrt{{{c}}}}} = \frac{{{a}(\sqrt{{{b}}} - \sqrt{{{c}}})}}{{ {b} - {c} }}",
+                slots={
+                    "a": S(_COEFF_POOL, idx=0.35),
+                    "b": S(_COEFF_POOL, idx=0.35),
+                    "c": S(_COEFF_POOL, idx=0.35),
+                },
+                distinct=[["a", "b", "c"]],
             ),
         ],
     ),

@@ -7,6 +7,7 @@ from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import (
+    _GEO_N,
     _SCALARS,
     _VARS,
     _arccos_nm,
@@ -36,7 +37,6 @@ from .._vocab import (
 
 _SIDES_POOL: list[str] = ["a", "b", "c", "p", "q", "r"]
 _ANGLES_POOL: list[str] = ["A", "B", "C", "P", "Q", "R"]
-_GEO_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "p", "r")
 _TRIG_ARG_POOL: tuple[str, ...] = tuple(_SCALARS) + (
     r"\theta",
     r"\phi",

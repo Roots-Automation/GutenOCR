@@ -50,6 +50,18 @@ _SCALARS = list("abcdkmnpq")
 _INDICES = list("ijklmn")
 _POS_INTS = ["1", "2", "3", "4", "5", "6"]
 _BOUNDS = ["0", "1", "a", "b", r"\pi", "T", "L", "-1"]
+_GEO_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "p", "r")
+_COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
+    r"\alpha",
+    r"\beta",
+    r"\gamma",
+    r"\lambda",
+    r"\mu",
+    r"\rho",
+    r"\kappa",
+    r"\theta",
+)
+_VEC_POOL: list[str] = list("abcdefghijklmnopqrstuvwxyz")
 _MATRIX_NAMES = ["A", "B", "M", "P", "Q", "R"]
 _CALLIGRAPHIC = [
     r"\mathcal{F}",
@@ -127,6 +139,14 @@ def _s(rng: random.Random) -> str:
 
 def _i(rng: random.Random) -> str:
     return rng.choice(_INDICES)
+
+
+def _eps_sub(rng: random.Random) -> str:
+    return rng.choice([r"\epsilon", r"\varepsilon"])
+
+
+def _tol_sub(rng: random.Random) -> str:
+    return rng.choice([r"\epsilon", r"\varepsilon", r"\delta"])
 
 
 def _cal(rng: random.Random) -> str:
