@@ -5,31 +5,20 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, P, S, Template, compute_weights, make_dispatcher
-from .._vocab import _SCALARS
+from .._template_dsl import E, P, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_N_POOL: tuple[str, ...] = ("n", "m", "N")
-_K_POOL: tuple[str, ...] = ("k", "r")
+_N_POOL: tuple[str, ...] = ("n", "m", "N", "M", "p", "q")
+_K_POOL: tuple[str, ...] = ("k", "r", "j", "l")
+_SET_POOL: tuple[str, ...] = ("A", "B", "C", "D", "E", "S", "T", "U")
 
 # ---------------------------------------------------------------------------
 # Inline sub-generators
 # ---------------------------------------------------------------------------
-
-
-def _k2_sub(rng: random.Random) -> str:
-    return rng.choice(["k", "m"])
-
-
-def _aa_sub(rng: random.Random) -> str:
-    return rng.choice(["2", "3", "a"])
-
-
-def _bb_sub(rng: random.Random) -> str:
-    return rng.choice(["2", "3", "b"])
 
 
 def _multinomial_full(rng: random.Random, n: str) -> str:
@@ -43,8 +32,8 @@ def _multinomial_full(rng: random.Random, n: str) -> str:
 
 
 def _recurrence_rhs(rng: random.Random, n: str) -> str:
-    """Master-theorem RHS: may echo the drawn n value."""
-    return rng.choice([n, "O(1)", "O(n)"])
+    """Master-theorem RHS using the drawn n variable name."""
+    return rng.choice([f"O({n})", "O(1)", f"O({n}^2)", rf"O(\log {n})", rf"O({n} \log {n})"])
 
 
 def _lin_rec_a(rng: random.Random, n: str) -> str:
@@ -58,13 +47,6 @@ def _lin_rec_b(rng: random.Random, na: str) -> str:
     n, a = na.split("|", 1)
     pool = [s for s in _SCALARS if s != n and s != a]
     return rng.choice(pool)
-
-
-# For c=7 (linear recurrence): a and b must exclude n AND each other.
-# We handle a via ParamSub(_lin_rec_a, "n") and b via a second ParamSub that
-# receives "n|a" encoded by a wrapper.  Because ParamSub only passes one slot
-# value, we encode both exclusions into a single combined slot "_na" that carries
-# the drawn n and a separated by "|".
 
 
 def _lin_rec_na_combo(rng: random.Random, n: str) -> str:
@@ -88,11 +70,11 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             "k": S(_K_POOL),
         },
     ),
-    # c=1 — derangements (inclusion-exclusion sum)
+    # c=1 — derangements (inclusion-exclusion sum; ii is the summation index)
     Template(
         name="derangements_sum",
-        latex=r"D_{{{n}}} = {n}!\sum_{{j=0}}^{{{n}}} \frac{{(-1)^j}}{{j!}}",
-        slots={"n": S(_N_POOL)},
+        latex=r"D_{{{n}}} = {n}!\sum_{{{ii}=0}}^{{{n}}} \frac{{(-1)^{{{ii}}}}}{{{ii}!}}",
+        slots={"n": S(_N_POOL), "ii": S(("j", "i", "k", "l"))},
     ),
     # c=2 — sum of all binomial coefficients
     Template(
@@ -103,13 +85,14 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             "k": S(_K_POOL),
         },
     ),
-    # c=3 — binomial theorem
+    # c=3 — binomial theorem (v is now a slot instead of hardcoded x)
     Template(
         name="binomial_theorem",
-        latex=r"\sum_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} x^{{{k}}} = (1+x)^{{{n}}}",
+        latex=r"\sum_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} {v}^{{{k}}} = (1+{v})^{{{n}}}",
         slots={
             "n": S(_N_POOL),
             "k": S(_K_POOL),
+            "v": S(_VARS),
         },
     ),
     # c=4 — Pascal's rule
@@ -130,45 +113,61 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             "formula": P(_multinomial_full, param="n", n=72),
         },
     ),
-    # c=6 — master theorem / divide-and-conquer recurrence
+    # c=6 — master theorem / divide-and-conquer recurrence (ff is the time function)
     Template(
         name="master_theorem_recurrence",
-        latex=r"T({n}) = {aa}\,T\!\left(\frac{{{n}}}{{{bb}}}\right) + {rhs}",
+        latex=r"{ff}({n}) = {aa}\,{ff}\!\left(\frac{{{n}}}{{{bb}}}\right) + {rhs}",
         slots={
+            "ff": E(_fn_rich_nosub, n=100),
             "n": S(_N_POOL),
-            "aa": E(_aa_sub, n=3),
-            "bb": E(_bb_sub, n=3),
-            "rhs": P(_recurrence_rhs, param="n", n=3),
+            "aa": S(("2", "3", "4", "a", "b")),
+            "bb": S(("2", "3", "4", "b", "c")),
+            "rhs": P(_recurrence_rhs, param="n", n=5),
         },
     ),
     # c=7 — linear recurrence a_n = c1*a_{n-1} + c2*a_{n-2}
     # a and b must each exclude n; additionally b must exclude a.
-    # We draw a via _lin_rec_a(rng, n), then encode "a|n" into a combined slot
-    # so that _lin_rec_b can exclude both.
+    # _na carries "a_value|n_value" so _lin_rec_b can exclude both.
     Template(
         name="linear_recurrence",
-        latex=r"a_{{{n}}} = {a}\,a_{{{n}-1}} + {b}\,a_{{{n}-2}}",
+        latex=r"a_{{{n}}} = {c1}\,a_{{{n}-1}} + {c2}\,a_{{{n}-2}}",
         slots={
             "n": S(_N_POOL),
-            "a": P(_lin_rec_a, param="n", n=8),
-            # _na carries the "a_value|n_value" string; b reads it to exclude both
+            "c1": P(_lin_rec_a, param="n", n=8),
             "_na": P(_lin_rec_na_combo, param="n", n=8),
-            "b": P(_lin_rec_b, param="_na", n=7),
+            "c2": P(_lin_rec_b, param="_na", n=7),
         },
     ),
-    # c=8 — ordinary generating function
+    # c=7b — named-sequence recurrence (rich function name for the sequence)
+    Template(
+        name="named_sequence_recurrence",
+        latex=r"{ff}_{{{n}}} = {c1}\,{ff}_{{{n}-1}} + {c2}\,{ff}_{{{n}-2}}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+            "c1": P(_lin_rec_a, param="n", n=8),
+            "_na": P(_lin_rec_na_combo, param="n", n=8),
+            "c2": P(_lin_rec_b, param="_na", n=7),
+        },
+    ),
+    # c=8 — ordinary generating function (gg uses rich function name)
     Template(
         name="ordinary_generating_function",
-        latex=r"G(x) = \sum_{{{n} \geq 0}} a_{{{n}}}\, x^{{{n}}}",
-        slots={"n": S(_N_POOL)},
+        latex=r"{gg}({v}) = \sum_{{{n} \geq 0}} {sc}_{{{n}}}\, {v}^{{{n}}}",
+        slots={
+            "n": S(_N_POOL),
+            "gg": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "sc": S(_SCALARS),
+        },
     ),
     # c=9 — multiset (stars-and-bars) coefficient
     Template(
         name="multiset_coefficient",
-        latex=r"\binom{{{n}+{k2}-1}}{{{k2}-1}}",
+        latex=r"\binom{{{n}+{k}-1}}{{{k}-1}}",
         slots={
             "n": S(_N_POOL),
-            "k2": E(_k2_sub, n=2),
+            "k": S(_K_POOL),
         },
     ),
     # c=10 — derangement recurrence
@@ -177,13 +176,14 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         latex=r"D_{{{n}}} = ({n}-1)\!\left(D_{{{n}-1}} + D_{{{n}-2}}\right)",
         slots={"n": S(_N_POOL)},
     ),
-    # c=11 — hockey stick / Christmas stocking identity
+    # c=11 — hockey stick / Christmas stocking identity (r2 slot, was hardcoded r)
     Template(
         name="hockey_stick_identity",
-        latex=r"\sum_{{{k}=0}}^{{r}} \binom{{{n}+{k}}}{{{k}}} = \binom{{{n}+r+1}}{{r}}",
+        latex=r"\sum_{{{k}=0}}^{{{r2}}} \binom{{{n}+{k}}}{{{k}}} = \binom{{{n}+{r2}+1}}{{{r2}}}",
         slots={
             "n": S(_N_POOL),
             "k": S(_K_POOL),
+            "r2": S(("r", "s", "R", "N")),
         },
     ),
     # c=12 — central binomial asymptotics
@@ -192,11 +192,28 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         latex=r"\binom{{2{n}}}{{{n}}} \sim \frac{{4^{{{n}}}}}{{\sqrt{{\pi {n}}}}}",
         slots={"n": S(_N_POOL)},
     ),
-    # c=13 — Stirling's approximation (fixed)
+    # c=13 — Stirling's approximation — 3 notation variants (was n_eff=1, no slots)
     Template(
         name="stirling_approximation",
-        latex=r"n! \sim \sqrt{2\pi n} \left(\frac{n}{e}\right)^n",
+        latex="",
         slots={},
+        variants=[
+            Template(
+                name="stirling_standard",
+                latex=r"{n}! \sim \sqrt{{2\pi {n}}} \left(\frac{{{n}}}{{e}}\right)^{{{n}}}",
+                slots={"n": S(_N_POOL)},
+            ),
+            Template(
+                name="stirling_log",
+                latex=r"\ln({n}!) \approx {n}\ln {n} - {n} + \frac{{1}}{{2}}\ln(2\pi {n})",
+                slots={"n": S(_N_POOL)},
+            ),
+            Template(
+                name="stirling_gamma",
+                latex=r"\Gamma({n}+1) \sim \sqrt{{2\pi {n}}} \left(\frac{{{n}}}{{e}}\right)^{{{n}}}",
+                slots={"n": S(_N_POOL)},
+            ),
+        ],
     ),
     # c=14 — derangements alternating sum
     Template(
@@ -206,6 +223,169 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             r" + \cdots + \frac{{(-1)^{{{n}}}}}{{{n}!}}\right)"
         ),
         slots={"n": S(_N_POOL)},
+    ),
+    # c=15 — Vandermonde's convolution
+    Template(
+        name="vandermonde_identity",
+        latex=r"\binom{{{mm}+{n}}}{{{k}}} = \sum_{{{j}=0}}^{{{k}}} \binom{{{mm}}}{{{j}}}\binom{{{n}}}{{{k}-{j}}}",
+        slots={
+            "mm": S(_N_POOL),
+            "n": X(_N_POOL, ("mm",)),
+            "k": S(_K_POOL),
+            "j": X(_K_POOL, ("k",)),
+        },
+    ),
+    # c=16 — Catalan numbers (3 equivalent forms)
+    Template(
+        name="catalan_numbers",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="catalan_binomial",
+                latex=r"C_{{{n}}} = \frac{{1}}{{{n}+1}}\binom{{2{n}}}{{{n}}}",
+                slots={"n": S(_N_POOL)},
+            ),
+            Template(
+                name="catalan_factorial",
+                latex=r"C_{{{n}}} = \frac{{(2{n})!}}{{({n}+1)!\,{n}!}}",
+                slots={"n": S(_N_POOL)},
+            ),
+            Template(
+                name="catalan_recurrence",
+                latex=r"C_{{{n}+1}} = \sum_{{{k}=0}}^{{{n}}} C_{{{k}}} C_{{{n}-{k}}}",
+                slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+            ),
+        ],
+    ),
+    # c=17 — Stirling numbers of the second kind (two notation forms)
+    Template(
+        name="stirling_numbers_second",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="stirling_second_s_notation",
+                latex=r"S({n},{k}) = {k}\,S({n}-1,{k}) + S({n}-1,{k}-1)",
+                slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+            ),
+            Template(
+                name="stirling_second_bracket",
+                latex=(
+                    r"\left\{{\begin{{matrix}}{n}\\{k}\end{{matrix}}\right\}}"
+                    r" = {k}\left\{{\begin{{matrix}}{n}-1\\{k}\end{{matrix}}\right\}}"
+                    r" + \left\{{\begin{{matrix}}{n}-1\\{k}-1\end{{matrix}}\right\}}"
+                ),
+                slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+            ),
+        ],
+    ),
+    # c=18 — falling factorial / rising factorial (Pochhammer symbol)
+    Template(
+        name="falling_rising_factorial",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="falling_factorial_descending",
+                latex=r"({v})_{{{n}}} = {v}({v}-1)\cdots({v}-{n}+1)",
+                slots={"v": S(_VARS), "n": S(("2", "3", "n", "m", "k"))},
+            ),
+            Template(
+                name="falling_factorial_ratio",
+                latex=r"({v})_{{{n}}} = \frac{{{v}!}}{{({v}-{n})!}}",
+                slots={"v": S(_VARS), "n": S(_N_POOL)},
+            ),
+            Template(
+                name="rising_factorial_pochhammer",
+                latex=r"({sc})_{{{n}}} = {sc}({sc}+1)\cdots({sc}+{n}-1) = \frac{{\Gamma({sc}+{n})}}{{\Gamma({sc})}}",
+                slots={"sc": S(_SCALARS), "n": S(_N_POOL)},
+            ),
+        ],
+    ),
+    # c=19 — absorption / extraction identity
+    Template(
+        name="absorption_identity",
+        latex=r"{k}\binom{{{n}}}{{{k}}} = {n}\binom{{{n}-1}}{{{k}-1}}",
+        slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+    ),
+    # c=20 — Bell number recurrence (exponential formula)
+    Template(
+        name="bell_number_recurrence",
+        latex=r"B_{{{n}+1}} = \sum_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}",
+        slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+    ),
+    # c=21 — inclusion-exclusion principle (2-set and 3-set forms)
+    Template(
+        name="inclusion_exclusion",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="inclusion_exclusion_two",
+                latex=r"|{ss1} \cup {ss2}| = |{ss1}| + |{ss2}| - |{ss1} \cap {ss2}|",
+                slots={"ss1": S(_SET_POOL), "ss2": X(_SET_POOL, ("ss1",))},
+            ),
+            Template(
+                name="inclusion_exclusion_three",
+                latex=(
+                    r"|{ss1} \cup {ss2} \cup {ss3}|"
+                    r" = |{ss1}| + |{ss2}| + |{ss3}|"
+                    r" - |{ss1} \cap {ss2}| - |{ss1} \cap {ss3}| - |{ss2} \cap {ss3}|"
+                    r" + |{ss1} \cap {ss2} \cap {ss3}|"
+                ),
+                slots={
+                    "ss1": S(_SET_POOL),
+                    "ss2": X(_SET_POOL, ("ss1",)),
+                    "ss3": X(_SET_POOL, ("ss1", "ss2")),
+                },
+            ),
+        ],
+    ),
+    # c=22 — upper negation / negative binomial coefficient identity
+    Template(
+        name="negative_binomial_coeff",
+        latex=r"\binom{{-{n}}}{{{k}}} = (-1)^{{{k}}} \binom{{{n}+{k}-1}}{{{k}}}",
+        slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+    ),
+    # c=23 — exponential generating function (complement to OGF; gg uses rich function name)
+    Template(
+        name="exponential_generating_function",
+        latex=r"{gg}({v}) = \sum_{{{n} \geq 0}} {sc}_{{{n}}}\, \frac{{{v}^{{{n}}}}}{{{n}!}}",
+        slots={
+            "n": S(_N_POOL),
+            "gg": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "sc": S(_SCALARS),
+        },
+    ),
+    # c=24 — Fibonacci identities (4 variants)
+    Template(
+        name="fibonacci_identities",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="fibonacci_recurrence",
+                latex=r"F_{{{n}}} = F_{{{n}-1}} + F_{{{n}-2}}",
+                slots={"n": S(_N_POOL)},
+            ),
+            Template(
+                name="fibonacci_addition",
+                latex=r"F_{{{mm}+{n}}} = F_{{{mm}}} F_{{{n}+1}} + F_{{{mm}-1}} F_{{{n}}}",
+                slots={"mm": S(_N_POOL), "n": X(_N_POOL, ("mm",))},
+            ),
+            Template(
+                name="fibonacci_sum",
+                latex=r"\sum_{{{k}=1}}^{{{n}}} F_{{{k}}} = F_{{{n}+2}} - 1",
+                slots={"n": S(_N_POOL), "k": S(_K_POOL)},
+            ),
+            Template(
+                name="cassini_identity",
+                latex=r"F_{{{n}-1}} F_{{{n}+1}} - F_{{{n}}}^2 = (-1)^{{{n}}}",
+                slots={"n": S(_N_POOL)},
+            ),
+        ],
     ),
 ]
 
