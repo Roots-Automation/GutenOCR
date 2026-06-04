@@ -241,7 +241,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"= \inf_{{{idx} \geq 1}} \sup_{{k \geq {idx}}} {seq}_k"
                 ),
                 slots={
-                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
+                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v")),
                     "idx": S(("n", "m", "j", "r"), idx=0.25),
                     "inf": S((r"\infty", r"+\infty")),
                 },
@@ -253,7 +253,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"= \sup_{{{idx} \geq 1}} \inf_{{k \geq {idx}}} {seq}_k"
                 ),
                 slots={
-                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
+                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v")),
                     "idx": S(("n", "m", "j", "r"), idx=0.25),
                     "inf": S((r"\infty", r"+\infty")),
                 },
@@ -333,7 +333,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="limit_sequence",
                 latex=r"\lim_{{{idx} \to \infty}} {seq}_{{{idx}}} = {L}",
                 slots={
-                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v"), idx=0.35),
+                    "seq": S(("a", "b", "x", "y", "u", "c", "z", "v")),
                     "idx": S(("n", "m", "j", "k"), idx=0.25),
                     "L": E(_atom, n=150),
                 },
@@ -599,7 +599,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\text{{ has a convergent subsequence}}"
         ),
         slots={
-            "seq": S(("x", "a", "y", "z", "u", "v"), idx=0.35),
+            "seq": S(("x", "a", "y", "z", "u", "v")),
             "d": S(("1", "2", "3", "n", "d", "m", "N", "k")),
         },
     ),
