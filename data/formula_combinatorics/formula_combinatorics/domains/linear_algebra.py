@@ -81,7 +81,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="trace_det_eigenvalues",
-        latex=r"\text{{tr}}({m}) = \sum_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod_{{i=1}}^{{{n}}} \lambda_i",
+        latex=r"\operatorname{{tr}}({m}) = \sum_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod_{{i=1}}^{{{n}}} \lambda_i",
         slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
     Template(
@@ -115,7 +115,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="rank_nullity",
-        latex=r"\text{{rank}}({m}) + \text{{null}}({m}) = {n}",
+        latex=r"\operatorname{{rank}}({m}) + \operatorname{{null}}({m}) = {n}",
         slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
     Template(

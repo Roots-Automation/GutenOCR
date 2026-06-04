@@ -14,7 +14,20 @@ from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
 
 _N_POOL: tuple[str, ...] = ("n", "m", "N", "M", "p", "q")
 _K_POOL: tuple[str, ...] = ("k", "r", "j", "l")
-_SET_POOL: tuple[str, ...] = ("A", "B", "C", "D", "E", "S", "T", "U")
+_SET_POOL: tuple[str, ...] = (
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "S",
+    "T",
+    "U",
+    r"\mathcal{A}",
+    r"\mathcal{B}",
+    r"\mathcal{C}",
+    r"\mathcal{S}",
+)
 
 # ---------------------------------------------------------------------------
 # Inline sub-generators

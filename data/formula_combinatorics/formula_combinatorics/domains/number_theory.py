@@ -51,7 +51,7 @@ _NUMBER_THEORY_TEMPLATES: list[Template] = [
     # c=3 — gcd * lcm identity
     Template(
         name="gcd_lcm_identity",
-        latex=r"\gcd({a}, {b}) \cdot \text{{lcm}}({a}, {b}) = {a} \cdot {b}",
+        latex=r"\gcd({a}, {b}) \cdot \operatorname{{lcm}}({a}, {b}) = {a} \cdot {b}",
         slots={
             "a": S(_SCALARS),
             "b": X(_SCALARS, ("a",)),

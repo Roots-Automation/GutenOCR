@@ -54,7 +54,7 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="variance",
-        latex=r"\text{{Var}}({x}) = E\!\left[{x}^2\right] - \left(E[{x}]\right)^2",
+        latex=r"\operatorname{{Var}}({x}) = E\!\left[{x}^2\right] - \left(E[{x}]\right)^2",
         slots={"x": S(_RV_POOL)},
     ),
     Template(
@@ -77,7 +77,7 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="covariance",
-        latex=r"\text{{Cov}}({x}, {y}) = E[{x} {y}] - E[{x}] E[{y}]",
+        latex=r"\operatorname{{Cov}}({x}, {y}) = E[{x} {y}] - E[{x}] E[{y}]",
         slots={"x": S(_RV_POOL), "y": X(_RV_POOL, ["x"])},
     ),
     Template(
@@ -99,7 +99,7 @@ _PROB_TEMPLATES: list[Template] = [
         name="correlation",
         latex=(
             r"\rho_{{{x}{y}}} = "
-            r"\frac{{\text{{Cov}}({x}, {y})}}{{\sqrt{{\text{{Var}}({x}) \, \text{{Var}}({y})}}}}"
+            r"\frac{{\operatorname{{Cov}}({x}, {y})}}{{\sqrt{{\operatorname{{Var}}({x}) \, \operatorname{{Var}}({y})}}}}"
         ),
         slots={"x": S(_RV_POOL), "y": X(_RV_POOL, ["x"])},
     ),

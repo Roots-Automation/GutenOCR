@@ -64,16 +64,35 @@ _COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
 _VEC_POOL: list[str] = list("abcdefghijklmnopqrstuvwxyz")
 _MATRIX_NAMES = ["A", "B", "M", "P", "Q", "R"]
 _CALLIGRAPHIC = [
+    r"\mathcal{A}",
+    r"\mathcal{B}",
+    r"\mathcal{C}",
+    r"\mathcal{D}",
+    r"\mathcal{E}",
     r"\mathcal{F}",
     r"\mathcal{G}",
     r"\mathcal{H}",
+    r"\mathcal{K}",
     r"\mathcal{L}",
+    r"\mathcal{M}",
+    r"\mathcal{N}",
     r"\mathcal{O}",
+    r"\mathcal{P}",
     r"\mathcal{S}",
     r"\mathcal{T}",
-    r"\mathcal{B}",
+    r"\mathcal{U}",
+    r"\mathcal{V}",
 ]
-_FRAKTUR = [r"\mathfrak{g}", r"\mathfrak{h}", r"\mathfrak{n}", r"\mathfrak{m}"]
+_FRAKTUR = [
+    r"\mathfrak{a}",
+    r"\mathfrak{b}",
+    r"\mathfrak{g}",
+    r"\mathfrak{h}",
+    r"\mathfrak{m}",
+    r"\mathfrak{n}",
+    r"\mathfrak{p}",
+    r"\mathfrak{q}",
+]
 _FUNCS = [
     r"\sin",
     r"\cos",
@@ -94,16 +113,47 @@ _FUNCS = [
     r"\operatorname{sgn}",
 ]
 _BBOLD = [
-    r"\mathbb{R}",
-    r"\mathbb{Z}",
-    r"\mathbb{N}",
-    r"\mathbb{Q}",
     r"\mathbb{C}",
-    r"\mathbb{P}",
     r"\mathbb{F}",
+    r"\mathbb{H}",
+    r"\mathbb{N}",
+    r"\mathbb{P}",
+    r"\mathbb{Q}",
+    r"\mathbb{R}",
+    r"\mathbb{T}",
+    r"\mathbb{Z}",
 ]
 _SETS = ["A", "B", "C", "S", "T", "U"]
 _PROPS = ["P", "Q", "R"]
+# Bold Latin and Greek vector/tensor names
+_BOLD_VECS: tuple[str, ...] = (
+    r"\mathbf{a}",
+    r"\mathbf{b}",
+    r"\mathbf{e}",
+    r"\mathbf{f}",
+    r"\mathbf{n}",
+    r"\mathbf{r}",
+    r"\mathbf{u}",
+    r"\mathbf{v}",
+    r"\mathbf{w}",
+    r"\mathbf{x}",
+    r"\mathbf{y}",
+    r"\mathbf{z}",
+)
+_BOLD_GREEK: tuple[str, ...] = (
+    r"\boldsymbol{\alpha}",
+    r"\boldsymbol{\beta}",
+    r"\boldsymbol{\gamma}",
+    r"\boldsymbol{\delta}",
+    r"\boldsymbol{\lambda}",
+    r"\boldsymbol{\mu}",
+    r"\boldsymbol{\omega}",
+    r"\boldsymbol{\phi}",
+    r"\boldsymbol{\psi}",
+    r"\boldsymbol{\sigma}",
+    r"\boldsymbol{\theta}",
+    r"\boldsymbol{\xi}",
+)
 _RELATIONS = [
     r"\sim",
     r"\cong",
@@ -151,6 +201,14 @@ def _tol_sub(rng: random.Random) -> str:
 
 def _cal(rng: random.Random) -> str:
     return rng.choice(_CALLIGRAPHIC)
+
+
+def _bvec(rng: random.Random) -> str:
+    return rng.choice(_BOLD_VECS)
+
+
+def _bgreek(rng: random.Random) -> str:
+    return rng.choice(_BOLD_GREEK)
 
 
 def _deco(rng: random.Random) -> str:
@@ -296,6 +354,10 @@ _FN_BASE: tuple[str, ...] = (
     r"\chi",
     r"\Phi",
     r"\Psi",
+    r"\mathcal{F}",
+    r"\mathcal{G}",
+    r"\mathcal{H}",
+    r"\mathcal{L}",
 )
 _FN_IDX: tuple[str, ...] = ("1", "2", "3", "i", "j", "k", "n", "m")
 
