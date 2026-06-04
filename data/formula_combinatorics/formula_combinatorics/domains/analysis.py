@@ -15,6 +15,11 @@ from .._vocab import (
     _tol_sub,
 )
 
+# Bound-variable pool: proper letter variables (no digits, no calligraphic) with
+# optional subscript decoration, used wherever a symbol is quantified over or
+# acts as an integration / limit / function-argument dummy variable.
+_BVAR = tuple(_VARS)  # ("x","y","z","t","u","v","r","s")
+
 # ---------------------------------------------------------------------------
 # Real analysis templates
 # ---------------------------------------------------------------------------
@@ -34,9 +39,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
-                    "a": E(_atom, n=150),
-                    "L": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),  # bound variable
+                    "a": E(_atom, n=150),  # limit point (any value)
+                    "L": E(_atom, n=150),  # limit value (any value)
                     "eps": E(_eps_sub, n=2),
                     "tol": E(_tol_sub, n=3),
                 },
@@ -49,8 +54,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
-                    "c": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),  # bound variable
+                    "c": E(_atom, n=150),  # fixed point (any value)
                     "eps": E(_eps_sub, n=2),
                     "tol": E(_tol_sub, n=3),
                 },
@@ -63,8 +68,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
-                    "y": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),  # bound variable
+                    "y": S(_BVAR, idx=0.35),  # bound variable
                     "eps": E(_eps_sub, n=2),
                     "tol": E(_tol_sub, n=3),
                 },
@@ -78,7 +83,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "f": E(_fn_rich_nosub, n=100),
             "p": S(("p", "2", "q", "r")),
-            "t": E(_atom, n=150),
+            "t": S(_BVAR, idx=0.35),  # integration variable
         },
     ),
     # --- Cauchy sequence criterion ---
@@ -88,7 +93,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "seq": S(("x", "a", "y", "z", "u", "v")),
             "eps": E(_eps_sub, n=2),
-            "N": E(_atom, n=150),
+            "N": E(_atom, n=150),  # bound value (any symbol)
         },
     ),
     # --- Cauchy-Schwarz for sums ---
@@ -132,14 +137,14 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             Template(
                 name="minkowski_integral",
                 latex=(
-                    r"\left(\int \left|{f}({x}) + {g}({x})\right|^{{{p}}} d{x}\right)^{{1/{p}}} "
-                    r"\leq \left(\int |{f}({x})|^{{{p}}} d{x}\right)^{{1/{p}}} "
-                    r"+ \left(\int |{g}({x})|^{{{p}}} d{x}\right)^{{1/{p}}}"
+                    r"\left(\int \left|{f}({t}) + {g}({t})\right|^{{{p}}} d{t}\right)^{{1/{p}}} "
+                    r"\leq \left(\int |{f}({t})|^{{{p}}} d{t}\right)^{{1/{p}}} "
+                    r"+ \left(\int |{g}({t})|^{{{p}}} d{t}\right)^{{1/{p}}}"
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
                     "g": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "t": S(_BVAR, idx=0.35),  # integration variable
                     "p": S(("p", "2", "q", "r")),
                 },
             ),
@@ -186,29 +191,29 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         latex=r"\sum_{{k=1}}^{{\infty}} \frac{{1}}{{k^{{{s}}}}} < \infty \iff {s} > 1",
         slots={"s": S(("p", "2", "3", "q", "r", "4", "5", r"\alpha", r"\beta"))},
     ),
-    # --- Hölder's inequality (with variable exponent slots) ---
+    # --- Hölder's inequality ---
     Template(
         name="holder_inequality",
         latex=(
-            r"\int |{f}({x}) \cdot {g}({x})| \, d{x} \leq "
-            r"\left(\int |{f}({x})|^{{{p}}}\, d{x}\right)^{{1/{p}}} "
-            r"\left(\int |{g}({x})|^{{{q}}}\, d{x}\right)^{{1/{q}}}"
+            r"\int |{f}({t}) \cdot {g}({t})| \, d{t} \leq "
+            r"\left(\int |{f}({t})|^{{{p}}}\, d{t}\right)^{{1/{p}}} "
+            r"\left(\int |{g}({t})|^{{{q}}}\, d{t}\right)^{{1/{q}}}"
         ),
         slots={
             "f": E(_fn_rich_nosub, n=100),
             "g": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),
+            "t": S(_BVAR, idx=0.35),  # integration variable
             "p": S(("p", "2", "r", "s", "3")),
             "q": S(("q", "2", "t", "r", "4")),
         },
     ),
-    # --- Banach contraction mapping (with x/y variable slots) ---
+    # --- Banach contraction mapping ---
     Template(
         name="banach_contraction",
         latex=r"\|T({x}) - T({y})\| \leq {c_sym} \|{x} - {y}\|",
         slots={
-            "x": S(tuple(_VARS), idx=0.35),
-            "y": S(tuple(_VARS), idx=0.35),
+            "x": S(_BVAR, idx=0.35),
+            "y": S(_BVAR, idx=0.35),
             "c_sym": S((r"\lambda", "k", "c", r"\kappa", r"\rho", r"\alpha", "L")),
         },
         distinct=[["x", "y"]],
@@ -219,7 +224,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         latex=r"\sup_{{{x} \in {D}}} |{f}({x})| < \infty",
         slots={
             "f": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),
+            "x": S(_BVAR, idx=0.35),  # quantified variable
             "D": S(("X", "D", "A", r"\Omega", "K", "U")),
         },
     ),
@@ -281,9 +286,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
-                    "a": E(_atom, n=150),
-                    "L": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),  # limit variable
+                    "a": E(_atom, n=150),  # limit point (any value)
+                    "L": E(_atom, n=150),  # limit value (any value)
                 },
             ),
             Template(
@@ -291,7 +296,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to {a}^+}} {f}({x}) = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                     "L": E(_atom, n=150),
                 },
@@ -301,7 +306,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to {a}^-}} {f}({x}) = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                     "L": E(_atom, n=150),
                 },
@@ -311,7 +316,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to +\infty}} {f}({x}) = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "L": E(_atom, n=150),
                 },
             ),
@@ -320,7 +325,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to -\infty}} {f}({x}) = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "L": E(_atom, n=150),
                 },
             ),
@@ -338,7 +343,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to {a}}} \frac{{{f}({x}) - {f}({a})}}{{{x} - {a}}} = {L}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                     "L": E(_atom, n=150),
                 },
@@ -352,7 +357,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
                     "g": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                 },
             ),
@@ -365,7 +370,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
                     "g": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                 },
             ),
@@ -374,7 +379,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {inf_sym}",
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "x": S(_BVAR, idx=0.35),
                     "a": E(_atom, n=150),
                     "inf_sym": S((r"\infty", r"+\infty", r"-\infty")),
                 },
@@ -391,7 +396,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         ),
         slots={
             "f": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),
+            "x": S(_BVAR, idx=0.35),  # function argument variable
             "M": S(("M", "C", "K", "B", "A", "L")),
         },
     ),
@@ -404,7 +409,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         ),
         slots={
             "f": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),
+            "x": S(_BVAR, idx=0.35),  # function argument variable
         },
     ),
     # --- Banach fixed-point theorem ---
@@ -413,7 +418,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         latex=r"\exists!\, x^* : {T}(x^*) = x^*, \quad x_{{n+1}} = {T}(x_n) \to x^*",
         slots={"T": E(_fn_rich_nosub, n=100)},
     ),
-    # --- Series convergence tests (rich parametric variants) ---
+    # --- Series convergence tests ---
     Template(
         name="convergence_tests",
         latex="",
@@ -435,11 +440,11 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="integral_test",
                 latex=(
                     r"\sum_{{n=1}}^\infty {f}(n) \text{{ converges}} "
-                    r"\iff \int_1^\infty {f}({x})\,d{x} < \infty"
+                    r"\iff \int_1^\infty {f}({t})\,d{t} < \infty"
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "x": E(_atom, n=150),
+                    "t": S(_BVAR, idx=0.35),  # integration variable
                 },
             ),
             Template(
@@ -458,8 +463,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             ),
         ],
     ),
-    # --- Ratio and root tests (standalone — inherently low n_eff, kept separate
-    #     so compute_weights assigns them proportionally fewer draws) ---
+    # --- Ratio / root tests / alternating series (standalone — low n_eff) ---
     Template(
         name="ratio_test",
         latex=(
@@ -505,12 +509,18 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             Template(
                 name="pointwise_conv",
                 latex=r"{f}_n({x}) \to {f}({x}) \quad \text{{for all }} {x} \in D",
-                slots={"f": E(_fn_rich_nosub, n=100), "x": E(_atom, n=150)},
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": S(_BVAR, idx=0.35),  # quantified variable
+                },
             ),
             Template(
                 name="uniform_conv_def",
                 latex=r"\sup_{{{x} \in D}} \left|{f}_n({x}) - {f}({x})\right| \to 0",
-                slots={"f": E(_fn_rich_nosub, n=100), "x": E(_atom, n=150)},
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "x": S(_BVAR, idx=0.35),  # quantified variable
+                },
             ),
             Template(
                 name="uniform_implies_continuous",
@@ -531,7 +541,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),
+                    "a": E(_atom, n=150),  # integration bounds (any value)
                     "b": E(_atom, n=150),
                 },
             ),
@@ -551,7 +561,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),
+                    "a": E(_atom, n=150),  # endpoints (any value)
                     "b": E(_atom, n=150),
                 },
             ),
@@ -581,7 +591,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             ),
         ],
     ),
-    # --- Bolzano-Weierstrass (standalone — low n_eff, gets proportionally few draws) ---
+    # --- Bolzano-Weierstrass (standalone — low n_eff) ---
     Template(
         name="bolzano_weierstrass",
         latex=(
@@ -602,8 +612,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         ),
         slots={
             "f": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),
-            "a": E(_atom, n=150),
+            "x": E(_atom, n=150),  # evaluation point (specific value)
+            "a": E(_atom, n=150),  # expansion point (specific value)
             "n": S(("n", "m", "N", "p")),
         },
     ),
