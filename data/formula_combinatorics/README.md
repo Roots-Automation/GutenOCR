@@ -1,6 +1,6 @@
 # formula-combinatorics
 
-Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 25 math domains using hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
+Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 24 math domains using a declarative template DSL with hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
 
 Output is a JSON object compatible with `GutenOCR/data/grounded_latex/generate_equations.py`.
 
@@ -11,9 +11,9 @@ Output is a JSON object compatible with `GutenOCR/data/grounded_latex/generate_e
 From within this directory:
 
 ```bash
-pip install -e .
-# or with uv:
 uv sync
+# or with pip:
+pip install -e .
 ```
 
 This installs the `formula-combinatorics` package and the `formula-generate` CLI command.
@@ -97,124 +97,101 @@ import random
 from formula_combinatorics.domains import GENERATORS
 
 rng = random.Random(0)
-
-# Single domain
 formula = GENERATORS["calculus"](rng)
-
-# Specific domain modules expose the same interface
-from formula_combinatorics.domains.probability import _probability
-formula = _probability(rng)
-```
-
-### Using vocabulary and template helpers directly
-
-```python
-from formula_combinatorics._vocab import _atom, _expr, _v, _g
-from formula_combinatorics._templates import _def_integral, _limit, _partial_deriv
-
-rng = random.Random(0)
-
-expr = _expr(rng, depth=2)            # recursive LaTeX expression
-integral = _def_integral(rng)          # \int_{lo}^{hi} expr dv
-limit = _limit(rng)                    # \lim_{v \to pt} expr
-pd = _partial_deriv(rng, order=2)      # \frac{\partial^2 f}{\partial v^2}
 ```
 
 ---
 
 ## Domains
 
-25 domains are available, organized into thematic modules. Default sampling weights reflect approximate prevalence in mathematical OCR corpora.
+24 domains are available, each in its own file. Default sampling weights reflect approximate prevalence in mathematical OCR corpora and sum to 100%.
 
-| Module file | Domains | Default weight |
+| Domain | File | Default weight |
 |---|---|---|
-| `domains/algebra.py` | `algebra` | 9% |
-| | `trigonometry` | 4% |
-| `domains/calculus.py` | `calculus` | 10% |
-| | `analysis` | 4% |
-| | `differential_equations` | 3% |
-| `domains/linear_algebra.py` | `linear_algebra` | 8% |
-| `domains/probability.py` | `probability` | 9% |
-| | `information_theory` | 3% |
-| `domains/discrete.py` | `number_theory` | 4% |
-| | `combinatorics` | 3% |
-| | `graph_theory` | 2% |
-| `domains/group_theory.py` | `group_theory` | 3% |
-| | `concrete_groups` | 1% |
-| `domains/ring_theory.py` | `ring_field_theory` | 1% |
-| `domains/representation.py` | `representation_theory` | 1% |
-| `domains/geometry.py` | `differential_geometry` | 2% |
-| | `topology` | 4% |
-| `domains/signals.py` | `complex_analysis` | 3% |
-| | `fourier` | 2% |
-| `domains/physics.py` | `physics` | 6% |
-| `domains/measure.py` | `measure_theory` | 2% |
-| | `p_adic` | 2% |
-| `domains/optimization.py` | `optimization` | 5% |
-| `domains/foundations.py` | `set_theory` | 5% |
-| | `logic` | 4% |
+| `algebra` | `domains/algebra.py` | 9% |
+| `trigonometry` | `domains/trigonometry.py` | 4% |
+| `calculus` | `domains/calculus.py` | 10% |
+| `analysis` | `domains/analysis.py` | 4% |
+| `differential_equations` | `domains/differential_equations.py` | 3% |
+| `linear_algebra` | `domains/linear_algebra.py` | 8% |
+| `probability` | `domains/probability.py` | 9% |
+| `information_theory` | `domains/information_theory.py` | 3% |
+| `number_theory` | `domains/number_theory.py` | 4% |
+| `combinatorics` | `domains/combinatorics.py` | 3% |
+| `graph_theory` | `domains/graph_theory.py` | 2% |
+| `group_theory` | `domains/group_theory.py` | 4% |
+| `ring_field_theory` | `domains/ring_theory.py` | 1% |
+| `representation_theory` | `domains/representation.py` | 1% |
+| `differential_geometry` | `domains/differential_geometry.py` | 2% |
+| `topology` | `domains/topology.py` | 4% |
+| `complex_analysis` | `domains/complex_analysis.py` | 3% |
+| `fourier` | `domains/fourier.py` | 2% |
+| `physics` | `domains/physics.py` | 6% |
+| `measure_theory` | `domains/measure_theory.py` | 2% |
+| `p_adic` | `domains/p_adic.py` | 2% |
+| `optimization` | `domains/optimization.py` | 5% |
+| `set_theory` | `domains/set_theory.py` | 5% |
+| `logic` | `domains/logic.py` | 4% |
 
 Sampling weights are renormalized automatically when `--domains` restricts the active set, so partial runs produce the correct relative distribution.
 
-An additional `align_fraction` (default 15%) of output uses multi-line `align*` or `cases` environments drawn from a separate pool of 12 structural templates independent of domain.
+An additional `align_fraction` (default 15%) of output uses multi-line `align*` or `cases` environments drawn from a separate pool of structural templates, independent of domain.
 
 ---
 
 ## Adding a New Domain
 
-1. Create a new file in `domains/`, e.g. `domains/topology_advanced.py`.
-
-2. Define a generator function and expose `GENERATORS` and `WEIGHTS` dicts:
+1. Create a new file in `formula_combinatorics/domains/`, e.g. `domains/my_domain.py`, following the standard module structure:
 
 ```python
-# domains/topology_advanced.py
+# domains/my_domain.py
+from __future__ import annotations
+
 import random
 from collections.abc import Callable
 
-def _my_domain(rng: random.Random) -> str:
-    c = rng.randint(0, 2)
-    if c == 0:
-        return r"\pi_1(S^1) \cong \mathbb{Z}"
-    if c == 1:
-        return r"H^n(M; \mathbb{Z}) \cong H_n(M; \mathbb{Z})"
-    return r"\chi(S^2) = 2"
+from .._template_dsl import S, Template, compute_weights, make_dispatcher
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "topology_advanced": _my_domain,
-}
+_MY_TEMPLATES: list[Template] = [
+    Template(
+        name="example",
+        latex=r"\pi_1(S^1) \cong \mathbb{{Z}}",
+        slots={},
+    ),
+    Template(
+        name="example_with_slot",
+        latex=r"H^n({X}; \mathbb{{Z}}) \cong H_n({X}; \mathbb{{Z}})",
+        slots={"X": S(["M", "S", "X"])},
+    ),
+]
 
-WEIGHTS: dict[str, float] = {
-    "topology_advanced": 0.02,
-}
+_W = compute_weights(_MY_TEMPLATES)
+_my_domain = make_dispatcher(_MY_TEMPLATES, _W)
+
+GENERATORS: dict[str, Callable[[random.Random], str]] = {"my_domain": _my_domain}
+WEIGHTS: dict[str, float] = {"my_domain": 0.02}
+TEMPLATES: dict[str, list[Template]] = {"my_domain": _MY_TEMPLATES}
 ```
 
-3. Import and merge in `domains/__init__.py`:
+2. Import and merge in `domains/__init__.py`:
 
 ```python
-from .topology_advanced import GENERATORS as _G_TOPO_ADV, WEIGHTS as _W_TOPO_ADV
+from .my_domain import GENERATORS as _G_MY, WEIGHTS as _W_MY, TEMPLATES as _T_MY
 
-GENERATORS = {
-    ...existing...,
-    **_G_TOPO_ADV,
-}
-
-DEFAULT_WEIGHTS = {
-    ...existing...,
-    **_W_TOPO_ADV,
-}
+GENERATORS = {**existing..., **_G_MY}
+DEFAULT_WEIGHTS = {**existing..., **_W_MY}
+TEMPLATES = {**existing..., **_T_MY}
 ```
 
 The import-time assertion `assert set(DEFAULT_WEIGHTS) == set(GENERATORS)` will catch any mismatch immediately.
 
-4. Adjust the total weights so they sum to 1.0 (the engine renormalizes, but clean weights are easier to read).
-
-### Using shared helpers
+### Using shared vocabulary helpers
 
 Pull from `_vocab.py` and `_templates.py` to avoid reinventing common patterns:
 
 ```python
-from .._vocab import _v, _g, _s, _atom, _expr, _two, _SCALARS
-from .._templates import _def_integral, _limit, _norm, _partial_deriv, _matrix_env
+from .._vocab import _VARS, _SCALARS, _atom, _expr, _s, _v
+from .._templates import _def_integral, _indef_integral, _mixed_partial
 ```
 
 ---
@@ -222,28 +199,45 @@ from .._templates import _def_integral, _limit, _norm, _partial_deriv, _matrix_e
 ## Module Layout
 
 ```
-formula_combinatorics/
-├── pyproject.toml          # package metadata and CLI entry point
-├── __init__.py             # public API: generate, GENERATORS, DEFAULT_WEIGHTS
-├── generate.py             # CLI entry point (main())
-├── corpus.py               # generation engine: dedup loop, exception handling
-├── align.py                # multi-line align* / cases environment builder
-├── _vocab.py               # shared constants and atomic sampling helpers
-├── _templates.py           # shared LaTeX fragment builders
-└── domains/
-    ├── __init__.py         # merged GENERATORS + DEFAULT_WEIGHTS registry
-    ├── algebra.py
-    ├── calculus.py
-    ├── discrete.py
-    ├── foundations.py
-    ├── geometry.py
-    ├── group_theory.py
-    ├── linear_algebra.py
-    ├── measure.py
-    ├── optimization.py
-    ├── physics.py
-    ├── probability.py
-    ├── representation.py
-    ├── ring_theory.py
-    └── signals.py
+formula_combinatorics/          ← project root
+├── pyproject.toml
+├── uv.lock
+├── README.md
+├── tools/                      ← dev utilities (not part of the package)
+│   ├── domain_inspector.py     # renders sample formulas to HTML via MathJax
+│   └── collision_probe.py      # birthday-problem diversity analysis
+└── formula_combinatorics/      ← installable package
+    ├── __init__.py             # public API: generate, GENERATORS, DEFAULT_WEIGHTS
+    ├── generate.py             # CLI entry point (formula-generate)
+    ├── corpus.py               # generation engine: dedup loop
+    ├── align.py                # multi-line align* / cases environment builder
+    ├── _vocab.py               # shared constants and atomic sampling helpers
+    ├── _templates.py           # shared LaTeX fragment builders
+    ├── _template_dsl.py        # Template DSL: Slot, Sub, compute_weights, make_dispatcher
+    └── domains/
+        ├── __init__.py         # merged GENERATORS, DEFAULT_WEIGHTS, TEMPLATES registry
+        ├── algebra.py
+        ├── trigonometry.py
+        ├── calculus.py
+        ├── analysis.py
+        ├── differential_equations.py
+        ├── linear_algebra.py
+        ├── probability.py
+        ├── information_theory.py
+        ├── number_theory.py
+        ├── combinatorics.py
+        ├── graph_theory.py
+        ├── group_theory.py
+        ├── ring_theory.py
+        ├── representation.py
+        ├── differential_geometry.py
+        ├── topology.py
+        ├── complex_analysis.py
+        ├── fourier.py
+        ├── physics.py
+        ├── measure_theory.py
+        ├── p_adic.py
+        ├── optimization.py
+        ├── set_theory.py
+        └── logic.py
 ```
