@@ -13,20 +13,20 @@ from .._vocab import _fn_rich_nosub
 # ---------------------------------------------------------------------------
 
 # Notation-style pools (same quantity, visually distinct typesetting)
-_HAM_POOL = ("H", r"\hat{H}", r"\mathcal{H}")
-_LAG_POOL = ("L", r"\mathcal{L}", r"\Lambda")
-_PSI_POOL = (r"\psi", r"\phi", r"\Psi", r"\varphi")
-_E_FIELD = (r"\mathbf{E}", r"\vec{E}", "E")
-_B_FIELD = (r"\mathbf{B}", r"\vec{B}", "B")
-_VEC_F = (r"\mathbf{F}", r"\vec{F}", "F")
+_HAM_POOL = ("H", r"\hat{H}", r"\mathcal{H}", r"\hat{\mathcal{H}}", r"H_0", r"\tilde{H}")
+_LAG_POOL = ("L", r"\mathcal{L}", r"\Lambda", r"\tilde{L}", r"L_0", r"\hat{L}")
+_PSI_POOL = (r"\psi", r"\phi", r"\Psi", r"\varphi", r"\tilde{\psi}", r"\hat{\psi}")
+_E_FIELD = (r"\mathbf{E}", r"\vec{E}", "E", r"\hat{E}", r"\mathcal{E}", r"\tilde{E}")
+_B_FIELD = (r"\mathbf{B}", r"\vec{B}", "B", r"\hat{B}", r"\mathcal{B}", r"\tilde{B}")
+_VEC_F = (r"\mathbf{F}", r"\vec{F}", "F", r"\hat{F}", r"\tilde{F}", r"\mathcal{F}")
 
 # Physical quantity pools
-_MASS_POOL = ("m", "M", r"\mu", r"m_1", r"m_2")
+_MASS_POOL = ("m", "M", r"\mu", r"m_1", r"m_2", r"\tilde{m}", r"m_0", r"M_0")
 _CHARGE_POOL = ("q", "e", "Q", r"q_1", r"q_2")
-_HBAR_POOL = (r"\hbar", r"h/(2\pi)")
-_EPS_POOL = (r"\varepsilon_0", r"\epsilon_0")
-_MU0_POOL = (r"\mu_0", r"\mu_{\mathrm{vac}}")
-_BETA_POOL = (r"\beta", r"(k_B T)^{-1}")
+_HBAR_POOL = (r"\hbar", r"h/(2\pi)", r"h", r"\hslash")
+_EPS_POOL = (r"\varepsilon_0", r"\epsilon_0", r"\varepsilon", r"\epsilon_r\varepsilon_0", r"\varepsilon_{\mathrm{eff}}")
+_MU0_POOL = (r"\mu_0", r"\mu_{\mathrm{vac}}", r"\mu", r"\mu_r\mu_0", r"\mu_{\mathrm{eff}}")
+_BETA_POOL = (r"\beta", r"(k_B T)^{-1}", r"\beta_0", r"\tilde{\beta}", r"1/(k T)")
 _OMEGA_POOL = (r"\omega", r"\omega_0", r"\Omega", r"\nu")
 _GAMMA_POOL = (r"\gamma", r"\Gamma", r"\gamma_0")
 _TEMP_POOL = ("T", r"T_0", r"T_H", r"T_C")
@@ -41,10 +41,10 @@ _ENERGY_POOL = ("E", r"E_0", r"\mathcal{E}", "U")
 _VEL_POOL = ("v", r"v_0", "u", r"v_1")
 _RHO_POOL = (r"\rho", r"\rho_0", r"\varrho")
 _K_POOL = ("k", r"k_0", r"\kappa", r"k_n")
-_KB_POOL = ("k_B", r"k_{\mathrm{B}}")
+_KB_POOL = ("k_B", r"k_{\mathrm{B}}", r"k", r"\kappa_B", r"k_{\mathrm{Boltz}}")
 _MU_POOL = (r"\mu", r"\mu_0", r"E_F")
-_TC_POOL = ("T_C", "T_c")
-_TH_POOL = ("T_H", "T_h")
+_TC_POOL = ("T_C", "T_c", r"T_1", r"\tau_c", r"T_{\mathrm{cold}}")
+_TH_POOL = ("T_H", "T_h", r"T_2", r"\tau_h", r"T_{\mathrm{hot}}")
 _PRESS_POOL = ("p", "P", r"p_0")
 
 # ---------------------------------------------------------------------------
@@ -615,6 +615,97 @@ _PHYSICS_TEMPLATES: list[Template] = [
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "ii": S(_IDX_POOL),
+        },
+    ),
+]
+
+# Part C additions — 8 more fn-pair templates
+_PHYSICS_TEMPLATES += [
+    Template(
+        name="fn_boltzmann_weight",
+        latex=r"{fn1}\!\left(e^{{-{bt}\,E_{{{ii}}}}}\right) = {fn2}\!\left(\frac{{1}}{{Z}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "bt": S(_BETA_POOL),
+            "ii": S(_IDX_POOL),
+        },
+    ),
+    Template(
+        name="fn_dispersion_relation",
+        latex=r"{fn1}({om}) = {fn2}({kk}\,c)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "om": S(_OMEGA_POOL),
+            "kk": S(_K_POOL),
+        },
+    ),
+    Template(
+        name="fn_lorentz_factor_pair",
+        latex=r"{fn1}({gm}) = {fn2}\!\left(\frac{{1}}{{\sqrt{{1-{vv}^2/c^2}}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "gm": S(_GAMMA_POOL),
+            "vv": S(_VEL_POOL),
+        },
+    ),
+    Template(
+        name="fn_heat_equation",
+        latex=(
+            r"\frac{{\partial {fn1}}}{{\partial t}}"
+            r" = {fn2}\,\frac{{\partial^2 {fn1}}}{{\partial {cc}^2}}"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "cc": S(_COORD_POOL),
+        },
+    ),
+    Template(
+        name="fn_correlation_fn",
+        latex=r"{fn1}(r) = {fn2}\!\left(\langle {psi}(0)\,{psi}(r)\rangle\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "psi": S(_PSI_POOL),
+        },
+    ),
+    Template(
+        name="fn_canonical_ensemble",
+        latex=r"{fn1}(Z) = {fn2}\!\left(\sum_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "bt": S(_BETA_POOL),
+            "ii": S(_IDX_POOL),
+        },
+    ),
+    Template(
+        name="fn_em_wave_pair",
+        latex=(
+            r"{fn1}\!\left(\frac{{\partial^2 {ef}}}{{\partial t^2}}\right)"
+            r" = {fn2}\!\left(c^2\,\nabla^2 {ef}\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "ef": S(_E_FIELD),
+        },
+    ),
+    Template(
+        name="fn_quantum_evolution",
+        latex=(
+            r"{fn1}(|{psi}(t)\rangle)"
+            r" = {fn2}\!\left(e^{{-i\,{ham}\,t/{hb}}}\,|{psi}(0)\rangle\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "psi": S(_PSI_POOL),
+            "ham": S(_HAM_POOL),
+            "hb": S(_HBAR_POOL),
         },
     ),
 ]

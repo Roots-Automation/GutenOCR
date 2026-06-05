@@ -12,11 +12,11 @@ from .._vocab import _fn_rich_nosub
 # Pools
 # ---------------------------------------------------------------------------
 
-_IDX_POOL: tuple[str, ...] = ("n", "m", "k", "j", "r", "l")
+_IDX_POOL: tuple[str, ...] = ("n", "m", "k", "j", "r", "l", "s", "t", "i", "p", "N", "M")
 _INT_POOL: tuple[str, ...] = ("a", "b", "c", "d", "u", "v", "x", "y")
-_PRIME_POOL: tuple[str, ...] = ("p", "q", "r", "s", "l", "t")
-_MOD_POOL: tuple[str, ...] = ("m", "n", "p", "q", "N", "M")
-_FUNC_POOL: tuple[str, ...] = ("f", "g", "h", r"\phi", r"\psi", r"\chi")
+_PRIME_POOL: tuple[str, ...] = ("p", "q", "r", "s", "l", "t", r"p_1", r"p_2", r"q_1", r"q_2", r"\ell", "u")
+_MOD_POOL: tuple[str, ...] = ("m", "n", "p", "q", "N", "M", "k", "r", "P", "Q")
+_FUNC_POOL: tuple[str, ...] = ("f", "g", "h", r"\phi", r"\psi", r"\chi", r"\varphi", r"\xi", r"\eta", r"\zeta")
 _ALPHA_POOL: tuple[str, ...] = (
     r"\alpha",
     r"\beta",
@@ -989,6 +989,68 @@ _TEMPLATES_C: list[Template] = [
             "pp": S(_PRIME_POOL),
             "nn": S(_IDX_POOL),
             "ss": S(_ALPHA_POOL),
+        },
+    ),
+]
+
+# Part C additions
+_TEMPLATES_C += [
+    Template(
+        name="fn_divisor_identity",
+        latex=r"{fn1}(\sigma({nn})) = {fn2}\!\left(\sum_{{d \mid {nn}}} d\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "nn": S(_IDX_POOL),
+        },
+    ),
+    Template(
+        name="fn_prime_count",
+        latex=r"{fn1}(\pi({nn})) = {fn2}\!\left(\sum_{{{pp} \leq {nn},\,{pp}\text{{ prime}}}} 1\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "nn": S(_IDX_POOL),
+            "pp": S(_PRIME_POOL),
+        },
+    ),
+    Template(
+        name="fn_euler_phi_product",
+        latex=r"{fn1}(\varphi({nn})) = {fn2}\!\left({nn} \prod_{{{pp} \mid {nn}}} \!\!\left(1 - \frac{{1}}{{{pp}}}\right)\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "nn": S(_IDX_POOL),
+            "pp": S(_PRIME_POOL),
+        },
+    ),
+    Template(
+        name="fn_moebius_inversion",
+        latex=r"{fn1}({nn}) = \sum_{{d \mid {nn}}} {fn2}(d) \iff {fn2}({nn}) = \sum_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "nn": S(_IDX_POOL),
+        },
+    ),
+    Template(
+        name="fn_zeta_product",
+        latex=r"{fn1}(\zeta({ss})) = {fn2}\!\left(\prod_{{{pp}\text{{ prime}}}} \frac{{1}}{{1-{pp}^{{-{ss}}}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "ss": S(_ALPHA_POOL),
+            "pp": S(_PRIME_POOL),
+        },
+    ),
+    Template(
+        name="fn_arithmetic_pair",
+        latex=r"{fn1}({aa}\cdot{bb}) = {fn2}({aa})\cdot{fn2}({bb}),\quad \gcd({aa},{bb})=1",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "aa": S(_INT_POOL),
+            "bb": X(_INT_POOL, ("aa",)),
         },
     ),
 ]

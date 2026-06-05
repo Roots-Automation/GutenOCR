@@ -497,7 +497,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "a": S(("a", "b", "c", "x", "y", "u", "v", "p")),
             "v": S(("n", "m", "k", "j")),
-            "v0": S(("1", "0", "2")),
+            "v0": S(("0", "1", "2", "3", r"n_0", "N")),
         },
     ),
     # --- Uniform / pointwise convergence ---
@@ -599,7 +599,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\text{{ has a convergent subsequence}}"
         ),
         slots={
-            "seq": S(("x", "a", "y", "z", "u", "v")),
+            "seq": S(("x", "a", "y", "z", "u", "v", "s", "b", "c", "w")),
             "d": S(("1", "2", "3", "n", "d", "m", "N", "k")),
         },
     ),
@@ -644,11 +644,89 @@ _ANALYSIS_TEMPLATES: list[Template] = [
     ),
 ]
 
+# Part C — high-n_eff fn-pair templates
+_ANALYSIS_TEMPLATES += [
+    Template(
+        name="fn_limit_composition",
+        latex=r"{fn1}\!\left(\lim_{{{x} \to {a}}} {fn2}({x})\right) = \lim_{{{x} \to {a}}} {fn1}\!\left({fn2}({x})\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+            "a": E(_atom, n=150),
+        },
+    ),
+    Template(
+        name="fn_continuity_bound",
+        latex=r"|{fn1}({x}) - {fn1}({y})| \leq {fn2}(|{x} - {y}|)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+            "y": S(_BVAR, idx=0.35),
+        },
+    ),
+    Template(
+        name="fn_uniform_convergence",
+        latex=r"\sup_{{{x} \in D}} |{fn1}_n({x}) - {fn2}({x})| \to 0 \text{{ as }} n \to \infty",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+        },
+    ),
+    Template(
+        name="fn_integral_bound",
+        latex=r"\left|\int {fn1}({x})\,d{x}\right| \leq \int |{fn2}({x})|\,d{x}",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+        },
+    ),
+    Template(
+        name="fn_derivative_chain",
+        latex=r"({fn1} \circ {fn2})'({x}) = {fn1}'({fn2}({x})) \cdot {fn2}'({x})",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+        },
+    ),
+    Template(
+        name="fn_sequence_bound",
+        latex=r"|{fn1}(a_n) - {fn1}(L)| \leq {fn2}(|a_n - L|) \to 0",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+        },
+    ),
+    Template(
+        name="fn_series_tail",
+        latex=r"\sum_{{n={v}}}^{{\infty}} {fn1}(a_n) \leq {fn2}\!\left(\sum_{{n={v}}}^{{\infty}} |a_n|\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "v": S(("n", "m", "k", "j", "N", "M")),
+        },
+    ),
+    Template(
+        name="fn_metric_bound",
+        latex=r"{fn1}(d({x},{y})) \leq {fn2}(d({x},z) + d(z,{y}))",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "x": S(_BVAR, idx=0.35),
+            "y": S(_BVAR, idx=0.35),
+        },
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Sampling weights — cap at 10_000 to balance high-n_eff templates
 # ---------------------------------------------------------------------------
 
-_W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES, cap=10_000)
+_W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
 
 # ---------------------------------------------------------------------------
 # Dispatch functions

@@ -40,9 +40,9 @@ _CARD_POOL = (
     r"\mu",
 )  # 6
 _VAR_POOL = ("x", "y", "z", "a", "b", "c", "u", "v", "w")  # 9
-_PROP_POOL = ("P", "Q", "R", r"\varphi", r"\psi")  # 5
-_FUNC_POOL = ("f", "g", "h", r"\varphi", r"\psi")  # 5
-_IDX_POOL = ("n", "m", "k", "i", "j")  # 5
+_PROP_POOL = ("P", "Q", "R", r"\varphi", r"\psi", "S", "T", "U")  # 8
+_FUNC_POOL = ("f", "g", "h", r"\varphi", r"\psi", r"\phi", r"\xi", r"\eta")  # 8
+_IDX_POOL = ("n", "m", "k", "i", "j", "r", "s", "l")  # 8
 _BBOLD_POOL = (
     r"\mathbb{N}",
     r"\mathbb{Z}",
@@ -815,6 +815,29 @@ _SET_THEORY_TEMPLATES: list[Template] = [
             "fn1": E(_fn_rich_nosub, n=100),
             "AA": S(_SET_POOL),
             "vv": S(_VAR_POOL),
+        },
+    ),
+]
+
+# Part C additions
+_SET_THEORY_TEMPLATES += [
+    Template(
+        name="fn_powerset_pair",
+        latex=r"{fn1}(\mathcal{{P}}({ss})) = {fn2}\!\left(\{{T : T \subseteq {ss}\}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "ss": S(_SET_POOL),
+        },
+    ),
+    Template(
+        name="fn_cardinal_pair",
+        latex=r"{fn1}(|{ss1} \times {ss2}|) = {fn2}(|{ss1}| \cdot |{ss2}|)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "ss1": S(_SET_POOL),
+            "ss2": X(_SET_POOL, ("ss1",)),
         },
     ),
 ]

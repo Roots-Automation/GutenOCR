@@ -12,12 +12,23 @@ from .._vocab import _fn_rich_nosub
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_RV_POOL = ("X", "Y", "Z", "U", "V", "W")  # 6
-_DIST_POOL = ("P", "Q", "R", r"\mu", r"\nu")  # 5
-_LOG_POOL = (r"\log_2", r"\ln", r"\log", r"\log_{10}")  # 4
+_RV_POOL = ("X", "Y", "Z", "U", "V", "W", "S", "T", "A", "B", "N", "M")  # 12
+_DIST_POOL = ("P", "Q", "R", r"\mu", r"\nu", "S", "T", "U", r"\pi", r"\rho")  # 10
+_LOG_POOL = (r"\log_2", r"\ln", r"\log", r"\log_{10}", r"\log_e", r"\log_q", r"\mathrm{ld}", r"\log_p")  # 8
 _IDX_POOL = ("n", "m", "k", "i", "j")  # 5
-_ALPHA_POOL = (r"\alpha", r"\beta", r"2", r"\frac{1}{2}", r"\frac{3}{2}")  # 5
-_EPS_POOL = (r"\epsilon", r"\delta", r"\varepsilon", r"\eta")  # 4
+_ALPHA_POOL = (
+    r"\alpha",
+    r"\beta",
+    r"2",
+    r"\frac{1}{2}",
+    r"\frac{3}{2}",
+    r"\gamma",
+    r"\delta",
+    r"\kappa",
+    r"\lambda",
+    r"\tau",
+)  # 10
+_EPS_POOL = (r"\epsilon", r"\delta", r"\varepsilon", r"\eta", r"\gamma", r"\kappa", r"\nu", r"\zeta")  # 8
 _RATE_POOL = ("R", r"R_0", r"R_1", r"\mathcal{C}", "C")  # 5
 _SET_POOL = (
     r"\mathcal{X}",
@@ -738,6 +749,48 @@ _INFOTH_TEMPLATES: list[Template] = (
     + _TEMPLATES_B_NET
     + _TEMPLATES_C
 )
+
+# Part C additions
+_INFOTH_TEMPLATES += [
+    Template(
+        name="fn_channel_capacity_pair",
+        latex=r"{fn1}(C) = {fn2}\!\left(\max_{{{pp}}} I({XX}; {YY})\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "pp": S(_DIST_POOL),
+            "XX": S(_RV_POOL),
+            "YY": X(_RV_POOL, ("XX",)),
+        },
+    ),
+    Template(
+        name="fn_source_coding_pair",
+        latex=r"{fn1}(L^*) = {fn2}\!\left(\sum_{{x}} p(x)\, {lb}\, \frac{{1}}{{p(x)}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "lb": S(_LOG_POOL),
+        },
+    ),
+    Template(
+        name="fn_rate_distortion_pair",
+        latex=r"{fn1}(R(D)) = {fn2}\!\left(\min_{{p(\hat{{x}}|x):\,\mathbb{{E}}[d]\leq D}} I(X;\hat{{X}})\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+        },
+    ),
+    Template(
+        name="fn_entropy_bound_pair",
+        latex=r"{fn1}(H({XX})) \leq {fn2}({lb}\,|\mathcal{{X}}|)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "XX": S(_RV_POOL),
+            "lb": S(_LOG_POOL),
+        },
+    ),
+]
 
 # ---------------------------------------------------------------------------
 # Sampling weights

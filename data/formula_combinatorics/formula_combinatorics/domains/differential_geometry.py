@@ -12,14 +12,36 @@ from .._vocab import _fn_rich_nosub
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_VF_POOL = ("X", "Y", "Z", "V", "W", "U")
-_FORM_POOL = (r"\omega", r"\alpha", r"\beta", r"\eta", r"\theta", r"\phi")
-_MFLD_POOL = ("M", "N", r"\Sigma", r"\mathcal{M}", r"\mathcal{N}")
-_METRIC_POOL = ("g", "h", "k")
+_VF_POOL = ("X", "Y", "Z", "V", "W", "U", "T", "S", r"\xi", r"\eta")
+_FORM_POOL = (r"\omega", r"\alpha", r"\beta", r"\eta", r"\theta", r"\phi", r"\psi", r"\chi", r"\rho", r"\sigma")
+_MFLD_POOL = (
+    "M",
+    "N",
+    r"\Sigma",
+    r"\mathcal{M}",
+    r"\mathcal{N}",
+    "P",
+    r"\mathcal{P}",
+    r"\mathcal{S}",
+    r"\Gamma",
+    r"\Lambda",
+)
+_METRIC_POOL = ("g", "h", "k", r"\gamma", r"\hat{g}", r"\tilde{g}", r"\bar{g}", r"g_0")
 _IDX_POOL = ("i", "j", "k", "l", "m", "n")
-_PARAM_POOL = (r"\tau", r"\lambda", "s", "t")
-_BUNDLE_POOL = ("E", "L", r"\mathcal{E}", r"\mathcal{L}", r"\mathcal{F}")
-_NVEC_POOL = ("N", r"\nu", r"\mathbf{n}", r"\hat{N}")
+_PARAM_POOL = (r"\tau", r"\lambda", "s", "t", r"\sigma", "u", r"\mu", r"\rho")
+_BUNDLE_POOL = (
+    "E",
+    "L",
+    r"\mathcal{E}",
+    r"\mathcal{L}",
+    r"\mathcal{F}",
+    "F",
+    r"\mathcal{G}",
+    r"\mathcal{H}",
+    r"\mathcal{V}",
+    "S",
+)
+_NVEC_POOL = ("N", r"\nu", r"\mathbf{n}", r"\hat{N}", r"\hat{n}", r"\mathbf{e}_n", "n", r"\bar{N}")
 _KAPPA_POOL = (r"\kappa", "0", "1", "-1")
 
 # ---------------------------------------------------------------------------
@@ -935,6 +957,108 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             "ii": S(_IDX_POOL),
             "jj": X(_IDX_POOL, ("ii",)),
             "kk": X(_IDX_POOL, ("ii", "jj")),
+        },
+    ),
+]
+
+# Part C additions — 8 fn-pair templates
+_DIFFGEOM_TEMPLATES += [
+    Template(
+        name="fn_metric_contraction",
+        latex=(
+            r"{fn1}\!\left({met}^{{{ii}{jj}}} T_{{{ii}{jj}}}\right)"
+            r" = {fn2}\!\left(\operatorname{{tr}}_{{{met}}} T\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="fn_curvature_trace",
+        latex=(
+            r"{fn1}(R_{{{ii}{jj}}})"
+            r" = {fn2}\!\left({met}^{{{kk}{ll}}} R_{{{kk}{ii}{ll}{jj}}}\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    Template(
+        name="fn_lie_bracket",
+        latex=r"{fn1}([{xx},{yy}]) = {fn2}({xx}{yy} - {yy}{xx})",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "xx": S(_VF_POOL),
+            "yy": X(_VF_POOL, ("xx",)),
+        },
+    ),
+    Template(
+        name="fn_exterior_product",
+        latex=r"{fn1}({om} \wedge {al}) = {fn2}((-1)^{{pq}}\,{al} \wedge {om})",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "om": S(_FORM_POOL),
+            "al": X(_FORM_POOL, ("om",)),
+        },
+    ),
+    Template(
+        name="fn_hodge_dual",
+        latex=r"{fn1}(\star {om}) = {fn2}\!\left(\langle {om}, {al} \rangle\,\mathrm{{vol}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "om": S(_FORM_POOL),
+            "al": X(_FORM_POOL, ("om",)),
+        },
+    ),
+    Template(
+        name="fn_geodesic_deviation",
+        latex=(
+            r"{fn1}\!\left(\frac{{D^2 {xx}}}{{d{par}^2}}\right)"
+            r" = {fn2}(R({xx}, \dot{{\gamma}})\dot{{\gamma}})"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "xx": S(_VF_POOL),
+            "par": S(_PARAM_POOL),
+        },
+    ),
+    Template(
+        name="fn_connection_form",
+        latex=(
+            r"{fn1}(\nabla_{{{xx}}} {yy})"
+            r" = {fn2}\!\left({xx}({yy}) + \omega({xx})\,{yy}\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "xx": S(_VF_POOL),
+            "yy": X(_VF_POOL, ("xx",)),
+        },
+    ),
+    Template(
+        name="fn_holonomy",
+        latex=(
+            r"{fn1}(\operatorname{{Hol}}_p(\nabla))"
+            r" = {fn2}\!\left(\bigl\{{P_\gamma : \gamma \in \Omega_p({mfld})\bigr\}}\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "mfld": S(_MFLD_POOL),
         },
     ),
 ]

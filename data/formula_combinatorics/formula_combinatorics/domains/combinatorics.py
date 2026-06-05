@@ -12,8 +12,8 @@ from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_N_POOL: tuple[str, ...] = ("n", "m", "N", "M", "p", "q")
-_K_POOL: tuple[str, ...] = ("k", "r", "j", "l")
+_N_POOL: tuple[str, ...] = ("n", "m", "N", "M", "p", "q", "r", "s", "t", "i", "l", r"n_0")
+_K_POOL: tuple[str, ...] = ("k", "r", "j", "l", "i", "s", "t", "p")
 _SET_POOL: tuple[str, ...] = (
     "A",
     "B",
@@ -399,6 +399,72 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
                 slots={"n": S(_N_POOL)},
             ),
         ],
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part C — high-n_eff function-pair templates
+# ---------------------------------------------------------------------------
+
+_COMBINATORICS_TEMPLATES += [
+    Template(
+        name="fn_binomial_symmetry",
+        latex=r"{fn1}\!\binom{{{n}}}{{{k}}} = {fn2}\!\binom{{{n}}}{{{n}-{k}}}",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+            "k": S(_K_POOL),
+        },
+    ),
+    Template(
+        name="fn_generating_func",
+        latex=r"{fn1}\!\left(\sum_{{{n}\geq 0}} {sc}_{{{n}}}\,{v}^{{{n}}}\right) = {fn2}({v})",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+            "sc": S(_SCALARS),
+            "v": S(_VARS),
+        },
+    ),
+    Template(
+        name="fn_recurrence_pair",
+        latex=r"{fn1}(a_{{{n}}}) = {fn2}\!\left(a_{{{n}-1}} + a_{{{n}-2}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+        },
+    ),
+    Template(
+        name="fn_stirling_transform",
+        latex=r"{fn1}(S({n},{k})) = {fn2}\!\left(\frac{{1}}{{{k}!}}\sum_{{j=0}}^{{{k}}} (-1)^{{{k}-j}}\binom{{{k}}}{{j}} j^{{{n}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+            "k": S(_K_POOL),
+        },
+    ),
+    Template(
+        name="fn_bell_recurrence",
+        latex=r"{fn1}(B_{{{n}+1}}) = {fn2}\!\left(\sum_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+            "k": S(_K_POOL),
+        },
+    ),
+    Template(
+        name="fn_catalan_formula",
+        latex=r"{fn1}(C_{{{n}}}) = {fn2}\!\left(\frac{{1}}{{{n}+1}}\binom{{2{n}}}{{{n}}}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "n": S(_N_POOL),
+        },
     ),
 ]
 

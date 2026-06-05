@@ -13,7 +13,7 @@ from .._vocab import _fn_rich_nosub
 # ---------------------------------------------------------------------------
 
 _RV_POOL = ("X", "Y", "Z", "W", "U", "V")
-_EVENT_POOL = ("A", "B", "C", "D")
+_EVENT_POOL = ("A", "B", "C", "D", "E", "F", r"A_1", r"B_1")
 _N_POOL = ("n", "m", "N", "M")
 _K_POOL = (r"k", r"\ell", "j", "r")
 _IDX_POOL = ("i", "j", "k", "t")
@@ -22,10 +22,10 @@ _LAM_POOL = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")
 _MU_POOL = (r"\mu", r"\mu_0", r"\nu", "m")
 _SIG_POOL = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")
 _A_POOL = ("a", "b", "c", r"\varepsilon")
-_PROB_OP = ("P", r"\mathbb{P}", r"\Pr")
-_EXP_OP = ("E", r"\mathbb{E}", r"\mathrm{E}")
+_PROB_OP = ("P", r"\mathbb{P}", r"\Pr", r"\mathbf{P}", r"\hat{P}", r"\tilde{P}")
+_EXP_OP = ("E", r"\mathbb{E}", r"\mathrm{E}", r"\mathbf{E}", r"\hat{E}", r"\mathbb{E}_\theta")
 _AB_POOL = ("a", "b", r"\alpha", r"\beta")
-_BERN_K = ("0", "1")
+_BERN_K = ("0", "1", "2", "3")
 
 # ---------------------------------------------------------------------------
 # Probability templates
@@ -785,6 +785,42 @@ _PROB_TEMPLATES: list[Template] = [
             "fn2": E(_fn_rich_nosub, n=100),
             "rv1": S(_RV_POOL),
             "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+]
+
+# Part C additions
+_PROB_TEMPLATES += [
+    Template(
+        name="fn_cdf_pair",
+        latex=r"{fn1}(F_{{{rv}}}({aa})) = {fn2}({op}({rv} \leq {aa}))",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv": S(_RV_POOL),
+            "aa": S(_A_POOL),
+            "op": S(_PROB_OP),
+        },
+    ),
+    Template(
+        name="fn_moment_pair",
+        latex=r"{fn1}(\mathbb{{E}}[{rv}^{{{kk}}}]) = {fn2}\!\left(\int {aa}^{{{kk}}} f_{{{rv}}}({aa})\,d{aa}\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "aa": S(_A_POOL),
+        },
+    ),
+    Template(
+        name="fn_characteristic_fn_pair",
+        latex=r"{fn1}(\varphi_{{{rv}}}({tt})) = {fn2}\!\left(\mathbb{{E}}[e^{{i{tt}{rv}}}]\right)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv": S(_RV_POOL),
+            "tt": S(_A_POOL),
         },
     ),
 ]
