@@ -15,6 +15,9 @@ from .analysis import WEIGHTS as _W_ANALYSIS
 from .calculus import GENERATORS as _G_CALCULUS
 from .calculus import TEMPLATES as _T_CALCULUS
 from .calculus import WEIGHTS as _W_CALCULUS
+from .category_theory import GENERATORS as _G_CATTHY
+from .category_theory import TEMPLATES as _T_CATTHY
+from .category_theory import WEIGHTS as _W_CATTHY
 from .combinatorics import GENERATORS as _G_COMB
 from .combinatorics import TEMPLATES as _T_COMB
 from .combinatorics import WEIGHTS as _W_COMB
@@ -83,6 +86,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_ALGEBRA,
     **_G_TRIG,
     **_G_CALCULUS,
+    **_G_CATTHY,
     **_G_ANALYSIS,
     **_G_DIFFEQ,
     **_G_LINEAR,
@@ -110,6 +114,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_ALGEBRA,
     **_W_TRIG,
     **_W_CALCULUS,
+    **_W_CATTHY,
     **_W_ANALYSIS,
     **_W_DIFFEQ,
     **_W_LINEAR,
@@ -140,6 +145,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_ALGEBRA,
     **_T_TRIG,
     **_T_CALCULUS,
+    **_T_CATTHY,
     **_T_ANALYSIS,
     **_T_DIFFEQ,
     **_T_LINEAR,
