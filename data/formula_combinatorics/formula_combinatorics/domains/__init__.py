@@ -75,6 +75,9 @@ from .ring_theory import WEIGHTS as _W_RING
 from .set_theory import GENERATORS as _G_SET
 from .set_theory import TEMPLATES as _T_SET
 from .set_theory import WEIGHTS as _W_SET
+from .stochastic_processes import GENERATORS as _G_SPROC
+from .stochastic_processes import TEMPLATES as _T_SPROC
+from .stochastic_processes import WEIGHTS as _W_SPROC
 from .topology import GENERATORS as _G_TOPOLOGY
 from .topology import TEMPLATES as _T_TOPOLOGY
 from .topology import WEIGHTS as _W_TOPOLOGY
@@ -108,6 +111,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_OPT,
     **_G_SET,
     **_G_LOGIC,
+    **_G_SPROC,
 }
 
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -136,6 +140,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_OPT,
     **_W_SET,
     **_W_LOGIC,
+    **_W_SPROC,
 }
 
 # Maps domain name → list of Template objects.
@@ -167,6 +172,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_OPT,
     **_T_SET,
     **_T_LOGIC,
+    **_T_SPROC,
 }
 
 assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (
