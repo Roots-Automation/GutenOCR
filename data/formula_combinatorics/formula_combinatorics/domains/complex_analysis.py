@@ -5,111 +5,624 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import S, Template, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_VARS_POOL: list[str] = ["x", "y", "z", "a", "b", "u", "w"]
-_SCALARS_POOL: list[str] = ["r", "s", "t", "c", "d"]
-_THETA_POOL: list[str] = [r"\theta", r"\phi", r"\varphi"]
-_A_POOL: list[str] = ["a", "z_0", r"\alpha"]
-_A2_POOL: list[str] = ["a", "z_0"]
-_MOBIUS_POOL: list[str] = ["a", "b", "c", "d"]
+_VAR_POOL = ("z", "w", "s", "t", "u", "v", r"\zeta", r"\xi", r"\eta", r"\omega")  # 10
+_REAL_POOL = ("x", "y", "u", "v", "s", "t", "r")  # 7
+_SCALAR_POOL = (
+    "a",
+    "b",
+    "c",
+    r"\alpha",
+    r"\beta",
+    r"\lambda",
+    r"\mu",
+    r"\rho",
+    r"\kappa",
+)  # 9
+_ANGLE_POOL = (r"\theta", r"\phi", r"\varphi", r"\psi", r"\alpha", r"\beta")  # 6
+_CENTER_POOL = ("a", r"z_0", r"\alpha", r"\beta", "0")  # 5
+_CURVE_POOL = (r"\Gamma", "C", r"C_r", r"\partial D", r"\gamma")  # 5
+_FUNC_POOL = ("f", "g", "h", "F", "G", r"\phi", r"\psi", r"\Phi")  # 8
+_INT_POOL = ("m", "n", "k", "p", "q")  # 5
+_COMP_POOL = ("u", "v", r"\varphi", r"\psi", "a", "b")  # 6 — component names
+_MOBIUS_POOL = ("a", "b", "c", "d", r"\alpha", r"\beta", r"\gamma", r"\delta")  # 8
 
 # ---------------------------------------------------------------------------
-# Complex analysis templates
+# Part A: Reparameterized originals (14 templates)
 # ---------------------------------------------------------------------------
 
-_COMPLEX_TEMPLATES: list[Template] = [
+_TEMPLATES_A: list[Template] = [
     Template(
         name="complex_cartesian",
-        latex=r"z = {x} + i{y}",
-        slots={"x": S(_VARS_POOL), "y": S(_VARS_POOL)},
+        latex=r"z = {xx} + i{yy}",
+        slots={"xx": S(_REAL_POOL), "yy": X(_REAL_POOL, ("xx",))},
     ),
     Template(
         name="complex_polar",
-        latex=r"z = {r} e^{{i{th}}}",
-        slots={"r": S(_SCALARS_POOL), "th": S(_THETA_POOL)},
+        latex=r"z = {rr} e^{{i{th}}}",
+        slots={"rr": S(_SCALAR_POOL), "th": S(_ANGLE_POOL)},
     ),
     Template(
         name="modulus_squared",
-        latex=r"|z|^2 = {x}^2 + {y}^2",
-        slots={"x": S(_VARS_POOL), "y": S(_VARS_POOL)},
+        latex=r"|z|^2 = {xx}^2 + {yy}^2",
+        slots={"xx": S(_REAL_POOL), "yy": X(_REAL_POOL, ("xx",))},
     ),
     Template(
         name="cauchy_riemann",
         latex=(
-            r"\frac{{\partial u}}{{\partial x}} = \frac{{\partial v}}{{\partial y}}, \quad "
-            r"\frac{{\partial u}}{{\partial y}} = -\frac{{\partial v}}{{\partial x}}"
+            r"\frac{{\partial {uu}}}{{\partial {xx}}} = \frac{{\partial {vv}}}{{\partial {yy}}},"
+            r"\quad \frac{{\partial {uu}}}{{\partial {yy}}} = -\frac{{\partial {vv}}}{{\partial {xx}}}"
         ),
-        slots={},
+        slots={
+            "uu": S(_COMP_POOL),
+            "vv": X(_COMP_POOL, ("uu",)),
+            "xx": S(_REAL_POOL),
+            "yy": X(_REAL_POOL, ("xx",)),
+        },
     ),
     Template(
         name="cauchy_integral_formula",
-        latex=r"f(a) = \frac{{1}}{{2\pi i}} \oint_C \frac{{f(z)}}{{z - {a}}} \, dz",
-        slots={"a": S(_A_POOL)},
+        latex=(
+            r"{ff}({aa}) = \frac{{1}}{{2\pi i}}"
+            r"\oint_{{{CC}}} \frac{{{ff}(z)}}{{z - {aa}}} \, dz"
+        ),
+        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="residue_theorem",
-        latex=r"\oint_C f(z) \, dz = 2\pi i \sum_k \operatorname{{Res}}(f, z_k)",
-        slots={},
+        latex=(r"\oint_{{{CC}}} {ff}(z) \, dz = 2\pi i \sum_k \operatorname{{Res}}({ff}, z_k)"),
+        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="laurent_series",
-        latex=r"f(z) = \sum_{{n=-\infty}}^{{\infty}} c_n (z - {a})^n",
-        slots={"a": S(_A2_POOL)},
+        latex=r"{ff}(z) = \sum_{{n=-\infty}}^{{\infty}} c_n (z - {aa})^n",
+        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL)},
     ),
     Template(
         name="mobius_transformation",
-        latex=r"w = \frac{{{a}z + {b}}}{{{c}z + {d}}}, \quad {a}{d} - {b}{c} \neq 0",
-        slots={"a": S(_MOBIUS_POOL), "b": S(_MOBIUS_POOL), "c": S(_MOBIUS_POOL), "d": S(_MOBIUS_POOL)},
+        latex=(
+            r"w = \frac{{{aa}z + {bb}}}{{{cc}z + {dd}}},"
+            r"\quad {aa}{dd} - {bb}{cc} \neq 0"
+        ),
+        slots={
+            "aa": S(_MOBIUS_POOL),
+            "bb": X(_MOBIUS_POOL, ("aa",)),
+            "cc": X(_MOBIUS_POOL, ("aa", "bb")),
+            "dd": X(_MOBIUS_POOL, ("aa", "bb", "cc")),
+        },
     ),
     Template(
-        name="eulers_identity",
-        latex=r"e^{{i\pi}} + 1 = 0",
-        slots={},
+        name="eulers_formula",
+        latex=r"e^{{i{th}}} = \cos {th} + i \sin {th}",
+        slots={"th": S(_ANGLE_POOL)},
     ),
     Template(
         name="complex_conjugate",
-        latex=r"\bar{{z}} = x - iy, \quad z\bar{{z}} = |z|^2",
-        slots={},
+        latex=r"\bar{{{zz}}} = {xx} - i{yy}, \quad {zz}\bar{{{zz}}} = |{zz}|^2",
+        slots={
+            "zz": S(_VAR_POOL),
+            "xx": S(_REAL_POOL),
+            "yy": X(_REAL_POOL, ("xx",)),
+        },
     ),
     Template(
         name="real_imag_parts",
         latex=(
-            r"\operatorname{{Re}}(z) = \frac{{z + \bar{{z}}}}{{2}}, \quad "
-            r"\operatorname{{Im}}(z) = \frac{{z - \bar{{z}}}}{{2i}}"
+            r"\operatorname{{Re}}({zz}) = \frac{{{zz} + \bar{{{zz}}}}}{{2}},"
+            r"\quad \operatorname{{Im}}({zz}) = \frac{{{zz} - \bar{{{zz}}}}}{{2i}}"
         ),
-        slots={},
+        slots={"zz": S(_VAR_POOL)},
     ),
     Template(
         name="argument_principle",
-        latex=r"\frac{{1}}{{2\pi i}} \oint_C \frac{{f'(z)}}{{f(z)}} \, dz = N - P",
-        slots={},
+        latex=(r"\frac{{1}}{{2\pi i}} \oint_{{{CC}}} \frac{{{ff}'(z)}}{{{ff}(z)}} \, dz = N - P"),
+        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="rouche_theorem",
-        latex=r"|f(z) - g(z)| < |g(z)| \text{{ on }} C \implies Z_f = Z_g",
-        slots={},
+        latex=(
+            r"|{ff}(z) - {gg}(z)| < |{gg}(z)|"
+            r"\text{{ on }}{CC} \implies Z_{{{ff}}} = Z_{{{gg}}}"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "gg": X(_FUNC_POOL, ("ff",)),
+            "CC": S(_CURVE_POOL),
+        },
     ),
     Template(
         name="maximum_modulus",
-        latex=r"|f(z)| \leq \max_{{|\zeta|=r}} |f(\zeta)| \text{{ for }} |z| \leq r",
-        slots={},
+        latex=(
+            r"|{ff}(z)| \leq \max_{{|\zeta|={rr}}} |{ff}(\zeta)|"
+            r"\text{{ for }} |z| \leq {rr}"
+        ),
+        slots={"ff": S(_FUNC_POOL), "rr": S(_SCALAR_POOL)},
     ),
 ]
 
 # ---------------------------------------------------------------------------
-# Sampling weights
+# Part B1: Complex Arithmetic (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B1: list[Template] = [
+    Template(
+        name="de_moivre",
+        latex=(r"(\cos {th} + i\sin {th})^{{{nn}}} = \cos({nn}{th}) + i\sin({nn}{th})"),
+        slots={"th": S(_ANGLE_POOL), "nn": S(_INT_POOL)},
+    ),
+    Template(
+        name="complex_logarithm",
+        latex=r"\log {zz} = \ln|{zz}| + i\arg {zz}",
+        slots={"zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="argument_sum",
+        latex=r"\arg({zz1}{zz2}) = \arg{zz1} + \arg{zz2} \pmod{{2\pi}}",
+        slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
+    ),
+    Template(
+        name="complex_product_polar",
+        latex=r"|{zz1}{zz2}| = |{zz1}|\,|{zz2}|",
+        slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
+    ),
+    Template(
+        name="triangle_inequality",
+        latex=r"|{zz1} + {zz2}| \leq |{zz1}| + |{zz2}|",
+        slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
+    ),
+    Template(
+        name="inverse_euler",
+        latex=r"\cos {th} = \frac{{e^{{i{th}}} + e^{{-i{th}}}}}{{2}}",
+        slots={"th": S(_ANGLE_POOL)},
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B2: Analytic Functions (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B2: list[Template] = [
+    Template(
+        name="complex_derivative_def",
+        latex=(
+            r"{ff}'({zz}) = \lim_{{\Delta{zz}\to 0}}"
+            r"\frac{{{ff}({zz}+\Delta{zz})-{ff}({zz})}}{{\Delta{zz}}}"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="harmonic_laplacian",
+        latex=(
+            r"\nabla^2 {uu} = "
+            r"\frac{{\partial^2 {uu}}}{{\partial {xx}^2}} + "
+            r"\frac{{\partial^2 {uu}}}{{\partial {yy}^2}} = 0"
+        ),
+        slots={
+            "uu": S(_COMP_POOL),
+            "xx": S(_REAL_POOL),
+            "yy": X(_REAL_POOL, ("xx",)),
+        },
+    ),
+    Template(
+        name="liouville_bound",
+        latex=(r"|{ff}(z)| \leq M \;\forall\,z \in \mathbb{{C}} \implies {ff} \equiv \text{{const}}"),
+        slots={"ff": S(_FUNC_POOL)},
+    ),
+    Template(
+        name="analytic_implies_cr",
+        latex=(
+            r"{ff} = {uu} + i{vv}\text{{ analytic}}"
+            r"\Rightarrow \frac{{\partial {uu}}}{{\partial {xx}}} = \frac{{\partial {vv}}}{{\partial {yy}}}"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "uu": S(_COMP_POOL),
+            "vv": X(_COMP_POOL, ("uu",)),
+            "xx": S(_REAL_POOL),
+            "yy": X(_REAL_POOL, ("xx",)),
+        },
+    ),
+    Template(
+        name="power_function",
+        latex=r"{ff}({zz}) = {zz}^{{{nn}}}",
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "nn": S(_INT_POOL)},
+    ),
+    Template(
+        name="exp_function",
+        latex=r"{ff}({zz}) = e^{{{zz}}}",
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B3: Contour Integration (8)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B3: list[Template] = [
+    Template(
+        name="cauchy_nth_derivative",
+        latex=(
+            r"{ff}^{{({nn})}}({aa}) = \frac{{{nn}!}}{{2\pi i}}"
+            r"\oint_{{{CC}}} \frac{{{ff}({zz})}}{{({zz}-{aa})^{{{nn}+1}}}} \, d{zz}"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "nn": S(_INT_POOL),
+            "aa": S(_CENTER_POOL),
+            "CC": S(_CURVE_POOL),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="residue_simple_pole",
+        latex=(
+            r"\operatorname{{Res}}({ff}, {aa}) = "
+            r"\lim_{{{zz} \to {aa}}} ({zz} - {aa}) {ff}({zz})"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "aa": S(_CENTER_POOL),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="residue_higher_pole",
+        latex=(
+            r"\operatorname{{Res}}({ff}, {aa}) = \frac{{1}}{{({nn}-1)!}}"
+            r"\lim_{{{zz} \to {aa}}} \frac{{d^{{{nn}-1}}}}{{d{zz}^{{{nn}-1}}}}"
+            r"[({zz}-{aa})^{{{nn}}} {ff}({zz})]"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "aa": S(_CENTER_POOL),
+            "nn": S(_INT_POOL),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="winding_number",
+        latex=(r"n(\gamma, {aa}) = \frac{{1}}{{2\pi i}} \oint_\gamma \frac{{d{zz}}}{{{zz} - {aa}}}"),
+        slots={"aa": S(_CENTER_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="ml_inequality",
+        latex=(r"\left| \oint_{{{CC}}} {ff}({zz}) \, d{zz} \right| \leq M \cdot L"),
+        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="cauchy_goursat",
+        latex=r"\oint_{{{CC}}} {ff}({zz}) \, d{zz} = 0",
+        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="residue_sum_formula",
+        latex=(
+            r"\oint_{{{CC}}} {ff}({zz}) \, d{zz} = "
+            r"2\pi i \sum_k \operatorname{{Res}}({ff}, a_k)"
+        ),
+        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="jordan_estimate",
+        latex=(
+            r"\left| \int_{{C_R}} {ff}({zz}) e^{{i{aa}{zz}}} \, d{zz} \right| \to 0"
+            r"\text{{ as }} R \to \infty"
+        ),
+        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "zz": S(_VAR_POOL)},
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B4: Series & Convergence (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B4: list[Template] = [
+    Template(
+        name="taylor_complex",
+        latex=(
+            r"{ff}({zz}) = \sum_{{n=0}}^{{\infty}} "
+            r"\frac{{{ff}^{{(n)}}({aa})}}{{n!}} ({zz} - {aa})^n"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+    ),
+    Template(
+        name="power_series_domain",
+        latex=(
+            r"{ff}({zz}) = \sum_{{n=0}}^{{\infty}} c_n ({zz} - {aa})^n,"
+            r"\quad |{zz} - {aa}| < R"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+    ),
+    Template(
+        name="laurent_annulus",
+        latex=(
+            r"{ff}({zz}) = \sum_{{n=-\infty}}^{{\infty}} c_n ({zz} - {aa})^n,"
+            r"\quad r < |{zz} - {aa}| < R"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+    ),
+    Template(
+        name="radius_limsup",
+        latex=r"R = \frac{{1}}{{\limsup_{{n \to \infty}} |c_n|^{{1/n}}}}",
+        slots={},
+    ),
+    Template(
+        name="radius_ratio",
+        latex=r"R = \lim_{{n \to \infty}} \left| \frac{{c_n}}{{c_{{n+1}}}} \right|",
+        slots={},
+    ),
+    Template(
+        name="weierstrass_product",
+        latex=(
+            r"{ff}({zz}) = {zz}^m e^{{{gg}({zz})}} "
+            r"\prod_n \!\left(1 - \tfrac{{{zz}}}{{a_n}}\right) e^{{{zz}/a_n}}"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "gg": X(_FUNC_POOL, ("ff",)),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B5: Conformal Mapping (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B5: list[Template] = [
+    Template(
+        name="joukowski_map",
+        latex=r"{ww} = {zz} + \frac{{{rr}^2}}{{{zz}}}",
+        slots={
+            "ww": S(_VAR_POOL),
+            "zz": X(_VAR_POOL, ("ww",)),
+            "rr": S(_SCALAR_POOL),
+        },
+    ),
+    Template(
+        name="schwarz_lemma",
+        latex=(
+            r"|{ff}({zz})| \leq |{zz}|, \quad"
+            r" {ff} : \mathbb{{D}} \to \mathbb{{D}},\; {ff}(0) = 0"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="conformal_composition",
+        latex=r"({gg} \circ {ff})({zz}) = {gg}({ff}({zz}))\text{{ conformal}}",
+        slots={
+            "ff": S(_FUNC_POOL),
+            "gg": X(_FUNC_POOL, ("ff",)),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="log_map",
+        latex=r"{ww} = \log {zz} = \ln|{zz}| + i\arg {zz}",
+        slots={"ww": S(_VAR_POOL), "zz": X(_VAR_POOL, ("ww",))},
+    ),
+    Template(
+        name="cayley_map",
+        latex=r"{ww} = \frac{{{zz} - i}}{{{zz} + i}},\quad \mathbb{{H}} \to \mathbb{{D}}",
+        slots={"ww": S(_VAR_POOL), "zz": X(_VAR_POOL, ("ww",))},
+    ),
+    Template(
+        name="exp_map",
+        latex=(
+            r"{ww} = e^{{{zz}}}, \quad"
+            r" e^{{{xx} + i{yy}}} = e^{{{xx}}}(\cos {yy} + i\sin {yy})"
+        ),
+        slots={
+            "ww": S(_VAR_POOL),
+            "zz": X(_VAR_POOL, ("ww",)),
+            "xx": S(_REAL_POOL),
+            "yy": X(_REAL_POOL, ("xx",)),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B6: Special Theorems (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B6: list[Template] = [
+    Template(
+        name="open_mapping",
+        latex=(
+            r"{ff} \not\equiv \text{{const}},\;"
+            r"{ff}\text{{ analytic}} \Rightarrow {ff}(\Omega)\text{{ open}}"
+        ),
+        slots={"ff": S(_FUNC_POOL)},
+    ),
+    Template(
+        name="identity_theorem",
+        latex=(
+            r"{ff}\big|_E = {gg}\big|_E,\;"
+            r"E' \cap \Omega \neq \emptyset"
+            r"\Rightarrow {ff} \equiv {gg}"
+        ),
+        slots={"ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",))},
+    ),
+    Template(
+        name="schwarz_reflection",
+        latex=r"{ff}(\bar{{{zz}}}) = \overline{{{ff}({zz})}}",
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="casorati_weierstrass",
+        latex=r"\overline{{{ff}(D^*({aa}))}} = \mathbb{{C}}",
+        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL)},
+    ),
+    Template(
+        name="montel_theorem",
+        latex=(
+            r"\sup_n |{ff}_n({zz})| \leq M"
+            r"\Rightarrow ({ff}_n)\text{{ normal family}}"
+        ),
+        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="picards_little",
+        latex=(
+            r"{ff}\text{{ entire nonconstant}}"
+            r"\Rightarrow \mathbb{{C}} \setminus {ff}(\mathbb{{C}})\text{{ finite}}"
+        ),
+        slots={"ff": S(_FUNC_POOL)},
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part B7: Special Functions (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B7: list[Template] = [
+    Template(
+        name="gamma_functional",
+        latex=r"\Gamma({ss} + 1) = {ss}\,\Gamma({ss})",
+        slots={"ss": S(_VAR_POOL)},
+    ),
+    Template(
+        name="gamma_reflection",
+        latex=r"\Gamma({ss})\,\Gamma(1 - {ss}) = \frac{{\pi}}{{\sin(\pi {ss})}}",
+        slots={"ss": S(_VAR_POOL)},
+    ),
+    Template(
+        name="riemann_zeta_def",
+        latex=(
+            r"\zeta({ss}) = \sum_{{n=1}}^{{\infty}} \frac{{1}}{{n^{{{ss}}}}},"
+            r"\quad \operatorname{{Re}}({ss}) > 1"
+        ),
+        slots={"ss": S(_VAR_POOL)},
+    ),
+    Template(
+        name="zeta_functional_eq",
+        latex=(
+            r"\zeta({ss}) = 2^{{{ss}}} \pi^{{{ss}-1}}"
+            r"\sin\!\tfrac{{\pi {ss}}}{{2}}\,\Gamma(1-{ss})\,\zeta(1-{ss})"
+        ),
+        slots={"ss": S(_VAR_POOL)},
+    ),
+    Template(
+        name="mellin_transform",
+        latex=(
+            r"\mathcal{{M}}\{{{ff}\}}({ss}) = "
+            r"\int_0^\infty {xx}^{{{ss}-1}} {ff}({xx})\,d{xx}"
+        ),
+        slots={
+            "ff": S(_FUNC_POOL),
+            "ss": S(_VAR_POOL),
+            "xx": X(_VAR_POOL, ("ss",)),
+        },
+    ),
+    Template(
+        name="hurwitz_zeta",
+        latex=(
+            r"\zeta({ss}, {aa}) = "
+            r"\sum_{{n=0}}^{{\infty}} \frac{{1}}{{(n + {aa})^{{{ss}}}}}"
+        ),
+        slots={"ss": S(_VAR_POOL), "aa": X(_VAR_POOL, ("ss",))},
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff function-pair templates (6)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_C: list[Template] = [
+    Template(
+        name="holomorphic_sum",
+        latex=(
+            r"({fn1} + {fn2})({zz}) = {fn1}({zz}) + {fn2}({zz})"
+            r"\text{{ holomorphic}}"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="composition_analytic",
+        latex=(r"({fn1} \circ {fn2})({zz}) = {fn1}({fn2}({zz}))\text{{ analytic}}"),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="product_rule_complex",
+        latex=(
+            r"({fn1} {fn2})'({zz}) = "
+            r"{fn1}'({zz}){fn2}({zz}) + {fn1}({zz}){fn2}'({zz})"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="cauchy_inequality_fn",
+        latex=(
+            r"\left|{fn1}^{{(n)}}({aa})\right| \leq \frac{{n!\,M}}{{r^n}}"
+            r"\text{{ on }} |{zz}-{aa}|=r"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "aa": S(_CENTER_POOL),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="contour_fn_pair",
+        latex=r"\oint_{{{CC}}} {fn1}({zz}) {fn2}({zz}) \, d{zz}",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "CC": S(_CURVE_POOL),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+    Template(
+        name="fn_triple_composition",
+        latex=r"{fn1}({fn2}({fn3}({zz})))",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "fn3": E(_fn_rich_nosub, n=100),
+            "zz": S(_VAR_POOL),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
+# Assemble all templates
+# ---------------------------------------------------------------------------
+
+_COMPLEX_TEMPLATES: list[Template] = (
+    _TEMPLATES_A
+    + _TEMPLATES_B1
+    + _TEMPLATES_B2
+    + _TEMPLATES_B3
+    + _TEMPLATES_B4
+    + _TEMPLATES_B5
+    + _TEMPLATES_B6
+    + _TEMPLATES_B7
+    + _TEMPLATES_C
+)
+
+# ---------------------------------------------------------------------------
+# Sampling weights and dispatcher
 # ---------------------------------------------------------------------------
 
 _W_COMPLEX: list[float] = compute_weights(_COMPLEX_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
 
 _complex_analysis = make_dispatcher(_COMPLEX_TEMPLATES, _W_COMPLEX)
 
