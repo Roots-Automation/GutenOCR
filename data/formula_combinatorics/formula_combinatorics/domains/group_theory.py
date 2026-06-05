@@ -5,20 +5,21 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Shared pools (kept local to avoid cross-domain coupling)
 # ---------------------------------------------------------------------------
 
-_ELEMS = ["g", "h", "a", "b", "x", "y", r"\sigma", r"\tau", r"\alpha", r"\beta", r"\gamma"]
+_ELEMS = ["g", "h", "a", "b", "x", "y", r"\sigma", r"\tau", r"\alpha", r"\beta", r"\gamma", r"\delta", r"\omega"]
 _HOMOS = [r"\phi", r"\varphi", r"\psi", "f", r"\theta", r"\rho", r"\pi"]
-_SIMPLE = ["G", "H", "K", "N", "A", "B"]
+_SIMPLE = ["G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W"]
 
-_NV_POOL: tuple[str, ...] = ("n", "m", "4", "5", "6", "p")
-_QV_POOL: tuple[str, ...] = ("q", "2", "p")
-_P_POOL: tuple[str, ...] = ("p", "q", r"\ell")
-_N_POOL: tuple[str, ...] = ("n", "m", "r")
+_NV_POOL: tuple[str, ...] = ("n", "m", "4", "5", "6", "7", "8", "p", "q", "r")
+_QV_POOL: tuple[str, ...] = ("q", "2", "3", "4", "5", "p")
+_P_POOL: tuple[str, ...] = ("p", "q", r"\ell", "r", "s", r"p_1", r"p_2")
+_N_POOL: tuple[str, ...] = ("n", "m", "r", "k", "d", r"n_1", r"n_2")
 _SIMPLE_T: tuple[str, ...] = tuple(_SIMPLE)
 _ELEMS_T: tuple[str, ...] = tuple(_ELEMS)
 _HOMOS_T: tuple[str, ...] = tuple(_HOMOS)
@@ -716,6 +717,346 @@ _GROUP_THEORY_TEMPLATES.append(
                 },
             ),
         ],
+    )
+)
+
+# c=30 — Burnside / orbit partition / action maps
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="burnside_lemma",
+        latex=(
+            r"|{H}/{G}|"
+            r" = \tfrac{{1}}{{|{G}|}}\sum_{{{g_el} \in {G}}} \left|{H}^{{{g_el}}}\right|"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "H": X(_SIMPLE_T, ("G",)),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# c=31 — fixed-point subset
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fixed_point_subset",
+        latex=(
+            r"{H}^{{{g_el}}}"
+            r" = \left\{{{h_el} \in {H} : {g_el} \cdot {h_el} = {h_el}\right\}}"
+        ),
+        slots={
+            "H": S(_SIMPLE_T),
+            "g_el": S(_ELEMS_T),
+            "h_el": X(_ELEMS_T, ("g_el",)),
+        },
+    )
+)
+
+# c=32 — orbit-coset isomorphism (transitive actions)
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="orbit_coset_iso",
+        latex=r"{G}/\operatorname{{Stab}}_{{{G}}}({g_el}) \cong {G}\cdot{g_el}",
+        slots={
+            "G": S(_G_POOL),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# c=33 — faithful action injection
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="action_faithful",
+        latex=(
+            r"{phi} : {G} \hookrightarrow \operatorname{{Sym}}({H})"
+            r"\text{{ faithful}} \iff"
+            r" \bigcap_{{{g_el} \in {H}}} \operatorname{{Stab}}_{{{G}}}({g_el}) = \{{e\}}"
+        ),
+        slots={
+            "phi": S(_HOMOS_T),
+            "G": S(_G_POOL),
+            "H": X(_SIMPLE_T, ("G",)),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# c=34 — group extension / five-term SES
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="group_extension_ses",
+        latex=(
+            r"1 \to {N_sub} \xrightarrow{{{phi}}} {G}"
+            r" \xrightarrow{{{psi}}} {H} \to 1"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "N_sub": X(_SIMPLE_T, ("G",)),
+            "H": X(_SIMPLE_T, ("G", "N_sub")),
+            "phi": S(_HOMOS_T),
+            "psi": X(_HOMOS_T, ("phi",)),
+        },
+    )
+)
+
+# c=35 — split extension / semidirect with explicit twist
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="split_extension",
+        latex=(
+            r"{G} \cong {N_sub} \rtimes_{{{phi}}} {H},"
+            r"\quad {phi} : {H} \to \operatorname{{Aut}}({N_sub})"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "N_sub": X(_SIMPLE_T, ("G",)),
+            "H": X(_SIMPLE_T, ("G", "N_sub")),
+            "phi": S(_HOMOS_T),
+        },
+    )
+)
+
+# c=36 — second cohomology classifies extensions
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="second_cohomology_extensions",
+        latex=r"H^2({H},\, {N_sub}) \cong \operatorname{{Ext}}({H},\, {N_sub})",
+        slots={
+            "H": S(_SIMPLE_T),
+            "N_sub": X(_SIMPLE_T, ("H",)),
+        },
+    )
+)
+
+# c=37 — lower central series / nilpotency class
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="lower_central_series",
+        latex=(
+            r"{G} = {G}_0 \trianglerighteq {G}_1 \trianglerighteq \cdots"
+            r" \trianglerighteq {G}_{{{n}}} = 1,"
+            r"\quad {G}_k = [{G}, {G}_{{k-1}}]"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "n": S(_N_POOL),
+        },
+    )
+)
+
+# c=38 — derived series / solvability
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="derived_series_solvable",
+        latex=(
+            r"{G}^{{(0)}} = {G} \supset {G}^{{(1)}}"
+            r" \supset \cdots \supset {G}^{{({n})}} = 1"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "n": S(_N_POOL),
+        },
+    )
+)
+
+# c=39 — nilpotent class definition
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="nilpotent_class",
+        latex=(
+            r"\gamma_{{{n}}}({G}) = 1,"
+            r"\quad \gamma_{{{n}-1}}({G}) \neq 1,"
+            r"\quad \operatorname{{cl}}({G}) = {n}"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "n": S(_N_POOL),
+        },
+    )
+)
+
+# c=40 — Schur–Zassenhaus
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="schur_zassenhaus",
+        latex=(
+            r"\gcd(|{N_sub}|, [{G}:{N_sub}]) = 1"
+            r" \implies {G} \cong {N_sub} \rtimes {H}"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "N_sub": X(_SIMPLE_T, ("G",)),
+            "H": X(_SIMPLE_T, ("G", "N_sub")),
+        },
+    )
+)
+
+# c=41 — Jordan–Hölder uniqueness statement
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="jordan_holder",
+        latex=(
+            r"\text{{Any two composition series of }} {G}"
+            r" \text{{ have the same factors up to iso and reordering}}"
+        ),
+        slots={"G": S(_G_POOL)},
+    )
+)
+
+# c=42 — Frattini subgroup
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="frattini_subgroup",
+        latex=r"\Phi({G}) = \bigcap_{{M \text{{ max}} \leq {G}}} M \trianglelefteq {G}",
+        slots={"G": S(_G_POOL)},
+    )
+)
+
+# c=43 — transfer homomorphism
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="transfer_homomorphism",
+        latex=(
+            r"\operatorname{{Ver}} : {G} \to {H}/[{H},{H}],"
+            r"\quad {phi}({g_el}) = \prod_{{t}} t{g_el} t^{{-1}} \bmod [{H},{H}]"
+        ),
+        slots={
+            "G": S(_G_POOL),
+            "H": X(_SIMPLE_T, ("G",)),
+            "phi": S(_HOMOS_T),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# ---------------------------------------------------------------------------
+# Part C — high-n_eff function-decorated templates (E(_fn_rich_nosub, n=100))
+# ---------------------------------------------------------------------------
+
+# c=44
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_group_order",
+        latex=r"{fn1}(|{G}|) = {fn2}([{G}:{H}] \cdot |{H}|)",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+            "H": X(_SIMPLE_T, ("G",)),
+        },
+    )
+)
+
+# c=45
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_index_tower",
+        latex=r"{fn1}([{G}:{K}]) = {fn2}([{G}:{H}] \cdot [{H}:{K}])",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+            "H": X(_SIMPLE_T, ("G",)),
+            "K": X(_SIMPLE_T, ("G", "H")),
+        },
+    )
+)
+
+# c=46
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_conjugation_apply",
+        latex=r"{fn1}({g_el} {h_el} {g_el}^{{-1}}) = {fn2}({h_el})",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "g_el": S(_ELEMS_T),
+            "h_el": X(_ELEMS_T, ("g_el",)),
+        },
+    )
+)
+
+# c=47
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_orbit_stabilizer",
+        latex=(
+            r"{fn1}(|{G}|)"
+            r" = {fn2}(|\operatorname{{Orb}}_{{{G}}}({g_el})| \cdot |\operatorname{{Stab}}_{{{G}}}({g_el})|)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# c=48
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_hom_kernel",
+        latex=(
+            r"{fn1}(\ker {phi})"
+            r" = {fn2}\!\left(\{{g \in {G} : {phi}({g_el}) = e\}}\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "phi": S(_HOMOS_T),
+            "G": S(_G_POOL),
+            "g_el": S(_ELEMS_T),
+        },
+    )
+)
+
+# c=49
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_sylow_decomposition",
+        latex=(
+            r"{fn1}(|{G}|) = {fn2}({p}^{{{n}}} m),"
+            r"\quad \gcd({p}, m) = 1"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+            "p": S(_P_POOL),
+            "n": S(_N_POOL),
+        },
+    )
+)
+
+# c=50
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_abelianization",
+        latex=r"{fn1}({G}^{{\mathrm{{ab}}}}) = {fn2}({G}/[{G},{G}])",
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+        },
+    )
+)
+
+# c=51
+_GROUP_THEORY_TEMPLATES.append(
+    Template(
+        name="fn_class_equation",
+        latex=(
+            r"{fn1}(|{G}|)"
+            r" = {fn2}\!\left(|Z({G})| + \sum_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]\right)"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "G": S(_G_POOL),
+            "g_el": S(_ELEMS_T),
+        },
     )
 )
 
