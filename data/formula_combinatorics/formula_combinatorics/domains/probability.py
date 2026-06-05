@@ -5,123 +5,787 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_RV_POOL: list[str] = ["X", "Y", "Z"]
-_K_POOL: list[str] = ["k", "m"]
-_N_POOL: list[str] = ["n", "N"]
-_P_POOL: list[str] = ["p", r"\theta"]
-_LAM_POOL: list[str] = [r"\lambda", r"\mu"]
-_MU_POOL: list[str] = [r"\mu", "0"]
-_SIG_POOL: list[str] = [r"\sigma", r"\sigma_0"]
+_RV_POOL = ("X", "Y", "Z", "W", "U", "V")
+_EVENT_POOL = ("A", "B", "C", "D")
+_N_POOL = ("n", "m", "N", "M")
+_K_POOL = (r"k", r"\ell", "j", "r")
+_IDX_POOL = ("i", "j", "k", "t")
+_P_POOL = ("p", "q", r"\theta", r"\pi", r"\rho")
+_LAM_POOL = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")
+_MU_POOL = (r"\mu", r"\mu_0", r"\nu", "m")
+_SIG_POOL = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")
+_A_POOL = ("a", "b", "c", r"\varepsilon")
+_PROB_OP = ("P", r"\mathbb{P}", r"\Pr")
+_EXP_OP = ("E", r"\mathbb{E}", r"\mathrm{E}")
+_AB_POOL = ("a", "b", r"\alpha", r"\beta")
+_BERN_K = ("0", "1")
 
 # ---------------------------------------------------------------------------
 # Probability templates
 # ---------------------------------------------------------------------------
 
 _PROB_TEMPLATES: list[Template] = [
+    # ------------------------------------------------------------------
+    # Part A: reparameterized originals
+    # ------------------------------------------------------------------
     Template(
         name="binomial_pmf",
-        latex=r"P({x} = {k}) = \binom{{{n}}}{{{k}}} {p}^{{{k}}} (1-{p})^{{{n}-{k}}}",
-        slots={"x": S(_RV_POOL), "k": S(_K_POOL), "n": S(_N_POOL), "p": S(_P_POOL)},
+        latex=(
+            r"{op}({rv} = {kk}) = \binom{{{nn}}}{{{kk}}}"
+            r" {pp}^{{{kk}}} (1-{pp})^{{{nn}-{kk}}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "nn": S(_N_POOL),
+            "pp": S(_P_POOL),
+        },
     ),
     Template(
         name="poisson_pmf",
-        latex=r"P({x} = {k}) = \frac{{{lam}^{{{k}}} e^{{-{lam}}}}}{{{k}!}}",
-        slots={"x": S(_RV_POOL), "k": S(_K_POOL), "lam": S(_LAM_POOL)},
+        latex=r"{op}({rv} = {kk}) = \frac{{{lam}^{{{kk}}} e^{{-{lam}}}}}{{{kk}!}}",
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "lam": S(_LAM_POOL),
+        },
     ),
     Template(
         name="normal_pdf",
         latex=(
-            r"f(x) = \frac{{1}}{{\sqrt{{2\pi}} {sig}}} "
-            r"\exp\!\left(-\frac{{(x - {mu})^2}}{{2 {sig}^2}}\right)"
+            r"f(x) = \frac{{1}}{{\sqrt{{2\pi}}\,{sig}}}"
+            r" \exp\!\left(-\frac{{(x-{mu})^2}}{{2\,{sig}^2}}\right)"
         ),
         slots={"mu": S(_MU_POOL), "sig": S(_SIG_POOL)},
     ),
     Template(
         name="expected_value_discrete",
-        latex=r"E[{x}] = \sum_{{k}} k \cdot P({x} = k)",
-        slots={"x": S(_RV_POOL)},
+        latex=r"{op}[{rv}] = \sum_{{k}} k \cdot P({rv} = k)",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="expected_value_continuous",
-        latex=r"E[{x}] = \int_{{-\infty}}^{{\infty}} x \, f(x) \, dx",
-        slots={"x": S(_RV_POOL)},
+        latex=r"{op}[{rv}] = \int_{{-\infty}}^{{\infty}} x\, f_{{{rv}}}(x)\, dx",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="variance",
-        latex=r"\operatorname{{Var}}({x}) = E\!\left[{x}^2\right] - \left(E[{x}]\right)^2",
-        slots={"x": S(_RV_POOL)},
+        latex=(
+            r"\operatorname{{Var}}({rv})"
+            r" = {op}\!\left[{rv}^2\right] - \bigl({op}[{rv}]\bigr)^2"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="bayes_theorem",
-        latex=r"P(A \mid B) = \frac{{P(B \mid A) \, P(A)}}{{P(B)}}",
-        slots={},
+        latex=(
+            r"{op}({ev1} \mid {ev2})"
+            r" = \frac{{{op}({ev2} \mid {ev1})\,{op}({ev1})}}{{{op}({ev2})}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "ev1": S(_EVENT_POOL),
+            "ev2": X(_EVENT_POOL, ("ev1",)),
+        },
     ),
     Template(
         name="law_of_total_probability",
-        latex=r"P(A) = \sum_{{i=1}}^{{{n}}} P(A \mid B_i) \, P(B_i)",
-        slots={"n": S(_N_POOL)},
+        latex=(
+            r"{op}({ev}) = \sum_{{i=1}}^{{{nn}}}"
+            r" {op}({ev} \mid B_i)\,{op}(B_i)"
+        ),
+        slots={"op": S(_PROB_OP), "ev": S(_EVENT_POOL), "nn": S(_N_POOL)},
     ),
     Template(
         name="mgf",
         latex=(
-            r"M_{{{x}}}(t) = E\!\left[e^{{t {x}}}\right] = "
-            r"\sum_{{k=0}}^{{\infty}} \frac{{E[{x}^k]}}{{k!}} t^k"
+            r"M_{{{rv}}}(t) = {op}\!\left[e^{{t\,{rv}}}\right]"
+            r" = \sum_{{k=0}}^{{\infty}} \frac{{{op}[{rv}^k]}}{{k!}}\,t^k"
         ),
-        slots={"x": S(_RV_POOL)},
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="covariance",
-        latex=r"\operatorname{{Cov}}({x}, {y}) = E[{x} {y}] - E[{x}] E[{y}]",
-        slots={"x": S(_RV_POOL), "y": X(_RV_POOL, ["x"])},
+        latex=(
+            r"\operatorname{{Cov}}({rv1},{rv2})"
+            r" = {op}[{rv1}\,{rv2}] - {op}[{rv1}]\,{op}[{rv2}]"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
     ),
     Template(
         name="cdf",
-        latex=r"F(x) = P({x} \leq x) = \int_{{-\infty}}^{{x}} f(t) \, dt",
-        slots={"x": S(_RV_POOL)},
+        latex=r"F_{{{rv}}}(x) = {op}({rv} \leq x) = \int_{{-\infty}}^{{x}} f_{{{rv}}}(t)\, dt",
+        slots={"op": S(_PROB_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="geometric_pmf",
-        latex=r"P({x} = {k}) = (1 - {p})^{{{k}-1}} {p}",
-        slots={"x": S(_RV_POOL), "k": S(_K_POOL), "p": S(_P_POOL)},
+        latex=r"{op}({rv} = {kk}) = (1-{pp})^{{{kk}-1}}\,{pp}",
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "pp": S(_P_POOL),
+        },
     ),
     Template(
         name="jensens_inequality",
-        latex=r"f\!\left(E[{x}]\right) \leq E\!\left[f({x})\right]",
-        slots={"x": S(_RV_POOL)},
+        latex=r"{fn}\!\bigl({op}[{rv}]\bigr) \leq {op}\!\bigl[{fn}({rv})\bigr]",
+        slots={
+            "fn": E(_fn_rich_nosub, n=100),
+            "op": S(_EXP_OP),
+            "rv": S(_RV_POOL),
+        },
     ),
     Template(
         name="correlation",
         latex=(
-            r"\rho_{{{x}{y}}} = "
-            r"\frac{{\operatorname{{Cov}}({x}, {y})}}{{\sqrt{{\operatorname{{Var}}({x}) \, \operatorname{{Var}}({y})}}}}"
+            r"\rho_{{{rv1}{rv2}}} = "
+            r"\frac{{\operatorname{{Cov}}({rv1},{rv2})}}"
+            r"{{\sqrt{{\operatorname{{Var}}({rv1})\,\operatorname{{Var}}({rv2})}}}}"
         ),
-        slots={"x": S(_RV_POOL), "y": X(_RV_POOL, ["x"])},
+        slots={
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
     ),
     Template(
         name="central_limit_theorem",
-        latex=r"\frac{{\bar{{{x}}}_n - \mu}}{{\sigma / \sqrt{{{n}}}}} \xrightarrow{{d}} \mathcal{{N}}(0,1)",
-        slots={"x": S(_RV_POOL), "n": S(_N_POOL)},
+        latex=(
+            r"\frac{{\bar{{{rv}}}_n - {mu}}}{{{sig}/\sqrt{{{nn}}}}}"
+            r" \xrightarrow{{d}} \mathcal{{N}}(0,1)"
+        ),
+        slots={
+            "rv": S(_RV_POOL),
+            "mu": S(_MU_POOL),
+            "sig": S(_SIG_POOL),
+            "nn": S(_N_POOL),
+        },
     ),
     Template(
         name="law_of_large_numbers",
-        latex=r"\bar{{{x}}}_n \xrightarrow{{p}} \mu \text{{ as }} n \to \infty",
-        slots={"x": S(_RV_POOL)},
+        latex=r"\bar{{{rv}}}_n \xrightarrow{{p}} \mu \text{{ as }} n \to \infty",
+        slots={"rv": S(_RV_POOL)},
     ),
     Template(
         name="characteristic_function",
-        latex=r"\varphi_{{{x}}}(t) = E\!\left[e^{{it{x}}}\right]",
-        slots={"x": S(_RV_POOL)},
+        latex=r"\varphi_{{{rv}}}(t) = {op}\!\left[e^{{it\,{rv}}}\right]",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="tower_property",
-        latex=r"E\!\left[E[{x} \mid \mathcal{{F}}]\right] = E[{x}]",
-        slots={"x": S(_RV_POOL)},
+        latex=(r"{op}\!\Bigl[{op}[{rv} \mid \mathcal{{F}}]\Bigr] = {op}[{rv}]"),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    # ------------------------------------------------------------------
+    # Part B: new flat standalone templates
+    # ------------------------------------------------------------------
+    # Core probability rules
+    Template(
+        name="complement_rule",
+        latex=r"{op}({ev}^c) = 1 - {op}({ev})",
+        slots={"op": S(_PROB_OP), "ev": S(_EVENT_POOL)},
+    ),
+    Template(
+        name="addition_rule",
+        latex=(
+            r"{op}({ev1} \cup {ev2})"
+            r" = {op}({ev1}) + {op}({ev2}) - {op}({ev1} \cap {ev2})"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "ev1": S(_EVENT_POOL),
+            "ev2": X(_EVENT_POOL, ("ev1",)),
+        },
+    ),
+    Template(
+        name="conditional_prob",
+        latex=(
+            r"{op}({ev1} \mid {ev2})"
+            r" = \dfrac{{{op}({ev1} \cap {ev2})}}{{{op}({ev2})}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "ev1": S(_EVENT_POOL),
+            "ev2": X(_EVENT_POOL, ("ev1",)),
+        },
+    ),
+    Template(
+        name="multiplication_rule",
+        latex=(
+            r"{op}({ev1} \cap {ev2})"
+            r" = {op}({ev1} \mid {ev2})\,{op}({ev2})"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "ev1": S(_EVENT_POOL),
+            "ev2": X(_EVENT_POOL, ("ev1",)),
+        },
+    ),
+    Template(
+        name="independence_events",
+        latex=r"{op}({ev1} \cap {ev2}) = {op}({ev1})\,{op}({ev2})",
+        slots={
+            "op": S(_PROB_OP),
+            "ev1": S(_EVENT_POOL),
+            "ev2": X(_EVENT_POOL, ("ev1",)),
+        },
+    ),
+    Template(
+        name="union_bound",
+        latex=(
+            r"{op}\!\Bigl(\bigcup_{{i=1}}^{{{nn}}} A_i\Bigr)"
+            r" \leq \sum_{{i=1}}^{{{nn}}} {op}(A_i)"
+        ),
+        slots={"op": S(_PROB_OP), "nn": S(_N_POOL)},
+    ),
+    # Continuous distributions
+    Template(
+        name="exponential_pdf",
+        latex=r"f(x;\,{lam}) = {lam}\,e^{{-{lam}\,x}},\quad x \geq 0",
+        slots={"lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="exponential_mean",
+        latex=r"{op}[{rv}] = \tfrac{{1}}{{{lam}}} \quad \bigl(\mathrm{{Exp}}({lam})\bigr)",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL), "lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="exponential_memoryless",
+        latex=(r"{op}({rv} > s + t \mid {rv} > s) = {op}({rv} > t)"),
+        slots={"op": S(_PROB_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="gamma_pdf",
+        latex=(
+            r"f(x;\,{al},{bt}) ="
+            r" \dfrac{{x^{{{al}-1}}\,e^{{-x/{bt}}}}}"
+            r"{{{bt}^{{{al}}}\,\Gamma({al})}}"
+        ),
+        slots={"al": S(_LAM_POOL), "bt": S(_SIG_POOL)},
+    ),
+    Template(
+        name="gamma_mean",
+        latex=(
+            r"{op}[{rv}] = {al}\,{bt}"
+            r" \quad \bigl(\mathrm{{Gamma}}({al},{bt})\bigr)"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv": S(_RV_POOL),
+            "al": S(_LAM_POOL),
+            "bt": S(_SIG_POOL),
+        },
+    ),
+    Template(
+        name="beta_pdf",
+        latex=(
+            r"f(x;\,{al},{bt}) ="
+            r" \dfrac{{x^{{{al}-1}}(1-x)^{{{bt}-1}}}}{{B({al},{bt})}}"
+        ),
+        slots={"al": S(_LAM_POOL), "bt": X(_LAM_POOL, ("al",))},
+    ),
+    Template(
+        name="beta_mean",
+        latex=(
+            r"{op}[{rv}] = \dfrac{{{al}}}{{{al}+{bt}}}"
+            r" \quad \bigl(\mathrm{{Beta}}({al},{bt})\bigr)"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv": S(_RV_POOL),
+            "al": S(_LAM_POOL),
+            "bt": X(_LAM_POOL, ("al",)),
+        },
+    ),
+    Template(
+        name="uniform_pdf",
+        latex=(
+            r"f(x;\,{aa},{bb}) = \dfrac{{1}}{{{bb}-{aa}}},"
+            r"\quad {aa} \leq x \leq {bb}"
+        ),
+        slots={"aa": S(_AB_POOL), "bb": X(_AB_POOL, ("aa",))},
+    ),
+    Template(
+        name="uniform_mean",
+        latex=r"{op}[{rv}] = \dfrac{{{aa}+{bb}}}{{2}}",
+        slots={
+            "op": S(_EXP_OP),
+            "rv": S(_RV_POOL),
+            "aa": S(_AB_POOL),
+            "bb": X(_AB_POOL, ("aa",)),
+        },
+    ),
+    Template(
+        name="lognormal_pdf",
+        latex=(
+            r"f(x;\,{mu},{sig}) = \dfrac{{1}}{{x\,{sig}\sqrt{{2\pi}}}}"
+            r" \exp\!\left(-\dfrac{{(\ln x - {mu})^2}}{{2\,{sig}^2}}\right)"
+        ),
+        slots={"mu": S(_MU_POOL), "sig": S(_SIG_POOL)},
+    ),
+    Template(
+        name="cauchy_pdf",
+        latex=(
+            r"f(x;\,{mu},{sig}) = \dfrac{{1}}{{\pi\,{sig}"
+            r"\!\left[1+\!\left(\dfrac{{x-{mu}}}{{{sig}}}\right)^{{\!2}}\right]}}"
+        ),
+        slots={"mu": S(_MU_POOL), "sig": S(_SIG_POOL)},
+    ),
+    # Discrete distributions
+    Template(
+        name="negative_binomial_pmf",
+        latex=(
+            r"{op}({rv} = {kk}) = \binom{{{kk}+{rr}-1}}{{{kk}}}"
+            r" {pp}^{{{rr}}} (1-{pp})^{{{kk}}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "rr": X(_K_POOL, ("kk",)),
+            "pp": S(_P_POOL),
+        },
+    ),
+    Template(
+        name="hypergeometric_pmf",
+        latex=(
+            r"{op}({rv} = {kk}) ="
+            r" \dfrac{{\dbinom{{K}}{{{kk}}}\dbinom{{N-K}}{{{nn}-{kk}}}}}"
+            r"{{\dbinom{{N}}{{{nn}}}}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "nn": S(_N_POOL),
+        },
+    ),
+    Template(
+        name="bernoulli_pmf",
+        latex=(r"{op}({rv} = {kk}) = {pp}^{{{kk}}}(1-{pp})^{{1-{kk}}}"),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_BERN_K),
+            "pp": S(_P_POOL),
+        },
+    ),
+    Template(
+        name="uniform_discrete_pmf",
+        latex=(
+            r"{op}({rv} = {kk}) = \dfrac{{1}}{{{nn}}},"
+            r"\quad {kk} \in \{{1,2,\ldots,{nn}\}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "kk": S(_K_POOL),
+            "nn": S(_N_POOL),
+        },
+    ),
+    # Moment and expectation identities
+    Template(
+        name="linearity_expectation",
+        latex=(
+            r"{op}[a\,{rv1} + b\,{rv2}]"
+            r" = a\,{op}[{rv1}] + b\,{op}[{rv2}]"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+    Template(
+        name="variance_linear",
+        latex=r"\operatorname{{Var}}(a\,{rv} + b) = a^2\,\operatorname{{Var}}({rv})",
+        slots={"rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="variance_sum",
+        latex=(
+            r"\operatorname{{Var}}({rv1} + {rv2})"
+            r" = \operatorname{{Var}}({rv1}) + \operatorname{{Var}}({rv2})"
+            r" + 2\operatorname{{Cov}}({rv1},{rv2})"
+        ),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="second_moment_relation",
+        latex=(
+            r"{op}[{rv}^2]"
+            r" = \operatorname{{Var}}({rv}) + \bigl({op}[{rv}]\bigr)^2"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="skewness_def",
+        latex=(
+            r"\gamma_1({rv}) ="
+            r" \dfrac{{{op}\!\left[({rv}-\mu)^3\right]}}{{\sigma^3}}"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="kurtosis_def",
+        latex=(
+            r"\kappa({rv}) ="
+            r" \dfrac{{{op}\!\left[({rv}-\mu)^4\right]}}{{\sigma^4}} - 3"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="variance_independence",
+        latex=(
+            r"\operatorname{{Var}}({rv1} + {rv2})"
+            r" = \operatorname{{Var}}({rv1}) + \operatorname{{Var}}({rv2})"
+            r" \quad ({rv1} \perp {rv2})"
+        ),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="expectation_product_indep",
+        latex=(
+            r"{op}[{rv1}\,{rv2}] = {op}[{rv1}]\,{op}[{rv2}]"
+            r" \quad ({rv1} \perp {rv2})"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+    # Probability inequalities
+    Template(
+        name="markov_inequality",
+        latex=(
+            r"{op}({rv} \geq {aa})"
+            r" \leq \dfrac{{{op}[{rv}]}}{{{aa}}}"
+        ),
+        slots={"op": S(_PROB_OP), "rv": S(_RV_POOL), "aa": S(_A_POOL)},
+    ),
+    Template(
+        name="chebyshev_inequality",
+        latex=(
+            r"{op}\!\left(|{rv} - {mu}| \geq {aa}\right)"
+            r" \leq \dfrac{{\operatorname{{Var}}({rv})}}{{{aa}^2}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "mu": S(_MU_POOL),
+            "aa": S(_A_POOL),
+        },
+    ),
+    Template(
+        name="cauchy_schwarz_expectation",
+        latex=(
+            r"\bigl({op}[{rv1}\,{rv2}]\bigr)^2"
+            r" \leq {op}[{rv1}^2]\,{op}[{rv2}^2]"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+    Template(
+        name="chernoff_bound",
+        latex=(
+            r"{op}({rv} \geq {aa})"
+            r" \leq \dfrac{{M_{{{rv}}}({lam})}}{{e^{{{lam}\,{aa}}}}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "rv": S(_RV_POOL),
+            "aa": S(_A_POOL),
+            "lam": S(_LAM_POOL),
+        },
+    ),
+    # Stochastic processes
+    Template(
+        name="markov_chain_transition",
+        latex=(
+            r"{op}(X_{{{nn}+1}} = {kk} \mid X_{{{nn}}} = {ii})"
+            r" = P_{{{ii}{kk}}}"
+        ),
+        slots={
+            "op": S(_PROB_OP),
+            "nn": S(_N_POOL),
+            "kk": S(_IDX_POOL),
+            "ii": X(_IDX_POOL, ("kk",)),
+        },
+    ),
+    Template(
+        name="stationary_distribution",
+        latex=r"\pi P = \pi,\quad \sum_{{i}} \pi_i = 1",
+        slots={},
+    ),
+    Template(
+        name="martingale_def",
+        latex=(
+            r"{op}[{rv}_{{{nn}+1}} \mid \mathcal{{F}}_{{{nn}}}]"
+            r" = {rv}_{{{nn}}}"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL), "nn": S(_N_POOL)},
+    ),
+    Template(
+        name="random_walk_mean",
+        latex=r"{op}[S_{{{nn}}}] = {nn}\,{mu}",
+        slots={"op": S(_EXP_OP), "nn": S(_N_POOL), "mu": S(_MU_POOL)},
+    ),
+    Template(
+        name="random_walk_var",
+        latex=r"\operatorname{{Var}}(S_{{{nn}}}) = {nn}\,{sig}^2",
+        slots={"nn": S(_N_POOL), "sig": S(_SIG_POOL)},
+    ),
+    Template(
+        name="optional_stopping",
+        latex=r"{op}[{rv}_T] = {op}[{rv}_0]",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    # Multivariate
+    Template(
+        name="marginal_pdf_cont",
+        latex=(
+            r"f_{{{rv1}}}(x)"
+            r" = \int_{{-\infty}}^{{\infty}} f_{{{rv1},{rv2}}}(x,y)\, dy"
+        ),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="conditional_pdf_def",
+        latex=(
+            r"f_{{{rv2} \mid {rv1}}}(y \mid x)"
+            r" = \dfrac{{f_{{{rv1},{rv2}}}(x,y)}}{{f_{{{rv1}}}(x)}}"
+        ),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="joint_independence_pdf",
+        latex=(r"f_{{{rv1},{rv2}}}(x,y) = f_{{{rv1}}}(x)\,f_{{{rv2}}}(y)"),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="covariance_matrix_entry",
+        latex=(
+            r"\Sigma_{{{ii}{jj}}}"
+            r" = \operatorname{{Cov}}({rv}_{{{ii}}},{rv}_{{{jj}}})"
+        ),
+        slots={
+            "rv": S(_RV_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="multivariate_normal",
+        latex=(
+            r"f(\mathbf{{x}}) = \frac{{1}}{{(2\pi)^{{d/2}}|\Sigma|^{{1/2}}}}"
+            r" \exp\!\left(-\tfrac{{1}}{{2}}"
+            r"(\mathbf{{x}}-{mu})^\top \Sigma^{{-1}}(\mathbf{{x}}-{mu})\right)"
+        ),
+        slots={"mu": S(_MU_POOL)},
+    ),
+    # Generating functions
+    Template(
+        name="pgf_def",
+        latex=(
+            r"G_{{{rv}}}(z) = {op}\!\left[z^{{{rv}}}\right]"
+            r" = \sum_{{k=0}}^{{\infty}} {op}({rv} = k)\,z^k"
+        ),
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="pgf_mean",
+        latex=r"{op}[{rv}] = G'_{{{rv}}}(1)",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+    ),
+    Template(
+        name="mgf_derivative_moment",
+        latex=r"{op}[{rv}^{{{nn}}}] = M^{{({nn})}}_{{{rv}}}(0)",
+        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL), "nn": S(_N_POOL)},
+    ),
+    Template(
+        name="mgf_sum_independent",
+        latex=(
+            r"M_{{{rv1}+{rv2}}}(t)"
+            r" = M_{{{rv1}}}(t)\,M_{{{rv2}}}(t)"
+            r" \quad ({rv1} \perp {rv2})"
+        ),
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="characteristic_fn_inversion",
+        latex=(
+            r"f_{{{rv}}}(x)"
+            r" = \frac{{1}}{{2\pi}}"
+            r" \int_{{-\infty}}^{{\infty}} e^{{-itx}}\,\varphi_{{{rv}}}(t)\, dt"
+        ),
+        slots={"rv": S(_RV_POOL)},
+    ),
+    # Statistical inference
+    Template(
+        name="mle_argmax",
+        latex=(
+            r"\hat{{{lam}}}"
+            r" = \operatorname{{arg\,max}}_{{{lam}}} \mathcal{{L}}({lam})"
+        ),
+        slots={"lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="score_function",
+        latex=(
+            r"s({lam}) = \frac{{\partial}}{{\partial {lam}}}"
+            r" \log \mathcal{{L}}({lam})"
+        ),
+        slots={"lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="fisher_information",
+        latex=(
+            r"I({lam}) = {op}\!\left["
+            r"\left(\frac{{\partial}}{{\partial {lam}}}"
+            r" \log f(x;\,{lam})\right)^{{\!2}}\right]"
+        ),
+        slots={"op": S(_EXP_OP), "lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="cramer_rao",
+        latex=(
+            r"\operatorname{{Var}}(\hat{{{lam}}})"
+            r" \geq \dfrac{{1}}{{I({lam})}}"
+        ),
+        slots={"lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="bayes_posterior",
+        latex=(
+            r"p({lam} \mid \mathbf{{x}})"
+            r" \propto p(\mathbf{{x}} \mid {lam})\,p({lam})"
+        ),
+        slots={"lam": S(_LAM_POOL)},
+    ),
+    Template(
+        name="delta_method",
+        latex=(
+            r"\sqrt{{{nn}}}\,\bigl({fn}(\bar{{{rv}}}_n) - {fn}({mu})\bigr)"
+            r" \xrightarrow{{d}} \mathcal{{N}}\!\left(0,\,{fn}'({mu})^2\,{sig}^2\right)"
+        ),
+        slots={
+            "fn": E(_fn_rich_nosub, n=100),
+            "rv": S(_RV_POOL),
+            "mu": S(_MU_POOL),
+            "sig": S(_SIG_POOL),
+            "nn": S(_N_POOL),
+        },
+    ),
+    # Convergence
+    Template(
+        name="convergence_in_probability",
+        latex=r"{rv1}_n \xrightarrow{{p}} {rv2}",
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="convergence_in_distribution",
+        latex=r"{rv1}_n \xrightarrow{{d}} {rv2}",
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    Template(
+        name="almost_sure_convergence",
+        latex=r"{rv1}_n \xrightarrow{{\text{{a.s.}}}} {rv2}",
+        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+    ),
+    # ------------------------------------------------------------------
+    # Part C: high-n_eff function-pair templates
+    # ------------------------------------------------------------------
+    Template(
+        name="expectation_composition",
+        latex=(
+            r"{op}[{fn1}({rv})]"
+            r" = \int_{{-\infty}}^{{\infty}} {fn1}(x)\, f_{{{rv}}}(x)\, dx"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "fn1": E(_fn_rich_nosub, n=100),
+            "rv": S(_RV_POOL),
+        },
+    ),
+    Template(
+        name="conditional_expectation_product",
+        latex=(
+            r"{op}[{fn1}({rv1})\,{fn2}({rv2})]"
+            r" = {op}[{fn1}({rv1})]\,{op}[{fn2}({rv2})]"
+            r" \quad ({rv1} \perp {rv2})"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+    Template(
+        name="mgf_composition",
+        latex=(
+            r"M_{{{fn1}({rv})}}(t)"
+            r" = {op}\!\left[e^{{t\,{fn1}({rv})}}\right]"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "op": S(_EXP_OP),
+            "rv": S(_RV_POOL),
+        },
+    ),
+    Template(
+        name="jacobian_change_of_variables",
+        latex=(
+            r"f_{{{rv2}}}(y)"
+            r" = f_{{{rv1}}}\!\left({fn1}(y)\right)\,\bigl|{fn2}(y)\bigr|"
+        ),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
+    ),
+    Template(
+        name="log_likelihood_sum",
+        latex=(r"\ell({fn1}) = \sum_{{i=1}}^{{{nn}}} \log {fn2}(x_i \mid {fn1})"),
+        slots={
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "nn": S(_N_POOL),
+        },
+    ),
+    Template(
+        name="rao_blackwell",
+        latex=(
+            r"{op}\!\left[\bigl({fn1}({rv1}) - {fn2}({rv2})\bigr)^2\right]"
+            r" \geq {op}\!\left[\bigl(\hat{{\theta}} - {fn2}({rv2})\bigr)^2\right]"
+        ),
+        slots={
+            "op": S(_EXP_OP),
+            "fn1": E(_fn_rich_nosub, n=100),
+            "fn2": E(_fn_rich_nosub, n=100),
+            "rv1": S(_RV_POOL),
+            "rv2": X(_RV_POOL, ("rv1",)),
+        },
     ),
 ]
 
