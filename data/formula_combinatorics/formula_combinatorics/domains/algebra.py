@@ -1594,6 +1594,54 @@ _PART_ARROWS: list[Template] = [
 ]
 _ALGEBRA_TEMPLATES += _PART_ARROWS
 
+# ---------------------------------------------------------------------------
+# Large manual bracket-size templates (\biggl/\biggr, \Biggl/\Biggr)
+# ---------------------------------------------------------------------------
+
+_LARGE_BRACKET: list[Template] = [
+    # Product of two sums — \biggl( \sum ... \biggr)\biggl( \sum ... \biggr)
+    Template(
+        name="prod_of_sums_biggl",
+        latex=(
+            r"\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k \biggr)"
+            r"\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k \biggr)"
+        ),
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "a": S(list("abcdefg")),
+            "b": S(list("hijklmn")),
+            "n": S(("n", "N", "m")),
+        },
+    ),
+    # Cauchy-Schwarz with \Biggl| absolute value and \Biggl( squared sums
+    Template(
+        name="cauchy_schwarz_biggl",
+        latex=(
+            r"\Biggl| \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k {b}_k \Biggr|^2"
+            r" \leq \Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k^2 \Biggr)"
+            r"\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)"
+        ),
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "a": S(list("abcde")),
+            "b": S(list("fghij")),
+            "n": S(("n", "N", "m")),
+        },
+    ),
+    # Set comprehension with \Biggl\{ ... \Bigg| ... \Biggr\}
+    Template(
+        name="set_comprehension_biggl",
+        latex=r"\Biggl\{{ {v} \in {sp} \;\Bigg|\; {f}({v}) \leq {c} \Biggr\}}",
+        slots={
+            "v": S(_VARS),
+            "sp": S((r"\mathbb{R}", r"\mathbb{Z}", r"\mathbb{N}")),
+            "f": E(_fn_rich_nosub, n=100),
+            "c": E(_atom, n=150),
+        },
+    ),
+]
+_ALGEBRA_TEMPLATES += _LARGE_BRACKET
+
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
 _W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)
 

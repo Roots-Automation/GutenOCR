@@ -9,7 +9,7 @@ from ._vocab import _expr, _overbrace, _s, _underbrace, _v
 
 def _align(rng: random.Random) -> str:
     """Generate a multi-line LaTeX block (align* or equation*/cases)."""
-    style = rng.randint(0, 11)
+    style = rng.randint(0, 14)
     env = "align*"  # default wrapper; overridden below for cases styles
 
     if style == 0:
@@ -110,12 +110,45 @@ def _align(rng: random.Random) -> str:
             rf"&= {_expr(rng, 1)}",
         ]
 
-    else:  # style == 11
+    elif style == 11:
         rel = rng.choice([r"\leq", r"\geq", r"\ll"])
         e1, e2, e3 = _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
         lines = [
             rf"{e1} &{rel} {e2}",
             rf"&{rel} {e3}",
+        ]
+
+    elif style == 12:
+        # Invisible-bracket split: \left( ... \right. / \left. ... \right)
+        lhs = rng.choice(["f(x)", "g(t)", "y", "S"])
+        delim_open, delim_close = rng.choice([("(", ")"), ("[", "]")])
+        e1, e2 = _expr(rng, 2), _expr(rng, 2)
+        e3, e4 = _expr(rng, 1), _expr(rng, 1)
+        lines = [
+            rf"{lhs} &= \left{delim_open} {e1} + {e2} + \cdots \right.",
+            rf"&\left. \quad + {e3} + {e4} \right{delim_close}",
+        ]
+
+    elif style == 13:
+        # Derivative bracket spanning two rows, evaluated at bounds
+        v = _v(rng)
+        fn = rng.choice([rf"\frac{{d}}{{d{v}}}", rf"\frac{{d^2}}{{d{v}^2}}"])
+        a, b = _s(rng), _s(rng)
+        e1, e2, e3, e4 = _expr(rng, 2), _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
+        lines = [
+            rf"I &= \left[ {fn}\left( {e1} \right) + {e2} \right.",
+            rf"&\left. \quad - {e3} \cdot {e4} \right]_{{{a}}}^{{{b}}}",
+        ]
+
+    else:  # style == 14
+        # Grouped expression with coefficient spanning two rows
+        lhs = rng.choice(["y", "z", "w"])
+        c = _s(rng)
+        e1, e2 = _expr(rng, 2), _expr(rng, 2)
+        e3, e4, e5, e6 = _expr(rng, 1), _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
+        lines = [
+            rf"{lhs} &= {c} \left( \frac{{{e1}}}{{{e2}}} + {e3} \right.",
+            rf"&\left. \qquad + \frac{{{e4}}}{{{e5}}} \right) + {e6}",
         ]
 
     body = r" \\".join(lines)

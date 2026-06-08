@@ -11,6 +11,7 @@ from .._vocab import (
     _VARS,
     _atom,
     _eps_sub,
+    _expr,
     _fn_rich_nosub,
     _tol_sub,
 )
@@ -860,6 +861,52 @@ _PART_ARROWS: list[Template] = [
     ),
 ]
 _ANALYSIS_TEMPLATES += _PART_ARROWS
+
+# ---------------------------------------------------------------------------
+# Evaluation-bar and large-bracket templates
+# ---------------------------------------------------------------------------
+
+_ANALYSIS_TEMPLATES += [
+    # Function evaluated at a point with \left. ... \right|
+    Template(
+        name="limit_eval_bar",
+        latex=r"\left.{f}({v})\right|_{{{v}={a}}} = \lim_{{{v} \to {a}}} {f}({v})",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_BVAR),
+            "a": E(_atom, n=150),
+        },
+    ),
+    # Norm of a fraction — \biggl\| ... \biggr\| exposes size-3 manual sizing
+    Template(
+        name="norm_frac_biggl",
+        latex=r"\biggl\| \frac{{{f}({v})}}{{{g}({v})}} \biggr\|",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "g": E(_fn_rich_nosub, n=100),
+            "v": S(_BVAR),
+        },
+    ),
+    # Inner product of a fraction with a function — \Biggl\langle ... \Biggr\rangle (size 4)
+    Template(
+        name="inner_product_biggl",
+        latex=r"\Biggl\langle \frac{{{expr1}}}{{{expr2}}},\; {f} \Biggr\rangle",
+        slots={
+            "expr1": E(_expr, n=3000),
+            "expr2": E(_expr, n=3000),
+            "f": E(_fn_rich_nosub, n=100),
+        },
+    ),
+    # Absolute value of a fraction — \biggl| ... \biggr| (size 3)
+    Template(
+        name="abs_frac_biggl",
+        latex=r"\biggl| \frac{{{expr1}}}{{{expr2}}} \biggr|",
+        slots={
+            "expr1": E(_expr, n=3000),
+            "expr2": E(_expr, n=3000),
+        },
+    ),
+]
 
 _W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
 

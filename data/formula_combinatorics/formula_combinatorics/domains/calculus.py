@@ -781,6 +781,127 @@ _PART_ARROWS: list[Template] = [
 _CALCULUS_TEMPLATES += _PART_ARROWS
 
 # ---------------------------------------------------------------------------
+# Evaluation-bar templates
+# ---------------------------------------------------------------------------
+
+_EVAL_BAR: list[Template] = [
+    # Antiderivative evaluated at bounds — F(x)\Big|_a^b
+    Template(
+        name="antiderivative_eval_bar",
+        latex=r"{f}({v})\Big|_{{{a}}}^{{{b}}}",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # FTC with \left. ... \right| invisible-left evaluation bar
+    Template(
+        name="ftc_eval_bar",
+        latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = \left.{g}({v})\right|_{{{a}}}^{{{b}}}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "f": E(_fn_rich_nosub, n=100),
+            "g": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # FTC three-part: integral = antiderivative bar = F(b) - F(a)
+    Template(
+        name="ftc_difference_bar",
+        latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = {g}({v})\bigg|_{{{a}}}^{{{b}}} = {g}({b}) - {g}({a})",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "f": E(_fn_rich_nosub, n=100),
+            "g": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # IBP using \Big| evaluation bar instead of square-bracket notation
+    Template(
+        name="ibp_eval_bar",
+        latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {u}\,d{w} = {u}\,{w}\Big|_{{{a}}}^{{{b}}} - \int{lim_mod}_{{{a}}}^{{{b}}} {w}\,d{u}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "u": E(_fn_rich_nosub, n=100),
+            "w": E(_fn_rich_nosub, n=100),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # First derivative evaluated at a point: \left. d/dv [...] \right|_{v=a}
+    Template(
+        name="derivative_eval_point",
+        latex=r"\left.\frac{{d}}{{d{v}}}\left[{expr}\right]\right|_{{{v}={a}}}",
+        slots={
+            "v": S(_VARS),
+            "expr": E(_expr, n=5000),
+            "a": E(_atom, n=150),
+        },
+    ),
+    # Second derivative evaluated at a point
+    Template(
+        name="second_deriv_eval_point",
+        latex=r"\left.\frac{{d^2}}{{d{v}^2}}\left[{expr}\right]\right|_{{{v}={a}}}",
+        slots={
+            "v": S(_VARS),
+            "expr": E(_expr, n=5000),
+            "a": E(_atom, n=150),
+        },
+    ),
+    # Mixed partial evaluated at a point — uses \bigg| for tall fraction
+    Template(
+        name="mixed_partial_eval_point",
+        latex=r"\frac{{\partial^2 {f}}}{{\partial {v}\,\partial {w}}}\bigg|_{{({a},{b})}}",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "w": X(_VARS, ("v",)),
+            "a": E(_atom, n=150),
+            "b": E(_atom, n=150),
+        },
+    ),
+    # Gradient evaluated at a point
+    Template(
+        name="gradient_eval_point",
+        latex=r"\nabla {f}\bigg|_{{{v}={a}}}",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "a": E(_atom, n=150),
+        },
+    ),
+    # Partial derivative evaluated on a surface w = c
+    Template(
+        name="partial_eval_surface",
+        latex=r"\left.\frac{{\partial {f}}}{{\partial {v}}}\right|_{{{w}={c}}}",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "w": X(_VARS, ("v",)),
+            "c": E(_atom, n=150),
+        },
+    ),
+    # Lagrange remainder — common companion to Taylor templates
+    Template(
+        name="lagrange_remainder",
+        latex=r"R_{{{n}}}({v}) = \frac{{{f}^{{({n}+1)}}(\xi)}}{{({n}+1)!}}\,({v}-{a})^{{{n}+1}},\quad \xi \in ({a},{v})",
+        slots={
+            "f": E(_fn_rich_nosub, n=100),
+            "v": S(_VARS),
+            "a": E(_atom, n=150),
+            "n": S(("n", "N", "k")),
+        },
+    ),
+]
+_CALCULUS_TEMPLATES += _EVAL_BAR
+
+# ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------
 
