@@ -860,6 +860,24 @@ _PART_APPROX: list[Template] = [
 
 _PHYSICS_TEMPLATES += _PART_APPROX
 
+_PHYSICS_TEMPLATES += [
+    Template(
+        name="wavefunction_real_part",
+        latex=r"\Re({psi}(\mathbf{{r}},t)) = A\cos(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)",
+        slots={"psi": S(_PSI_POOL)},
+    ),
+    Template(
+        name="wavefunction_imaginary_part",
+        latex=r"\Im({psi}(\mathbf{{r}},t)) = A\sin(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)",
+        slots={"psi": S(_PSI_POOL)},
+    ),
+    Template(
+        name="complex_impedance_Re_Im",
+        latex=r"Z = \Re(Z) + i\,\Im(Z)",
+        slots={},
+    ),
+]
+
 _W = compute_weights(_PHYSICS_TEMPLATES)
 
 _physics = make_dispatcher(_PHYSICS_TEMPLATES, _W)

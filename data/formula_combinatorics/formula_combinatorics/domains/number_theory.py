@@ -1062,6 +1062,19 @@ _TEMPLATES_C += [
 # Aggregate
 # ---------------------------------------------------------------------------
 
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="nexists_quadratic_residue",
+        latex=r"\nexists\, {aa} \in \mathbb{{Z}}:\; {aa}^2 \equiv {bb} \pmod{{{mm}}}",
+        slots={"aa": S(_INT_POOL), "bb": X(_INT_POOL, ("aa",)), "mm": S(_PRIME_POOL)},
+    ),
+    Template(
+        name="nexists_common_factor",
+        latex=r"\nexists\, {pp} \text{{ prime}}:\; {pp} \mid {aa} \;\wedge\; {pp} \mid {bb}",
+        slots={"aa": S(_INT_POOL), "bb": X(_INT_POOL, ("aa",)), "pp": S(_PRIME_POOL)},
+    ),
+]
+
 _NUMBER_THEORY_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -1073,6 +1086,7 @@ _NUMBER_THEORY_TEMPLATES: list[Template] = (
     + _TEMPLATES_B7
     + _TEMPLATES_B8
     + _TEMPLATES_C
+    + _TEMPLATES_D
 )
 
 _W_NT: list[float] = compute_weights(_NUMBER_THEORY_TEMPLATES)

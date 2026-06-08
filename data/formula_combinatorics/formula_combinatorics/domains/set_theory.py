@@ -911,6 +911,25 @@ _PART_ARROWS: list[Template] = [
 ]
 _SET_THEORY_TEMPLATES += _PART_ARROWS
 
+_PART_MISC: list[Template] = [
+    Template(
+        name="nexists_element",
+        latex=r"\nexists\, {xx} \in {AA}:\; {ff}({xx}) = 0",
+        slots={"xx": S(_VAR_POOL), "AA": S(_SET_POOL), "ff": S(_FUNC_POOL)},
+    ),
+    Template(
+        name="varnothing_disjoint",
+        latex=r"{AA} \cap {BB} = \varnothing \iff {AA} \text{{ and }} {BB} \text{{ are disjoint}}",
+        slots={"AA": S(_SET_POOL), "BB": X(_SET_POOL, ("AA",))},
+    ),
+    Template(
+        name="varnothing_membership",
+        latex=r"\forall\, {xx}:\; {xx} \notin \varnothing",
+        slots={"xx": S(_VAR_POOL)},
+    ),
+]
+_SET_THEORY_TEMPLATES += _PART_MISC
+
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------

@@ -681,6 +681,29 @@ _TEMPLATES_E: list[Template] = [
     ),
 ]
 
+_TEMPLATES_F: list[Template] = [
+    Template(
+        name="modulus_Re_Im",
+        latex=r"|{zz}|^2 = \Re({zz})^2 + \Im({zz})^2",
+        slots={"zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="real_part_inequality",
+        latex=r"\Re({zz}) \leq |{zz}|",
+        slots={"zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="complex_conjugate_Re_Im",
+        latex=r"\overline{{{zz}}} = \Re({zz}) - i\,\Im({zz})",
+        slots={"zz": S(_VAR_POOL)},
+    ),
+    Template(
+        name="imaginary_part_bound",
+        latex=r"|\Im({zz})| \leq |{zz}|",
+        slots={"zz": S(_VAR_POOL)},
+    ),
+]
+
 _COMPLEX_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -693,6 +716,7 @@ _COMPLEX_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
     + _TEMPLATES_D
     + _TEMPLATES_E
+    + _TEMPLATES_F
 )
 
 # ---------------------------------------------------------------------------

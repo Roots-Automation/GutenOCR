@@ -573,7 +573,25 @@ _PART_D: list[Template] = [
     ),
 ]
 
-_FOURIER_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PART_D
+_PART_E: list[Template] = [
+    Template(
+        name="fourier_real_part",
+        latex=r"\Re(\hat{{{ff}}}({xi})) = \int_{{-\infty}}^{{\infty}} {ff}({tt}) \cos(2\pi {xi} {tt})\,d{tt}",
+        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+    ),
+    Template(
+        name="fourier_imaginary_part",
+        latex=r"\Im(\hat{{{ff}}}({xi})) = -\int_{{-\infty}}^{{\infty}} {ff}({tt}) \sin(2\pi {xi} {tt})\,d{tt}",
+        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+    ),
+    Template(
+        name="power_spectral_density_Re",
+        latex=r"S_{{{ff}}}({xi}) = \Re\!\left(\int_{{-\infty}}^{{\infty}} R_{{{ff}}}(\tau)\,e^{{-2\pi i {xi} \tau}}\,d\tau\right)",
+        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL)},
+    ),
+]
+
+_FOURIER_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PART_D + _PART_E
 
 _W_FOURIER: list[float] = compute_weights(_FOURIER_TEMPLATES)
 

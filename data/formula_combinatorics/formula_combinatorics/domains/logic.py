@@ -797,6 +797,29 @@ _TEMPLATES_F: list[Template] = [
     ),
 ]
 
+_TEMPLATES_G: list[Template] = [
+    Template(
+        name="nexists_predicate",
+        latex=r"\nexists\, {xx}:\; {pp}({xx})",
+        slots={"xx": S(_VAR_POOL), "pp": S(_PRED_POOL)},
+    ),
+    Template(
+        name="nexists_as_negation",
+        latex=r"\nexists\, {xx}:\; {pp}({xx}) \equiv \forall {xx}\;\neg {pp}({xx})",
+        slots={"xx": S(_VAR_POOL), "pp": S(_PRED_POOL)},
+    ),
+    Template(
+        name="proof_end_blacksquare",
+        latex=r"\therefore {pp} \Rightarrow {qq} \qquad \blacksquare",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="contradiction_blacksquare",
+        latex=r"\neg({pp} \land \neg {pp}) \qquad \blacksquare",
+        slots={"pp": S(_PROP_POOL)},
+    ),
+]
+
 _LOGIC_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -811,6 +834,7 @@ _LOGIC_TEMPLATES: list[Template] = (
     + _TEMPLATES_D
     + _TEMPLATES_E
     + _TEMPLATES_F
+    + _TEMPLATES_G
 )
 
 # ---------------------------------------------------------------------------
