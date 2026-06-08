@@ -51,6 +51,9 @@ from .linear_algebra import WEIGHTS as _W_LINEAR
 from .logic import GENERATORS as _G_LOGIC
 from .logic import TEMPLATES as _T_LOGIC
 from .logic import WEIGHTS as _W_LOGIC
+from .math_fonts import GENERATORS as _G_FONTS
+from .math_fonts import TEMPLATES as _T_FONTS
+from .math_fonts import WEIGHTS as _W_FONTS
 from .measure_theory import GENERATORS as _G_MEASURE
 from .measure_theory import TEMPLATES as _T_MEASURE
 from .measure_theory import WEIGHTS as _W_MEASURE
@@ -116,6 +119,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_LOGIC,
     **_G_SPROC,
     **_G_CUSTOP,
+    **_G_FONTS,
 }
 
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -146,6 +150,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_LOGIC,
     **_W_SPROC,
     **_W_CUSTOP,
+    **_W_FONTS,
 }
 
 # Maps domain name → list of Template objects.
@@ -179,6 +184,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_LOGIC,
     **_T_SPROC,
     **_T_CUSTOP,
+    **_T_FONTS,
 }
 
 assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (
