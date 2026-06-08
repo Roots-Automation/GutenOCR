@@ -1,4 +1,4 @@
-"""Real analysis domain generators."""
+"""Real analysis and functional analysis domain generators."""
 
 from __future__ import annotations
 
@@ -953,10 +953,6 @@ _ANALYSIS_TEMPLATES += [
         },
     ),
 ]
-
-# ---------------------------------------------------------------------------
-# Sampling weights — cap at 10_000 to balance high-n_eff templates
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # Greek symbol coverage: \varsigma, \digamma, \Digamma

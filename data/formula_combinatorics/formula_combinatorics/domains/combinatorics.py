@@ -68,10 +68,10 @@ def _lin_rec_na_combo(rng: random.Random, n: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Combinatorics templates
+# Part A — core combinatorics identities
 # ---------------------------------------------------------------------------
 
-_COMBINATORICS_TEMPLATES: list[Template] = [
+_PART_A: list[Template] = [
     # c=0 — permutations P(n,k)
     Template(
         name="permutations",
@@ -407,10 +407,10 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
-# Part C — high-n_eff function-pair templates
+# Part B — high-n_eff function-pair templates
 # ---------------------------------------------------------------------------
 
-_COMBINATORICS_TEMPLATES += [
+_PART_B: list[Template] = [
     Template(
         name="fn_binomial_symmetry",
         latex=r"{fn1}\!\binom{{{n}}}{{{k}}} = {fn2}\!\binom{{{n}}}{{{n}-{k}}}",
@@ -476,6 +476,10 @@ _COMBINATORICS_TEMPLATES += [
 ]
 
 # ---------------------------------------------------------------------------
+# Assembly
+# ---------------------------------------------------------------------------
+
+_COMBINATORICS_TEMPLATES: list[Template] = _PART_A + _PART_B
 
 # ---------------------------------------------------------------------------
 # Registry
