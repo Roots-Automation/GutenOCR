@@ -897,6 +897,20 @@ _SET_THEORY_TEMPLATES += [
     ),
 ]
 
+_PART_ARROWS: list[Template] = [
+    Template(
+        name="set_equality_biconditional",
+        latex=r"{AA} = {BB} \leftrightarrow ({AA} \subseteq {BB}) \wedge ({BB} \subseteq {AA})",
+        slots={"AA": S(_SET_POOL), "BB": X(_SET_POOL, ("AA",))},
+    ),
+    Template(
+        name="directed_family_uparrow",
+        latex=r"{AA}_\alpha \uparrow {AA}: \quad {AA}_1 \subseteq {AA}_2 \subseteq \cdots,\;\bigcup_\alpha {AA}_\alpha = {AA}",
+        slots={"AA": S(_SET_POOL)},
+    ),
+]
+_SET_THEORY_TEMPLATES += _PART_ARROWS
+
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------

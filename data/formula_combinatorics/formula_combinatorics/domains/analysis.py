@@ -823,6 +823,35 @@ _ANALYSIS_TEMPLATES += [
     ),
 ]
 
+_SEQ_POOL = ("a", "b", "c", "f", "g", "h")
+_SP_POOL = (r"L^2(\Omega)", r"L^p(\Omega)", r"H^1(\Omega)", "H")
+_NN_POOL = ("n", "k", "m")
+_DOM_POOL = (r"\Omega", r"[0,1]", r"\mathbb{R}^n")
+
+_PART_ARROWS: list[Template] = [
+    Template(
+        name="sequence_limit_rightarrow",
+        latex=r"{aa}_n \rightarrow {ll} \quad \text{{as }} n \rightarrow \infty",
+        slots={"aa": S(_SEQ_POOL), "ll": S(_BVAR)},
+    ),
+    Template(
+        name="function_measurable_rightarrow",
+        latex=r"f: {dom} \rightarrow \mathbb{{R}} \text{{ is measurable}}",
+        slots={"dom": S(_DOM_POOL)},
+    ),
+    Template(
+        name="weak_convergence_Lp",
+        latex=r"f_{{{nn}}} \rightharpoonup f \text{{ in }} {sp}",
+        slots={"nn": S(_NN_POOL), "sp": S(_SP_POOL)},
+    ),
+    Template(
+        name="weak_convergence_Hilbert",
+        latex=r"\langle x_{{{nn}}}, y \rangle \rightarrow \langle x, y \rangle \;\forall\, y \implies x_{{{nn}}} \rightharpoonup x",
+        slots={"nn": S(_NN_POOL)},
+    ),
+]
+_ANALYSIS_TEMPLATES += _PART_ARROWS
+
 _W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
 
 # ---------------------------------------------------------------------------

@@ -742,6 +742,29 @@ _CALCULUS_TEMPLATES += [
     ),
 ]
 
+_CF_POOL = ("f", "g", "h", r"\phi", r"\psi")
+_CV_POOL = ("x", "t", "u", "s")
+_CD_POOL = (r"\mathbb{R}", r"[a,b]", r"[0,1]", r"\mathbb{R}^n")
+
+_PART_ARROWS: list[Template] = [
+    Template(
+        name="continuous_function_rightarrow",
+        latex=r"{ff}: {dom} \rightarrow \mathbb{{R}} \text{{ continuous}}",
+        slots={"ff": S(_CF_POOL), "dom": S(_CD_POOL)},
+    ),
+    Template(
+        name="integral_operator_mapsto",
+        latex=r"{ff}: {xx} \mapsto \int_a^{{{xx}}} g(t)\,dt",
+        slots={"ff": S(_CF_POOL), "xx": S(_CV_POOL)},
+    ),
+    Template(
+        name="exponential_longmapsto",
+        latex=r"\exp: {xx} \longmapsto e^{{{xx}}}",
+        slots={"xx": S(_CV_POOL)},
+    ),
+]
+_CALCULUS_TEMPLATES += _PART_ARROWS
+
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------

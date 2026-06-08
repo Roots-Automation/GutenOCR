@@ -160,6 +160,25 @@ _PART_PERP: list[Template] = [
 
 _LINEAR_ALGEBRA_TEMPLATES += _PART_PERP
 
+_PART_ARROWS: list[Template] = [
+    Template(
+        name="linear_map_rightarrow",
+        latex=r"T: \mathbb{{R}}^{{{m}}} \rightarrow \mathbb{{R}}^{{{n}}}",
+        slots={"m": S(_N_POOL), "n": S(_N_POOL)},
+    ),
+    Template(
+        name="matrix_action_mapsto",
+        latex=r"{mm}: \mathbf{{v}} \mapsto {mm}\mathbf{{v}}, \quad {mm} \in \mathbb{{R}}^{{{n} \times {n}}}",
+        slots={"mm": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+    ),
+    Template(
+        name="dual_map_longmapsto",
+        latex=r"T^*: \phi \longmapsto \phi \circ T, \quad \phi \in V^*",
+        slots={},
+    ),
+]
+_LINEAR_ALGEBRA_TEMPLATES += _PART_ARROWS
+
 _W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 
 _linear_algebra = make_dispatcher(_LINEAR_ALGEBRA_TEMPLATES, _W)

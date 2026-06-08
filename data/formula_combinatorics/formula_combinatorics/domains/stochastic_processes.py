@@ -1085,6 +1085,24 @@ _TEMPLATES_C: list[Template] = [
 # Assembly
 # ---------------------------------------------------------------------------
 
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="communicating_states",
+        latex=r"i \rightleftharpoons j \iff \exists\, n:\; P^n(i,j)>0 \;\wedge\; P^m(j,i)>0",
+        slots={},
+    ),
+    Template(
+        name="detailed_balance_reversibility",
+        latex=r"\pi_i \, {proc}(i,j) \rightleftharpoons \pi_j \, {proc}(j,i) \;\forall\; i,j \in S",
+        slots={"proc": S(_PROC_POOL)},
+    ),
+    Template(
+        name="monotone_process_uparrow",
+        latex=r"0 \leq {proc}_1 \leq {proc}_2 \leq \cdots \uparrow {proc}_\infty \text{{a.s.}}",
+        slots={"proc": S(_PROC_POOL)},
+    ),
+]
+
 _SPROC_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -1094,6 +1112,7 @@ _SPROC_TEMPLATES: list[Template] = (
     + _TEMPLATES_B5
     + _TEMPLATES_B6
     + _TEMPLATES_C
+    + _TEMPLATES_D
 )
 
 _W_SPROC: list[float] = compute_weights(_SPROC_TEMPLATES)

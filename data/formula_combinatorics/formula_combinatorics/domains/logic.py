@@ -779,6 +779,24 @@ _TEMPLATES_E: list[Template] = [
     ),
 ]
 
+_TEMPLATES_F: list[Template] = [
+    Template(
+        name="biconditional_leftrightarrow",
+        latex=r"{pp} \leftrightarrow {qq} \equiv ({pp} \rightarrow {qq}) \wedge ({qq} \rightarrow {pp})",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="converse_leftarrow",
+        latex=r"({pp} \leftarrow {qq}) \equiv ({qq} \rightarrow {pp})",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="necessary_condition_Leftarrow",
+        latex=r"{pp} \Leftarrow {qq} \iff {qq} \Rightarrow {pp}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+]
+
 _LOGIC_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -792,6 +810,7 @@ _LOGIC_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
     + _TEMPLATES_D
     + _TEMPLATES_E
+    + _TEMPLATES_F
 )
 
 # ---------------------------------------------------------------------------

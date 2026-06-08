@@ -1556,6 +1556,34 @@ _ALGEBRA_TEMPLATES += [
 # Sampling weights (sqrt of n_eff for balanced coverage)
 # ---------------------------------------------------------------------------
 
+_GRP_NAMES = ("G", "H", "K", "N", "Q")
+_RING_NAMES = ("R", "S", "A", "B")
+_ELT_POOL = ("g", "h", "x", "r", "s", "a")
+
+_PART_ARROWS: list[Template] = [
+    Template(
+        name="group_homomorphism_rightarrow",
+        latex=r"\phi: {GG} \rightarrow {HH} \text{{ is a group homomorphism}}",
+        slots={"GG": S(_GRP_NAMES), "HH": X(_GRP_NAMES, ("GG",))},
+    ),
+    Template(
+        name="ring_homomorphism_rightarrow",
+        latex=r"f: {RR} \rightarrow {SS},\quad f(1_{{{RR}}}) = 1_{{{SS}}}",
+        slots={"RR": S(_RING_NAMES), "SS": X(_RING_NAMES, ("RR",))},
+    ),
+    Template(
+        name="conjugation_mapsto",
+        latex=r"\phi_h: {gg} \mapsto h{gg}h^{{-1}}, \quad {gg} \in {GG}",
+        slots={"gg": S(_ELT_POOL), "GG": S(_GRP_NAMES)},
+    ),
+    Template(
+        name="frobenius_endomorphism_longmapsto",
+        latex=r"\mathrm{{Frob}}: {rr} \longmapsto {rr}^p \quad (p\text{{ prime}})",
+        slots={"rr": S(_ELT_POOL)},
+    ),
+]
+_ALGEBRA_TEMPLATES += _PART_ARROWS
+
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
 _W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)
 
