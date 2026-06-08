@@ -755,6 +755,52 @@ _CALCULUS_TEMPLATES += [
         latex=r"\iiiint_{{\Omega}} f(x,y,z,w)\, dx\, dy\, dz\, dw",
         slots={},
     ),
+    # C6: k-fold integral (idotsint) — variable-arity multi-integral
+    Template(
+        name="idotsint_k_fold",
+        latex=(
+            r"\idotsint_{{{dom}}} {ff}({v}_1,\dots,{v}_{{{idx}}}) "
+            r"\, d{v}_1 \dots d{v}_{{{idx}}}"
+        ),
+        slots={
+            "dom": S(("V", r"\Omega", "D", r"\mathcal{D}")),
+            "ff": S(("f", "g", "h", r"\mu", r"\rho", r"\phi")),
+            "v": S(("u", "x", "t", "s")),
+            "idx": S(("k", "n", "m")),
+        },
+    ),
+    Template(
+        name="idotsint_measure",
+        latex=r"\idotsint_{{{dom}}} {ff}({v}_1,\dots,{v}_{{{idx}}}) \, d\mu",
+        slots={
+            "dom": S(("V", r"\Omega", "D", r"\mathbb{R}^n")),
+            "ff": S(("f", "g", r"\phi", r"\psi")),
+            "v": S(("x", "u", "t")),
+            "idx": S(("n", "k", "m")),
+        },
+    ),
+    # C7: bare scalar line integral (oint without theorem context)
+    Template(
+        name="line_integral_scalar",
+        latex=r"\oint{lim_mod}_{{{C}}} {ff}({v}) \, d{v}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "C": S(("C", r"\gamma", r"\partial D", "L", r"\Gamma")),
+            "v": S(_VARS),
+            "ff": E(_fn_rich_nosub, n=100),
+        },
+    ),
+    Template(
+        name="line_integral_scalar_equals",
+        latex=r"\oint{lim_mod}_{{{C}}} {ff}({v}) \, d{v} = {val}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "C": S(("C", r"\gamma", r"\partial D", "L")),
+            "v": S(_VARS),
+            "ff": E(_fn_rich_nosub, n=100),
+            "val": E(_atom, n=150),
+        },
+    ),
 ]
 
 _CF_POOL = ("f", "g", "h", r"\phi", r"\psi")
