@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import (
     _GEO_N,
     _VARS,
@@ -907,6 +907,85 @@ _ANALYSIS_TEMPLATES += [
         },
     ),
 ]
+
+# ---------------------------------------------------------------------------
+# Backslash-space (\ ) qualifier patterns
+# ---------------------------------------------------------------------------
+
+_BSLVAR_POOL: tuple[str, ...] = ("A", "B", "C", "S", "T")
+_DOM_POOL: tuple[str, ...] = (r"\mathbb{R}", r"\mathbb{R}^n", r"[a,b]", r"\mathbb{C}", r"\mathbb{Z}")
+_SPACE_POOL: tuple[str, ...] = (r"L^p", r"L^2", r"L^\infty", r"\mathcal{H}", r"C([a,b])")
+
+_PART_BSLSPACE: list[Template] = [
+    Template(
+        name="bslspace_forall_explicit",
+        latex=r"{ff}({vv}) = {expr}, \ \forall {vv} \in {dom}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "expr": E(_expr, n=5000),
+            "dom": S(_DOM_POOL),
+        },
+    ),
+    Template(
+        name="bslspace_exists_explicit",
+        latex=r"{ff}({vv}) \leq {cc}, \ \exists {vv} \in {dom}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "cc": E(_atom, n=150),
+            "dom": S((r"\mathbb{R}", r"\mathbb{Z}", r"[0,\infty)")),
+        },
+    ),
+    Template(
+        name="bslspace_chain_implication",
+        latex=r"{aa} \subseteq {bb}, \ {bb} \subseteq {cc} \implies {aa} \subseteq {cc}",
+        slots={
+            "aa": S(_BSLVAR_POOL),
+            "bb": X(_BSLVAR_POOL, ("aa",)),
+            "cc": X(_BSLVAR_POOL, ("aa", "bb")),
+        },
+    ),
+    Template(
+        name="bslspace_inequality_chain",
+        latex=r"\|{ff}({vv})\| \leq {c}_1, \ \|{gg}({vv})\| \leq {c}_2",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "gg": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "c": S(("C", "M", "K", "L")),
+        },
+    ),
+    Template(
+        name="bslspace_condition_separation",
+        latex=r"{lhs} = {rhs} \ \Rightarrow \ {consequence}",
+        slots={
+            "lhs": E(_expr, n=5000),
+            "rhs": E(_expr, n=5000),
+            "consequence": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="bslspace_bound_qualifier",
+        latex=r"\|{ff}\|_{{{pp}}} \leq {cc}, \ \forall {ff} \in {space}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "pp": S(("p", "2", "q", "1", r"\infty")),
+            "cc": E(_atom, n=150),
+            "space": S(_SPACE_POOL),
+        },
+    ),
+    Template(
+        name="bslspace_forall_solution",
+        latex=r"{ff}({vv}) = 0, \ {vv} \in {dom}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "dom": S(_DOM_POOL),
+        },
+    ),
+]
+_ANALYSIS_TEMPLATES += _PART_BSLSPACE
 
 _W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
 

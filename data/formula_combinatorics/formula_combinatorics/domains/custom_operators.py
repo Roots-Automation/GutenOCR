@@ -16,6 +16,8 @@ from .._vocab import (
     _GEO_N,
     _SCALARS,
     _VARS,
+    _atom,
+    _expr,
     _fn_rich_nosub,
 )
 
@@ -28,6 +30,18 @@ _COEFF: tuple[str, ...] = tuple(_SCALARS)
 _POLY_POOL = ("p", "q", "f", "g", "h")
 _MAT_POOL = ("A", "B", "M", "P", "Q", "S")
 _N_POOL: tuple[str, ...] = tuple(_GEO_N)
+_MATHCLASS_SYMS: tuple[str, ...] = (
+    r"\#",
+    r"\dagger",
+    r"\ddagger",
+    r"\star",
+    r"\bullet",
+    r"\diamond",
+    r"\circ",
+    r"\S",
+    r"\clubsuit",
+    r"\spadesuit",
+)
 
 # ---------------------------------------------------------------------------
 # Section A — Sign function (\\operatorname{sgn})
@@ -376,11 +390,101 @@ _INTL_TEMPLATES: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Section G — \\mathbin{} / \\mathrel{} spacing-class wrappers
+# ---------------------------------------------------------------------------
+
+_MATHBIN_TEMPLATES: list[Template] = [
+    Template(
+        name="mathbin_binary_op",
+        latex=r"{lhs} \mathbin{{{sym}}} {rhs}",
+        slots={
+            "lhs": E(_expr, n=5000),
+            "sym": S(_MATHCLASS_SYMS),
+            "rhs": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="mathbin_in_equation",
+        latex=r"{lhs} \mathbin{{{sym}}} {rhs} = {result}",
+        slots={
+            "lhs": E(_atom, n=200),
+            "sym": S(_MATHCLASS_SYMS),
+            "rhs": E(_atom, n=200),
+            "result": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="mathbin_associativity",
+        latex=r"({aa} \mathbin{{{sym}}} {bb}) \mathbin{{{sym}}} {cc} = {aa} \mathbin{{{sym}}} ({bb} \mathbin{{{sym}}} {cc})",
+        slots={
+            "aa": S(_VAR_POOL, idx=0.3),
+            "bb": X(_VAR_POOL, ("aa",), idx=0.3),
+            "cc": X(_VAR_POOL, ("aa", "bb"), idx=0.3),
+            "sym": S(_MATHCLASS_SYMS),
+        },
+    ),
+    Template(
+        name="mathbin_commutativity",
+        latex=r"{aa} \mathbin{{{sym}}} {bb} = {bb} \mathbin{{{sym}}} {aa}",
+        slots={
+            "aa": S(_VAR_POOL, idx=0.3),
+            "bb": X(_VAR_POOL, ("aa",), idx=0.3),
+            "sym": S(_MATHCLASS_SYMS),
+        },
+    ),
+    Template(
+        name="mathrel_relation",
+        latex=r"{lhs} \mathrel{{{sym}}} {rhs}",
+        slots={
+            "lhs": E(_expr, n=5000),
+            "sym": S(_MATHCLASS_SYMS),
+            "rhs": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="mathrel_chain",
+        latex=r"{aa} \mathrel{{{sym}}} {bb} \mathrel{{{sym}}} {cc}",
+        slots={
+            "aa": S(_VAR_POOL, idx=0.3),
+            "bb": X(_VAR_POOL, ("aa",), idx=0.3),
+            "cc": X(_VAR_POOL, ("aa", "bb"), idx=0.3),
+            "sym": S(_MATHCLASS_SYMS),
+        },
+    ),
+    Template(
+        name="mathbin_vs_mathrel",
+        latex=r"{aa} \mathbin{{{sym1}}} {bb} \quad \text{{vs}} \quad {aa} \mathrel{{{sym2}}} {bb}",
+        slots={
+            "aa": S(_VAR_POOL),
+            "bb": X(_VAR_POOL, ("aa",)),
+            "sym1": S(_MATHCLASS_SYMS),
+            "sym2": X(_MATHCLASS_SYMS, ("sym1",)),
+        },
+    ),
+    Template(
+        name="mathbin_subscripted",
+        latex=r"{aa} \mathbin{{{sym}}}_{{{idx}}} {bb}",
+        slots={
+            "aa": E(_atom, n=200),
+            "sym": S(_MATHCLASS_SYMS),
+            "idx": S(("n", "k", "1", "2", "i", "j")),
+            "bb": E(_atom, n=200),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
 # Assemble
 # ---------------------------------------------------------------------------
 
 _CUSTOM_OP_TEMPLATES: list[Template] = (
-    _SGN_TEMPLATES + _SUPP_TEMPLATES + _DIAG_TEMPLATES + _ESS_TEMPLATES + _COLIM_TEMPLATES + _INTL_TEMPLATES
+    _SGN_TEMPLATES
+    + _SUPP_TEMPLATES
+    + _DIAG_TEMPLATES
+    + _ESS_TEMPLATES
+    + _COLIM_TEMPLATES
+    + _INTL_TEMPLATES
+    + _MATHBIN_TEMPLATES
 )
 
 _W = compute_weights(_CUSTOM_OP_TEMPLATES)

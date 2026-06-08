@@ -902,6 +902,82 @@ _EVAL_BAR: list[Template] = [
 _CALCULUS_TEMPLATES += _EVAL_BAR
 
 # ---------------------------------------------------------------------------
+# Medspace (\:) — differential and qualifier patterns
+# ---------------------------------------------------------------------------
+
+_PART_MEDSPACE: list[Template] = [
+    Template(
+        name="medspace_double_integral_diffs",
+        latex=r"\iint_{{{dom}}} {ff}({v1},{v2}) \: d{v1} \: d{v2}",
+        slots={
+            "dom": S(("D", "R", r"\Omega", "S", "U")),
+            "ff": E(_fn_rich_nosub, n=100),
+            "v1": S(_VARS),
+            "v2": X(_VARS, ("v1",)),
+        },
+    ),
+    Template(
+        name="medspace_triple_integral_diffs",
+        latex=r"\iiint_{{{dom}}} {ff} \: d{v1} \: d{v2} \: d{v3}",
+        slots={
+            "dom": S(("V", r"\Omega", "D")),
+            "ff": E(_fn_rich_nosub, n=100),
+            "v1": S(_VARS),
+            "v2": X(_VARS, ("v1",)),
+            "v3": X(_VARS, ("v1", "v2")),
+        },
+    ),
+    Template(
+        name="medspace_forall_qualifier",
+        latex=r"{ff}({vv}) = {expr}, \: \forall {vv} \in {dom}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "expr": E(_expr, n=5000),
+            "dom": S((r"\mathbb{R}", r"\mathbb{Z}", r"[a,b]", r"\mathbb{N}", r"(0,\infty)")),
+        },
+    ),
+    Template(
+        name="medspace_subset_qualifier",
+        latex=r"{aa} \subseteq {bb}, \: {bb} \subseteq {cc} \implies {aa} \subseteq {cc}",
+        slots={
+            "aa": S(("A", "B", "C", "S", "T")),
+            "bb": X(("A", "B", "C", "S", "T"), ("aa",)),
+            "cc": X(("A", "B", "C", "S", "T"), ("aa", "bb")),
+        },
+    ),
+    Template(
+        name="medspace_integral_measure",
+        latex=r"\int_{{{dom}}} {ff}({vv}) \: d\mu({vv})",
+        slots={
+            "dom": S(("E", "X", r"\Omega", "A")),
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+        },
+    ),
+    Template(
+        name="medspace_differential_form",
+        latex=r"{ff}({vv}) \: d{v1} \wedge d{v2}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "vv": S(_VARS),
+            "v1": S(_VARS),
+            "v2": X(_VARS, ("v1",)),
+        },
+    ),
+    Template(
+        name="medspace_lim_qualifier",
+        latex=r"\lim_{{{vv} \to \infty}} {ff}({vv}) = {expr}, \: {ff} \text{{ monotone}}",
+        slots={
+            "vv": S(_VARS),
+            "ff": E(_fn_rich_nosub, n=100),
+            "expr": E(_atom, n=150),
+        },
+    ),
+]
+_CALCULUS_TEMPLATES += _PART_MEDSPACE
+
+# ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------
 
