@@ -74,6 +74,29 @@ def _matrix_env(
     return rf"\begin{{{env}}} {body} \end{{{env}}}"
 
 
+_SMALLMATRIX_DELIMS = [
+    (r"\bigl(", r"\bigr)"),
+    (r"\bigl[", r"\bigr]"),
+    (r"\bigl\{", r"\bigr\}"),
+    (r"\bigl\langle", r"\bigr\rangle"),
+]
+
+
+def _smallmatrix_inline(
+    rng: random.Random,
+    rows: int,
+    cols: int,
+) -> str:
+    """Return a smallmatrix wrapped in a randomly chosen \\big delimiter pair."""
+    entries = [_atom(rng) for _ in range(rows * cols)]
+    row_strs = []
+    for r in range(rows):
+        row_strs.append(" & ".join(entries[r * cols : (r + 1) * cols]))
+    body = r" \\ ".join(row_strs)
+    open_, close = rng.choice(_SMALLMATRIX_DELIMS)
+    return rf"{open_}\begin{{smallmatrix}} {body} \end{{smallmatrix}}{close}"
+
+
 def _sum_indexed(rng: random.Random, lo: str, hi: str) -> str:
     """Return a \\sum_{idx=lo}^{hi} expr."""
     idx = _i(rng)

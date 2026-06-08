@@ -6,7 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._templates import _matrix_env
+from .._templates import _matrix_env, _smallmatrix_inline
 from .._vocab import _MATRIX_NAMES, _atom
 
 # ---------------------------------------------------------------------------
@@ -178,6 +178,95 @@ _PART_ARROWS: list[Template] = [
     ),
 ]
 _LINEAR_ALGEBRA_TEMPLATES += _PART_ARROWS
+
+_PART_MATRIX_ENVS: list[Template] = [
+    # --- Bmatrix (curly braces) ---
+    Template(
+        name="2x2_Bmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "Bmatrix"), n=50)},
+    ),
+    Template(
+        name="3x3_Bmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "Bmatrix"), n=200)},
+    ),
+    # --- Vmatrix (double pipes) ---
+    Template(
+        name="2x2_Vmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "Vmatrix"), n=50)},
+    ),
+    Template(
+        name="3x3_Vmatrix_det",
+        latex=r"\det {mat}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "Vmatrix"), n=200)},
+    ),
+    # --- Plain matrix env (standalone + mixed delimiters) ---
+    Template(
+        name="2x2_matrix_plain",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
+    ),
+    Template(
+        name="3x3_matrix_plain",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "matrix"), n=200)},
+    ),
+    Template(
+        name="2x2_matrix_ceil",
+        latex=r"\left\lceil {mat} \right\rceil",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
+    ),
+    Template(
+        name="2x2_matrix_angle",
+        latex=r"\left\langle {mat} \right\rangle",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
+    ),
+    Template(
+        name="2x2_matrix_rvert",
+        latex=r"\left\langle {mat} \right\rvert",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
+    ),
+    # --- smallmatrix inline ---
+    Template(
+        name="2x2_smallmatrix_inline",
+        latex=r"{sm}",
+        slots={"sm": E(lambda rng: _smallmatrix_inline(rng, 2, 2), n=200)},
+    ),
+    Template(
+        name="3x2_smallmatrix_inline",
+        latex=r"{sm}",
+        slots={"sm": E(lambda rng: _smallmatrix_inline(rng, 3, 2), n=300)},
+    ),
+    # --- Larger and rectangular matrices ---
+    Template(
+        name="3x3_pmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "pmatrix"), n=200)},
+    ),
+    Template(
+        name="3x3_bmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "bmatrix"), n=200)},
+    ),
+    Template(
+        name="4x4_pmatrix",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 4, 4, "pmatrix"), n=1000)},
+    ),
+    Template(
+        name="3x1_bmatrix_col_vector",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 3, 1, "bmatrix"), n=15)},
+    ),
+    Template(
+        name="1x3_bmatrix_row_vector",
+        latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
+        slots={"mat": E(lambda rng: _matrix_env(rng, 1, 3, "bmatrix"), n=15)},
+    ),
+]
+_LINEAR_ALGEBRA_TEMPLATES += _PART_MATRIX_ENVS
 
 _W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 
