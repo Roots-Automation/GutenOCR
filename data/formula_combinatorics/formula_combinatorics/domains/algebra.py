@@ -24,12 +24,62 @@ from .._vocab import (
 )
 
 # ---------------------------------------------------------------------------
-# Shared pools
+# Slot pools
 # ---------------------------------------------------------------------------
 
 _UNION: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
 _LOG_BASES: tuple[str, ...] = ("2", "10", "e") + tuple(_SCALARS) + (r"\alpha", r"\beta", r"\lambda", r"\mu")
 _EXP_POOL: tuple[str, ...] = ("2", "3", "4", "m", "n", "p", "q")
+_MAT_POOL: tuple[str, ...] = ("A", "B", "C", "M", "T", "U")
+
+# Arrow / abstract-algebra pools
+_GRP_NAMES: tuple[str, ...] = ("G", "H", "K", "N", "Q")
+_RING_NAMES: tuple[str, ...] = ("R", "S", "A", "B")
+_ELT_POOL: tuple[str, ...] = ("g", "h", "x", "r", "s", "a")
+
+# Style-modifier pool
+_STYLE_CMDS: tuple[str, ...] = (r"\displaystyle", r"\textstyle", r"\scriptstyle", r"\scriptscriptstyle")
+_N_POOL_STYLE: tuple[str, ...] = ("n", "m", "N", "M", "k", "r")
+
+# \genfrac pools
+_GENFRAC_LEFT: tuple[str, ...] = ("", r"\langle", r"\lfloor", r"\lceil", r"\|", "(", "[", r"\{")
+_GENFRAC_RIGHT: tuple[str, ...] = ("", r"\rangle", r"\rfloor", r"\rceil", r"\|", ")", "]", r"\}")
+_GENFRAC_THICK: tuple[str, ...] = ("", "0pt", "0.4pt", "0.8pt")
+_GENFRAC_STYLE: tuple[str, ...] = ("", "0", "1", "2", "3")
+
+# Text-fraction pools
+_TEXT_NUMER: tuple[str, ...] = (
+    r"\text{rise}",
+    r"\text{distance}",
+    r"\text{rate}",
+    r"\text{observed}",
+    r"\text{output}",
+    r"\text{signal}",
+    r"\text{profit}",
+    r"\text{numerator}",
+    r"\text{change in } y",
+    r"\text{work}",
+    r"\text{input}",
+    r"\text{cost}",
+)
+_TEXT_DENOM: tuple[str, ...] = (
+    r"\text{run}",
+    r"\text{time}",
+    r"\text{rate}",
+    r"\text{expected}",
+    r"\text{input}",
+    r"\text{noise}",
+    r"\text{cost}",
+    r"\text{denominator}",
+    r"\text{change in } x",
+    r"\text{work}",
+    r"\text{output}",
+    r"\text{profit}",
+)
+
+# Polynomial degree pools
+_DEG_POLY_POOL: tuple[str, ...] = ("p", "q", "f", "g", "h", "r", "s")
+_DEG_N_POOL: tuple[str, ...] = ("n", "m", "d", "k", "r", "N")
 
 # ---------------------------------------------------------------------------
 # Inline sub-generators (ParamSub only — simple pools are inlined as S slots)
@@ -1462,7 +1512,6 @@ _ALGEBRA_TEMPLATES: list[Template] = [
     ),
 ]
 
-_MAT_POOL: tuple[str, ...] = ("A", "B", "C", "M", "T", "U")
 
 _ALGEBRA_TEMPLATES += [
     # \leqslant / \geqslant
@@ -1562,12 +1611,6 @@ _ALGEBRA_TEMPLATES += [
     ),
 ]
 
-# Sampling weights (sqrt of n_eff for balanced coverage)
-# ---------------------------------------------------------------------------
-
-_GRP_NAMES = ("G", "H", "K", "N", "Q")
-_RING_NAMES = ("R", "S", "A", "B")
-_ELT_POOL = ("g", "h", "x", "r", "s", "a")
 
 _PART_ARROWS: list[Template] = [
     Template(
@@ -1645,13 +1688,6 @@ _ALGEBRA_TEMPLATES += _LARGE_BRACKET
 # Math style modifier overrides (Gap 1)
 # ---------------------------------------------------------------------------
 
-_STYLE_CMDS: tuple[str, ...] = (
-    r"\displaystyle",
-    r"\textstyle",
-    r"\scriptstyle",
-    r"\scriptscriptstyle",
-)
-_N_POOL_STYLE: tuple[str, ...] = ("n", "m", "N", "M", "k", "r")
 
 _STYLE_MODIFIER_TEMPLATES: list[Template] = [
     Template(
@@ -1699,28 +1735,6 @@ _ALGEBRA_TEMPLATES += _STYLE_MODIFIER_TEMPLATES
 # \genfrac as general-purpose fraction builder (Gap 3)
 # ---------------------------------------------------------------------------
 
-_GENFRAC_LEFT: tuple[str, ...] = (
-    "",
-    r"\langle",
-    r"\lfloor",
-    r"\lceil",
-    r"\|",
-    "(",
-    "[",
-    r"\{",
-)
-_GENFRAC_RIGHT: tuple[str, ...] = (
-    "",
-    r"\rangle",
-    r"\rfloor",
-    r"\rceil",
-    r"\|",
-    ")",
-    "]",
-    r"\}",
-)
-_GENFRAC_THICK: tuple[str, ...] = ("", "0pt", "0.4pt", "0.8pt")
-_GENFRAC_STYLE: tuple[str, ...] = ("", "0", "1", "2", "3")
 
 _GENFRAC_TEMPLATES: list[Template] = [
     Template(
@@ -1759,34 +1773,6 @@ _ALGEBRA_TEMPLATES += _GENFRAC_TEMPLATES
 # Text-in-fraction patterns (Gap 5)
 # ---------------------------------------------------------------------------
 
-_TEXT_NUMER: tuple[str, ...] = (
-    r"\text{rise}",
-    r"\text{distance}",
-    r"\text{rate}",
-    r"\text{observed}",
-    r"\text{output}",
-    r"\text{signal}",
-    r"\text{profit}",
-    r"\text{numerator}",
-    r"\text{change in } y",
-    r"\text{work}",
-    r"\text{input}",
-    r"\text{cost}",
-)
-_TEXT_DENOM: tuple[str, ...] = (
-    r"\text{run}",
-    r"\text{time}",
-    r"\text{rate}",
-    r"\text{expected}",
-    r"\text{input}",
-    r"\text{noise}",
-    r"\text{cost}",
-    r"\text{denominator}",
-    r"\text{change in } x",
-    r"\text{work}",
-    r"\text{output}",
-    r"\text{profit}",
-)
 
 _TEXT_FRAC_TEMPLATES: list[Template] = [
     Template(
@@ -1826,9 +1812,6 @@ _TEXT_FRAC_TEMPLATES: list[Template] = [
 
 _ALGEBRA_TEMPLATES += _TEXT_FRAC_TEMPLATES
 
-# ── Polynomial degree operator as primary formula subject ──────────────────
-_DEG_POLY_POOL = ("p", "q", "f", "g", "h", "r", "s")
-_DEG_N_POOL = ("n", "m", "d", "k", "r", "N")
 
 _DEG_TEMPLATES: list[Template] = [
     Template(
