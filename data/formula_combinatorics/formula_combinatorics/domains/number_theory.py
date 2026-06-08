@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._templates import _substack_prod, _substack_sum
 from .._vocab import _fn_rich_nosub
 
@@ -1203,21 +1200,9 @@ _NUMBER_THEORY_TEMPLATES = list(_NUMBER_THEORY_TEMPLATES) + [
     ),
 ]
 
-_W_NT: list[float] = compute_weights(_NUMBER_THEORY_TEMPLATES)
-_number_theory = make_dispatcher(_NUMBER_THEORY_TEMPLATES, _W_NT)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "number_theory": _number_theory,
-}
-
-WEIGHTS: dict[str, float] = {
-    "number_theory": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "number_theory": _NUMBER_THEORY_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("number_theory", _NUMBER_THEORY_TEMPLATES, 0.04)

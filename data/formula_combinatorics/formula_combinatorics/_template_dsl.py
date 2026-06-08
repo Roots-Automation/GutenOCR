@@ -404,3 +404,23 @@ def make_dispatcher(
         return sample(t, rng)
 
     return _dispatch
+
+
+def register_domain(
+    name: str,
+    templates: list[Template],
+    weight: float,
+    cap: float = _N_EFF_CAP_DEFAULT,
+) -> tuple[
+    dict[str, Callable[[random.Random], str]],
+    dict[str, float],
+    dict[str, list[Template]],
+]:
+    """Build the three public registry dicts for a single-key domain module.
+
+    Returns (GENERATORS, WEIGHTS, TEMPLATES) ready for tuple-unpacking::
+
+        GENERATORS, WEIGHTS, TEMPLATES = register_domain("algebra", _TEMPLATES, 0.09)
+    """
+    w = compute_weights(templates, cap=cap)
+    return {name: make_dispatcher(templates, w)}, {name: weight}, {name: templates}

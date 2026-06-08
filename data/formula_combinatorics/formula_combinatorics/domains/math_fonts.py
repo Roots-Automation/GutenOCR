@@ -3,10 +3,7 @@ and full-expression font wrapping."""
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, register_domain
 from .._vocab import _SCALARS, _VARS, _atom, _expr
 
 # ---------------------------------------------------------------------------
@@ -269,22 +266,9 @@ _MATH_FONTS_TEMPLATES: list[Template] = (
     + _PMB_TEMPLATES
 )
 
-_W_FONTS: list[float] = compute_weights(_MATH_FONTS_TEMPLATES)
-
-_math_fonts = make_dispatcher(_MATH_FONTS_TEMPLATES, _W_FONTS)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "math_fonts": _math_fonts,
-}
-
-WEIGHTS: dict[str, float] = {
-    "math_fonts": 0.03,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "math_fonts": _MATH_FONTS_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("math_fonts", _MATH_FONTS_TEMPLATES, 0.03)

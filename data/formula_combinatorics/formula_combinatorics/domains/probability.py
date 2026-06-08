@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import (
     _EXP_OP,
     _fn_rich_nosub,
@@ -741,26 +738,9 @@ _PROB_TEMPLATES += [
     ),
 ]
 
-_W_PROB: list[float] = compute_weights(_PROB_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_probability = make_dispatcher(_PROB_TEMPLATES, _W_PROB)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "probability": _probability,
-}
-
-WEIGHTS: dict[str, float] = {
-    "probability": 0.07,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "probability": _PROB_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("probability", _PROB_TEMPLATES, 0.07)

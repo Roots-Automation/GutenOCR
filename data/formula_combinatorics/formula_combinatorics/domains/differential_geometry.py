@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1357,26 +1354,9 @@ _DIFFGEOM_TEMPLATES += [
     ),
 ]
 
-_W_DIFFGEOM: list[float] = compute_weights(_DIFFGEOM_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_differential_geometry = make_dispatcher(_DIFFGEOM_TEMPLATES, _W_DIFFGEOM)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "differential_geometry": _differential_geometry,
-}
-
-WEIGHTS: dict[str, float] = {
-    "differential_geometry": 0.02,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "differential_geometry": _DIFFGEOM_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_geometry", _DIFFGEOM_TEMPLATES, 0.02)

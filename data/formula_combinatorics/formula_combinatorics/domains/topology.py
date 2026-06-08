@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -673,29 +670,9 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-_W_TOPOLOGY: list[float] = compute_weights(_TOPOLOGY_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_topology = make_dispatcher(_TOPOLOGY_TEMPLATES, _W_TOPOLOGY)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "topology": _topology,
-}
-
-WEIGHTS: dict[str, float] = {
-    "topology": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "topology": _TOPOLOGY_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("topology", _TOPOLOGY_TEMPLATES, 0.04)

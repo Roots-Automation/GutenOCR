@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import S, Template, X, register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -285,21 +282,9 @@ _PART_E: list[Template] = [
 
 _QUANTUM_NOTATION_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PART_D + _PART_E
 
-_W_QN = compute_weights(_QUANTUM_NOTATION_TEMPLATES)
-_quantum_notation = make_dispatcher(_QUANTUM_NOTATION_TEMPLATES, _W_QN)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "quantum_notation": _quantum_notation,
-}
-
-WEIGHTS: dict[str, float] = {
-    "quantum_notation": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "quantum_notation": _QUANTUM_NOTATION_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("quantum_notation", _QUANTUM_NOTATION_TEMPLATES, 0.04)

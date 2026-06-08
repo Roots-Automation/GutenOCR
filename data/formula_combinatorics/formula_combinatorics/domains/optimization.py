@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _CALLIGRAPHIC, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1010,23 +1007,9 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     ),
 ]
 
-_W_OPT = compute_weights(_OPTIMIZATION_TEMPLATES)
-
-_optimization = make_dispatcher(_OPTIMIZATION_TEMPLATES, _W_OPT)
-
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "optimization": _optimization,
-}
-
-WEIGHTS: dict[str, float] = {
-    "optimization": 0.05,
-}
-
-TEMPLATES: dict = {
-    "optimization": _OPTIMIZATION_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("optimization", _OPTIMIZATION_TEMPLATES, 0.05)

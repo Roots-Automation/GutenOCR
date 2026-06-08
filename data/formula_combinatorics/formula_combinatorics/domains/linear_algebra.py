@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._templates import _matrix_env, _matrix_with_ellipsis, _smallmatrix_inline
 from .._vocab import _MATRIX_NAMES, _atom
 from .._vocab import _STATS_N as _N_POOL
@@ -334,23 +331,9 @@ _PART_LVERT_NORMS: list[Template] = [
 
 _LINEAR_ALGEBRA_TEMPLATES += _PART_LVERT_NORMS
 
-_W_LA = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
-
-_linear_algebra = make_dispatcher(_LINEAR_ALGEBRA_TEMPLATES, _W_LA)
-
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "linear_algebra": _linear_algebra,
-}
-
-WEIGHTS: dict[str, float] = {
-    "linear_algebra": 0.08,
-}
-
-TEMPLATES: dict = {
-    "linear_algebra": _LINEAR_ALGEBRA_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("linear_algebra", _LINEAR_ALGEBRA_TEMPLATES, 0.08)

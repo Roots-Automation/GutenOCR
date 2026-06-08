@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1060,11 +1057,9 @@ _CATTHY_TEMPLATES: list[Template] = (
     + _TEMPLATES_D
     + _TEMPLATES_E
 )
-_W_CATTHY: list[float] = compute_weights(_CATTHY_TEMPLATES)
-_category_theory = make_dispatcher(_CATTHY_TEMPLATES, _W_CATTHY)
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "category_theory": _category_theory,
-}
-WEIGHTS: dict[str, float] = {"category_theory": 0.02}
-TEMPLATES: dict[str, list[Template]] = {"category_theory": _CATTHY_TEMPLATES}
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("category_theory", _CATTHY_TEMPLATES, 0.02)

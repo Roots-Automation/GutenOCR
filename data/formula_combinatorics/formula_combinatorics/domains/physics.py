@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1070,23 +1067,9 @@ _PART_ANTICOMMUTATOR: list[Template] = [
 
 _PHYSICS_TEMPLATES += _PART_ANTICOMMUTATOR
 
-_W_PHY = compute_weights(_PHYSICS_TEMPLATES)
-
-_physics = make_dispatcher(_PHYSICS_TEMPLATES, _W_PHY)
-
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "physics": _physics,
-}
-
-WEIGHTS: dict[str, float] = {
-    "physics": 0.06,
-}
-
-TEMPLATES: dict = {
-    "physics": _PHYSICS_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("physics", _PHYSICS_TEMPLATES, 0.06)

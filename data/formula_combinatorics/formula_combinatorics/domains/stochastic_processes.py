@@ -3,10 +3,7 @@ continuous-time martingales, Markov generators, jump processes, control."""
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1119,11 +1116,9 @@ _SPROC_TEMPLATES: list[Template] = (
     + _TEMPLATES_D
 )
 
-_W_SPROC: list[float] = compute_weights(_SPROC_TEMPLATES)
-_stochastic_processes = make_dispatcher(_SPROC_TEMPLATES, _W_SPROC)
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "stochastic_processes": _stochastic_processes,
-}
-WEIGHTS: dict[str, float] = {"stochastic_processes": 0.02}
-TEMPLATES: dict[str, list[Template]] = {"stochastic_processes": _SPROC_TEMPLATES}
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("stochastic_processes", _SPROC_TEMPLATES, 0.02)

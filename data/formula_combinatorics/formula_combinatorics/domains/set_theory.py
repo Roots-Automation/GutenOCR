@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -934,29 +931,9 @@ _PART_MISC: list[Template] = [
 _SET_THEORY_TEMPLATES += _PART_MISC
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-_W_SET: list[float] = compute_weights(_SET_THEORY_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_set_theory = make_dispatcher(_SET_THEORY_TEMPLATES, _W_SET)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "set_theory": _set_theory,
-}
-
-WEIGHTS: dict[str, float] = {
-    "set_theory": 0.05,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "set_theory": _SET_THEORY_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("set_theory", _SET_THEORY_TEMPLATES, 0.05)

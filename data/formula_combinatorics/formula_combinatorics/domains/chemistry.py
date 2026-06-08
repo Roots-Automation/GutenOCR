@@ -3,10 +3,7 @@ acid/base, and electrochemistry formula templates."""
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, S, Template, X, register_domain
 
 # ---------------------------------------------------------------------------
 # Symbol pools
@@ -812,9 +809,9 @@ _CHEM_TEMPLATES += [
 # Dispatcher and exports
 # ---------------------------------------------------------------------------
 
-_W_CHEM = compute_weights(_CHEM_TEMPLATES)
-_chemistry = make_dispatcher(_CHEM_TEMPLATES, _W_CHEM)
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {"chemistry": _chemistry}
-WEIGHTS: dict[str, float] = {"chemistry": 0.05}
-TEMPLATES: dict[str, list[Template]] = {"chemistry": _CHEM_TEMPLATES}
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("chemistry", _CHEM_TEMPLATES, 0.05)

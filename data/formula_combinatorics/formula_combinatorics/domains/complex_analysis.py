@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -724,25 +721,9 @@ _COMPLEX_TEMPLATES: list[Template] = (
 )
 
 # ---------------------------------------------------------------------------
-# Sampling weights and dispatcher
-# ---------------------------------------------------------------------------
-
-_W_COMPLEX: list[float] = compute_weights(_COMPLEX_TEMPLATES)
-
-_complex_analysis = make_dispatcher(_COMPLEX_TEMPLATES, _W_COMPLEX)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "complex_analysis": _complex_analysis,
-}
-
-WEIGHTS: dict[str, float] = {
-    "complex_analysis": 0.03,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "complex_analysis": _COMPLEX_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("complex_analysis", _COMPLEX_TEMPLATES, 0.03)

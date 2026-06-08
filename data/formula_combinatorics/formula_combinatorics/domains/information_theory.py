@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -836,29 +833,9 @@ _INFOTH_TEMPLATES += [
 ]
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-_W_INFO: list[float] = compute_weights(_INFOTH_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_information_theory = make_dispatcher(_INFOTH_TEMPLATES, _W_INFO)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "information_theory": _information_theory,
-}
-
-WEIGHTS: dict[str, float] = {
-    "information_theory": 0.03,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "information_theory": _INFOTH_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("information_theory", _INFOTH_TEMPLATES, 0.03)

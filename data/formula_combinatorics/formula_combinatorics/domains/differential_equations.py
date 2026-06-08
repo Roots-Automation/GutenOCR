@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -980,29 +977,9 @@ _DIFFEQ_TEMPLATES: list[Template] = (
 )
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-_W_DIFFEQ: list[float] = compute_weights(_DIFFEQ_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_differential_equations = make_dispatcher(_DIFFEQ_TEMPLATES, _W_DIFFEQ)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "differential_equations": _differential_equations,
-}
-
-WEIGHTS: dict[str, float] = {
-    "differential_equations": 0.03,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "differential_equations": _DIFFEQ_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_equations", _DIFFEQ_TEMPLATES, 0.03)

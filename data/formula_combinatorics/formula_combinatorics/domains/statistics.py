@@ -5,10 +5,7 @@ survival analysis."""
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import (
     _EXP_OP,
     _fn_rich_nosub,
@@ -937,21 +934,9 @@ _STAT_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
 )
 
-_W_STAT: list[float] = compute_weights(_STAT_TEMPLATES)
-_statistics = make_dispatcher(_STAT_TEMPLATES, _W_STAT)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "statistics": _statistics,
-}
-
-WEIGHTS: dict[str, float] = {
-    "statistics": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "statistics": _STAT_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("statistics", _STAT_TEMPLATES, 0.04)

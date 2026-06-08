@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import random
-from collections.abc import Callable
 
-from .._template_dsl import _LIM_MOD, E, P, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, P, S, Template, X, register_domain
 from .._templates import _poly, _substack_prod, _substack_sum
 from .._vocab import (
     _COEFF_POOL,
@@ -1928,29 +1927,10 @@ _SUBSTACK_ALG_TEMPLATES: list[Template] = [
 
 _ALGEBRA_TEMPLATES += _SUBSTACK_ALG_TEMPLATES
 
-# cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
-_W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)
-
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_algebra = make_dispatcher(_ALGEBRA_TEMPLATES, _W_ALGEBRA)
-
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "algebra": _algebra,
-}
-
-WEIGHTS: dict[str, float] = {
-    "algebra": 0.09,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "algebra": _ALGEBRA_TEMPLATES,
-}
+# cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("algebra", _ALGEBRA_TEMPLATES, 0.09, cap=75_000_000)

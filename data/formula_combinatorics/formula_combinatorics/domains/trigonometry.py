@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import random
-from collections.abc import Callable
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import (
     _GEO_N,
     _SCALARS,
@@ -1546,30 +1545,10 @@ _TRIG_TEMPLATES: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-# cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
-_W_TRIG: list[float] = compute_weights(_TRIG_TEMPLATES, cap=75_000_000)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_trigonometry = make_dispatcher(_TRIG_TEMPLATES, _W_TRIG)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "trigonometry": _trigonometry,
-}
-
-WEIGHTS: dict[str, float] = {
-    "trigonometry": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "trigonometry": _TRIG_TEMPLATES,
-}
+# cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("trigonometry", _TRIG_TEMPLATES, 0.04, cap=75_000_000)

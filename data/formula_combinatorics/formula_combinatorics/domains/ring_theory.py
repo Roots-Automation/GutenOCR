@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -691,15 +688,9 @@ _RING_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
 )
 
-_W_RT = compute_weights(_RING_TEMPLATES)
-_ring_field_theory = make_dispatcher(_RING_TEMPLATES, _W_RT)
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "ring_field_theory": _ring_field_theory,
-}
-WEIGHTS: dict[str, float] = {
-    "ring_field_theory": 0.01,
-}
-TEMPLATES: dict[str, list[Template]] = {
-    "ring_field_theory": _RING_TEMPLATES,
-}
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("ring_field_theory", _RING_TEMPLATES, 0.01)

@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1116,29 +1113,9 @@ _GROUP_THEORY_TEMPLATES += [
 ]
 
 # ---------------------------------------------------------------------------
-# Sampling weights
-# ---------------------------------------------------------------------------
-
-_W_GT: list[float] = compute_weights(_GROUP_THEORY_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_group_theory = make_dispatcher(_GROUP_THEORY_TEMPLATES, _W_GT)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "group_theory": _group_theory,
-}
-
-WEIGHTS: dict[str, float] = {
-    "group_theory": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "group_theory": _GROUP_THEORY_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("group_theory", _GROUP_THEORY_TEMPLATES, 0.04)

@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import E, S, Template, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -496,25 +493,9 @@ _GEO_TEMPLATES = (
 )
 
 # ---------------------------------------------------------------------------
-# Sampling weights and dispatcher
-# ---------------------------------------------------------------------------
-
-_W_GEO: list[float] = compute_weights(_GEO_TEMPLATES)
-
-_geometry = make_dispatcher(_GEO_TEMPLATES, _W_GEO)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "geometry": _geometry,
-}
-
-WEIGHTS: dict[str, float] = {
-    "geometry": 0.07,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "geometry": _GEO_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("geometry", _GEO_TEMPLATES, 0.07)

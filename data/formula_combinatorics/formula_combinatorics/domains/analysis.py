@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
 from .._vocab import (
     _GEO_N,
     _VARS,
@@ -1214,26 +1211,9 @@ _PART_BSLSPACE: list[Template] = [
 ]
 _ANALYSIS_TEMPLATES += _PART_BSLSPACE
 
-_W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
-
-# ---------------------------------------------------------------------------
-# Dispatch functions
-# ---------------------------------------------------------------------------
-
-_analysis = make_dispatcher(_ANALYSIS_TEMPLATES, _W_ANALYSIS)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "analysis": _analysis,
-}
-
-WEIGHTS: dict[str, float] = {
-    "analysis": 0.04,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "analysis": _ANALYSIS_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("analysis", _ANALYSIS_TEMPLATES, 0.04)

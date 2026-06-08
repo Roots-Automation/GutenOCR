@@ -7,10 +7,7 @@ and international/regional trig-name variants.
 
 from __future__ import annotations
 
-import random
-from collections.abc import Callable
-
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import E, S, Template, X, register_domain
 from .._vocab import (
     _CALLIGRAPHIC,
     _GEO_N,
@@ -487,22 +484,9 @@ _CUSTOM_OP_TEMPLATES: list[Template] = (
     + _MATHBIN_TEMPLATES
 )
 
-_W_CO = compute_weights(_CUSTOM_OP_TEMPLATES)
-
-_custom_operators = make_dispatcher(_CUSTOM_OP_TEMPLATES, _W_CO)
 
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS: dict[str, Callable[[random.Random], str]] = {
-    "custom_operators": _custom_operators,
-}
-
-WEIGHTS: dict[str, float] = {
-    "custom_operators": 0.03,
-}
-
-TEMPLATES: dict[str, list[Template]] = {
-    "custom_operators": _CUSTOM_OP_TEMPLATES,
-}
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("custom_operators", _CUSTOM_OP_TEMPLATES, 0.03)
