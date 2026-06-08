@@ -45,6 +45,8 @@ _FIELD_POOL: tuple[str, ...] = (
     r"\mathbb{Q}(\zeta_n)",
 )
 
+_CFRAC_ALIGN: tuple[str, ...] = ("l", "r")
+
 # ---------------------------------------------------------------------------
 # Part A: Reparameterized originals (20 templates)
 # ---------------------------------------------------------------------------
@@ -707,6 +709,65 @@ _TEMPLATES_B5: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Part B5b: cfrac alignment variants and deep nesting (3 templates)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_B5b: list[Template] = [
+    Template(
+        name="cfrac_aligned_variant",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="cfrac_default_two_level",
+                latex=(
+                    r"{xx} = {aa}_0 + \cfrac{{1}}"
+                    r"{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cdots}}}}"
+                ),
+                slots={"xx": S(_INT_POOL), "aa": X(_INT_POOL, ("xx",))},
+            ),
+            Template(
+                name="cfrac_left_two_level",
+                latex=(
+                    r"{xx} = {aa}_0 + \cfrac[l]{{1}}"
+                    r"{{{aa}_1 + \cfrac[l]{{1}}{{{aa}_2 + \cdots}}}}"
+                ),
+                slots={"xx": S(_INT_POOL), "aa": X(_INT_POOL, ("xx",))},
+            ),
+            Template(
+                name="cfrac_right_two_level",
+                latex=(
+                    r"{xx} = {aa}_0 + \cfrac[r]{{1}}"
+                    r"{{{aa}_1 + \cfrac[r]{{1}}{{{aa}_2 + \cdots}}}}"
+                ),
+                slots={"xx": S(_INT_POOL), "aa": X(_INT_POOL, ("xx",))},
+            ),
+        ],
+    ),
+    Template(
+        name="cfrac_three_level",
+        latex=(
+            r"{xx} = {aa}_0 + \cfrac{{1}}"
+            r"{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cfrac{{1}}{{{aa}_3 + \cdots}}}}}}"
+        ),
+        slots={
+            "xx": S(_INT_POOL),
+            "aa": X(_INT_POOL, ("xx",)),
+        },
+    ),
+    Template(
+        name="cfrac_three_level_named",
+        latex=(
+            r"{aa}_0 + \cfrac{{1}}"
+            r"{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cfrac{{1}}{{{aa}_3 + \cdots}}}}}}"
+        ),
+        slots={
+            "aa": S(_INT_POOL),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
 # Part B6: Analytic number theory (8 templates)
 # ---------------------------------------------------------------------------
 
@@ -1120,6 +1181,7 @@ _NUMBER_THEORY_TEMPLATES: list[Template] = (
     + _TEMPLATES_B3
     + _TEMPLATES_B4
     + _TEMPLATES_B5
+    + _TEMPLATES_B5b
     + _TEMPLATES_B6
     + _TEMPLATES_B7
     + _TEMPLATES_B8

@@ -1642,6 +1642,191 @@ _LARGE_BRACKET: list[Template] = [
 ]
 _ALGEBRA_TEMPLATES += _LARGE_BRACKET
 
+# ---------------------------------------------------------------------------
+# Math style modifier overrides (Gap 1)
+# ---------------------------------------------------------------------------
+
+_STYLE_CMDS: tuple[str, ...] = (
+    r"\displaystyle",
+    r"\textstyle",
+    r"\scriptstyle",
+    r"\scriptscriptstyle",
+)
+_N_POOL_STYLE: tuple[str, ...] = ("n", "m", "N", "M", "k", "r")
+
+_STYLE_MODIFIER_TEMPLATES: list[Template] = [
+    Template(
+        name="style_frac",
+        latex=r"{style} \frac{{{num}}}{{{den}}}",
+        slots={
+            "style": S(_STYLE_CMDS),
+            "num": E(_expr, n=5000),
+            "den": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="style_binom",
+        latex=r"{style} \binom{{{top}}}{{{bot}}}",
+        slots={
+            "style": S(_STYLE_CMDS),
+            "top": S(_N_POOL_STYLE),
+            "bot": X(_N_POOL_STYLE, ("top",)),
+        },
+    ),
+    Template(
+        name="style_sum_frac",
+        latex=r"{style} \sum_{{{lo}=0}}^{{{hi}}} \frac{{{num}}}{{{den}}}",
+        slots={
+            "style": S(_STYLE_CMDS),
+            "lo": S(("k", "j", "i", "m")),
+            "hi": S(("n", "N", "M", "p")),
+            "num": E(_expr, n=5000),
+            "den": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="style_expr",
+        latex=r"{style} {expr}",
+        slots={
+            "style": S(_STYLE_CMDS),
+            "expr": E(_expr, n=5000),
+        },
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _STYLE_MODIFIER_TEMPLATES
+
+# ---------------------------------------------------------------------------
+# \genfrac as general-purpose fraction builder (Gap 3)
+# ---------------------------------------------------------------------------
+
+_GENFRAC_LEFT: tuple[str, ...] = (
+    "",
+    r"\langle",
+    r"\lfloor",
+    r"\lceil",
+    r"\|",
+    "(",
+    "[",
+    r"\{",
+)
+_GENFRAC_RIGHT: tuple[str, ...] = (
+    "",
+    r"\rangle",
+    r"\rfloor",
+    r"\rceil",
+    r"\|",
+    ")",
+    "]",
+    r"\}",
+)
+_GENFRAC_THICK: tuple[str, ...] = ("", "0pt", "0.4pt", "0.8pt")
+_GENFRAC_STYLE: tuple[str, ...] = ("", "0", "1", "2", "3")
+
+_GENFRAC_TEMPLATES: list[Template] = [
+    Template(
+        name="genfrac_general",
+        latex=r"\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}",
+        slots={
+            "lft": S(_GENFRAC_LEFT),
+            "rgt": S(_GENFRAC_RIGHT),
+            "thk": S(_GENFRAC_THICK),
+            "sty": S(_GENFRAC_STYLE),
+            "num": E(_expr, n=5000),
+            "den": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="genfrac_no_rule",
+        latex=r"\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}",
+        slots={
+            "num": E(_expr, n=5000),
+            "den": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="genfrac_angle",
+        latex=r"\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}",
+        slots={
+            "num": E(_expr, n=5000),
+            "den": E(_expr, n=5000),
+        },
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _GENFRAC_TEMPLATES
+
+# ---------------------------------------------------------------------------
+# Text-in-fraction patterns (Gap 5)
+# ---------------------------------------------------------------------------
+
+_TEXT_NUMER: tuple[str, ...] = (
+    r"\text{rise}",
+    r"\text{distance}",
+    r"\text{rate}",
+    r"\text{observed}",
+    r"\text{output}",
+    r"\text{signal}",
+    r"\text{profit}",
+    r"\text{numerator}",
+    r"\text{change in } y",
+    r"\text{work}",
+    r"\text{input}",
+    r"\text{cost}",
+)
+_TEXT_DENOM: tuple[str, ...] = (
+    r"\text{run}",
+    r"\text{time}",
+    r"\text{rate}",
+    r"\text{expected}",
+    r"\text{input}",
+    r"\text{noise}",
+    r"\text{cost}",
+    r"\text{denominator}",
+    r"\text{change in } x",
+    r"\text{work}",
+    r"\text{output}",
+    r"\text{profit}",
+)
+
+_TEXT_FRAC_TEMPLATES: list[Template] = [
+    Template(
+        name="text_over_text_frac",
+        latex=r"\frac{{{num}}}{{{den}}}",
+        slots={
+            "num": S(_TEXT_NUMER),
+            "den": X(_TEXT_DENOM, ("num",)),
+        },
+    ),
+    Template(
+        name="text_over_expr_frac",
+        latex=r"\frac{{{num}}}{{{den}}}",
+        slots={
+            "num": S(_TEXT_NUMER),
+            "den": E(_expr, n=5000),
+        },
+    ),
+    Template(
+        name="expr_over_text_frac",
+        latex=r"\frac{{{num}}}{{{den}}}",
+        slots={
+            "num": E(_expr, n=5000),
+            "den": S(_TEXT_DENOM),
+        },
+    ),
+    Template(
+        name="text_frac_equality",
+        latex=r"{lhs} = \frac{{{num}}}{{{den}}}",
+        slots={
+            "lhs": S(_TEXT_NUMER),
+            "num": S(_TEXT_NUMER),
+            "den": X(_TEXT_DENOM, ("num",)),
+        },
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _TEXT_FRAC_TEMPLATES
+
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
 _W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)
 
