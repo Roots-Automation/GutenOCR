@@ -75,6 +75,9 @@ from .physics import WEIGHTS as _W_PHYSICS
 from .probability import GENERATORS as _G_PROB
 from .probability import TEMPLATES as _T_PROB
 from .probability import WEIGHTS as _W_PROB
+from .quantum_notation import GENERATORS as _G_QUANTUM
+from .quantum_notation import TEMPLATES as _T_QUANTUM
+from .quantum_notation import WEIGHTS as _W_QUANTUM
 from .representation import GENERATORS as _G_REPR
 from .representation import TEMPLATES as _T_REPR
 from .representation import WEIGHTS as _W_REPR
@@ -115,6 +118,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_COMPLEX,
     **_G_FOURIER,
     **_G_PHYSICS,
+    **_G_QUANTUM,
     **_G_MEASURE,
     **_G_PADIC,
     **_G_OPT,
@@ -147,6 +151,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_COMPLEX,
     **_W_FOURIER,
     **_W_PHYSICS,
+    **_W_QUANTUM,
     **_W_MEASURE,
     **_W_PADIC,
     **_W_OPT,
@@ -182,6 +187,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_COMPLEX,
     **_T_FOURIER,
     **_T_PHYSICS,
+    **_T_QUANTUM,
     **_T_MEASURE,
     **_T_PADIC,
     **_T_OPT,

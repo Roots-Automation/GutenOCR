@@ -224,7 +224,7 @@ _PART_MATRIX_ENVS: list[Template] = [
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
     Template(
-        name="2x2_matrix_rvert",
+        name="2x2_matrix_bra_form",
         latex=r"\left\langle {mat} \right\rvert",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
@@ -291,6 +291,49 @@ _PART_ELLIPSIS_MATRICES: list[Template] = [
     ),
 ]
 _LINEAR_ALGEBRA_TEMPLATES += _PART_ELLIPSIS_MATRICES
+
+# ---------------------------------------------------------------------------
+# lVert / rVert — double-bar norm templates
+# ---------------------------------------------------------------------------
+
+_VEC_LVERT_POOL = (r"\mathbf{u}", r"\mathbf{v}", r"\mathbf{x}", "u", "v", "x", r"\mathbf{w}")
+_MAT_LVERT_POOL = ("A", "B", "M", "T", "U", "H")
+_P_LVERT_POOL = ("2", "p", r"\infty", "1")
+
+_PART_LVERT_NORMS: list[Template] = [
+    Template(
+        name="lVert_normalization",
+        latex=r"\lVert {vv} \rVert = 1",
+        slots={"vv": S(_VEC_LVERT_POOL)},
+    ),
+    Template(
+        name="lVert_operator_norm_def",
+        latex=r"\lVert {AA} \rVert_{{\mathrm{{op}}}} = \sup_{{\lVert {vv} \rVert = 1}} \lVert {AA}\,{vv} \rVert",
+        slots={"AA": S(_MAT_LVERT_POOL), "vv": S(_VEC_LVERT_POOL)},
+    ),
+    Template(
+        name="lVert_lp_norm",
+        latex=r"\lVert f \rVert_{{L^{{{pp}}}}} = \Bigl(\int \lvert f \rvert^{{{pp}}}\,d\mu\Bigr)^{{1/{pp}}}",
+        slots={"pp": S(_P_LVERT_POOL)},
+    ),
+    Template(
+        name="lVert_triangle_inequality",
+        latex=r"\lVert {uu} + {vv} \rVert \leq \lVert {uu} \rVert + \lVert {vv} \rVert",
+        slots={"uu": S(_VEC_LVERT_POOL), "vv": X(_VEC_LVERT_POOL, ("uu",))},
+    ),
+    Template(
+        name="lVert_submultiplicative",
+        latex=r"\lVert {AA}\,{BB} \rVert \leq \lVert {AA} \rVert\,\lVert {BB} \rVert",
+        slots={"AA": S(_MAT_LVERT_POOL), "BB": X(_MAT_LVERT_POOL, ("AA",))},
+    ),
+    Template(
+        name="lVert_spectral_radius_bound",
+        latex=r"\rho({AA}) \leq \lVert {AA} \rVert",
+        slots={"AA": S(_MAT_LVERT_POOL)},
+    ),
+]
+
+_LINEAR_ALGEBRA_TEMPLATES += _PART_LVERT_NORMS
 
 _W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 

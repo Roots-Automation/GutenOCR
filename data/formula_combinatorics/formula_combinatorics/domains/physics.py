@@ -1029,6 +1029,47 @@ _PHYSICS_TEMPLATES += [
     ),
 ]
 
+# ---------------------------------------------------------------------------
+# Anticommutators and non-Poisson brackets
+# ---------------------------------------------------------------------------
+
+_FERM_IDX_POOL = ("i", "j", "k", "l", "m")
+
+_PART_ANTICOMMUTATOR: list[Template] = [
+    Template(
+        name="anticommutator_def",
+        latex=r"\{{{A},\,{B}\}} = {A}{B} + {B}{A}",
+        slots={"A": S(_DAG_OP_POOL), "B": X(_DAG_OP_POOL, ("A",))},
+    ),
+    Template(
+        name="canonical_anticommutation_relation",
+        latex=r"\{{a_{{{ii}}},\,a_{{{jj}}}^\dagger\}} = \delta_{{{ii}{jj}}}",
+        slots={"ii": S(_FERM_IDX_POOL), "jj": X(_FERM_IDX_POOL, ("ii",))},
+    ),
+    Template(
+        name="anticommutation_annihilators",
+        latex=r"\{{a_{{{ii}}},\,a_{{{jj}}}\}} = 0",
+        slots={"ii": S(_FERM_IDX_POOL), "jj": X(_FERM_IDX_POOL, ("ii",))},
+    ),
+    Template(
+        name="fermionic_number_operator",
+        latex=r"\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}},\quad \hat{{n}}_{{{ii}}}^2 = \hat{{n}}_{{{ii}}}",
+        slots={"ii": S(_FERM_IDX_POOL)},
+    ),
+    Template(
+        name="dirac_bracket",
+        latex=r"\{f,\,g\}_D = \{f,\,g\} - \{f,\,\phi_a\}\,C^{ab}\,\{\phi_b,\,g\}",
+        slots={},
+    ),
+    Template(
+        name="moyal_bracket",
+        latex=r"\{{f,\,g\}}_\star = \tfrac{{1}}{{i{hb}}}(f \star g - g \star f)",
+        slots={"hb": S(_HBAR_POOL)},
+    ),
+]
+
+_PHYSICS_TEMPLATES += _PART_ANTICOMMUTATOR
+
 _W = compute_weights(_PHYSICS_TEMPLATES)
 
 _physics = make_dispatcher(_PHYSICS_TEMPLATES, _W)
