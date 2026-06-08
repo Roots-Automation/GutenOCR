@@ -87,6 +87,9 @@ from .ring_theory import WEIGHTS as _W_RING
 from .set_theory import GENERATORS as _G_SET
 from .set_theory import TEMPLATES as _T_SET
 from .set_theory import WEIGHTS as _W_SET
+from .statistics import GENERATORS as _G_STATS
+from .statistics import TEMPLATES as _T_STATS
+from .statistics import WEIGHTS as _W_STATS
 from .stochastic_processes import GENERATORS as _G_SPROC
 from .stochastic_processes import TEMPLATES as _T_SPROC
 from .stochastic_processes import WEIGHTS as _W_SPROC
@@ -124,6 +127,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_OPT,
     **_G_SET,
     **_G_LOGIC,
+    **_G_STATS,
     **_G_SPROC,
     **_G_CUSTOP,
     **_G_FONTS,
@@ -157,6 +161,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_OPT,
     **_W_SET,
     **_W_LOGIC,
+    **_W_STATS,
     **_W_SPROC,
     **_W_CUSTOP,
     **_W_FONTS,
@@ -193,6 +198,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_OPT,
     **_T_SET,
     **_T_LOGIC,
+    **_T_STATS,
     **_T_SPROC,
     **_T_CUSTOP,
     **_T_FONTS,

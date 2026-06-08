@@ -515,50 +515,6 @@ _PROB_TEMPLATES: list[Template] = [
             "lam": S(_LAM_POOL),
         },
     ),
-    # Stochastic processes
-    Template(
-        name="markov_chain_transition",
-        latex=(
-            r"{op}(X_{{{nn}+1}} = {kk} \mid X_{{{nn}}} = {ii})"
-            r" = P_{{{ii}{kk}}}"
-        ),
-        slots={
-            "op": S(_PROB_OP),
-            "nn": S(_N_POOL),
-            "kk": S(_IDX_POOL),
-            "ii": X(_IDX_POOL, ("kk",)),
-        },
-    ),
-    Template(
-        name="stationary_distribution",
-        latex=r"\pi P = \pi,\quad \sum{lim_mod}_{{i}} \pi_i = 1",
-        slots={
-            "lim_mod": S(("", r"\limits")),
-        },
-    ),
-    Template(
-        name="martingale_def",
-        latex=(
-            r"{op}[{rv}_{{{nn}+1}} \mid \mathcal{{F}}_{{{nn}}}]"
-            r" = {rv}_{{{nn}}}"
-        ),
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL), "nn": S(_N_POOL)},
-    ),
-    Template(
-        name="random_walk_mean",
-        latex=r"{op}[S_{{{nn}}}] = {nn}\,{mu}",
-        slots={"op": S(_EXP_OP), "nn": S(_N_POOL), "mu": S(_MU_POOL)},
-    ),
-    Template(
-        name="random_walk_var",
-        latex=r"\operatorname{{Var}}(S_{{{nn}}}) = {nn}\,{sig}^2",
-        slots={"nn": S(_N_POOL), "sig": S(_SIG_POOL)},
-    ),
-    Template(
-        name="optional_stopping",
-        latex=r"{op}[{rv}_T] = {op}[{rv}_0]",
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
-    ),
     # Multivariate
     Template(
         name="marginal_pdf_cont",
@@ -639,62 +595,6 @@ _PROB_TEMPLATES: list[Template] = [
         ),
         slots={"lim_mod": S(("", r"\limits")), "rv": S(_RV_POOL)},
     ),
-    # Statistical inference
-    Template(
-        name="mle_argmax",
-        latex=(
-            r"\hat{{{lam}}}"
-            r" = \operatorname{{arg\,max}}_{{{lam}}} \mathcal{{L}}({lam})"
-        ),
-        slots={"lam": S(_LAM_POOL)},
-    ),
-    Template(
-        name="score_function",
-        latex=(
-            r"s({lam}) = \frac{{\partial}}{{\partial {lam}}}"
-            r" \log \mathcal{{L}}({lam})"
-        ),
-        slots={"lam": S(_LAM_POOL)},
-    ),
-    Template(
-        name="fisher_information",
-        latex=(
-            r"I({lam}) = {op}\!\left["
-            r"\left(\frac{{\partial}}{{\partial {lam}}}"
-            r" \log f(x;\,{lam})\right)^{{\!2}}\right]"
-        ),
-        slots={"op": S(_EXP_OP), "lam": S(_LAM_POOL)},
-    ),
-    Template(
-        name="cramer_rao",
-        latex=(
-            r"\operatorname{{Var}}(\hat{{{lam}}})"
-            r" \geq \dfrac{{1}}{{I({lam})}}"
-        ),
-        slots={"lam": S(_LAM_POOL)},
-    ),
-    Template(
-        name="bayes_posterior",
-        latex=(
-            r"p({lam} \mid \mathbf{{x}})"
-            r" \propto p(\mathbf{{x}} \mid {lam})\,p({lam})"
-        ),
-        slots={"lam": S(_LAM_POOL)},
-    ),
-    Template(
-        name="delta_method",
-        latex=(
-            r"\sqrt{{{nn}}}\,\bigl({fn}(\bar{{{rv}}}_n) - {fn}({mu})\bigr)"
-            r" \xrightarrow{{d}} \mathcal{{N}}\!\left(0,\,{fn}'({mu})^2\,{sig}^2\right)"
-        ),
-        slots={
-            "fn": E(_fn_rich_nosub, n=100),
-            "rv": S(_RV_POOL),
-            "mu": S(_MU_POOL),
-            "sig": S(_SIG_POOL),
-            "nn": S(_N_POOL),
-        },
-    ),
     # Convergence
     Template(
         name="convergence_in_probability",
@@ -767,30 +667,6 @@ _PROB_TEMPLATES: list[Template] = [
             "rv2": X(_RV_POOL, ("rv1",)),
         },
     ),
-    Template(
-        name="log_likelihood_sum",
-        latex=(r"\ell({fn1}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} \log {fn2}(x_i \mid {fn1})"),
-        slots={
-            "lim_mod": S(("", r"\limits")),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "nn": S(_N_POOL),
-        },
-    ),
-    Template(
-        name="rao_blackwell",
-        latex=(
-            r"{op}\!\left[\bigl({fn1}({rv1}) - {fn2}({rv2})\bigr)^2\right]"
-            r" \geq {op}\!\left[\bigl(\hat{{\theta}} - {fn2}({rv2})\bigr)^2\right]"
-        ),
-        slots={
-            "op": S(_EXP_OP),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "rv1": S(_RV_POOL),
-            "rv2": X(_RV_POOL, ("rv1",)),
-        },
-    ),
 ]
 
 # Part C additions
@@ -835,11 +711,6 @@ _PROB_TEMPLATES += [
 
 _PROB_TEMPLATES += [
     Template(
-        name="sample_mean_normal_approx",
-        latex=r"\bar{{{rv}}}_{{{nn}}} \approx \mathcal{{N}}\!\left({mu},\,\frac{{{sig}^2}}{{{nn}}}\right)",
-        slots={"rv": S(_RV_POOL), "nn": S(_N_POOL), "mu": S(_MU_POOL), "sig": S(_SIG_POOL)},
-    ),
-    Template(
         name="poisson_binomial_approx",
         latex=r"\operatorname{{Bin}}({nn},\,{pp}) \approx \operatorname{{Poisson}}({nn}\,{pp}) \quad ({nn}\text{{ large, }}{pp}\text{{ small}})",
         slots={"nn": S(_N_POOL), "pp": S(_P_POOL)},
@@ -873,7 +744,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
 }
 
 WEIGHTS: dict[str, float] = {
-    "probability": 0.09,
+    "probability": 0.07,
 }
 
 TEMPLATES: dict[str, list[Template]] = {
