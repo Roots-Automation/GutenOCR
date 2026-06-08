@@ -6,7 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._templates import _matrix_env, _smallmatrix_inline
+from .._templates import _matrix_env, _matrix_with_ellipsis, _smallmatrix_inline
 from .._vocab import _MATRIX_NAMES, _atom
 
 # ---------------------------------------------------------------------------
@@ -267,6 +267,30 @@ _PART_MATRIX_ENVS: list[Template] = [
     ),
 ]
 _LINEAR_ALGEBRA_TEMPLATES += _PART_MATRIX_ENVS
+
+_PART_ELLIPSIS_MATRICES: list[Template] = [
+    Template(
+        name="matrix_corner_pmatrix",
+        latex=r"{mat}",
+        slots={"mat": E(lambda rng: _matrix_with_ellipsis(rng, "pmatrix"), n=5_000_000)},
+    ),
+    Template(
+        name="matrix_corner_bmatrix",
+        latex=r"{mat}",
+        slots={"mat": E(lambda rng: _matrix_with_ellipsis(rng, "bmatrix"), n=5_000_000)},
+    ),
+    Template(
+        name="matrix_corner_vmatrix",
+        latex=r"{mat}",
+        slots={"mat": E(lambda rng: _matrix_with_ellipsis(rng, "vmatrix"), n=5_000_000)},
+    ),
+    Template(
+        name="matrix_ellipsis_det",
+        latex=r"\det{mat}",
+        slots={"mat": E(lambda rng: _matrix_with_ellipsis(rng, "vmatrix"), n=5_000_000)},
+    ),
+]
+_LINEAR_ALGEBRA_TEMPLATES += _PART_ELLIPSIS_MATRICES
 
 _W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 

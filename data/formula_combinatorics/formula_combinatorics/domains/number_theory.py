@@ -6,6 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._templates import _substack_prod, _substack_sum
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1188,6 +1189,19 @@ _NUMBER_THEORY_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
     + _TEMPLATES_D
 )
+
+_NUMBER_THEORY_TEMPLATES = list(_NUMBER_THEORY_TEMPLATES) + [
+    Template(
+        name="substack_sum_nt",
+        latex=r"{s}",
+        slots={"s": E(_substack_sum, n=5_000_000)},
+    ),
+    Template(
+        name="substack_prod_nt",
+        latex=r"{s}",
+        slots={"s": E(_substack_prod, n=5_000_000)},
+    ),
+]
 
 _W_NT: list[float] = compute_weights(_NUMBER_THEORY_TEMPLATES)
 _number_theory = make_dispatcher(_NUMBER_THEORY_TEMPLATES, _W_NT)

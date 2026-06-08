@@ -36,6 +36,9 @@ from .differential_geometry import WEIGHTS as _W_DIFFGEOM
 from .fourier import GENERATORS as _G_FOURIER
 from .fourier import TEMPLATES as _T_FOURIER
 from .fourier import WEIGHTS as _W_FOURIER
+from .geometry import GENERATORS as _G_GEO
+from .geometry import TEMPLATES as _T_GEO
+from .geometry import WEIGHTS as _W_GEO
 from .graph_theory import GENERATORS as _G_GT
 from .graph_theory import TEMPLATES as _T_GT
 from .graph_theory import WEIGHTS as _W_GT
@@ -120,6 +123,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_SPROC,
     **_G_CUSTOP,
     **_G_FONTS,
+    **_G_GEO,
 }
 
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -151,6 +155,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_SPROC,
     **_W_CUSTOP,
     **_W_FONTS,
+    **_W_GEO,
 }
 
 # Maps domain name → list of Template objects.
@@ -185,6 +190,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_SPROC,
     **_T_CUSTOP,
     **_T_FONTS,
+    **_T_GEO,
 }
 
 assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (

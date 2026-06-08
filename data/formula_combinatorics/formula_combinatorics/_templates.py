@@ -7,6 +7,8 @@ import random
 from ._vocab import (
     _BOUNDS,
     _FUNCS,
+    _INDICES,
+    _MATRIX_NAMES,
     _atom,
     _expr,
     _i,
@@ -115,6 +117,76 @@ def _func_apply(rng: random.Random) -> str:
     """Return fn\\!\\left(expr\\right) for a random function."""
     fn = rng.choice(_FUNCS)
     return rf"{fn}\!\left({_expr(rng)}\right)"
+
+
+def _matrix_with_ellipsis(rng: random.Random, env: str = "pmatrix") -> str:
+    """Return a matrix showing corner entries with \\vdots/\\cdots/\\ddots ellipsis rows."""
+    mode = rng.choice(["corner", "block"])
+    n = rng.choice(["n", "m", "N", "M"])
+    name = rng.choice(_MATRIX_NAMES)
+    a = name.lower()
+
+    if mode == "corner":
+        # Full corner pattern: a_{11} ... a_{1n} / vdots ddots vdots / a_{n1} ... a_{nn}
+        top = rf"{a}_{{11}} & \cdots & {a}_{{1{n}}}"
+        mid = r"\vdots & \ddots & \vdots"
+        bot = rf"{a}_{{{n}1}} & \cdots & {a}_{{{n}{n}}}"
+        body = rf"{top} \\ {mid} \\ {bot}"
+    else:
+        # Block pattern: concrete first row/col, ellipsis at end
+        body = (
+            rf"{a}_{{11}} & {a}_{{12}} & \cdots \\"
+            rf" {a}_{{21}} & {a}_{{22}} & \cdots \\"
+            rf" \vdots & \vdots & \ddots"
+        )
+
+    return rf"\begin{{{env}}} {body} \end{{{env}}}"
+
+
+_SUBSTACK_CONDS = [
+    lambda i, s, rng: rf"{i} \neq {rng.choice(_INDICES)}",
+    lambda i, s, rng: rf"\gcd({i}, {s}) = 1",
+    lambda i, s, rng: rf"{i} \geq 1",
+    lambda i, s, rng: rf"{i} \text{{ prime}}",
+    lambda i, s, rng: rf"{i} \nmid {s}",
+]
+
+
+def _substack_sum(rng: random.Random) -> str:
+    """Return a \\sum with a \\substack multi-condition subscript."""
+    idx = _i(rng)
+    bound = _s(rng)
+    hi = _upper(rng)
+    cond_fn = rng.choice(_SUBSTACK_CONDS)
+    cond = cond_fn(idx, bound, rng)
+    lim = r"\limits" if rng.random() < 0.5 else ""
+    return rf"\sum{lim}_{{\substack{{{idx}=1\\{cond}}}}}^{{{hi}}} {_expr(rng)}"
+
+
+def _substack_prod(rng: random.Random) -> str:
+    """Return a \\prod with a \\substack multi-condition subscript."""
+    idx = _i(rng)
+    bound = _s(rng)
+    hi = _upper(rng)
+    cond_fn = rng.choice(_SUBSTACK_CONDS)
+    cond = cond_fn(idx, bound, rng)
+    lim = r"\limits" if rng.random() < 0.5 else ""
+    return rf"\prod{lim}_{{\substack{{{idx}=1\\{cond}}}}}^{{{hi}}} {_expr(rng)}"
+
+
+def _interval(rng: random.Random) -> str:
+    """Return an interval using \\lbrack/\\rbrack or ( ) delimiters."""
+    a = rng.choice([_lower(rng), _s(rng), "-" + _s(rng)])
+    b = rng.choice([_upper(rng), _s(rng)])
+    left, right = rng.choice(
+        [
+            (r"\lbrack", r"\rbrack"),
+            ("(", r"\rbrack"),
+            (r"\lbrack", ")"),
+            ("(", ")"),
+        ]
+    )
+    return rf"{left} {a}, {b} {right}"
 
 
 def _poly(rng: random.Random, var: str, *, max_degree: int = 5) -> str:

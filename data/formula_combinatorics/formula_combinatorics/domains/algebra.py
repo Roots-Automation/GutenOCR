@@ -6,7 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, P, S, Template, X, compute_weights, make_dispatcher
-from .._templates import _poly
+from .._templates import _poly, _substack_prod, _substack_sum
 from .._vocab import (
     _COEFF_POOL,
     _GEO_N,
@@ -1878,6 +1878,55 @@ _DEG_TEMPLATES: list[Template] = [
 ]
 
 _ALGEBRA_TEMPLATES += _DEG_TEMPLATES
+
+# ---------------------------------------------------------------------------
+# Division operator templates
+# ---------------------------------------------------------------------------
+
+_DIV_TEMPLATES: list[Template] = [
+    Template(
+        name="div_expr_eq",
+        latex=r"{a} \div {b} = {c}",
+        slots={"a": E(_expr, n=1e4), "b": E(_expr, n=1e4), "c": E(_expr, n=1e4)},
+    ),
+    Template(
+        name="div_remainder",
+        latex=r"{a} \div {b} = {q} \cdots {r}",
+        slots={"a": E(_atom, n=100), "b": E(_atom, n=100), "q": E(_atom, n=100), "r": E(_atom, n=100)},
+    ),
+    Template(
+        name="div_fraction_identity",
+        latex=r"{a} \div {b} = \frac{{{a2}}}{{{b2}}}",
+        slots={"a": E(_atom, n=100), "b": E(_atom, n=100), "a2": E(_atom, n=100), "b2": E(_atom, n=100)},
+    ),
+    Template(
+        name="div_paren_expr",
+        latex=r"\left({a} + {b}\right) \div {c}",
+        slots={"a": E(_expr, n=1e4), "b": E(_expr, n=1e4), "c": E(_expr, n=1e4)},
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _DIV_TEMPLATES
+
+_SUBSTACK_ALG_TEMPLATES: list[Template] = [
+    Template(
+        name="substack_sum_alg",
+        latex=r"{s}",
+        slots={"s": E(_substack_sum, n=5_000_000)},
+    ),
+    Template(
+        name="substack_prod_alg",
+        latex=r"{s}",
+        slots={"s": E(_substack_prod, n=5_000_000)},
+    ),
+    Template(
+        name="substack_sum_eq",
+        latex=r"{s} = {v}",
+        slots={"s": E(_substack_sum, n=5_000_000), "v": E(_expr, n=5_000_000)},
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _SUBSTACK_ALG_TEMPLATES
 
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
 _W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)

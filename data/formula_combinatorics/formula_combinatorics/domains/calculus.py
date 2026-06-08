@@ -6,7 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._templates import _def_integral, _indef_integral
+from .._templates import _def_integral, _indef_integral, _interval, _substack_prod, _substack_sum
 from .._vocab import _SCALARS, _VARS, _atom, _expr, _fn_rich, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -1022,6 +1022,36 @@ _PART_MEDSPACE: list[Template] = [
     ),
 ]
 _CALCULUS_TEMPLATES += _PART_MEDSPACE
+
+_CALCULUS_TEMPLATES += [
+    Template(
+        name="substack_sum",
+        latex=r"{s}",
+        slots={"s": E(_substack_sum, n=5_000_000)},
+    ),
+    Template(
+        name="substack_prod",
+        latex=r"{s}",
+        slots={"s": E(_substack_prod, n=5_000_000)},
+    ),
+    Template(
+        name="interval_notation",
+        latex=r"{v} \in {ivl}",
+        slots={
+            "v": E(lambda rng: rng.choice(["x", "y", "z", "t", "u"]), n=5_000_000),
+            "ivl": E(_interval, n=5_000_000),
+        },
+    ),
+    Template(
+        name="interval_bounds",
+        latex=r"{f} : {ivl_a} \to {ivl_b}",
+        slots={
+            "f": E(lambda rng: rng.choice(["f", "g", "h", "F"]), n=4),
+            "ivl_a": E(_interval, n=5_000_000),
+            "ivl_b": E(_interval, n=5_000_000),
+        },
+    ),
+]
 
 # ---------------------------------------------------------------------------
 # Sampling weights

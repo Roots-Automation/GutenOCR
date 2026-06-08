@@ -6,8 +6,8 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import S, Template, X, compute_weights, make_dispatcher
-from .._vocab import _SCALARS, _VARS
+from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _SCALARS, _VARS, _atom, _expr
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -223,11 +223,50 @@ _FONT_WRAP_TEMPLATES: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Section 6 — \pmb (poor man's bold) and \boldsymbol variants
+# ---------------------------------------------------------------------------
+
+_BOLD_EXPR_POOL = (r"\alpha", r"\beta", r"\gamma", r"\delta", r"\lambda", r"\mu", r"\omega", r"\sigma")
+
+_PMB_TEMPLATES: list[Template] = [
+    Template(
+        name="pmb_single",
+        latex=r"\pmb{{{v}}}",
+        slots={"v": E(_atom, n=5_000_000)},
+    ),
+    Template(
+        name="pmb_relation",
+        latex=r"\pmb{{{v}}} = {w}",
+        slots={"v": E(_atom, n=5_000_000), "w": E(_expr, n=5_000_000)},
+    ),
+    Template(
+        name="boldsymbol_greek",
+        latex=r"\boldsymbol{{{g}}}",
+        slots={"g": S(_BOLD_EXPR_POOL)},
+    ),
+    Template(
+        name="boldsymbol_eq",
+        latex=r"\boldsymbol{{{g}}} = {a} \mathbf{{{v}}}",
+        slots={"g": S(_BOLD_EXPR_POOL), "a": S(tuple(_SCALARS)), "v": S(tuple(_SET_LETTER_POOL))},
+    ),
+    Template(
+        name="bf_declaration",
+        latex=r"{{\bf {v}}} = {a}",
+        slots={"v": S(tuple(_SET_LETTER_POOL)), "a": S(tuple(_SCALARS))},
+    ),
+]
+
+# ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
 
 _MATH_FONTS_TEMPLATES: list[Template] = (
-    _MATHSF_TEMPLATES + _MATHTT_TEMPLATES + _MATHIT_TEMPLATES + _MATHNORMAL_TEMPLATES + _FONT_WRAP_TEMPLATES
+    _MATHSF_TEMPLATES
+    + _MATHTT_TEMPLATES
+    + _MATHIT_TEMPLATES
+    + _MATHNORMAL_TEMPLATES
+    + _FONT_WRAP_TEMPLATES
+    + _PMB_TEMPLATES
 )
 
 _W_FONTS: list[float] = compute_weights(_MATH_FONTS_TEMPLATES)

@@ -164,6 +164,8 @@ _RELATIONS = [
     r"\gg",
     r"\preceq",
     r"\succeq",
+    r"\parallel",
+    r"\perp",
 ]
 
 # ---------------------------------------------------------------------------
@@ -211,23 +213,36 @@ def _bgreek(rng: random.Random) -> str:
     return rng.choice(_BOLD_GREEK)
 
 
+_DECO_CMDS = [
+    r"\hat",
+    r"\bar",
+    r"\tilde",
+    r"\vec",
+    r"\widehat",
+    r"\widetilde",
+    r"\check",
+    r"\overline",
+    r"\dot",
+    r"\mathring",
+]
+_DECO_WEIGHTS = [22, 18, 14, 12, 8, 8, 6, 6, 4, 2]
+
+
 def _deco(rng: random.Random) -> str:
-    cmd = rng.choice(
-        [
-            r"\hat",
-            r"\bar",
-            r"\dot",
-            r"\ddot",
-            r"\vec",
-            r"\tilde",
-            r"\widetilde",
-            r"\widehat",
-            r"\acute",
-            r"\breve",
-        ]
-    )
+    cmd = rng.choices(_DECO_CMDS, weights=_DECO_WEIGHTS, k=1)[0]
     target = rng.choice(_VARS + list("abcfghpqrs"))
     return rf"{cmd}{{{target}}}"
+
+
+def _prime_deco(rng: random.Random, base: str) -> str:
+    return rng.choice(
+        [
+            f"{base}'",
+            f"{base}''",
+            rf"{base}^{{\prime}}",
+            rf"{base}^{{\prime\prime}}",
+        ]
+    )
 
 
 def _atom(rng: random.Random) -> str:
@@ -242,6 +257,10 @@ def _atom(rng: random.Random) -> str:
         lambda: _deco(rng),
         lambda: _gu(rng),
         lambda: rng.choice(_CALLIGRAPHIC),
+        lambda: _bvec(rng),
+        lambda: _bgreek(rng),
+        lambda: _prime_deco(rng, _v(rng)),
+        lambda: _prime_deco(rng, rng.choice(["f", "g", "h", "F", "G"])),
     ]
     return rng.choice(builders)()
 
@@ -363,12 +382,12 @@ _FN_IDX: tuple[str, ...] = ("1", "2", "3", "i", "j", "k", "n", "m")
 
 
 def _fn_rich(rng: random.Random) -> str:
-    """Rich function-name token: base optionally decorated with subscript/hat/tilde/bar/star/dot."""
+    """Rich function-name token: base optionally decorated with subscript/hat/tilde/bar/star."""
     base = rng.choice(_FN_BASE)
     d = rng.random()
-    if d < 0.28:
+    if d < 0.30:
         return f"{base}_{{{rng.choice(_FN_IDX)}}}"
-    elif d < 0.42:
+    elif d < 0.44:
         return rf"\hat{{{base}}}"
     elif d < 0.56:
         return rf"\tilde{{{base}}}"
@@ -376,8 +395,8 @@ def _fn_rich(rng: random.Random) -> str:
         return rf"\bar{{{base}}}"
     elif d < 0.76:
         return f"{base}^{{*}}"
-    elif d < 0.84:
-        return rf"\dot{{{base}}}"
+    elif d < 0.82:
+        return rf"\check{{{base}}}"
     else:
         return base
 
@@ -387,14 +406,14 @@ def _fn_rich_nosub(rng: random.Random) -> str:
     appends its own ^{(n)}, ', or '' to the function name."""
     base = rng.choice(_FN_BASE)
     d = rng.random()
-    if d < 0.23:
+    if d < 0.28:
         return rf"\hat{{{base}}}"
-    elif d < 0.46:
+    elif d < 0.50:
         return rf"\tilde{{{base}}}"
-    elif d < 0.63:
+    elif d < 0.66:
         return rf"\bar{{{base}}}"
-    elif d < 0.77:
-        return rf"\dot{{{base}}}"
+    elif d < 0.76:
+        return rf"\check{{{base}}}"
     else:
         return base
 

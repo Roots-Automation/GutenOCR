@@ -11,14 +11,21 @@ from .align import _align
 logger = logging.getLogger(__name__)
 
 
+_TAG_POOL = ["1", "2", "3", "4", "5", "6", "*", r"\dagger", "a", "b", "i", "ii"]
+
+
 def _is_wrapped(formula: str) -> bool:
     return formula.startswith(r"\begin{") or formula.startswith(r"\[") or formula.startswith("$")
 
 
 def _wrap_display(formula: str, rng: random.Random) -> str:
-    if rng.random() < 0.70:
+    r = rng.random()
+    if r < 0.65:
         return rf"\[{formula}\]"
-    return rf"\begin{{equation}}{formula}\end{{equation}}"
+    if r < 0.85:
+        return rf"\begin{{equation}}{formula}\end{{equation}}"
+    tag = rng.choice(_TAG_POOL)
+    return rf"\begin{{equation}}{formula}\tag{{{tag}}}\end{{equation}}"
 
 
 def _wrap_inline(formula: str) -> str:
