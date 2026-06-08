@@ -1158,6 +1158,205 @@ _DIFFGEOM_TEMPLATES += [
     ),
 ]
 
+# ---- Tensor/index notation completeness additions ----------------------------
+_DIFFGEOM_TEMPLATES += [
+    # -- Missing covariant derivative cases --
+    Template(
+        name="cov_deriv_covector",
+        latex=(
+            r"\nabla_{{{kk}}} V_{{{ii}}}"
+            r" = \partial_{{{kk}}} V_{{{ii}}}"
+            r" - \Gamma^{{{ll}}}_{{{kk}{ii}}} V_{{{ll}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "kk": X(_IDX_POOL, ("ii",)),
+            "ll": X(_IDX_POOL, ("ii", "kk")),
+        },
+    ),
+    Template(
+        name="cov_deriv_mixed",
+        latex=(
+            r"\nabla_{{{kk}}} T^{{{ii}}}{{}}_{{{jj}}}"
+            r" = \partial_{{{kk}}} T^{{{ii}}}{{}}_{{{jj}}}"
+            r" + \Gamma^{{{ii}}}_{{{kk}{ll}}} T^{{{ll}}}{{}}_{{{jj}}}"
+            r" - \Gamma^{{{ll}}}_{{{kk}{jj}}} T^{{{ii}}}{{}}_{{{ll}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    # -- Index raising/lowering (component form) --
+    Template(
+        name="index_raising_vector",
+        latex=r"V^{{{ii}}} = {met}^{{{ii}{jj}}} V_{{{jj}}}",
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="index_lowering_vector",
+        latex=r"V_{{{ii}}} = {met}_{{{ii}{jj}}} V^{{{jj}}}",
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="index_raising_tensor",
+        latex=r"T^{{{ii}{jj}}} = {met}^{{{ii}{kk}}} {met}^{{{jj}{ll}}} T_{{{kk}{ll}}}",
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    Template(
+        name="index_lowering_tensor",
+        latex=r"T_{{{ii}{jj}}} = {met}_{{{ii}{kk}}} {met}_{{{jj}{ll}}} T^{{{kk}{ll}}}",
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    # -- Einstein summation convention (explicit statement) --
+    Template(
+        name="einstein_convention_def",
+        latex=r"A^{{{ii}}} B_{{{ii}}} \equiv \sum_{{{ii}}} A^{{{ii}}} B_{{{ii}}}",
+        slots={"ii": S(_IDX_POOL)},
+    ),
+    Template(
+        name="einstein_trace_def",
+        latex=(
+            r"T^{{{ii}}}{{}}_{{{ii}}}"
+            r" \equiv \sum_{{{ii}}} T^{{{ii}}}{{}}_{{{ii}}}"
+            r" = \operatorname{{tr}} T"
+        ),
+        slots={"ii": S(_IDX_POOL)},
+    ),
+    # -- Symmetrization and antisymmetrization --
+    Template(
+        name="tensor_symmetrization",
+        latex=(r"T_{{({ii}{jj})}} = \tfrac{{1}}{{2}}\!\left(T_{{{ii}{jj}}} + T_{{{jj}{ii}}}\right)"),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="tensor_antisymmetrization",
+        latex=(r"T_{{[{ii}{jj}]}} = \tfrac{{1}}{{2}}\!\left(T_{{{ii}{jj}}} - T_{{{jj}{ii}}}\right)"),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="tensor_sym_decomp",
+        latex=r"T_{{{ii}{jj}}} = T_{{({ii}{jj})}} + T_{{[{ii}{jj}]}}",
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    # -- Torsion tensor components --
+    Template(
+        name="torsion_components",
+        latex=(
+            r"T^{{{kk}}}{{}}_{{{ii}{jj}}}"
+            r" = \Gamma^{{{kk}}}_{{{ii}{jj}}} - \Gamma^{{{kk}}}_{{{jj}{ii}}}"
+        ),
+        slots={
+            "kk": S(_IDX_POOL),
+            "ii": X(_IDX_POOL, ("kk",)),
+            "jj": X(_IDX_POOL, ("kk", "ii")),
+        },
+    ),
+    # -- Riemann pair symmetry --
+    Template(
+        name="riemann_pair_symmetry",
+        latex=r"R_{{{ii}{jj}{kk}{ll}}} = R_{{{kk}{ll}{ii}{jj}}}",
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    # -- Weyl tensor --
+    Template(
+        name="weyl_def",
+        latex=(
+            r"C_{{{ii}{jj}{kk}{ll}}} = R_{{{ii}{jj}{kk}{ll}}}"
+            r" - \tfrac{{1}}{{n-2}}\!\left("
+            r"{met}_{{{ii}{kk}}} R_{{{jj}{ll}}}"
+            r" - {met}_{{{ii}{ll}}} R_{{{jj}{kk}}}"
+            r" - {met}_{{{jj}{kk}}} R_{{{ii}{ll}}}"
+            r" + {met}_{{{jj}{ll}}} R_{{{ii}{kk}}}\right)"
+            r" + \tfrac{{R}}{{(n-1)(n-2)}}\!\left("
+            r"{met}_{{{ii}{kk}}} {met}_{{{jj}{ll}}}"
+            r" - {met}_{{{ii}{ll}}} {met}_{{{jj}{kk}}}\right)"
+        ),
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    Template(
+        name="weyl_traceless",
+        latex=r"{met}^{{{ii}{kk}}} C_{{{ii}{jj}{kk}{ll}}} = 0",
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    Template(
+        name="weyl_antisymmetry",
+        latex=(
+            r"C_{{{ii}{jj}{kk}{ll}}}"
+            r" = -C_{{{jj}{ii}{kk}{ll}}}"
+            r" = -C_{{{ii}{jj}{ll}{kk}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+        },
+    ),
+    # -- Kronecker delta (geometry side) --
+    Template(
+        name="kronecker_mixed_geom",
+        latex=r"\delta^{{{ii}}}_{{{jj}}}",
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="kronecker_flat_trace",
+        latex=r"\delta^{{{ii}}}_{{{ii}}} = \dim M",
+        slots={"ii": S(_IDX_POOL)},
+    ),
+]
+
 _W_DIFFGEOM: list[float] = compute_weights(_DIFFGEOM_TEMPLATES)
 
 # ---------------------------------------------------------------------------

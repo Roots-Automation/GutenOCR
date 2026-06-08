@@ -34,6 +34,7 @@ _COORD_POOL = ("x", "y", "z", "r", r"\theta", r"\phi")
 _Q_POOL = ("q", r"q_i", r"q_k", r"q_j")
 _P_POOL = ("p", r"p_i", r"p_k", r"\pi")
 _IDX_POOL = ("i", "j", "k", "n", "m")
+_SPACETIME_IDX_POOL = (r"\mu", r"\nu", r"\rho", r"\sigma", r"\lambda", r"\kappa")
 _N_POOL = ("n", "m", "N", r"n_0")
 _LAM_POOL = (r"\lambda", r"\Lambda", r"\mu", r"\kappa")
 _SIGMA_POOL = (r"\sigma", r"\Sigma", r"\sigma_0")
@@ -576,26 +577,26 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="lagrangian_density_field",
         latex=(
-            r"\mathcal{{L}}\bigl({fn1},\,\partial_{{{ii}}}{fn1}\bigr)"
+            r"\mathcal{{L}}\bigl({fn1},\,\partial_{{{mu}}}{fn1}\bigr)"
             r" = {fn2}({fn1}) - V({fn1})"
         ),
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
-            "ii": S(_IDX_POOL),
+            "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
     Template(
         name="noether_current",
         latex=(
-            r"j^{{{ii}}} ="
-            r" \frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{ii}}}{fn1})}}"
+            r"j^{{{mu}}} ="
+            r" \frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{mu}}}{fn1})}}"
             r"\,\delta {fn2}"
         ),
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
-            "ii": S(_IDX_POOL),
+            "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
     Template(
@@ -613,13 +614,13 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="field_equation_general",
         latex=(
-            r"\partial_{{{ii}}}\frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{ii}}}{fn1})}}"
+            r"\partial_{{{mu}}}\frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{mu}}}{fn1})}}"
             r" - \frac{{\partial \mathcal{{L}}}}{{\partial {fn2}}} = 0"
         ),
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
-            "ii": S(_IDX_POOL),
+            "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
 ]
@@ -882,6 +883,149 @@ _PHYSICS_TEMPLATES += [
         name="complex_impedance_Re_Im",
         latex=r"Z = \Re(Z) + i\,\Im(Z)",
         slots={},
+    ),
+]
+
+# ---- Tensor/index notation additions ----------------------------------------
+_PHYSICS_TEMPLATES += [
+    # -- Electromagnetic field tensor --
+    Template(
+        name="em_field_tensor_def",
+        latex=r"F_{{{mu}{nu}}} = \partial_{{{mu}}} A_{{{nu}}} - \partial_{{{nu}}} A_{{{mu}}}",
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+        },
+    ),
+    Template(
+        name="em_maxwell_covariant",
+        latex=r"\partial_{{{mu}}} F^{{{mu}{nu}}} = {mu0}\,j^{{{nu}}}",
+        slots={
+            "mu0": S(_MU0_POOL),
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+        },
+    ),
+    Template(
+        name="em_bianchi_covariant",
+        latex=(
+            r"\partial_{{{mu}}} F_{{{nu}{rho}}}"
+            r" + \partial_{{{nu}}} F_{{{rho}{mu}}}"
+            r" + \partial_{{{rho}}} F_{{{mu}{nu}}} = 0"
+        ),
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+            "rho": X(_SPACETIME_IDX_POOL, ("mu", "nu")),
+        },
+    ),
+    # -- 4-vector notation --
+    Template(
+        name="four_momentum_def",
+        latex=r"p^{{{mu}}} = ({ee}/c,\, \mathbf{{p}})",
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "ee": S(_ENERGY_POOL),
+        },
+    ),
+    Template(
+        name="four_vector_norm",
+        latex=r"p_{{{mu}}} p^{{{mu}}} = -{mm}^2 c^2",
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "mm": S(_MASS_POOL),
+        },
+    ),
+    Template(
+        name="minkowski_metric_idx",
+        latex=r"ds^2 = \eta_{{{mu}{nu}}} dx^{{{mu}}} dx^{{{nu}}}",
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+        },
+    ),
+    Template(
+        name="stress_energy_conservation",
+        latex=r"\partial_{{{mu}}} T^{{{mu}{nu}}} = 0",
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+        },
+    ),
+    # -- Levi-Civita symbol (parameterized) --
+    Template(
+        name="levi_civita_3d_cross",
+        latex=(
+            r"(\mathbf{{A}}\times\mathbf{{B}})^{{{ii}}}"
+            r" = \varepsilon^{{{ii}{jj}{kk}}} A_{{{jj}}} B_{{{kk}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+        },
+    ),
+    Template(
+        name="levi_civita_3d_curl",
+        latex=(
+            r"(\nabla\times\mathbf{{A}})^{{{ii}}}"
+            r" = \varepsilon^{{{ii}{jj}{kk}}} \partial_{{{jj}}} A_{{{kk}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+        },
+    ),
+    Template(
+        name="levi_civita_contraction",
+        latex=(
+            r"\varepsilon_{{{ii}{jj}{kk}}} \varepsilon^{{{ii}{ll}{mm}}}"
+            r" = \delta^{{{ll}}}_{{{jj}}} \delta^{{{mm}}}_{{{kk}}}"
+            r" - \delta^{{{ll}}}_{{{kk}}} \delta^{{{mm}}}_{{{jj}}}"
+        ),
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+            "kk": X(_IDX_POOL, ("ii", "jj")),
+            "ll": X(_IDX_POOL, ("ii", "jj", "kk")),
+            "mm": X(_IDX_POOL, ("ii", "jj", "kk", "ll")),
+        },
+    ),
+    Template(
+        name="levi_civita_4d_dual",
+        latex=(
+            r"\tilde{{F}}^{{{mu}{nu}}}"
+            r" = \tfrac{{1}}{{2}} \varepsilon^{{{mu}{nu}{rho}{sig}}} F_{{{rho}{sig}}}"
+        ),
+        slots={
+            "mu": S(_SPACETIME_IDX_POOL),
+            "nu": X(_SPACETIME_IDX_POOL, ("mu",)),
+            "rho": X(_SPACETIME_IDX_POOL, ("mu", "nu")),
+            "sig": X(_SPACETIME_IDX_POOL, ("mu", "nu", "rho")),
+        },
+    ),
+    # -- Kronecker delta as tensor --
+    Template(
+        name="kronecker_mixed",
+        latex=r"\delta^{{{ii}}}_{{{jj}}}",
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="kronecker_trace",
+        latex=r"\delta^{{{ii}}}_{{{ii}}} = n",
+        slots={"ii": S(_IDX_POOL)},
+    ),
+    Template(
+        name="kronecker_contraction",
+        latex=r"\delta^{{{ii}}}_{{{jj}}} T^{{{jj}}} = T^{{{ii}}}",
+        slots={
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
     ),
 ]
 
