@@ -87,6 +87,8 @@ _MONAD_POOL: tuple[str, ...] = (
     r"\mathbb{M}",
 )  # 6
 
+_CT_IDX_POOL: tuple[str, ...] = ("n", "m", "k", "i", "j")  # 5
+
 # ---------------------------------------------------------------------------
 # Part A: Basic Category Theory (8 templates)
 # ---------------------------------------------------------------------------
@@ -631,7 +633,7 @@ _TEMPLATES_B5: list[Template] = [
     ),  # n_eff = 9×6×10 = 540
     Template(
         name="monad_associativity",
-        latex=r"{nat} \circ {mon}{nat} = {nat} \circ {nat}{mon}",
+        latex=r"{nat} \circ {mon} {nat} = {nat} \circ {nat} {mon}",
         slots={
             "nat": S(_NAT_POOL),
             "mon": S(_MONAD_POOL),
@@ -949,8 +951,101 @@ _TEMPLATES_C: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Part D: \coprod, \amalg, \bigotimes, \bigodot, \rightsquigarrow, \multimap (10)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="coprod_indexed",
+        latex=r"\coprod_{{{ii}}} {AA}_{{{ii}}}",
+        slots={"ii": S(_CT_IDX_POOL), "AA": S(_OBJ_POOL)},
+    ),
+    Template(
+        name="amalg_binary",
+        latex=r"{aa} \amalg {bb}",
+        slots={"aa": S(_OBJ_POOL), "bb": X(_OBJ_POOL, ("aa",))},
+    ),
+    Template(
+        name="coprod_universal",
+        latex=r"\exists!\, {uu} : \coprod_{{{ii}}} {AA}_{{{ii}}} \to {BB}",
+        slots={
+            "ii": S(_CT_IDX_POOL),
+            "AA": S(_OBJ_POOL),
+            "BB": X(_OBJ_POOL, ("AA",)),
+            "uu": S(_MOR_POOL),
+        },
+    ),
+    Template(
+        name="bigotimes_indexed",
+        latex=r"\bigotimes_{{{ii}=1}}^{{n}} {VV}_{{{ii}}}",
+        slots={"ii": S(_CT_IDX_POOL), "VV": S(_OBJ_POOL)},
+    ),
+    Template(
+        name="bigotimes_cat_indexed",
+        latex=r"\bigotimes_{{i \in {II}}} {VV}_i",
+        slots={"II": S(_CAT_POOL), "VV": S(_OBJ_POOL)},
+    ),
+    Template(
+        name="bigodot_indexed",
+        latex=r"\bigodot_{{{ii}}} {FF}_{{{ii}}}",
+        slots={"ii": S(_CT_IDX_POOL), "FF": S(_FUN_POOL)},
+    ),
+    Template(
+        name="rightsquigarrow_obj",
+        latex=r"{AA} \rightsquigarrow {BB}",
+        slots={"AA": S(_OBJ_POOL), "BB": X(_OBJ_POOL, ("AA",))},
+    ),
+    Template(
+        name="rightsquigarrow_fun",
+        latex=r"{FF} \rightsquigarrow {GG}",
+        slots={"FF": S(_FUN_POOL), "GG": X(_FUN_POOL, ("FF",))},
+    ),
+    Template(
+        name="multimap_internal_hom",
+        latex=r"{AA} \multimap {BB} \cong \hom({AA}, {BB})",
+        slots={"AA": S(_OBJ_POOL), "BB": X(_OBJ_POOL, ("AA",))},
+    ),
+    Template(
+        name="multimap_currying",
+        latex=(
+            r"\hom({AA} \otimes {BB}, {CC})"
+            r" \cong \hom({AA}, {BB} \multimap {CC})"
+        ),
+        slots={
+            "AA": S(_OBJ_POOL),
+            "BB": X(_OBJ_POOL, ("AA",)),
+            "CC": X(_OBJ_POOL, ("AA", "BB")),
+        },
+    ),
+]
+
+# ---------------------------------------------------------------------------
 # Assembly
 # ---------------------------------------------------------------------------
+
+_TEMPLATES_E: list[Template] = [
+    Template(
+        name="weak_equivalence",
+        latex=r"{fun}: {cat1} \xrightarrow{{\;\sim\;}} {cat2},\quad {cat1} \simeq {cat2}",
+        slots={"fun": S(_FUN_POOL), "cat1": S(_CAT_POOL), "cat2": X(_CAT_POOL, ("cat1",))},
+    ),
+    Template(
+        name="external_product_functor",
+        latex=r"{fun1} \boxtimes {fun2}: {cat1} \times {cat2} \to {cat3}",
+        slots={
+            "fun1": S(_FUN_POOL),
+            "fun2": X(_FUN_POOL, ("fun1",)),
+            "cat1": S(_CAT_POOL),
+            "cat2": X(_CAT_POOL, ("cat1",)),
+            "cat3": X(_CAT_POOL, ("cat1", "cat2")),
+        },
+    ),
+    Template(
+        name="boxtimes_symmetry",
+        latex=r"{AA} \boxtimes {BB} \simeq {BB} \boxtimes {AA} \quad \text{{in }} {cat}",
+        slots={"AA": S(_OBJ_POOL), "BB": X(_OBJ_POOL, ("AA",)), "cat": S(_CAT_POOL)},
+    ),
+]
 
 _CATTHY_TEMPLATES: list[Template] = (
     _TEMPLATES_A
@@ -962,6 +1057,8 @@ _CATTHY_TEMPLATES: list[Template] = (
     + _TEMPLATES_B6
     + _TEMPLATES_B7
     + _TEMPLATES_C
+    + _TEMPLATES_D
+    + _TEMPLATES_E
 )
 _W_CATTHY: list[float] = compute_weights(_CATTHY_TEMPLATES)
 _category_theory = make_dispatcher(_CATTHY_TEMPLATES, _W_CATTHY)

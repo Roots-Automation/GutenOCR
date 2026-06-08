@@ -815,7 +815,7 @@ _PROB_TEMPLATES += [
     ),
     Template(
         name="fn_characteristic_fn_pair",
-        latex=r"{fn1}(\varphi_{{{rv}}}({tt})) = {fn2}\!\left(\mathbb{{E}}[e^{{i{tt}{rv}}}]\right)",
+        latex=r"{fn1}(\varphi_{{{rv}}}({tt})) = {fn2}\!\left(\mathbb{{E}}[e^{{i{tt} {rv}}}]\right)",
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
@@ -828,6 +828,29 @@ _PROB_TEMPLATES += [
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------
+
+_PROB_TEMPLATES += [
+    Template(
+        name="sample_mean_normal_approx",
+        latex=r"\bar{{{rv}}}_{{{nn}}} \approx \mathcal{{N}}\!\left({mu},\,\frac{{{sig}^2}}{{{nn}}}\right)",
+        slots={"rv": S(_RV_POOL), "nn": S(_N_POOL), "mu": S(_MU_POOL), "sig": S(_SIG_POOL)},
+    ),
+    Template(
+        name="poisson_binomial_approx",
+        latex=r"\operatorname{{Bin}}({nn},\,{pp}) \approx \operatorname{{Poisson}}({nn}\,{pp}) \quad ({nn}\text{{ large, }}{pp}\text{{ small}})",
+        slots={"nn": S(_N_POOL), "pp": S(_P_POOL)},
+    ),
+    Template(
+        name="stirling_approx",
+        latex=r"{nn}!\approx\sqrt{{2\pi\,{nn}}}\left(\frac{{{nn}}}{{e}}\right)^{{{nn}}}",
+        slots={"nn": S(_N_POOL)},
+    ),
+    Template(
+        name="normal_cdf_approx",
+        latex=r"{op}\!\left(\frac{{{rv}-{mu}}}{{{sig}}} \leq {aa}\right) \approx \Phi({aa})",
+        slots={"op": S(_PROB_OP), "rv": S(_RV_POOL), "mu": S(_MU_POOL), "sig": S(_SIG_POOL), "aa": S(_A_POOL)},
+    ),
+]
 
 _W_PROB: list[float] = compute_weights(_PROB_TEMPLATES)
 

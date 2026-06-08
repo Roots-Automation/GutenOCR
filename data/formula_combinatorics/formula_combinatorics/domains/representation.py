@@ -307,8 +307,8 @@ _TEMPLATES_B3: list[Template] = [
         name="induced_character",
         latex=(
             r"\chi_{{\operatorname{{Ind}}_{{{HH}}}^{{{GG}}}{rr}}}({gg}) = "
-            r"\frac{{1}}{{|{HH}|}} \sum_{{x \in {GG},\, x^{{-1}}{gg}x \in {HH}}} "
-            r"\chi_{{{rr}}}(x^{{-1}}{gg}x)"
+            r"\frac{{1}}{{|{HH}|}} \sum_{{x \in {GG},\, x^{{-1}} {gg} x \in {HH}}} "
+            r"\chi_{{{rr}}}(x^{{-1}} {gg} x)"
         ),
         slots={
             "GG": S(_GROUP_POOL),
@@ -692,6 +692,39 @@ _TEMPLATES_C: list[Template] = [
 # Assembly
 # ---------------------------------------------------------------------------
 
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="rep_isomorphism_simeq",
+        latex=r"{rr} \simeq {ss} \iff \exists\text{{ invertible intertwiner }} {phi}: {rr} \xrightarrow{{\sim}} {ss}",
+        slots={"rr": S(_REP_POOL), "ss": X(_REP_POOL, ("rr",)), "phi": S(_HOMO_POOL)},
+    ),
+    Template(
+        name="character_determines_rep",
+        latex=r"\chi_{{{rr}}} = \chi_{{{ss}}} \implies {rr} \simeq {ss}",
+        slots={"rr": S(_REP_POOL), "ss": X(_REP_POOL, ("rr",))},
+    ),
+    Template(
+        name="external_tensor_product",
+        latex=r"({rr} \boxtimes {ss})({gg},\,{hh}) = {rr}({gg}) \otimes {ss}({hh})",
+        slots={
+            "rr": S(_REP_POOL),
+            "ss": X(_REP_POOL, ("rr",)),
+            "gg": S(_ELEM_POOL),
+            "hh": X(_ELEM_POOL, ("gg",)),
+        },
+    ),
+    Template(
+        name="boxtimes_character",
+        latex=r"\chi_{{{rr} \boxtimes {ss}}}({gg},\,{hh}) = \chi_{{{rr}}}({gg})\,\chi_{{{ss}}}({hh})",
+        slots={
+            "rr": S(_REP_POOL),
+            "ss": X(_REP_POOL, ("rr",)),
+            "gg": S(_ELEM_POOL),
+            "hh": X(_ELEM_POOL, ("gg",)),
+        },
+    ),
+]
+
 _REPR_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -702,6 +735,7 @@ _REPR_TEMPLATES: list[Template] = (
     + _TEMPLATES_B6
     + _TEMPLATES_B7
     + _TEMPLATES_C
+    + _TEMPLATES_D
 )
 
 _W_REPR: list[float] = compute_weights(_REPR_TEMPLATES)

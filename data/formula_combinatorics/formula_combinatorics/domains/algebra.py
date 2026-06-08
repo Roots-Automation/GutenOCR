@@ -1453,6 +1453,106 @@ _ALGEBRA_TEMPLATES: list[Template] = [
     ),
 ]
 
+_MAT_POOL: tuple[str, ...] = ("A", "B", "C", "M", "T", "U")
+
+_ALGEBRA_TEMPLATES += [
+    # \leqslant / \geqslant
+    Template(
+        name="leqslant_chain",
+        latex=r"{aa} \leqslant {bb} \leqslant {cc}",
+        slots={
+            "aa": S(tuple(_UNION)),
+            "bb": S(tuple(_UNION)),
+            "cc": S(tuple(_UNION)),
+        },
+        distinct=[["aa", "bb", "cc"]],
+    ),
+    Template(
+        name="norm_leqslant_bound",
+        latex=r"\|{vv}\| \leqslant {aa} \|{ww}\|",
+        slots={
+            "vv": S(tuple(_VARS)),
+            "ww": S(tuple(_VARS)),
+            "aa": S(tuple(_SCALARS)),
+        },
+        distinct=[["vv", "ww"]],
+    ),
+    Template(
+        name="abs_geqslant_eps",
+        latex=r"|{xx}| \geqslant {eps}",
+        slots={
+            "xx": S(tuple(_VARS)),
+            "eps": E(_eps_sub, n=2),
+        },
+    ),
+    # \lll / \ggg
+    Template(
+        name="much_less_than",
+        latex=r"{aa} \lll {bb}",
+        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        distinct=[["aa", "bb"]],
+    ),
+    Template(
+        name="much_greater_than",
+        latex=r"{aa} \ggg {bb}",
+        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        distinct=[["aa", "bb"]],
+    ),
+    # \lesssim / \gtrsim
+    Template(
+        name="norm_lesssim_power",
+        latex=r"\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}",
+        slots={
+            "ff": E(_fn_rich_nosub, n=100),
+            "xx": S(tuple(_VARS)),
+            "nn": S(_EXP_POOL),
+        },
+    ),
+    Template(
+        name="gtrsim_scalars",
+        latex=r"{aa} \gtrsim {bb}",
+        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        distinct=[["aa", "bb"]],
+    ),
+    # \dagger — adjoint operator
+    Template(
+        name="adjoint_involutive",
+        latex=r"({AA}^{{\dagger}})^{{\dagger}} = {AA}",
+        slots={"AA": S(_MAT_POOL)},
+    ),
+    Template(
+        name="adjoint_anti_multiplicative",
+        latex=r"({AA} {BB})^{{\dagger}} = {BB}^{{\dagger}} {AA}^{{\dagger}}",
+        slots={"AA": S(_MAT_POOL), "BB": S(_MAT_POOL)},
+        distinct=[["AA", "BB"]],
+    ),
+    Template(
+        name="adjoint_inner_product",
+        latex=r"\langle {AA} {uu}, {vv} \rangle = \langle {uu}, {AA}^{{\dagger}} {vv} \rangle",
+        slots={
+            "AA": S(_MAT_POOL),
+            "uu": S(tuple(_VARS)),
+            "vv": S(tuple(_VARS)),
+        },
+        distinct=[["uu", "vv"]],
+    ),
+    # \ddagger — bidual
+    Template(
+        name="bidual_notation",
+        latex=r"{AA}^{{\ddagger}} = ({AA}^{{\dagger}})^{{\dagger}}",
+        slots={"AA": S(_MAT_POOL)},
+    ),
+    Template(
+        name="bidual_canonical_embedding",
+        latex=r"\iota : V \hookrightarrow V^{{\ddagger}},\quad \iota({vv})({ff}) = {ff}({vv})",
+        slots={
+            "vv": S(tuple(_VARS)),
+            "ff": S(("f", "g", "h", "F", "G")),
+        },
+        distinct=[["vv", "ff"]],
+    ),
+]
+
 # Sampling weights (sqrt of n_eff for balanced coverage)
 # ---------------------------------------------------------------------------
 

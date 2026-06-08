@@ -842,6 +842,61 @@ _SET_THEORY_TEMPLATES += [
     ),
 ]
 
+_SET_THEORY_TEMPLATES += [
+    Template(
+        name="complement_superscript_eq",
+        latex=r"{AA}^c = \complement_{{{UU}}} {AA}",
+        slots={
+            "AA": S(_SET_POOL),
+            "UU": X(_SET_POOL, ("AA",)),
+        },
+    ),
+    Template(
+        name="complement_de_morgan_union",
+        latex=(
+            r"\complement_{{{UU}}} ({AA} \cup {BB})"
+            r" = \complement_{{{UU}}} {AA} \cap \complement_{{{UU}}} {BB}"
+        ),
+        slots={
+            "AA": S(_SET_POOL),
+            "BB": X(_SET_POOL, ("AA",)),
+            "UU": X(_SET_POOL, ("AA", "BB")),
+        },
+    ),
+    Template(
+        name="complement_de_morgan_intersection",
+        latex=(
+            r"\complement_{{{UU}}} ({AA} \cap {BB})"
+            r" = \complement_{{{UU}}} {AA} \cup \complement_{{{UU}}} {BB}"
+        ),
+        slots={
+            "AA": S(_SET_POOL),
+            "BB": X(_SET_POOL, ("AA",)),
+            "UU": X(_SET_POOL, ("AA", "BB")),
+        },
+    ),
+    Template(
+        name="gimel_beth_power",
+        latex=r"\gimel(\aleph_{{{nn}}}) = 2^{{\aleph_{{{nn}}}}}",
+        slots={"nn": S(_IDX_POOL)},
+    ),
+    Template(
+        name="gimel_cofinality",
+        latex=r"\gimel(\kappa) = \kappa^{{\mathrm{{cf}}(\kappa)}}",
+        slots={},
+    ),
+    Template(
+        name="daleth_recursion",
+        latex=r"\daleth_0 = \aleph_0,\quad \daleth_{{n+1}} = 2^{{\daleth_n}}",
+        slots={},
+    ),
+    Template(
+        name="daleth_gimel_leq",
+        latex=r"\daleth_{{{nn}}} \leq \gimel(\aleph_{{{nn}}})",
+        slots={"nn": S(_IDX_POOL)},
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------

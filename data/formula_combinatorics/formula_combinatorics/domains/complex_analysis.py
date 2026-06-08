@@ -32,6 +32,7 @@ _FUNC_POOL = ("f", "g", "h", "F", "G", r"\phi", r"\psi", r"\Phi")  # 8
 _INT_POOL = ("m", "n", "k", "p", "q")  # 5
 _COMP_POOL = ("u", "v", r"\varphi", r"\psi", "a", "b")  # 6 — component names
 _MOBIUS_POOL = ("a", "b", "c", "d", r"\alpha", r"\beta", r"\gamma", r"\delta")  # 8
+_NOME_POOL = ("q", r"q_0", "r")  # nome variable for Jacobi theta functions
 
 # ---------------------------------------------------------------------------
 # Part A: Reparameterized originals (14 templates)
@@ -87,8 +88,8 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="mobius_transformation",
         latex=(
-            r"w = \frac{{{aa}z + {bb}}}{{{cc}z + {dd}}},"
-            r"\quad {aa}{dd} - {bb}{cc} \neq 0"
+            r"w = \frac{{{aa} z + {bb}}}{{{cc} z + {dd}}},"
+            r"\quad {aa} {dd} - {bb} {cc} \neq 0"
         ),
         slots={
             "aa": S(_MOBIUS_POOL),
@@ -163,12 +164,12 @@ _TEMPLATES_B1: list[Template] = [
     ),
     Template(
         name="argument_sum",
-        latex=r"\arg({zz1}{zz2}) = \arg{zz1} + \arg{zz2} \pmod{{2\pi}}",
+        latex=r"\arg({zz1} {zz2}) = \arg {zz1} + \arg {zz2} \pmod{{2\pi}}",
         slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
     ),
     Template(
         name="complex_product_polar",
-        latex=r"|{zz1}{zz2}| = |{zz1}|\,|{zz2}|",
+        latex=r"|{zz1} {zz2}| = |{zz1}|\,|{zz2}|",
         slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
     ),
     Template(
@@ -191,8 +192,8 @@ _TEMPLATES_B2: list[Template] = [
     Template(
         name="complex_derivative_def",
         latex=(
-            r"{ff}'({zz}) = \lim_{{\Delta{zz}\to 0}}"
-            r"\frac{{{ff}({zz}+\Delta{zz})-{ff}({zz})}}{{\Delta{zz}}}"
+            r"{ff}'({zz}) = \lim_{{\Delta {zz}\to 0}}"
+            r"\frac{{{ff}({zz}+\Delta {zz})-{ff}({zz})}}{{\Delta {zz}}}"
         ),
         slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL)},
     ),
@@ -311,7 +312,7 @@ _TEMPLATES_B3: list[Template] = [
     Template(
         name="jordan_estimate",
         latex=(
-            r"\left| \int_{{C_R}} {ff}({zz}) e^{{i{aa}{zz}}} \, d{zz} \right| \to 0"
+            r"\left| \int_{{C_R}} {ff}({zz}) e^{{i{aa} {zz}}} \, d{zz} \right| \to 0"
             r"\text{{ as }} R \to \infty"
         ),
         slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "zz": S(_VAR_POOL)},
@@ -606,6 +607,80 @@ _TEMPLATES_C: list[Template] = [
 # Assemble all templates
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Part D: Jacobi theta functions (\vartheta)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="jacobi_theta_series",
+        latex=(
+            r"\vartheta_3({zz}, {qq}) = "
+            r"\sum_{{n=-\infty}}^{{\infty}} {qq}^{{n^2}} e^{{2\pi i n {zz}}}"
+        ),
+        slots={"zz": S(_VAR_POOL), "qq": S(_NOME_POOL)},
+    ),
+    Template(
+        name="jacobi_theta_product",
+        latex=(
+            r"\vartheta_3(0, {qq}) = "
+            r"\prod_{{n=1}}^{{\infty}} (1-{qq}^{{2n}})(1+{qq}^{{2n-1}})^2"
+        ),
+        slots={"qq": S(_NOME_POOL)},
+    ),
+    Template(
+        name="jacobi_theta_identity",
+        latex=r"\vartheta_3(0,{qq})^4 = \vartheta_2(0,{qq})^4 + \vartheta_4(0,{qq})^4",
+        slots={"qq": S(_NOME_POOL)},
+    ),
+    Template(
+        name="jacobi_theta_symmetry",
+        latex=r"\vartheta_3({zz}, {qq}) = \vartheta_3(-{zz}, {qq})",
+        slots={"zz": S(_VAR_POOL), "qq": S(_NOME_POOL)},
+    ),
+    Template(
+        name="jacobi_theta_modular",
+        latex=(
+            r"\vartheta_3\!\left(0,\, e^{{-\pi {tt}}}\right)"
+            r" = \frac{{1}}{{\sqrt{{{tt}}}}}\; \vartheta_3\!\left(0,\, e^{{-\pi/{tt}}}\right)"
+        ),
+        slots={"tt": S(_REAL_POOL)},
+    ),
+]
+
+_TEMPLATES_E: list[Template] = [
+    Template(
+        name="weierstrass_p_definition",
+        latex=(
+            r"\wp(z;\, g_2, g_3) = \frac{{1}}{{z^2}}"
+            r" + \sum_{{(m,n)\neq(0,0)}} \left("
+            r"\frac{{1}}{{(z - \omega_{{mn}})^2}} - \frac{{1}}{{\omega_{{mn}}^2}}"
+            r"\right)"
+        ),
+        slots={},
+    ),
+    Template(
+        name="weierstrass_p_ode",
+        latex=r"(\wp')^2 = 4\wp^3 - g_2 \wp - g_3",
+        slots={},
+    ),
+    Template(
+        name="weierstrass_p_periodicity",
+        latex=r"\wp(z + \omega_1) = \wp(z + \omega_2) = \wp(z)",
+        slots={},
+    ),
+    Template(
+        name="weierstrass_p_even",
+        latex=r"\wp(-z) = \wp(z)",
+        slots={},
+    ),
+    Template(
+        name="complex_cartesian_imath",
+        latex=r"z = x + \imath\, y,\quad \bar{{z}} = x - \imath\, y",
+        slots={},
+    ),
+]
+
 _COMPLEX_TEMPLATES: list[Template] = (
     _TEMPLATES_A
     + _TEMPLATES_B1
@@ -616,6 +691,8 @@ _COMPLEX_TEMPLATES: list[Template] = (
     + _TEMPLATES_B6
     + _TEMPLATES_B7
     + _TEMPLATES_C
+    + _TEMPLATES_D
+    + _TEMPLATES_E
 )
 
 # ---------------------------------------------------------------------------

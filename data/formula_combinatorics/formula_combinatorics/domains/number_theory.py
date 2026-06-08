@@ -15,6 +15,9 @@ from .._vocab import _fn_rich_nosub
 _IDX_POOL: tuple[str, ...] = ("n", "m", "k", "j", "r", "l", "s", "t", "i", "p", "N", "M")
 _INT_POOL: tuple[str, ...] = ("a", "b", "c", "d", "u", "v", "x", "y")
 _PRIME_POOL: tuple[str, ...] = ("p", "q", "r", "s", "l", "t", r"p_1", r"p_2", r"q_1", r"q_2", r"\ell", "u")
+# Restricted pool for templates that append their own subscripts to {pp} — using
+# pre-subscripted values like p_2 would produce invalid double-subscript LaTeX (p_2_i).
+_PRIME_BASE_POOL: tuple[str, ...] = tuple(v for v in _PRIME_POOL if "_" not in v)
 _MOD_POOL: tuple[str, ...] = ("m", "n", "p", "q", "N", "M", "k", "r", "P", "Q")
 _FUNC_POOL: tuple[str, ...] = ("f", "g", "h", r"\phi", r"\psi", r"\chi", r"\varphi", r"\xi", r"\eta", r"\zeta")
 _ALPHA_POOL: tuple[str, ...] = (
@@ -239,7 +242,7 @@ _TEMPLATES_B1: list[Template] = [
         name="divisibility_def",
         latex=(
             r"{aa} \mid {bb}"
-            r" \iff \exists {cc} \in \mathbb{{Z}},\; {bb} = {cc}\cdot{aa}"
+            r" \iff \exists {cc} \in \mathbb{{Z}},\; {bb} = {cc} \cdot {aa}"
         ),
         slots={
             "aa": S(_INT_POOL),
@@ -271,7 +274,7 @@ _TEMPLATES_B1: list[Template] = [
         name="lcm_via_gcd",
         latex=(
             r"\operatorname{{lcm}}({aa},{bb})"
-            r" = \frac{{{aa}\cdot{bb}}}{{\gcd({aa},{bb})}}"
+            r" = \frac{{{aa} \cdot {bb}}}{{\gcd({aa},{bb})}}"
         ),
         slots={
             "aa": S(_INT_POOL),
@@ -289,7 +292,7 @@ _TEMPLATES_B1: list[Template] = [
         slots={
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
-            "pp": S(_PRIME_POOL),
+            "pp": S(_PRIME_BASE_POOL),
         },
     ),
     Template(
@@ -312,7 +315,7 @@ _TEMPLATES_B1: list[Template] = [
         ),
         slots={
             "nn": S(_IDX_POOL),
-            "pp": S(_PRIME_POOL),
+            "pp": S(_PRIME_BASE_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
     ),
@@ -1045,7 +1048,7 @@ _TEMPLATES_C += [
     ),
     Template(
         name="fn_arithmetic_pair",
-        latex=r"{fn1}({aa}\cdot{bb}) = {fn2}({aa})\cdot{fn2}({bb}),\quad \gcd({aa},{bb})=1",
+        latex=r"{fn1}({aa} \cdot {bb}) = {fn2}({aa}) \cdot {fn2}({bb}),\quad \gcd({aa},{bb})=1",
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),

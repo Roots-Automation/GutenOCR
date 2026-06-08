@@ -663,6 +663,85 @@ _CALCULUS_TEMPLATES: list[Template] = [
     ),
 ]
 
+_CALCULUS_TEMPLATES += [
+    # C1: inverse trig derivatives and identity
+    Template(
+        name="deriv_arcsin",
+        latex=r"\frac{{d}}{{d{vv}}} \arcsin({vv}) = \frac{{1}}{{\sqrt{{1 - {vv}^2}}}}",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="deriv_arccos",
+        latex=r"\frac{{d}}{{d{vv}}} \arccos({vv}) = -\frac{{1}}{{\sqrt{{1 - {vv}^2}}}}",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="deriv_arctan",
+        latex=r"\frac{{d}}{{d{vv}}} \arctan({vv}) = \frac{{1}}{{1 + {vv}^2}}",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="arctan_complement_identity",
+        latex=r"\arctan({vv}) + \arctan\!\left(\frac{{1}}{{{vv}}}\right) = \frac{{\pi}}{{2}}",
+        slots={"vv": S(_VARS)},
+    ),
+    # C2: hyperbolic and trig identities/derivatives
+    Template(
+        name="deriv_tanh",
+        latex=r"\frac{{d}}{{d{vv}}} \tanh({vv}) = \operatorname{{sech}}^2({vv})",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="deriv_coth",
+        latex=r"\frac{{d}}{{d{vv}}} \coth({vv}) = -\operatorname{{csch}}^2({vv})",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="csc_pythagorean_identity",
+        latex=r"\csc^2({vv}) = 1 + \cot^2({vv})",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="csc_reciprocal",
+        latex=r"\csc({vv}) = \frac{{1}}{{\sin({vv})}}",
+        slots={"vv": S(_VARS)},
+    ),
+    # C3: vector displacement (overrightarrow)
+    Template(
+        name="vector_displacement",
+        latex=r"\overrightarrow{{AB}} = {bb} - {aa}",
+        slots={
+            "aa": S(_VARS),
+            "bb": X(_VARS, ("aa",)),
+        },
+    ),
+    Template(
+        name="vector_displacement_magnitude",
+        latex=r"|\overrightarrow{{AB}}| = \sqrt{{(B_1 - A_1)^2 + (B_2 - A_2)^2}}",
+        slots={},
+    ),
+    # C4: underbrace and overbrace annotations
+    Template(
+        name="underbrace_polynomial",
+        latex=r"\underbrace{{a_0 + a_1 {vv} + \cdots + a_n {vv}^n}}_{{n+1 \text{{ terms}}}}",
+        slots={"vv": S(_VARS)},
+    ),
+    Template(
+        name="overbrace_binomial",
+        latex=(
+            r"\overbrace{{(1 + {vv})^n}}^{{n \text{{ factors}}}} = "
+            r"\sum_{{k=0}}^{{n}} \binom{{n}}{{k}} {vv}^k"
+        ),
+        slots={"vv": S(_VARS)},
+    ),
+    # C5: four-dimensional integral (iiiint)
+    Template(
+        name="iiiint_domain",
+        latex=r"\iiiint_{{\Omega}} f(x,y,z,w)\, dx\, dy\, dz\, dw",
+        slots={},
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------

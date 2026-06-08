@@ -26,7 +26,7 @@ _MFLD_POOL = (
     r"\Gamma",
     r"\Lambda",
 )
-_METRIC_POOL = ("g", "h", "k", r"\gamma", r"\hat{g}", r"\tilde{g}", r"\bar{g}", r"g_0")
+_METRIC_POOL = ("g", "h", "k", r"\gamma", r"\hat{g}", r"\tilde{g}", r"\bar{g}", r"\mathring{g}")
 _IDX_POOL = ("i", "j", "k", "l", "m", "n")
 _PARAM_POOL = (r"\tau", r"\lambda", "s", "t", r"\sigma", "u", r"\mu", r"\rho")
 _BUNDLE_POOL = (
@@ -995,7 +995,7 @@ _DIFFGEOM_TEMPLATES += [
     ),
     Template(
         name="fn_lie_bracket",
-        latex=r"{fn1}([{xx},{yy}]) = {fn2}({xx}{yy} - {yy}{xx})",
+        latex=r"{fn1}([{xx},{yy}]) = {fn2}({xx} {yy} - {yy} {xx})",
         slots={
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
@@ -1066,6 +1066,94 @@ _DIFFGEOM_TEMPLATES += [
 # ---------------------------------------------------------------------------
 # Sampling weights
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Geodesic curvature templates (\varkappa)
+# ---------------------------------------------------------------------------
+
+_DIFFGEOM_TEMPLATES += [
+    Template(
+        name="geodesic_curvature_def",
+        latex=(
+            r"\varkappa_g(\gamma)"
+            r" = \left\langle \nabla_{{\dot{{\gamma}}}} \dot{{\gamma}},\, \mathbf{{n}} \right\rangle"
+        ),
+        slots={},
+    ),
+    Template(
+        name="gauss_bonnet_boundary",
+        latex=(
+            r"\iint_{{{mm}}} K \, dA"
+            r" + \int_{{\partial {mm}}} \varkappa_g \, ds"
+            r" = 2\pi \chi({mm})"
+        ),
+        slots={"mm": S(_MFLD_POOL)},
+    ),
+    Template(
+        name="geodesic_curvature_signed",
+        latex=r"\varkappa_g = \frac{{d\theta}}{{ds}} + \frac{{d\phi}}{{ds}}",
+        slots={},
+    ),
+    Template(
+        name="geodesic_curvature_covariant",
+        latex=(
+            r"\varkappa_g = {met}_{{{ii}{jj}}}\,"
+            r"\dot{{\gamma}}^{{{ii}}} \nabla_{{\dot{{\gamma}}}} \dot{{\gamma}}^{{{jj}}}"
+        ),
+        slots={
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+]
+
+_DIFFGEOM_TEMPLATES += [
+    # \pitchfork — transversality
+    Template(
+        name="transversality_notation",
+        latex=r"{mm} \pitchfork {nn}",
+        slots={"mm": S(_MFLD_POOL), "nn": S(_MFLD_POOL)},
+        distinct=[["mm", "nn"]],
+    ),
+    Template(
+        name="transversality_preimage",
+        latex=r"f \pitchfork {nn} \Rightarrow f^{{-1}}({nn}) \text{{ is a submanifold}}",
+        slots={"nn": S(_MFLD_POOL)},
+    ),
+    # \sharp, \flat — musical isomorphisms (metric-induced index raising/lowering)
+    Template(
+        name="sharp_index_raising",
+        latex=r"{al}^{{\sharp}} = {met}^{{{ii}{jj}}} {al}_{{{jj}}} \partial_{{{ii}}}",
+        slots={
+            "al": S(_FORM_POOL),
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="flat_index_lowering",
+        latex=r"{vf}^{{\flat}} = {met}_{{{ii}{jj}}} {vf}^{{{ii}}} dx^{{{jj}}}",
+        slots={
+            "vf": S(_VF_POOL),
+            "met": S(_METRIC_POOL),
+            "ii": S(_IDX_POOL),
+            "jj": X(_IDX_POOL, ("ii",)),
+        },
+    ),
+    Template(
+        name="sharp_flat_inverse",
+        latex=r"({al}^{{\sharp}})^{{\flat}} = {al},\quad ({vf}^{{\flat}})^{{\sharp}} = {vf}",
+        slots={"al": S(_FORM_POOL), "vf": S(_VF_POOL)},
+    ),
+    # \natural — natural map / canonical projection
+    Template(
+        name="natural_map_projection",
+        latex=r"\pi^{{\natural}} : T^*{mm} \to {mm}",
+        slots={"mm": S(_MFLD_POOL)},
+    ),
+]
 
 _W_DIFFGEOM: list[float] = compute_weights(_DIFFGEOM_TEMPLATES)
 

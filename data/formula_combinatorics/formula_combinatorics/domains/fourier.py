@@ -325,7 +325,7 @@ _PART_B_HA: list[Template] = [
     ),
     Template(
         name="cross_correlation",
-        latex=r"R_{{{ff}{gg}}}({tau}) = \int_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,d{tt}",
+        latex=r"R_{{{ff} {gg}}}({tau}) = \int_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,d{tt}",
         slots={"ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
     ),
     Template(
@@ -471,7 +471,7 @@ _PART_C: list[Template] = [
     ),
     Template(
         name="cross_correlation_ft",
-        latex=r"\widehat{{R_{{{fn1}{fn2}}}}}({xi}) = \overline{{\hat{{{fn1}}}({xi})}}\,\hat{{{fn2}}}({xi})",
+        latex=r"\widehat{{R_{{{fn1} {fn2}}}}}({xi}) = \overline{{\hat{{{fn1}}}({xi})}}\,\hat{{{fn2}}}({xi})",
         slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "xi": S(_FREQ_POOL)},
     ),
     Template(
@@ -500,7 +500,7 @@ _PART_C: list[Template] = [
     Template(
         name="autocorrelation_pair",
         latex=(
-            r"R_{{{fn1}{fn2}}}({tau})"
+            r"R_{{{fn1} {fn2}}}({tau})"
             r" = \int_{{-\infty}}^\infty {fn1}({tt})\,\overline{{{fn2}({tt}-{tau})}}\,d{tt}"
         ),
         slots={
@@ -518,7 +518,7 @@ _PART_C: list[Template] = [
     Template(
         name="laplace_product_pair",
         latex=(
-            r"\mathcal{{L}}\left\{{{fn1}(t)\cdot{fn2}(t)\right\}}({ss})"
+            r"\mathcal{{L}}\left\{{{fn1}(t) \cdot {fn2}(t)\right\}}({ss})"
             r" = \frac{{1}}{{2\pi i}}\int_{{{cc}-i\infty}}^{{{cc}+i\infty}} F_1(\sigma)\,F_2({ss}-\sigma)\,d\sigma"
         ),
         slots={
@@ -545,7 +545,35 @@ _PART_C: list[Template] = [
 # Assembly
 # ---------------------------------------------------------------------------
 
-_FOURIER_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C
+_PART_D: list[Template] = [
+    Template(
+        name="fourier_basis_orthogonality",
+        latex=r"\langle e_{{{nn}}}, e_{{{mm}}} \rangle_{{L^2[0,{T}]}} = 0, \quad {nn} \neq {mm}",
+        slots={"nn": S(_IDX_POOL), "mm": X(_IDX_POOL, ("nn",)), "T": S(_PERIOD_POOL)},
+    ),
+    Template(
+        name="sin_cos_orthogonality",
+        latex=r"\cos\!\tfrac{{2\pi\,{nn}\,{tt}}}{{{T}}} \perp \sin\!\tfrac{{2\pi\,{mm}\,{tt}}}{{{T}}} \;\text{{in }}\; L^2[0,{T}]",
+        slots={"nn": S(_IDX_POOL), "mm": X(_IDX_POOL, ("nn",)), "T": S(_PERIOD_POOL), "tt": S(_TIME_POOL)},
+    ),
+    Template(
+        name="hilbert_basis_perp",
+        latex=r"\langle {ff}, e_{{{nn}}} \rangle = 0 \;\forall\, {nn} \implies {ff} \perp \overline{{\mathrm{{span}}}}\{{e_n\}}",
+        slots={"ff": S(_FUNC_POOL), "nn": S(_IDX_POOL)},
+    ),
+    Template(
+        name="fourier_truncation_approx",
+        latex=r"{ff}({tt}) \approx \sum_{{|k| \leq {N}}} \hat{{{ff}}}(k)\, e^{{2\pi i\,k\,{tt}/{T}}}",
+        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "T": S(_PERIOD_POOL), "N": S(_SIZE_POOL)},
+    ),
+    Template(
+        name="dft_cft_approx",
+        latex=r"X[{nn}] \approx \hat{{x}}\!\left(\frac{{{nn}}}{{{N}\,\Delta t}}\right), \quad {nn} = 0,\ldots,{N}-1",
+        slots={"nn": S(_IDX_POOL), "N": S(_SIZE_POOL)},
+    ),
+]
+
+_FOURIER_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PART_D
 
 _W_FOURIER: list[float] = compute_weights(_FOURIER_TEMPLATES)
 

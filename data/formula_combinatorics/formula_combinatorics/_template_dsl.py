@@ -46,8 +46,55 @@ from __future__ import annotations
 
 import math
 import random
+import re
 from collections.abc import Callable
 from dataclasses import dataclass, field
+
+# ---------------------------------------------------------------------------
+# Index decoration pool (mirrors _maybe_idx in _vocab.py)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Greek-macro concatenation guard
+# ---------------------------------------------------------------------------
+
+_GREEK_CONCAT_RE = re.compile(
+    r"\\(?:"
+    # Greek letters (lowercase)
+    r"alpha|beta|gamma|delta|epsilon|varepsilon|zeta|eta|theta|vartheta|"
+    r"iota|kappa|lambda|mu(?!lti)|nu|xi|pi(?!tchfork)|varpi|rho|varrho|sigma|varsigma|tau|"
+    r"upsilon|phi|varphi|chi|psi|omega|"
+    # Greek letters (uppercase)
+    r"Gamma|Delta|Theta|Lambda|Xi|Pi|Sigma|Upsilon|Phi|Psi|Omega|"
+    # Other common single-purpose math commands.
+    # Negative lookaheads prevent matching valid longer commands:
+    #   \to -> exclude \top (?!p)
+    #   \cdot -> exclude \cdots (?!s)
+    r"partial|nabla|ell|neg|Box|Diamond|square|lozenge|arg|"
+    r"to(?!p)|"
+    r"cdot(?!s)|"
+    r"quad|qquad"  # \quad/\qquad followed by a letter → \quadX (undefined command)
+    r")[A-Za-z]"
+)
+
+# Double-subscript guard: catches p_2_1 style (unbraced single-char subscript
+# followed immediately by another subscript operator).
+_DOUBLE_SUB_RE = re.compile(r"[A-Za-z0-9]_[A-Za-z0-9]_")
+
+
+def _check_no_greek_concat(latex: str, name: str) -> None:
+    m = _GREEK_CONCAT_RE.search(latex)
+    if m:
+        snippet = latex[max(0, m.start() - 5) : m.end() + 5]
+        raise ValueError(
+            f"Template '{name}': Greek macro directly concatenated with a letter "
+            f"at position {m.start()}: ...{snippet!r}..."
+        )
+    m = _DOUBLE_SUB_RE.search(latex)
+    if m:
+        snippet = latex[max(0, m.start() - 5) : m.end() + 5]
+        raise ValueError(f"Template '{name}': double subscript (unbraced) at position {m.start()}: ...{snippet!r}...")
+
 
 # ---------------------------------------------------------------------------
 # Index decoration pool (mirrors _maybe_idx in _vocab.py)
@@ -240,7 +287,9 @@ def sample(t: Template, rng: random.Random) -> str:
         else:  # Slot
             draws[name] = s.draw(rng)
 
-    return t.latex.format(**draws)
+    result = t.latex.format(**draws)
+    _check_no_greek_concat(result, t.name)
+    return result
 
 
 # ---------------------------------------------------------------------------

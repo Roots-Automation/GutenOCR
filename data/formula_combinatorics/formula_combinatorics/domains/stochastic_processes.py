@@ -805,7 +805,7 @@ _TEMPLATES_B5: list[Template] = [
         name="inter_arrival_exponential",
         latex=(
             r"{stop}_{{{idx}}} \sim \mathrm{{Exp}}({coeff})"
-            r"\text{{ i.i.d.}},\quad"
+            r"\text{{ i.i.d.}},\quad "
             r"N_{{{t}}} = \max\left\{{k : {stop}_1 + \cdots"
             r" + {stop}_k \le {t}\right\}}"
         ),

@@ -260,7 +260,7 @@ _TEMPLATES_B1: list[Template] = [
     Template(
         name="primary_ideal_def",
         latex=(
-            r"{QQ} \text{{ primary in }} {RR}: {aa}{bb} \in {QQ}"
+            r"{QQ} \text{{ primary in }} {RR}: {aa} {bb} \in {QQ}"
             r" \Rightarrow {aa} \in {QQ} \text{{ or }} {bb}^n \in {QQ}"
         ),
         slots={

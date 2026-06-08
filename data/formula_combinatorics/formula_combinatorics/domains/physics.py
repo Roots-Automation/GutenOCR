@@ -175,7 +175,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="work_energy_theorem",
         latex=r"W = \Delta K = \tfrac{{1}}{{2}}\,{mm}\,{vv}_f^2 - \tfrac{{1}}{{2}}\,{mm}\,{vv}_i^2",
-        slots={"mm": S(_MASS_POOL), "vv": S(_VEL_POOL)},
+        slots={"mm": S(_MASS_POOL), "vv": S(tuple(v for v in _VEL_POOL if "_" not in v))},
     ),
     Template(
         name="sho_equation",
@@ -210,7 +210,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="moment_of_inertia_sum",
         latex=r"I = \sum_{{{ii}}} {mm}_{{{ii}}}\,r_{{{ii}}}^2",
-        slots={"ii": S(_IDX_POOL), "mm": S(_MASS_POOL)},
+        slots={"ii": S(_IDX_POOL), "mm": S(tuple(v for v in _MASS_POOL if "_" not in v))},
     ),
     Template(
         name="torque_cross_product",
@@ -709,6 +709,156 @@ _PHYSICS_TEMPLATES += [
         },
     ),
 ]
+
+# ---------------------------------------------------------------------------
+# Appendix — symbols \upsilon, \Xi, \Upsilon (needed for full Greek coverage)
+# ---------------------------------------------------------------------------
+
+_VOL_POOL = ("V", r"V_0", r"\mathcal{V}", "L")
+_FUG_POOL = ("z", r"e^{{\beta \mu}}", r"\lambda")
+
+_PHYSICS_TEMPLATES += [
+    # \upsilon — thermal/normalized velocity
+    Template(
+        name="thermal_speed",
+        latex=r"\upsilon_{{\mathrm{{th}}}} = \sqrt{{\frac{{2 {kb} {tt}}}{{{mm}}}}}",
+        slots={"kb": S(_KB_POOL), "tt": S(_TEMP_POOL), "mm": S(_MASS_POOL)},
+    ),
+    Template(
+        name="normalized_velocity",
+        latex=r"\upsilon \equiv \frac{{{vv}}}{{c}}, \quad 0 \leq \upsilon < 1",
+        slots={"vv": S(_VEL_POOL)},
+    ),
+    Template(
+        name="lorentz_factor_upsilon",
+        latex=r"\gamma = \frac{{1}}{{\sqrt{{1 - \upsilon^2}}}}, \quad \upsilon = {vv}/c",
+        slots={"vv": S(_VEL_POOL)},
+    ),
+    # \Xi — grand canonical partition function
+    Template(
+        name="grand_canonical_partition",
+        latex=(
+            r"\Xi(\mu, {vv}, {tt}) = "
+            r"\sum_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})"
+        ),
+        slots={
+            "vv": S(_VOL_POOL),
+            "tt": S(_TEMP_POOL),
+            "ff": S(_FUG_POOL),
+        },
+    ),
+    Template(
+        name="grand_potential_from_xi",
+        latex=r"\Omega = -{kb} {tt} \ln \Xi",
+        slots={"kb": S(_KB_POOL), "tt": S(_TEMP_POOL)},
+    ),
+    Template(
+        name="mean_particle_number_xi",
+        latex=r"\langle N \rangle = {kb} {tt} \frac{{\partial \ln \Xi}}{{\partial \mu}}\bigg|_{{T,V}}",
+        slots={"kb": S(_KB_POOL), "tt": S(_TEMP_POOL)},
+    ),
+    # \Upsilon — Upsilon meson and topological context
+    Template(
+        name="upsilon_meson_mass",
+        latex=r"m_\Upsilon \approx 9.460\,\frac{{\mathrm{{GeV}}}}{{c^2}}",
+        slots={},
+    ),
+    Template(
+        name="upsilon_leptonic_width",
+        latex=(
+            r"\Gamma(\Upsilon \to \ell^+ \ell^-)"
+            r" = \frac{{16\pi \alpha^2 e_b^2}}{{3\, {mm}^2}} |\psi(0)|^2"
+        ),
+        slots={"mm": S(_MASS_POOL)},
+    ),
+]
+
+_DAG_OP_POOL = ("A", "B", "H", r"\hat{H}", "U", "O", r"\hat{O}")
+_DAG_STATE_POOL = ("n", "m", "k", r"\psi", r"\phi", r"\alpha")
+
+_PHYSICS_TEMPLATES += [
+    Template(
+        name="conductance_unit_mho",
+        latex=r"G = \frac{{1}}{{R}},\quad [G] = \mho",
+        slots={},
+    ),
+    Template(
+        name="conductance_ohms_law_mho",
+        latex=r"G = \frac{{I}}{{U}},\quad G \in \mho",
+        slots={},
+    ),
+    Template(
+        name="position_vector_imath_jmath",
+        latex=r"\mathbf{{r}} = x\,\imath + y\,\jmath + z\,\hat{{k}}",
+        slots={},
+    ),
+    Template(
+        name="quaternion_units_imath_jmath",
+        latex=r"\imath^2 = \jmath^2 = -1,\quad \imath\,\jmath = -\jmath\,\imath",
+        slots={},
+    ),
+    Template(
+        name="adjoint_bra_rule",
+        latex=r"\langle {aa} | {op}^{{\dagger}} = (\langle {aa} | {op})^*",
+        slots={"aa": S(_DAG_STATE_POOL), "op": S(_DAG_OP_POOL)},
+    ),
+    Template(
+        name="adjoint_anti_multiplicativity",
+        latex=r"({op1}\,{op2})^{{\dagger}} = {op2}^{{\dagger}}\,{op1}^{{\dagger}}",
+        slots={"op1": S(_DAG_OP_POOL), "op2": X(_DAG_OP_POOL, ("op1",))},
+    ),
+    Template(
+        name="adjoint_matrix_element",
+        latex=(
+            r"\langle {aa} | {op}^{{\dagger}} | {bb} \rangle"
+            r" = \langle {bb} | {op} | {aa} \rangle^*"
+        ),
+        slots={
+            "aa": S(_DAG_STATE_POOL),
+            "bb": X(_DAG_STATE_POOL, ("aa",)),
+            "op": S(_DAG_OP_POOL),
+        },
+    ),
+    Template(
+        name="dirac_adjoint_derivative",
+        latex=r"\bar{{\psi}}\,\overleftarrow{{\partial}}_{{\mu}} = -\partial_{{\mu}}\bar{{\psi}}",
+        slots={},
+    ),
+    Template(
+        name="conserved_current_lr_arrows",
+        latex=(
+            r"j^{{\mu}} = \bar{{\psi}}\,\gamma^{{\mu}}\,\psi,"
+            r"\quad j^{{\mu}} = \bar{{\psi}}\,\overrightarrow{{\partial}}^{{\mu}}\psi"
+            r" - \bar{{\psi}}\,\overleftarrow{{\partial}}^{{\mu}}\psi"
+        ),
+        slots={},
+    ),
+]
+
+_PART_APPROX: list[Template] = [
+    Template(
+        name="wkb_wavefunction",
+        latex=r"{psi}({qq}) \approx \frac{{C}}{{\sqrt{{p({qq})}}}}\exp\!\left(\frac{{i}}{{\hbar}}\int^{{{qq}}} p(q')\,dq'\right)",
+        slots={"psi": S(_PSI_POOL), "qq": S(_Q_POOL)},
+    ),
+    Template(
+        name="perturbation_energy_first_order",
+        latex=r"E_n \approx E_n^{{(0)}} + \langle n^{{(0)}} | {ham}' | n^{{(0)}} \rangle",
+        slots={"ham": S(_HAM_POOL)},
+    ),
+    Template(
+        name="small_angle_approx",
+        latex=r"\sin {coord} \approx {coord} \quad ({coord} \ll 1)",
+        slots={"coord": S(_COORD_POOL)},
+    ),
+    Template(
+        name="classical_partition_high_T",
+        latex=r"Z \approx \left(\frac{{k_B T}}{{\hbar\,{om}}}\right)^{{{nn}}} \quad (k_B T \gg \hbar\,{om})",
+        slots={"om": S(_OMEGA_POOL), "nn": S(_N_POOL)},
+    ),
+]
+
+_PHYSICS_TEMPLATES += _PART_APPROX
 
 _W = compute_weights(_PHYSICS_TEMPLATES)
 

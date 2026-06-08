@@ -137,7 +137,7 @@ _TEMPLATES_A: list[Template] = [
 _TEMPLATES_B1: list[Template] = [
     Template(
         name="contrapositive",
-        latex=r"({pp} \Rightarrow {qq}) \equiv (\neg{qq} \Rightarrow \neg{pp})",
+        latex=r"({pp} \Rightarrow {qq}) \equiv (\neg {qq} \Rightarrow \neg {pp})",
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
     Template(
@@ -147,12 +147,12 @@ _TEMPLATES_B1: list[Template] = [
     ),
     Template(
         name="modus_tollens",
-        latex=r"\neg{qq},\; {pp} \Rightarrow {qq} \vdash \neg{pp}",
+        latex=r"\neg {qq},\; {pp} \Rightarrow {qq} \vdash \neg {pp}",
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
     Template(
         name="disjunctive_syllogism",
-        latex=r"{pp} \lor {qq},\; \neg{pp} \vdash {qq}",
+        latex=r"{pp} \lor {qq},\; \neg {pp} \vdash {qq}",
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
     Template(
@@ -162,7 +162,7 @@ _TEMPLATES_B1: list[Template] = [
     ),
     Template(
         name="resolution_rule",
-        latex=r"({pp} \lor {qq}) \land (\neg{pp} \lor {rr}) \vdash {qq} \lor {rr}",
+        latex=r"({pp} \lor {qq}) \land (\neg {pp} \lor {rr}) \vdash {qq} \lor {rr}",
         slots={
             "pp": S(_PROP_POOL),
             "qq": X(_PROP_POOL, ("pp",)),
@@ -325,7 +325,7 @@ _TEMPLATES_B3: list[Template] = [
         name="negation_intro",
         latex=(
             r"\dfrac{{\Gamma,\,{pp} \vdash \bot}}"
-            r"{{\Gamma \vdash \neg{pp}}} (\neg I)"
+            r"{{\Gamma \vdash \neg {pp}}} (\neg I)"
         ),
         slots={"pp": S(_PROP_POOL)},
     ),
@@ -338,38 +338,38 @@ _TEMPLATES_B3: list[Template] = [
 _TEMPLATES_B4: list[Template] = [
     Template(
         name="k_axiom",
-        latex=r"\Box({pp} \Rightarrow {qq}) \Rightarrow (\Box{pp} \Rightarrow \Box{qq})",
+        latex=r"\Box({pp} \Rightarrow {qq}) \Rightarrow (\Box {pp} \Rightarrow \Box {qq})",
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
     Template(
         name="t_axiom",
-        latex=r"\Box{pp} \Rightarrow {pp}",
+        latex=r"\Box {pp} \Rightarrow {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="b_axiom",
-        latex=r"{pp} \Rightarrow \Box\Diamond{pp}",
+        latex=r"{pp} \Rightarrow \Box\Diamond {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="s4_axiom",
-        latex=r"\Box{pp} \Rightarrow \Box\Box{pp}",
+        latex=r"\Box {pp} \Rightarrow \Box\Box {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="s5_axiom",
-        latex=r"\Diamond{pp} \Rightarrow \Box\Diamond{pp}",
+        latex=r"\Diamond {pp} \Rightarrow \Box\Diamond {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="dual_modal",
-        latex=r"\Diamond{pp} \equiv \neg\Box\neg{pp}",
+        latex=r"\Diamond {pp} \equiv \neg\Box\neg {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="kripke_satisfaction",
         latex=(
-            r"\mathcal{{M}},{ww} \models \Box{pp}"
+            r"\mathcal{{M}},{ww} \models \Box {pp}"
             r" \iff \forall {vv}\,({ww}\,R\,{vv} \Rightarrow \mathcal{{M}},{vv} \models {pp})"
         ),
         slots={
@@ -380,7 +380,7 @@ _TEMPLATES_B4: list[Template] = [
     ),
     Template(
         name="necessitation",
-        latex=r"\vdash {pp} \implies \vdash \Box{pp}",
+        latex=r"\vdash {pp} \implies \vdash \Box {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),
 ]
@@ -454,7 +454,7 @@ _TEMPLATES_B6: list[Template] = [
         name="function_type_intro",
         latex=(
             r"\dfrac{{\Gamma,\,{xx}:{sa} \vdash {ee}:{ta}}}"
-            r"{{\Gamma \vdash \lambda{xx}.\,{ee}:{sa}\to{ta}}}"
+            r"{{\Gamma \vdash \lambda {xx}.\,{ee}:{sa}\to {ta}}}"
         ),
         slots={
             "xx": S(_VAR_POOL),
@@ -466,7 +466,7 @@ _TEMPLATES_B6: list[Template] = [
     Template(
         name="application_type",
         latex=(
-            r"\dfrac{{\Gamma \vdash {ff}:{sa}\to{ta}"
+            r"\dfrac{{\Gamma \vdash {ff}:{sa}\to {ta}"
             r" \quad \Gamma \vdash {aa}:{sa}}}"
             r"{{\Gamma \vdash {ff}\,{aa}:{ta}}}"
         ),
@@ -548,12 +548,12 @@ _TEMPLATES_B7: list[Template] = [
     ),
     Template(
         name="complement_meet",
-        latex=r"{pp} \land \neg{pp} = 0",
+        latex=r"{pp} \land \neg {pp} = 0",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="shannons_expansion",
-        latex=r"{ff}({pp}) = ({pp} \land {ff}(\top)) \lor (\neg{pp} \land {ff}(\bot))",
+        latex=r"{ff}({pp}) = ({pp} \land {ff}(\top)) \lor (\neg {pp} \land {ff}(\bot))",
         slots={"ff": S(_PRED_POOL), "pp": S(_PROP_POOL)},
     ),
 ]
@@ -601,12 +601,12 @@ _TEMPLATES_B8: list[Template] = [
     ),
     Template(
         name="ltl_always",
-        latex=r"\square{pp} \equiv \bigwedge_{{t \geq 0}} {pp}(t)",
+        latex=r"\square {pp} \equiv \bigwedge_{{t \geq 0}} {pp}(t)",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
         name="ltl_eventually",
-        latex=r"\lozenge{pp} \equiv \bigvee_{{t \geq 0}} {pp}(t)",
+        latex=r"\lozenge {pp} \equiv \bigvee_{{t \geq 0}} {pp}(t)",
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
@@ -682,8 +682,102 @@ _TEMPLATES_C: list[Template] = [
 ]
 
 # ---------------------------------------------------------------------------
+# Part D: New symbols — \vDash, \Vdash, \therefore, \because, \barwedge, \veebar (11)
+# ---------------------------------------------------------------------------
+
+_TEMPLATES_D: list[Template] = [
+    Template(
+        name="semantic_entailment_world",
+        latex=r"{MM} \vDash {pp}",
+        slots={"MM": S(_WORLD_POOL), "pp": S(_PROP_POOL)},
+    ),
+    Template(
+        name="semantic_entailment_conjunction",
+        latex=r"{MM} \vDash {pp} \land {qq}",
+        slots={"MM": S(_WORLD_POOL), "pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="semantic_entailment_gamma",
+        latex=r"\Gamma \vDash {pp}",
+        slots={"pp": S(_PROP_POOL)},
+    ),
+    Template(
+        name="forcing_world",
+        latex=r"{ww} \Vdash {pp}",
+        slots={"ww": S(_WORLD_POOL), "pp": S(_PROP_POOL)},
+    ),
+    Template(
+        name="forcing_implication",
+        latex=r"{ww} \Vdash {pp} \Rightarrow {qq}",
+        slots={"ww": S(_WORLD_POOL), "pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="therefore_modus_ponens",
+        latex=r"{pp} \land ({pp} \Rightarrow {qq}) \therefore {qq}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="because_disjunctive_syllogism",
+        latex=r"{pp} \because {pp} \lor {qq},\; \neg {qq}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="barwedge_nand_equiv",
+        latex=r"{pp} \barwedge {qq} \equiv \neg({pp} \land {qq})",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="barwedge_nand_identity",
+        latex=r"({pp} \barwedge {pp}) \barwedge ({qq} \barwedge {qq}) \equiv {pp} \lor {qq}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="veebar_xor_via_or_and",
+        latex=r"{pp} \veebar {qq} \equiv ({pp} \lor {qq}) \land \neg({pp} \land {qq})",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="veebar_xor_via_asymmetric_and",
+        latex=r"{pp} \veebar {qq} \equiv ({pp} \land \neg {qq}) \lor (\neg {pp} \land {qq})",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+]
+
+# ---------------------------------------------------------------------------
 # Combine all templates
 # ---------------------------------------------------------------------------
+
+_TEMPLATES_E: list[Template] = [
+    Template(
+        name="lattice_join_def",
+        latex=r"{pp} \vee {qq} = \sup\{{{pp},\,{qq}\}}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="lattice_meet_def",
+        latex=r"{pp} \wedge {qq} = \inf\{{{pp},\,{qq}\}}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+    Template(
+        name="boolean_complement_laws",
+        latex=r"{pp} \vee \neg {pp} = \mathbf{{1}},\quad {pp} \wedge \neg {pp} = \mathbf{{0}}",
+        slots={"pp": S(_PROP_POOL)},
+    ),
+    Template(
+        name="distributive_lattice_law",
+        latex=r"{pp} \vee ({qq} \wedge {rr}) = ({pp} \vee {qq}) \wedge ({pp} \vee {rr})",
+        slots={
+            "pp": S(_PROP_POOL),
+            "qq": X(_PROP_POOL, ("pp",)),
+            "rr": X(_PROP_POOL, ("pp", "qq")),
+        },
+    ),
+    Template(
+        name="de_morgan_lattice",
+        latex=r"\neg({pp} \vee {qq}) = \neg {pp} \wedge \neg {qq}",
+        slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
+    ),
+]
 
 _LOGIC_TEMPLATES: list[Template] = (
     _TEMPLATES_A
@@ -696,6 +790,8 @@ _LOGIC_TEMPLATES: list[Template] = (
     + _TEMPLATES_B7
     + _TEMPLATES_B8
     + _TEMPLATES_C
+    + _TEMPLATES_D
+    + _TEMPLATES_E
 )
 
 # ---------------------------------------------------------------------------

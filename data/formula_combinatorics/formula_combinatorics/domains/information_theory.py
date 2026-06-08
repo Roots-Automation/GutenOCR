@@ -42,6 +42,10 @@ _NOISE_POOL = (r"\sigma^2", r"N_0", r"N_0/2", r"\sigma_n^2")  # 4
 _SNR_POOL = (r"\mathrm{SNR}", r"\gamma", r"\rho", r"P/N_0")  # 4
 _BW_POOL = ("W", "B", r"\Delta f", r"B_n")  # 4
 _PWR_POOL = ("P", r"P_s", r"P_T", r"\mathcal{P}")  # 4
+# Restricted pools for templates that append their own subscript (_k etc.) —
+# entries already containing _ would produce invalid double-subscript LaTeX.
+_PWR_BASE_POOL = tuple(v for v in _PWR_POOL if "_" not in v)
+_NOISE_BASE_POOL = tuple(v for v in _NOISE_POOL if "_" not in v)
 
 # ---------------------------------------------------------------------------
 # Part A — reparameterized originals (14)
@@ -394,7 +398,7 @@ _TEMPLATES_B_CHAN: list[Template] = [
             r"C = \sum_{{k=1}}^{{{nn}}}"
             r" \tfrac{{1}}{{2}}\, {lb}\!\left(1 + \frac{{{pw}_k}}{{{nz}_k}}\right)"
         ),
-        slots={"nn": S(_IDX_POOL), "lb": S(_LOG_POOL), "pw": S(_PWR_POOL), "nz": S(_NOISE_POOL)},
+        slots={"nn": S(_IDX_POOL), "lb": S(_LOG_POOL), "pw": S(_PWR_BASE_POOL), "nz": S(_NOISE_BASE_POOL)},
     ),
     Template(
         name="rate_distortion_gaussian",
@@ -788,6 +792,35 @@ _INFOTH_TEMPLATES += [
             "fn2": E(_fn_rich_nosub, n=100),
             "XX": S(_RV_POOL),
             "lb": S(_LOG_POOL),
+        },
+    ),
+]
+
+# \lg — binary logarithm (log base 2) templates
+_INFOTH_TEMPLATES += [
+    Template(
+        name="entropy_lg",
+        latex=r"H({XX}) = -\sum_{{x}} p(x) \lg p(x)",
+        slots={"XX": S(_RV_POOL)},
+    ),
+    Template(
+        name="shannon_hartley_lg",
+        latex=r"C = {bw} \lg\!\left(1 + \frac{{{pw}}}{{{nz}}}\right)",
+        slots={
+            "bw": S(_BW_POOL),
+            "pw": S(_PWR_BASE_POOL),
+            "nz": S(_NOISE_BASE_POOL),
+        },
+    ),
+    Template(
+        name="mutual_info_lg",
+        latex=(
+            r"I({XX}; {YY})"
+            r" = \sum_{{x,y}} p(x,y) \lg \frac{{p(x,y)}}{{p(x)\,p(y)}}"
+        ),
+        slots={
+            "XX": S(_RV_POOL),
+            "YY": X(_RV_POOL, ("XX",)),
         },
     ),
 ]

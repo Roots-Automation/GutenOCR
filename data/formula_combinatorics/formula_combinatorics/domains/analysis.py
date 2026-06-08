@@ -726,6 +726,103 @@ _ANALYSIS_TEMPLATES += [
 # Sampling weights — cap at 10_000 to balance high-n_eff templates
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Greek symbol coverage: \varsigma, \digamma, \Digamma
+# ---------------------------------------------------------------------------
+
+_ANALYSIS_TEMPLATES += [
+    # \varsigma — Stieltjes transform (uses \varsigma as the transform variable)
+    Template(
+        name="stieltjes_transform_def",
+        latex=(
+            r"\mathcal{{S}}[f](\varsigma)"
+            r" = \int_0^{{\infty}} \frac{{f(t)}}{{t + \varsigma}} \, dt,"
+            r"\quad \varsigma \notin (-\infty, 0]"
+        ),
+        slots={},
+    ),
+    Template(
+        name="stieltjes_inversion",
+        latex=(
+            r"f(t) = -\frac{{1}}{{\pi}}"
+            r" \lim_{{\varepsilon \to 0^+}}"
+            r" \operatorname{{Im}} \mathcal{{S}}[f](-t + i\varepsilon)"
+        ),
+        slots={},
+    ),
+    Template(
+        name="dirichlet_series_varsigma",
+        latex=(
+            r"F(\varsigma) = \sum_{{n=1}}^{{\infty}} \frac{{a_n}}{{n^\varsigma}},"
+            r"\quad \operatorname{{Re}}(\varsigma) > {cc}"
+        ),
+        slots={"cc": S(_BVAR)},
+    ),
+    # \digamma — digamma function (logarithmic derivative of \Gamma)
+    Template(
+        name="digamma_log_gamma",
+        latex=(
+            r"\digamma({xx}) = \frac{{d}}{{d{xx}}} \ln \Gamma({xx})"
+            r" = \frac{{\Gamma'({xx})}}{{\Gamma({xx})}}"
+        ),
+        slots={"xx": S(_BVAR)},
+    ),
+    Template(
+        name="digamma_recurrence",
+        latex=r"\digamma({xx} + 1) = \digamma({xx}) + \frac{{1}}{{{xx}}}",
+        slots={"xx": S(_BVAR)},
+    ),
+    Template(
+        name="digamma_series_rep",
+        latex=(
+            r"\digamma({xx}) = -\gamma"
+            r" + \sum_{{n=0}}^{{\infty}}"
+            r"\left(\frac{{1}}{{n+1}} - \frac{{1}}{{n+{xx}}}\right)"
+        ),
+        slots={"xx": S(_BVAR)},
+    ),
+    Template(
+        name="digamma_integral_rep",
+        latex=(
+            r"\digamma({xx})"
+            r" = \int_0^{{\infty}}\left("
+            r"\frac{{e^{{-t}}}}{{t}} - \frac{{e^{{-{xx} t}}}}{{1-e^{{-t}}}}"
+            r"\right)dt"
+        ),
+        slots={"xx": S(_BVAR)},
+    ),
+    Template(
+        name="digamma_euler_mascheroni",
+        latex=r"\digamma(1) = -\gamma \approx -0.5772",
+        slots={},
+    ),
+    Template(
+        name="digamma_reflection",
+        latex=(
+            r"\digamma(1-{xx}) - \digamma({xx})"
+            r" = \pi \cot(\pi {xx})"
+        ),
+        slots={"xx": S(_BVAR)},
+    ),
+    # \Digamma — uppercase digamma, used as a formal antiderivative / generating function
+    Template(
+        name="digamma_antiderivative",
+        latex=(
+            r"\Digamma({xx}) = \int_1^{{{xx}}} \digamma(t)\, dt"
+            r" = \ln \Gamma({xx}) - \ln \Gamma(1)"
+        ),
+        slots={"xx": S(_BVAR)},
+    ),
+    Template(
+        name="digamma_partial_sum",
+        latex=(
+            r"\Digamma_n = \sum_{{k=1}}^{{n}} \digamma(k)"
+            r" = -n\gamma + \sum_{{k=1}}^{{n}} H_{{k-1}}"
+        ),
+        slots={},
+    ),
+]
+
 _W_ANALYSIS: list[float] = compute_weights(_ANALYSIS_TEMPLATES)
 
 # ---------------------------------------------------------------------------

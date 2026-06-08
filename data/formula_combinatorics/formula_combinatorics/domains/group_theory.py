@@ -135,7 +135,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
             ),
             Template(
                 name="element_order_lcm",
-                latex=r"\operatorname{{ord}}({g_el}{h_el}) \mid \operatorname{{lcm}}(\operatorname{{ord}}({g_el}), \operatorname{{ord}}({h_el}))",
+                latex=r"\operatorname{{ord}}({g_el} {h_el}) \mid \operatorname{{lcm}}(\operatorname{{ord}}({g_el}), \operatorname{{ord}}({h_el}))",
                 slots={
                     "g_el": S(_ELEMS_T),
                     "h_el": X(_ELEMS_T, ("g_el",)),
@@ -224,7 +224,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
             ),
             Template(
                 name="commutator_product_rule",
-                latex=r"[{g_el}, {h_el}{N_sub}] = [{g_el},{h_el}] \cdot [{g_el},{N_sub}]^{{{h_el}}}",
+                latex=r"[{g_el}, {h_el} {N_sub}] = [{g_el},{h_el}] \cdot [{g_el},{N_sub}]^{{{h_el}}}",
                 slots={
                     "g_el": S(_ELEMS_T),
                     "h_el": X(_ELEMS_T, ("g_el",)),
@@ -263,7 +263,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="center_definition",
-                latex=r"Z({G}) = \left\{{{g_el} \in {G} \mid {g_el}{h_el} = {h_el}{g_el}\; \forall {h_el} \in {G}\right\}}",
+                latex=r"Z({G}) = \left\{{{g_el} \in {G} \mid {g_el} {h_el} = {h_el} {g_el}\; \forall {h_el} \in {G}\right\}}",
                 slots={
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
@@ -290,7 +290,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="conjugacy_relation",
-                latex=r"{g_el} \sim {h_el} \iff \exists\, {n} \in {G} : {n}{g_el}{n}^{{-1}} = {h_el}",
+                latex=r"{g_el} \sim {h_el} \iff \exists\, {n} \in {G} : {n} {g_el} {n}^{{-1}} = {h_el}",
                 slots={
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
@@ -316,7 +316,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="normalizer_definition",
-                latex=r"N_{{{G}}}({H}) = \left\{{{g_el} \in {G} : {g_el}{H}{g_el}^{{-1}} = {H}\right\}}",
+                latex=r"N_{{{G}}}({H}) = \left\{{{g_el} \in {G} : {g_el} {H} {g_el}^{{-1}} = {H}\right\}}",
                 slots={
                     "G": S(_G_POOL),
                     "H": X(_SIMPLE_T, ("G",)),
@@ -341,7 +341,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="centralizer_definition",
-                latex=r"C_{{{G}}}({g_el}) = \left\{{{h_el} \in {G} : {h_el}{g_el} = {g_el}{h_el}\right\}}",
+                latex=r"C_{{{G}}}({g_el}) = \left\{{{h_el} \in {G} : {h_el} {g_el} = {g_el} {h_el}\right\}}",
                 slots={
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
@@ -366,7 +366,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="homomorphism_multiplicativity",
-                latex=r"{phi}({g_el}{h_el}) = {phi}({g_el})\,{phi}({h_el})",
+                latex=r"{phi}({g_el} {h_el}) = {phi}({g_el})\,{phi}({h_el})",
                 slots={
                     "phi": S(_HOMOS_T),
                     "g_el": S(_ELEMS_T),
@@ -484,7 +484,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="dihedral_presentation",
                 latex=(
                     r"D_{{{nv}}} = \langle {g_el}, {h_el} \mid "
-                    r"{g_el}^{{{nv}}} = {h_el}^2 = e,\; {h_el}{g_el}{h_el}^{{-1}} = {g_el}^{{-1}} \rangle"
+                    r"{g_el}^{{{nv}}} = {h_el}^2 = e,\; {h_el} {g_el} {h_el}^{{-1}} = {g_el}^{{-1}} \rangle"
                 ),
                 slots={
                     "nv": S(_NV_POOL),
@@ -504,7 +504,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="quaternion_presentation",
                 latex=(
                     r"Q_8 = \langle {g_el}, {h_el} \mid "
-                    r"{g_el}^4 = e,\; {g_el}^2 = {h_el}^2,\; {h_el}{g_el}{h_el}^{{-1}} = {g_el}^{{-1}} \rangle"
+                    r"{g_el}^4 = e,\; {g_el}^2 = {h_el}^2,\; {h_el} {g_el} {h_el}^{{-1}} = {g_el}^{{-1}} \rangle"
                 ),
                 slots={
                     "g_el": S(_ELEMS_T),
@@ -756,7 +756,7 @@ _GROUP_THEORY_TEMPLATES.append(
 _GROUP_THEORY_TEMPLATES.append(
     Template(
         name="orbit_coset_iso",
-        latex=r"{G}/\operatorname{{Stab}}_{{{G}}}({g_el}) \cong {G}\cdot{g_el}",
+        latex=r"{G}/\operatorname{{Stab}}_{{{G}}}({g_el}) \cong {G} \cdot {g_el}",
         slots={
             "G": S(_G_POOL),
             "g_el": S(_ELEMS_T),
@@ -839,7 +839,7 @@ _GROUP_THEORY_TEMPLATES.append(
             r"\quad {G}_k = [{G}, {G}_{{k-1}}]"
         ),
         slots={
-            "G": S(_G_POOL),
+            "G": S(_SIMPLE_T),  # named groups (e.g. \mathbb{Z}_{n}) already carry a subscript
             "n": S(_N_POOL),
         },
     )
@@ -1059,6 +1059,50 @@ _GROUP_THEORY_TEMPLATES.append(
         },
     )
 )
+
+_GROUP_THEORY_TEMPLATES += [
+    # \vartriangleleft / \vartriangleright — normal subgroup relation
+    Template(
+        name="normal_subgroup_left",
+        latex=r"{NN} \vartriangleleft {GG}",
+        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+    ),
+    Template(
+        name="normal_subgroup_quotient",
+        latex=r"{NN} \vartriangleleft {GG} \Rightarrow {GG}/{NN} \text{{ is a group}}",
+        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+    ),
+    Template(
+        name="normal_subgroup_right",
+        latex=r"{GG} \vartriangleright {NN}",
+        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+    ),
+    # \ltimes — left semidirect product
+    Template(
+        name="semidirect_left",
+        latex=r"{GG} = {KK} \ltimes {NN}",
+        slots={"GG": S(_SIMPLE_T), "KK": S(_SIMPLE_T), "NN": S(_SIMPLE_T)},
+        distinct=[["GG", "KK", "NN"]],
+    ),
+    Template(
+        name="semidirect_left_action",
+        latex=r"{GG} = {NN} \rtimes {KK} \cong {KK} \ltimes {NN}",
+        slots={"GG": S(_SIMPLE_T), "KK": S(_SIMPLE_T), "NN": S(_SIMPLE_T)},
+        distinct=[["GG", "KK", "NN"]],
+    ),
+    # \wr — wreath product
+    Template(
+        name="wreath_product",
+        latex=r"{GG} \wr S_{{{nn}}}",
+        slots={"GG": S(_SIMPLE_T), "nn": S(_NV_POOL)},
+    ),
+    Template(
+        name="wreath_product_iterated",
+        latex=r"{GG} \wr {HH} \cong {GG}^{{|{HH}|}} \rtimes {HH}",
+        slots={"GG": S(_SIMPLE_T), "HH": S(_SIMPLE_T)},
+        distinct=[["GG", "HH"]],
+    ),
+]
 
 # ---------------------------------------------------------------------------
 # Sampling weights

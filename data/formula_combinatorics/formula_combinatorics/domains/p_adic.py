@@ -81,6 +81,7 @@ _UNIF_POOL: tuple[str, ...] = (
     r"\pi_0",
     r"\varpi_0",
 )  # 7
+_UNIF_BASE_POOL: tuple[str, ...] = tuple(v for v in _UNIF_POOL if "_" not in v)  # 5
 
 _POLY_POOL: tuple[str, ...] = (
     "f",
@@ -491,14 +492,14 @@ _TEMPLATES_B3: list[Template] = [
     Template(
         name="norm_map_local",
         latex=(
-            r"N_{{{LL}/{KK}}}: {LL}^* \to {KK}^*,\quad"
+            r"N_{{{LL}/{KK}}}: {LL}^* \to {KK}^*,\quad "
             r"N_{{{LL}/{KK}}}({uu}_{{{LL}}})^{{f({LL}/{KK})}} = (-1)^{{e}} a_0"
         ),
         slots={
             "LL": S(_FIELD_POOL),
             "KK": X(_FIELD_POOL, ("LL",)),
             "pp": S(_PRIME_POOL),
-            "uu": S(_UNIF_POOL),
+            "uu": S(_UNIF_BASE_POOL),
         },
     ),
 ]

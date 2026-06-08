@@ -35,7 +35,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
         name="2x2_determinant_expansion",
         latex=(
             r"\begin{{equation*}}\begin{{vmatrix}} {e0} & {e1} \\ {e2} & {e3} \end{{vmatrix}} "
-            r"= {e0}{e3} - {e1}{e2}\end{{equation*}}"
+            r"= {e0} {e3} - {e1} {e2}\end{{equation*}}"
         ),
         slots={
             "e0": E(_atom, n=150),
@@ -99,7 +99,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
         latex=(
             r"\begin{{equation*}}\begin{{pmatrix}} {e0} \\ {e1} \end{{pmatrix}} \cdot "
             r"\begin{{pmatrix}} {e2} \\ {e3} \end{{pmatrix}} = "
-            r"{e0}{e2} + {e1}{e3}\end{{equation*}}"
+            r"{e0} {e2} + {e1} {e3}\end{{equation*}}"
         ),
         slots={
             "e0": E(_atom, n=150),
@@ -134,6 +134,31 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
         slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
 ]
+
+_PART_PERP: list[Template] = [
+    Template(
+        name="orthogonal_complement_def",
+        latex=r"{m}^\perp = \{{\mathbf{{v}} \in \mathbb{{R}}^{{{n}}} \mid \mathbf{{v}} \cdot \mathbf{{u}} = 0 \;\forall\,\mathbf{{u}} \in {m}\}}",
+        slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+    ),
+    Template(
+        name="orthogonal_vectors_iff",
+        latex=r"\mathbf{{u}} \perp \mathbf{{v}} \iff \mathbf{{u}} \cdot \mathbf{{v}} = 0",
+        slots={},
+    ),
+    Template(
+        name="gram_schmidt_orthogonality",
+        latex=r"\mathbf{{e}}_i \perp \mathbf{{e}}_j \;\forall\; i \neq j \quad \text{{(Gram--Schmidt output)}}",
+        slots={},
+    ),
+    Template(
+        name="orthogonal_direct_sum",
+        latex=r"\mathbb{{R}}^{{{n}}} = {m} \oplus {m}^\perp",
+        slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+    ),
+]
+
+_LINEAR_ALGEBRA_TEMPLATES += _PART_PERP
 
 _W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 
