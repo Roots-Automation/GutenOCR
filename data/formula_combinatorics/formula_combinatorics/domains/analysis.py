@@ -2,16 +2,15 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
 from .._vocab import (
     _GEO_N,
     _VARS,
-    _atom,
     _eps_sub,
     _expr,
-    _fn_rich_nosub,
     _tol_sub,
 )
+from ._config import register_domain
 
 # Bound-variable pool: proper letter variables (no digits, no calligraphic) with
 # optional subscript decoration, used wherever a symbol is quantified over or
@@ -36,10 +35,10 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"|{x} - {a}| < {tol} \Rightarrow |{f}({x}) - {L}| < {eps}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # bound variable
-                    "a": E(_atom, n=150),  # limit point (any value)
-                    "L": E(_atom, n=150),  # limit value (any value)
+                    "a": _ATOM_SLOT,  # limit point (any value)
+                    "L": _ATOM_SLOT,  # limit value (any value)
                     "eps": E(_eps_sub, n=2),
                     "tol": E(_tol_sub, n=3),
                 },
@@ -51,9 +50,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"|{x} - {c}| < {tol} \Rightarrow |{f}({x}) - {f}({c})| < {eps}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # bound variable
-                    "c": E(_atom, n=150),  # fixed point (any value)
+                    "c": _ATOM_SLOT,  # fixed point (any value)
                     "eps": E(_eps_sub, n=2),
                     "tol": E(_tol_sub, n=3),
                 },
@@ -65,7 +64,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"|{x} - {y}| < {tol} \Rightarrow |{f}({x}) - {f}({y})| < {eps}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # bound variable
                     "y": S(_BVAR, idx=0.35),  # bound variable
                     "eps": E(_eps_sub, n=2),
@@ -79,7 +78,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         name="lp_norm",
         latex=r"\|{f}\|_{{{p}}} = \left(\int \left|{f}({t})\right|^{{{p}}} d{t}\right)^{{1/{p}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "p": S(("p", "2", "q", "r")),
             "t": S(_BVAR, idx=0.35),  # integration variable
         },
@@ -91,7 +90,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "seq": S(("x", "a", "y", "z", "u", "v")),
             "eps": E(_eps_sub, n=2),
-            "N": E(_atom, n=150),  # bound value (any symbol)
+            "N": _ATOM_SLOT,  # bound value (any symbol)
         },
     ),
     # --- Cauchy-Schwarz for sums ---
@@ -118,12 +117,12 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             Template(
                 name="triangle_scalar",
                 latex=r"\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|",
-                slots={"u": E(_fn_rich_nosub, n=100), "v": E(_fn_rich_nosub, n=100)},
+                slots={"u": _FN_SLOT, "v": _FN_SLOT},
             ),
             Template(
                 name="triangle_reverse",
                 latex=r"\left| \left\|{u}\right\| - \left\|{v}\right\| \right| \leq \left\|{u} - {v}\right\|",
-                slots={"u": E(_fn_rich_nosub, n=100), "v": E(_fn_rich_nosub, n=100)},
+                slots={"u": _FN_SLOT, "v": _FN_SLOT},
             ),
             Template(
                 name="triangle_sum_n",
@@ -131,7 +130,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\left\|\sum{lim_mod}_{{k=1}}^{{{n}}} {u}_k\right\| "
                     r"\leq \sum{lim_mod}_{{k=1}}^{{{n}}} \left\|{u}_k\right\|"
                 ),
-                slots={"lim_mod": _LIM_MOD, "u": E(_fn_rich_nosub, n=100), "n": S(tuple(_GEO_N))},
+                slots={"lim_mod": _LIM_MOD, "u": _FN_SLOT, "n": S(tuple(_GEO_N))},
             ),
             Template(
                 name="minkowski_integral",
@@ -141,8 +140,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"+ \left(\int |{g}({t})|^{{{p}}} d{t}\right)^{{1/{p}}}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "t": S(_BVAR, idx=0.35),  # integration variable
                     "p": S(("p", "2", "q", "r")),
                 },
@@ -159,8 +158,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_o",
                 latex=r"{f}({v}) = O\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -168,8 +167,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="little_o",
                 latex=r"{f}({v}) = o\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -177,8 +176,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_theta",
                 latex=r"{f}({v}) = \Theta\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -186,8 +185,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_omega",
                 latex=r"{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -195,8 +194,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="little_omega",
                 latex=r"{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -204,8 +203,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="asymptotic_equiv",
                 latex=r"{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -213,8 +212,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="soft_o",
                 latex=r"{f}({v}) = \tilde{{O}}\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -230,8 +229,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_o_at",
                 latex=r"{f}({v}) = O\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -240,8 +239,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="little_o_at",
                 latex=r"{f}({v}) = o\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -250,8 +249,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_theta_at",
                 latex=r"{f}({v}) = \Theta\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -260,8 +259,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="big_omega_at",
                 latex=r"{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -270,8 +269,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="little_omega_at",
                 latex=r"{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -280,8 +279,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="asymptotic_equiv_at",
                 latex=r"{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to {lp}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(_BVAR),
                     "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
                 },
@@ -298,9 +297,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="error_big_o",
                 latex=r"{f}({v}) = {g}({v}) + O\!\left({h}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "h": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "h": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -308,9 +307,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="error_little_o",
                 latex=r"{f}({v}) = {g}({v}) + o\!\left({h}({v})\right) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "h": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "h": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -318,8 +317,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="error_little_o_one",
                 latex=r"{f}({v}) = {g}({v}) + o(1) \text{{ as }} {v} \to \infty",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -339,8 +338,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\text{{ for all }} {v} \geq {v}_0"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -348,8 +347,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="little_o_limit",
                 latex=r"\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 0",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -357,8 +356,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="asymptotic_equiv_limit",
                 latex=r"\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 1",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -369,8 +368,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\text{{ for all large }} {v}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                 },
             ),
@@ -387,7 +386,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 latex=r"{f}({v}) \sim \sum{lim_mod}_{{{k}=0}}^{{\infty}} {a}_{{{k}}}\,{v}^{{-{k}}} \text{{ as }} {v} \to \infty",
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                     "a": S(_BVAR),
                     "k": S(("k", "j", "m")),
@@ -402,7 +401,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "v": S(tuple(_GEO_N)),
                     "a": S(_BVAR),
                     "k": S(("k", "j", "m")),
@@ -426,8 +425,8 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\left(\int |{g}({t})|^{{{q}}}\, d{t}\right)^{{1/{q}}}"
         ),
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "g": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g": _FN_SLOT,
             "t": S(_BVAR, idx=0.35),  # integration variable
             "p": S(("p", "2", "r", "s", "3")),
             "q": S(("q", "2", "t", "r", "4")),
@@ -449,7 +448,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         name="uniform_bound",
         latex=r"\sup_{{{x} \in {D}}} |{f}({x})| < \infty",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),  # quantified variable
             "D": S(("X", "D", "A", r"\Omega", "K", "U")),
         },
@@ -511,48 +510,48 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="limit_at_point",
                 latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # limit variable
-                    "a": E(_atom, n=150),  # limit point (any value)
-                    "L": E(_atom, n=150),  # limit value (any value)
+                    "a": _ATOM_SLOT,  # limit point (any value)
+                    "L": _ATOM_SLOT,  # limit value (any value)
                 },
             ),
             Template(
                 name="limit_right_sided",
                 latex=r"\lim_{{{x} \to {a}^+}} {f}({x}) = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
-                    "L": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="limit_left_sided",
                 latex=r"\lim_{{{x} \to {a}^-}} {f}({x}) = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
-                    "L": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="limit_pos_infinity",
                 latex=r"\lim_{{{x} \to +\infty}} {f}({x}) = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "L": E(_atom, n=150),
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="limit_neg_infinity",
                 latex=r"\lim_{{{x} \to -\infty}} {f}({x}) = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "L": E(_atom, n=150),
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -561,17 +560,17 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "seq": S(("a", "b", "x", "y", "u", "c", "z", "v")),
                     "idx": S(("n", "m", "j", "k"), idx=0.25),
-                    "L": E(_atom, n=150),
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="limit_newton_quotient",
                 latex=r"\lim_{{{x} \to {a}}} \frac{{{f}({x}) - {f}({a})}}{{{x} - {a}}} = {L}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
-                    "L": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "L": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -581,10 +580,10 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"= \lim_{{{x} \to {a}}} {f}({x}) + \lim_{{{x} \to {a}}} {g}({x})"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -594,19 +593,19 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"= \lim_{{{x} \to {a}}} {f}({x}) \cdot \lim_{{{x} \to {a}}} {g}({x})"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="limit_diverges_inf",
                 latex=r"\lim_{{{x} \to {a}}} {f}({x}) = {inf_sym}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),
-                    "a": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
                     "inf_sym": S((r"\infty", r"+\infty", r"-\infty")),
                 },
             ),
@@ -622,7 +621,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),  # function argument variable
             "M": S(("M", "C", "K", "B", "A", "L")),
         },
@@ -635,7 +634,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r" \implies \text{{has uniformly convergent subsequence}}"
         ),
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),  # function argument variable
         },
     ),
@@ -643,7 +642,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
     Template(
         name="banach_fixed_point",
         latex=r"\exists!\, x^* : {T}(x^*) = x^*, \quad x_{{n+1}} = {T}(x_n) \to x^*",
-        slots={"T": E(_fn_rich_nosub, n=100)},
+        slots={"T": _FN_SLOT},
     ),
     # --- Series convergence tests ---
     Template(
@@ -671,7 +670,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "t": S(_BVAR, idx=0.35),  # integration variable
                 },
             ),
@@ -685,7 +684,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     "a": S(("a", "x", "u", "p")),
                     "b": S(("b", "y", "v", "q")),
                     "v": S(("n", "m", "k", "j")),
-                    "L": E(_atom, n=150),
+                    "L": _ATOM_SLOT,
                 },
                 distinct=[["a", "b"]],
             ),
@@ -701,7 +700,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "seq": S(("a", "b", "c", "x", "y", "u", "v", "p")),
             "v": S(("n", "m", "k", "j")),
-            "L": E(_atom, n=150),
+            "L": _ATOM_SLOT,
         },
     ),
     Template(
@@ -713,7 +712,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         slots={
             "seq": S(("a", "b", "c", "x", "y", "u", "v", "p")),
             "v": S(("n", "m", "k", "j")),
-            "L": E(_atom, n=150),
+            "L": _ATOM_SLOT,
         },
     ),
     Template(
@@ -739,7 +738,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="pointwise_conv",
                 latex=r"{f}_n({x}) \to {f}({x}) \quad \text{{for all }} {x} \in D",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # quantified variable
                 },
             ),
@@ -747,7 +746,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="uniform_conv_def",
                 latex=r"\sup_{{{x} \in D}} \left|{f}_n({x}) - {f}({x})\right| \to 0",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "x": S(_BVAR, idx=0.35),  # quantified variable
                 },
             ),
@@ -758,7 +757,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"{f}_n \text{{ continuous}} \implies {f} \text{{ continuous}}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "D": S(("D", "X", "K", r"\Omega", "A", "U")),
                 },
             ),
@@ -770,9 +769,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),  # integration bounds (any value)
-                    "b": E(_atom, n=150),
+                    "f": _FN_SLOT,
+                    "a": _ATOM_SLOT,  # integration bounds (any value)
+                    "b": _ATOM_SLOT,
                 },
             ),
         ],
@@ -790,9 +789,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\implies \exists\, c \in ({a}, {b}) : {f}(c) = 0"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),  # endpoints (any value)
-                    "b": E(_atom, n=150),
+                    "f": _FN_SLOT,
+                    "a": _ATOM_SLOT,  # endpoints (any value)
+                    "b": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -802,9 +801,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\dfrac{{{f}({b}) - {f}({a})}}{{{b} - {a}}}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),
-                    "b": E(_atom, n=150),
+                    "f": _FN_SLOT,
+                    "a": _ATOM_SLOT,
+                    "b": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -814,9 +813,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"{f} \text{{ attains its maximum and minimum on }} [{a}, {b}]"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "a": E(_atom, n=150),
-                    "b": E(_atom, n=150),
+                    "f": _FN_SLOT,
+                    "a": _ATOM_SLOT,
+                    "b": _ATOM_SLOT,
                 },
             ),
         ],
@@ -842,9 +841,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
-            "x": E(_atom, n=150),  # evaluation point (specific value)
-            "a": E(_atom, n=150),  # expansion point (specific value)
+            "f": _FN_SLOT,
+            "x": _ATOM_SLOT,  # evaluation point (specific value)
+            "a": _ATOM_SLOT,  # expansion point (specific value)
             "n": S(("n", "m", "N", "p")),
         },
     ),
@@ -881,18 +880,18 @@ _ANALYSIS_TEMPLATES += [
         name="fn_limit_composition",
         latex=r"{fn1}\!\left(\lim_{{{x} \to {a}}} {fn2}({x})\right) = \lim_{{{x} \to {a}}} {fn1}\!\left({fn2}({x})\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
         },
     ),
     Template(
         name="fn_continuity_bound",
         latex=r"|{fn1}({x}) - {fn1}({y})| \leq {fn2}(|{x} - {y}|)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
             "y": S(_BVAR, idx=0.35),
         },
@@ -901,8 +900,8 @@ _ANALYSIS_TEMPLATES += [
         name="fn_uniform_convergence",
         latex=r"\sup_{{{x} \in D}} |{fn1}_n({x}) - {fn2}({x})| \to 0 \text{{ as }} n \to \infty",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
         },
     ),
@@ -910,8 +909,8 @@ _ANALYSIS_TEMPLATES += [
         name="fn_integral_bound",
         latex=r"\left|\int {fn1}({x})\,d{x}\right| \leq \int |{fn2}({x})|\,d{x}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
         },
     ),
@@ -919,8 +918,8 @@ _ANALYSIS_TEMPLATES += [
         name="fn_derivative_chain",
         latex=r"({fn1} \circ {fn2})'({x}) = {fn1}'({fn2}({x})) \cdot {fn2}'({x})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
         },
     ),
@@ -928,8 +927,8 @@ _ANALYSIS_TEMPLATES += [
         name="fn_sequence_bound",
         latex=r"|{fn1}(a_n) - {fn1}(L)| \leq {fn2}(|a_n - L|) \to 0",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -937,8 +936,8 @@ _ANALYSIS_TEMPLATES += [
         latex=r"\sum{lim_mod}_{{n={v}}}^{{\infty}} {fn1}(a_n) \leq {fn2}\!\left(\sum{lim_mod}_{{n={v}}}^{{\infty}} |a_n|\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "v": S(("n", "m", "k", "j", "N", "M")),
         },
     ),
@@ -946,8 +945,8 @@ _ANALYSIS_TEMPLATES += [
         name="fn_metric_bound",
         latex=r"{fn1}(d({x},{y})) \leq {fn2}(d({x},z) + d(z,{y}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "x": S(_BVAR, idx=0.35),
             "y": S(_BVAR, idx=0.35),
         },
@@ -1092,9 +1091,9 @@ _ANALYSIS_TEMPLATES += [
         name="limit_eval_bar",
         latex=r"\left.{f}({v})\right|_{{{v}={a}}} = \lim_{{{v} \to {a}}} {f}({v})",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_BVAR),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
         },
     ),
     # Norm of a fraction — \biggl\| ... \biggr\| exposes size-3 manual sizing
@@ -1102,8 +1101,8 @@ _ANALYSIS_TEMPLATES += [
         name="norm_frac_biggl",
         latex=r"\biggl\| \frac{{{f}({v})}}{{{g}({v})}} \biggr\|",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "g": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g": _FN_SLOT,
             "v": S(_BVAR),
         },
     ),
@@ -1114,7 +1113,7 @@ _ANALYSIS_TEMPLATES += [
         slots={
             "expr1": E(_expr, n=3000),
             "expr2": E(_expr, n=3000),
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
         },
     ),
     # Absolute value of a fraction — \biggl| ... \biggr| (size 3)
@@ -1141,9 +1140,9 @@ _PART_BSLSPACE: list[Template] = [
         name="bslspace_forall_explicit",
         latex=r"{ff}({vv}) = {expr}, \ \forall {vv} \in {dom}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
             "dom": S(_DOM_POOL),
         },
     ),
@@ -1151,9 +1150,9 @@ _PART_BSLSPACE: list[Template] = [
         name="bslspace_exists_explicit",
         latex=r"{ff}({vv}) \leq {cc}, \ \exists {vv} \in {dom}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
-            "cc": E(_atom, n=150),
+            "cc": _ATOM_SLOT,
             "dom": S((r"\mathbb{R}", r"\mathbb{Z}", r"[0,\infty)")),
         },
     ),
@@ -1170,8 +1169,8 @@ _PART_BSLSPACE: list[Template] = [
         name="bslspace_inequality_chain",
         latex=r"\|{ff}({vv})\| \leq {c}_1, \ \|{gg}({vv})\| \leq {c}_2",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
-            "gg": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
+            "gg": _FN_SLOT,
             "vv": S(_VARS),
             "c": S(("C", "M", "K", "L")),
         },
@@ -1180,18 +1179,18 @@ _PART_BSLSPACE: list[Template] = [
         name="bslspace_condition_separation",
         latex=r"{lhs} = {rhs} \ \Rightarrow \ {consequence}",
         slots={
-            "lhs": E(_expr, n=5000),
-            "rhs": E(_expr, n=5000),
-            "consequence": E(_expr, n=5000),
+            "lhs": _EXPR_SLOT,
+            "rhs": _EXPR_SLOT,
+            "consequence": _EXPR_SLOT,
         },
     ),
     Template(
         name="bslspace_bound_qualifier",
         latex=r"\|{ff}\|_{{{pp}}} \leq {cc}, \ \forall {ff} \in {space}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "pp": S(("p", "2", "q", "1", r"\infty")),
-            "cc": E(_atom, n=150),
+            "cc": _ATOM_SLOT,
             "space": S(_SPACE_POOL),
         },
     ),
@@ -1199,7 +1198,7 @@ _PART_BSLSPACE: list[Template] = [
         name="bslspace_forall_solution",
         latex=r"{ff}({vv}) = 0, \ {vv} \in {dom}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
             "dom": S(_DOM_POOL),
         },
@@ -1212,4 +1211,4 @@ _ANALYSIS_TEMPLATES += _PART_BSLSPACE
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("analysis", _ANALYSIS_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("analysis", _ANALYSIS_TEMPLATES)

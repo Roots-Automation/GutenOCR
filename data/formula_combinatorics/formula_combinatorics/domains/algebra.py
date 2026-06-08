@@ -4,38 +4,33 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _LIM_MOD, E, P, S, Template, X, register_domain
+from .._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_RICH_SLOT, _FN_SLOT, _LIM_MOD, E, P, S, Template, X
 from .._templates import _poly, _substack_prod, _substack_sum
 from .._vocab import (
     _COEFF_POOL,
     _GEO_N,
     _GREEK,
+    _LOG_BASES,
     _SCALARS,
     _VARS,
+    _VARS_SCALARS,
     _VEC_POOL,
     _atom,
     _eps_sub,
     _expr,
-    _fn_rich,
-    _fn_rich_nosub,
     _idx_atom,
     _s,
     _tol_sub,
 )
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_UNION: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
-_LOG_BASES: tuple[str, ...] = ("2", "10", "e") + tuple(_SCALARS) + (r"\alpha", r"\beta", r"\lambda", r"\mu")
+# _VARS_SCALARS, _GRP_NAMES, _RING_NAMES, _ELT_POOL, _LOG_BASES imported from _vocab
 _EXP_POOL: tuple[str, ...] = ("2", "3", "4", "m", "n", "p", "q")
 _MAT_POOL: tuple[str, ...] = ("A", "B", "C", "M", "T", "U")
-
-# Arrow / abstract-algebra pools
-_GRP_NAMES: tuple[str, ...] = ("G", "H", "K", "N", "Q")
-_RING_NAMES: tuple[str, ...] = ("R", "S", "A", "B")
-_ELT_POOL: tuple[str, ...] = ("g", "h", "x", "r", "s", "a")
 
 # Style-modifier pool
 _STYLE_CMDS: tuple[str, ...] = (r"\displaystyle", r"\textstyle", r"\scriptstyle", r"\scriptscriptstyle")
@@ -105,7 +100,7 @@ def _poly_mid_5(rng: random.Random, v: str) -> str:
 # Algebra templates
 # ---------------------------------------------------------------------------
 
-_QUAD_SLOTS: dict = {k: S(tuple(_UNION), idx=0.35) for k in ["v0", "p", "q", "r"]}
+_QUAD_SLOTS: dict = {k: S(tuple(_VARS_SCALARS), idx=0.35) for k in ["v0", "p", "q", "r"]}
 _QUAD_DISTINCT: list[list[str]] = [["v0", "p", "q", "r"]]
 
 _ALGEBRA_TEMPLATES: list[Template] = [
@@ -222,7 +217,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 name="abs_val_expr",
                 latex=r"\left|{expr}\right| = {c}",
                 slots={
-                    "expr": E(_expr, n=5000),
+                    "expr": _EXPR_SLOT,
                     "c": S(tuple(_SCALARS), 0.35),
                 },
             ),
@@ -283,7 +278,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         latex=r"\left({v} - {u}\right)\left({v} + {u}\right) = {v}^2 - \left({u}\right)^2",
         slots={
             "v": S(tuple(_VARS), 0.35),
-            "u": E(_expr, n=5000),
+            "u": _EXPR_SLOT,
         },
     ),
     Template(
@@ -299,16 +294,16 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         name="sum_of_cubes",
         latex=r"\left({u}\right)^3 + \left({w}\right)^3 = \left({u}+{w}\right)\left(\left({u}\right)^2 - {u} {w} + \left({w}\right)^2\right)",
         slots={
-            "u": E(_expr, n=5000),
-            "w": E(_expr, n=5000),
+            "u": _EXPR_SLOT,
+            "w": _EXPR_SLOT,
         },
     ),
     Template(
         name="difference_of_cubes",
         latex=r"\left({u}\right)^3 - \left({w}\right)^3 = \left({u}-{w}\right)\left(\left({u}\right)^2 + {u} {w} + \left({w}\right)^2\right)",
         slots={
-            "u": E(_expr, n=5000),
-            "w": E(_expr, n=5000),
+            "u": _EXPR_SLOT,
+            "w": _EXPR_SLOT,
         },
     ),
     Template(
@@ -319,12 +314,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="perfect_square_plus",
                 latex=r"\left({u} + {w}\right)^2 = \left({u}\right)^2 + 2 {u} {w} + \left({w}\right)^2",
-                slots={"u": E(_expr, n=5000), "w": E(_expr, n=5000)},
+                slots={"u": _EXPR_SLOT, "w": _EXPR_SLOT},
             ),
             Template(
                 name="perfect_square_minus",
                 latex=r"\left({u} - {w}\right)^2 = \left({u}\right)^2 - 2 {u} {w} + \left({w}\right)^2",
-                slots={"u": E(_expr, n=5000), "w": E(_expr, n=5000)},
+                slots={"u": _EXPR_SLOT, "w": _EXPR_SLOT},
             ),
         ],
     ),
@@ -381,8 +376,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({v}) = ({v} - {pt}) \cdot {fn}_1({v}) + {fn}({pt})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich_nosub, n=100),
-                    "pt": E(_expr, n=5000),
+                    "fn": _FN_SLOT,
+                    "pt": _EXPR_SLOT,
                 },
             ),
             Template(
@@ -390,8 +385,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({pt}) = 0 \implies ({v} - {pt}) \mid {fn}({v})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich, n=272),
-                    "pt": E(_expr, n=5000),
+                    "fn": _FN_RICH_SLOT,
+                    "pt": _EXPR_SLOT,
                 },
             ),
         ],
@@ -407,8 +402,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"\left({f} \circ {g}\right)({v}) = {f}\!\left({g}({v})\right)",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                 },
             ),
             Template(
@@ -416,9 +411,9 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"\left({f} \circ {g} \circ {h}\right)({v}) = {f}\!\left({g}\!\left({h}({v})\right)\right)",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "h": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "h": _FN_SLOT,
                 },
             ),
             Template(
@@ -426,7 +421,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{f}\!\left({f}^{{-1}}({v})\right) = {v}",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                 },
             ),
             Template(
@@ -434,15 +429,15 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{f}^{{-1}}\!\left({f}({v})\right) = {v}",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                 },
             ),
             Template(
                 name="inverse_composition",
                 latex=r"\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
                 },
             ),
         ],
@@ -457,8 +452,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "exp": S(("n", "m", "k", "p", "r", "2", "3", "4", "5", "6")),
-            "u": E(_expr, n=5000),
-            "w": E(_expr, n=5000),
+            "u": _EXPR_SLOT,
+            "w": _EXPR_SLOT,
         },
     ),
     Template(
@@ -485,7 +480,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 slots={
                     "base": S(tuple(_LOG_BASES)),
                     "n": S(("2", "3", "n", "k", "a", "b", "c", "d", "m", "p", "q")),
-                    "arg": E(_expr, n=5000),
+                    "arg": _EXPR_SLOT,
                 },
             ),
             Template(
@@ -494,7 +489,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 slots={
                     "base": S(tuple(_LOG_BASES)),
                     "base2": X(tuple(_LOG_BASES), ("base",)),
-                    "arg": E(_expr, n=5000),
+                    "arg": _EXPR_SLOT,
                 },
             ),
             Template(
@@ -505,8 +500,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "base": S(tuple(_LOG_BASES)),
-                    "u": E(_expr, n=5000),
-                    "w": E(_expr, n=5000),
+                    "u": _EXPR_SLOT,
+                    "w": _EXPR_SLOT,
                 },
             ),
             Template(
@@ -532,7 +527,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{base}^{{\log_{{{base}}} {arg}}} = {arg}",
                 slots={
                     "base": S(tuple(_LOG_BASES), idx=0.35),
-                    "arg": E(_expr, n=5000),
+                    "arg": _EXPR_SLOT,
                 },
             ),
         ],
@@ -560,7 +555,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 slots={
                     "v": S(tuple(_VARS), 0.35),
                     "pt": E(_idx_atom, n=200),
-                    "fn": E(_fn_rich, n=272),
+                    "fn": _FN_RICH_SLOT,
                     "b": S(tuple(_SCALARS), 0.35),
                     "eps": E(_eps_sub, n=2),
                 },
@@ -570,7 +565,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"\left|{fn}({v}) - {b}\right| < {eps}",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich, n=272),
+                    "fn": _FN_RICH_SLOT,
                     "b": S(tuple(_SCALARS), 0.35),
                     "eps": E(_eps_sub, n=2),
                 },
@@ -648,37 +643,37 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 name="floor_fraction",
                 latex=r"\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor",
                 slots={
-                    "num": E(_expr, n=5000),
-                    "den": E(_atom, n=150),
+                    "num": _EXPR_SLOT,
+                    "den": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="ceil_fraction",
                 latex=r"\left\lceil \frac{{{num}}}{{{den}}} \right\rceil",
                 slots={
-                    "num": E(_expr, n=5000),
-                    "den": E(_atom, n=150),
+                    "num": _EXPR_SLOT,
+                    "den": _ATOM_SLOT,
                 },
             ),
             Template(
                 name="floor_add_int",
                 latex=r"\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}",
                 slots={
-                    "v": E(_atom, n=150),
+                    "v": _ATOM_SLOT,
                     "n": S(tuple(_SCALARS)),
                 },
             ),
             Template(
                 name="ceil_neg_floor",
                 latex=r"\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor",
-                slots={"v": E(_atom, n=150)},
+                slots={"v": _ATOM_SLOT},
             ),
             Template(
                 name="floor_sum_bound",
                 latex=r"\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor",
                 slots={
-                    "u": E(_expr, n=5000),
-                    "w": E(_expr, n=5000),
+                    "u": _EXPR_SLOT,
+                    "w": _EXPR_SLOT,
                 },
             ),
         ],
@@ -742,19 +737,19 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         name="proportion_identity",
         latex=r"\frac{{{e1}}}{{{e2}}} = \frac{{{e3}}}{{{e4}}}",
         slots={
-            "e1": E(_expr, n=5000),
-            "e2": E(_expr, n=5000),
-            "e3": E(_expr, n=5000),
-            "e4": E(_expr, n=5000),
+            "e1": _EXPR_SLOT,
+            "e2": _EXPR_SLOT,
+            "e3": _EXPR_SLOT,
+            "e4": _EXPR_SLOT,
         },
     ),
     Template(
         name="sum_of_squares",
         latex=r"\left({e1}\right)^2 + \left({e2}\right)^2 = {at}^2",
         slots={
-            "e1": E(_expr, n=5000),
-            "e2": E(_expr, n=5000),
-            "at": E(_atom, n=150),
+            "e1": _EXPR_SLOT,
+            "e2": _EXPR_SLOT,
+            "at": _ATOM_SLOT,
         },
     ),
     Template(
@@ -922,10 +917,10 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "v": S(tuple(_VARS), 0.35),
-                    "lo": E(_atom, n=150),
-                    "hi": E(_atom, n=150),
-                    "f1": E(_fn_rich, n=272),
-                    "f2": E(_fn_rich, n=272),
+                    "lo": _ATOM_SLOT,
+                    "hi": _ATOM_SLOT,
+                    "f1": _FN_RICH_SLOT,
+                    "f2": _FN_RICH_SLOT,
                 },
             ),
             Template(
@@ -954,10 +949,10 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "q": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "r": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "q": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "r": _FN_SLOT,
                 },
             ),
             Template(
@@ -965,10 +960,10 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=(r"{f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v})"),
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "q": E(_fn_rich_nosub, n=100),
-                    "r": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "q": _FN_SLOT,
+                    "r": _FN_SLOT,
                 },
             ),
             Template(
@@ -977,8 +972,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 slots={
                     "v": S(tuple(_VARS), 0.35),
                     "a": S(_COEFF_POOL, idx=0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "q": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "q": _FN_SLOT,
                 },
             ),
             Template(
@@ -989,10 +984,10 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g": E(_fn_rich_nosub, n=100),
-                    "q": E(_fn_rich_nosub, n=100),
-                    "r": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g": _FN_SLOT,
+                    "q": _FN_SLOT,
+                    "r": _FN_SLOT,
                 },
             ),
         ],
@@ -1163,7 +1158,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "n": S(_GEO_N),
                 },
             ),
@@ -1464,7 +1459,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({v}) = {lc}({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "lc": S(_COEFF_POOL, idx=0.35),
                     "r1": S(_COEFF_POOL, idx=0.35),
                     "r2": S(_COEFF_POOL, idx=0.35),
@@ -1477,7 +1472,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({v}) = ({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "r1": S(_COEFF_POOL, idx=0.35),
                     "r2": S(_COEFF_POOL, idx=0.35),
                     "rn": S(_COEFF_POOL, idx=0.35),
@@ -1489,7 +1484,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({v}) = {lc}({v} - {r1})({v} - {r2})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "lc": S(_COEFF_POOL, idx=0.35),
                     "r1": S(_COEFF_POOL, idx=0.35),
                     "r2": S(_COEFF_POOL, idx=0.35),
@@ -1501,7 +1496,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 latex=r"{fn}({v}) = {lc}({v} - {r}_1)({v} - {r}_2) \cdots ({v} - {r}_{{{n}}})",
                 slots={
                     "v": S(tuple(_VARS), 0.35),
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "lc": S(_COEFF_POOL, idx=0.35),
                     "r": S(_COEFF_POOL),
                     "n": S(_GEO_N),
@@ -1519,9 +1514,9 @@ _ALGEBRA_TEMPLATES += [
         name="leqslant_chain",
         latex=r"{aa} \leqslant {bb} \leqslant {cc}",
         slots={
-            "aa": S(tuple(_UNION)),
-            "bb": S(tuple(_UNION)),
-            "cc": S(tuple(_UNION)),
+            "aa": S(tuple(_VARS_SCALARS)),
+            "bb": S(tuple(_VARS_SCALARS)),
+            "cc": S(tuple(_VARS_SCALARS)),
         },
         distinct=[["aa", "bb", "cc"]],
     ),
@@ -1547,13 +1542,13 @@ _ALGEBRA_TEMPLATES += [
     Template(
         name="much_less_than",
         latex=r"{aa} \lll {bb}",
-        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        slots={"aa": S(tuple(_VARS_SCALARS)), "bb": S(tuple(_VARS_SCALARS))},
         distinct=[["aa", "bb"]],
     ),
     Template(
         name="much_greater_than",
         latex=r"{aa} \ggg {bb}",
-        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        slots={"aa": S(tuple(_VARS_SCALARS)), "bb": S(tuple(_VARS_SCALARS))},
         distinct=[["aa", "bb"]],
     ),
     # \lesssim / \gtrsim
@@ -1561,7 +1556,7 @@ _ALGEBRA_TEMPLATES += [
         name="norm_lesssim_power",
         latex=r"\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "xx": S(tuple(_VARS)),
             "nn": S(_EXP_POOL),
         },
@@ -1569,7 +1564,7 @@ _ALGEBRA_TEMPLATES += [
     Template(
         name="gtrsim_scalars",
         latex=r"{aa} \gtrsim {bb}",
-        slots={"aa": S(tuple(_UNION)), "bb": S(tuple(_UNION))},
+        slots={"aa": S(tuple(_VARS_SCALARS)), "bb": S(tuple(_VARS_SCALARS))},
         distinct=[["aa", "bb"]],
     ),
     # \dagger — adjoint operator
@@ -1612,29 +1607,8 @@ _ALGEBRA_TEMPLATES += [
 ]
 
 
-_PART_ARROWS: list[Template] = [
-    Template(
-        name="group_homomorphism_rightarrow",
-        latex=r"\phi: {GG} \rightarrow {HH} \text{{ is a group homomorphism}}",
-        slots={"GG": S(_GRP_NAMES), "HH": X(_GRP_NAMES, ("GG",))},
-    ),
-    Template(
-        name="ring_homomorphism_rightarrow",
-        latex=r"f: {RR} \rightarrow {SS},\quad f(1_{{{RR}}}) = 1_{{{SS}}}",
-        slots={"RR": S(_RING_NAMES), "SS": X(_RING_NAMES, ("RR",))},
-    ),
-    Template(
-        name="conjugation_mapsto",
-        latex=r"\phi_h: {gg} \mapsto h{gg}h^{{-1}}, \quad {gg} \in {GG}",
-        slots={"gg": S(_ELT_POOL), "GG": S(_GRP_NAMES)},
-    ),
-    Template(
-        name="frobenius_endomorphism_longmapsto",
-        latex=r"\mathrm{{Frob}}: {rr} \longmapsto {rr}^p \quad (p\text{{ prime}})",
-        slots={"rr": S(_ELT_POOL)},
-    ),
-]
-_ALGEBRA_TEMPLATES += _PART_ARROWS
+# group_homomorphism_rightarrow, conjugation_mapsto → group_theory.py
+# ring_homomorphism_rightarrow, frobenius_endomorphism_longmapsto → ring_field_theory.py
 
 # ---------------------------------------------------------------------------
 # Large manual bracket-size templates (\biggl/\biggr, \Biggl/\Biggr)
@@ -1677,8 +1651,8 @@ _LARGE_BRACKET: list[Template] = [
         slots={
             "v": S(_VARS),
             "sp": S((r"\mathbb{R}", r"\mathbb{Z}", r"\mathbb{N}")),
-            "f": E(_fn_rich_nosub, n=100),
-            "c": E(_atom, n=150),
+            "f": _FN_SLOT,
+            "c": _ATOM_SLOT,
         },
     ),
 ]
@@ -1695,8 +1669,8 @@ _STYLE_MODIFIER_TEMPLATES: list[Template] = [
         latex=r"{style} \frac{{{num}}}{{{den}}}",
         slots={
             "style": S(_STYLE_CMDS),
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
     Template(
@@ -1715,8 +1689,8 @@ _STYLE_MODIFIER_TEMPLATES: list[Template] = [
             "style": S(_STYLE_CMDS),
             "lo": S(("k", "j", "i", "m")),
             "hi": S(("n", "N", "M", "p")),
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
     Template(
@@ -1724,7 +1698,7 @@ _STYLE_MODIFIER_TEMPLATES: list[Template] = [
         latex=r"{style} {expr}",
         slots={
             "style": S(_STYLE_CMDS),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
         },
     ),
 ]
@@ -1745,24 +1719,24 @@ _GENFRAC_TEMPLATES: list[Template] = [
             "rgt": S(_GENFRAC_RIGHT),
             "thk": S(_GENFRAC_THICK),
             "sty": S(_GENFRAC_STYLE),
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
     Template(
         name="genfrac_no_rule",
         latex=r"\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}",
         slots={
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
     Template(
         name="genfrac_angle",
         latex=r"\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}",
         slots={
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
 ]
@@ -1788,14 +1762,14 @@ _TEXT_FRAC_TEMPLATES: list[Template] = [
         latex=r"\frac{{{num}}}{{{den}}}",
         slots={
             "num": S(_TEXT_NUMER),
-            "den": E(_expr, n=5000),
+            "den": _EXPR_SLOT,
         },
     ),
     Template(
         name="expr_over_text_frac",
         latex=r"\frac{{{num}}}{{{den}}}",
         slots={
-            "num": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
             "den": S(_TEXT_DENOM),
         },
     ),
@@ -1916,4 +1890,4 @@ _ALGEBRA_TEMPLATES += _SUBSTACK_ALG_TEMPLATES
 # ---------------------------------------------------------------------------
 
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("algebra", _ALGEBRA_TEMPLATES, 0.09, cap=75_000_000)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("algebra", _ALGEBRA_TEMPLATES)

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
 from .._vocab import _STATS_N as _N_POOL
-from .._vocab import _fn_rich_nosub
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -336,8 +336,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r" \quad \forall\,({uu},{vv}) \in E({gg})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "uu": S(_VTX_POOL),
             "vv": X(_VTX_POOL, ("uu",)),
             "gg": S(_GRAPH_POOL),
@@ -350,8 +350,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r" \quad \forall\,{uu} \in N({vv})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "uu": S(_VTX_POOL),
             "vv": X(_VTX_POOL, ("uu",)),
         },
@@ -363,8 +363,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r" \bigl\{{{fn1}({uu}) + {fn2}({uu},{vv})\bigr\}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "uu": S(_VTX_POOL),
             "vv": X(_VTX_POOL, ("uu",)),
         },
@@ -376,8 +376,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r" \text{{ is a graph homomorphism}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "g1": S(_GRAPH_POOL),
             "g3": X(_GRAPH_POOL, ("g1",)),
         },
@@ -390,8 +390,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "uu": S(_VTX_POOL),
             "vv": X(_VTX_POOL, ("uu",)),
         },
@@ -406,8 +406,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "gg": S(_GRAPH_POOL),
             "uu": S(_VTX_POOL),
             "vv": X(_VTX_POOL, ("uu",)),
@@ -421,4 +421,4 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("graph_theory", _GRAPH_THEORY_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("graph_theory", _GRAPH_THEORY_TEMPLATES)

@@ -7,16 +7,15 @@ and international/regional trig-name variants.
 
 from __future__ import annotations
 
-from .._template_dsl import E, S, Template, X, register_domain
+from .._template_dsl import _EXPR_SLOT, _FN_SLOT, E, S, Template, X
 from .._vocab import (
     _CALLIGRAPHIC,
     _GEO_N,
     _SCALARS,
     _VARS,
     _atom,
-    _expr,
-    _fn_rich_nosub,
 )
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -95,7 +94,7 @@ _SUPP_TEMPLATES: list[Template] = [
         name="supp_definition",
         latex=r"\operatorname{{supp}}({ff}) = \overline{{\{{{vv} : {ff}({vv}) \neq 0\}}}}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -103,7 +102,7 @@ _SUPP_TEMPLATES: list[Template] = [
         name="supp_compact",
         latex=r"\operatorname{{supp}}({ff}) \subset [{aa}, {bb}]",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "aa": S(_COEFF, idx=0.2),
             "bb": X(_COEFF, ("aa",), idx=0.2),
         },
@@ -115,8 +114,8 @@ _SUPP_TEMPLATES: list[Template] = [
             r"\subseteq \operatorname{{supp}}({ff}) \cap \operatorname{{supp}}({gg})"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
-            "gg": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
+            "gg": _FN_SLOT,
         },
     ),
     Template(
@@ -134,8 +133,8 @@ _SUPP_TEMPLATES: list[Template] = [
             r"\subseteq \operatorname{{supp}}({ff}) \cup \operatorname{{supp}}({gg})"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
-            "gg": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
+            "gg": _FN_SLOT,
         },
     ),
 ]
@@ -217,7 +216,7 @@ _ESS_TEMPLATES: list[Template] = [
             r" = \inf\{{M : {ff}({vv}) \leq M \text{{ a.e.}}\}}"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
             "DD": S(tuple(_CALLIGRAPHIC)),
         },
@@ -226,7 +225,7 @@ _ESS_TEMPLATES: list[Template] = [
         name="esssup_Linfty",
         latex=r"\|{ff}\|_\infty = \operatorname{{ess\,sup}}_{{{vv}}}\,|{ff}({vv})|",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -237,7 +236,7 @@ _ESS_TEMPLATES: list[Template] = [
             r" = \sup\{{m : {ff}({vv}) \geq m \text{{ a.e.}}\}}"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
             "DD": S(tuple(_CALLIGRAPHIC)),
         },
@@ -249,7 +248,7 @@ _ESS_TEMPLATES: list[Template] = [
             r" \leq \operatorname{{ess\,sup}}_{{{vv}}}\, {ff}({vv})"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -260,7 +259,7 @@ _ESS_TEMPLATES: list[Template] = [
             r" = \inf\{{M \geq 0 : \mu(\{{{vv} : {ff}({vv}) > M\}}) = 0\}}"
         ),
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -395,9 +394,9 @@ _MATHBIN_TEMPLATES: list[Template] = [
         name="mathbin_binary_op",
         latex=r"{lhs} \mathbin{{{sym}}} {rhs}",
         slots={
-            "lhs": E(_expr, n=5000),
+            "lhs": _EXPR_SLOT,
             "sym": S(_MATHCLASS_SYMS),
-            "rhs": E(_expr, n=5000),
+            "rhs": _EXPR_SLOT,
         },
     ),
     Template(
@@ -407,7 +406,7 @@ _MATHBIN_TEMPLATES: list[Template] = [
             "lhs": E(_atom, n=200),
             "sym": S(_MATHCLASS_SYMS),
             "rhs": E(_atom, n=200),
-            "result": E(_expr, n=5000),
+            "result": _EXPR_SLOT,
         },
     ),
     Template(
@@ -433,9 +432,9 @@ _MATHBIN_TEMPLATES: list[Template] = [
         name="mathrel_relation",
         latex=r"{lhs} \mathrel{{{sym}}} {rhs}",
         slots={
-            "lhs": E(_expr, n=5000),
+            "lhs": _EXPR_SLOT,
             "sym": S(_MATHCLASS_SYMS),
-            "rhs": E(_expr, n=5000),
+            "rhs": _EXPR_SLOT,
         },
     ),
     Template(
@@ -489,4 +488,4 @@ _CUSTOM_OP_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("custom_operators", _CUSTOM_OP_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("custom_operators", _CUSTOM_OP_TEMPLATES)

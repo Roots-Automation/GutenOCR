@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -620,8 +620,8 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "GG": S(_GROUP_POOL),
             "gg": S(_ELEM_POOL),
         },
@@ -633,8 +633,8 @@ _TEMPLATES_C: list[Template] = [
             r"\sum_i {fn1}({gg})_{{ii}} \cdot {fn2}({hh})_{{ii}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "gg": S(_ELEM_POOL),
             "hh": X(_ELEM_POOL, ("gg",)),
         },
@@ -646,8 +646,8 @@ _TEMPLATES_C: list[Template] = [
             r"\text{{ in weight space }} {VV}_{{{ww}}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ww": S(_WEIGHT_POOL),
             "VV": S(_MODULE_POOL),
             "hh": S(_ELEM_POOL),
@@ -657,9 +657,9 @@ _TEMPLATES_C: list[Template] = [
         name="fn_triple_rep",
         latex=(r"{fn1}({gg} \cdot {hh}) = {fn2}({gg}) \cdot {fn3}({hh})"),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "gg": S(_ELEM_POOL),
             "hh": X(_ELEM_POOL, ("gg",)),
         },
@@ -671,7 +671,7 @@ _TEMPLATES_C: list[Template] = [
             r"\quad \forall {gg} \in {GG}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "rr": S(_REP_POOL),
             "gg": S(_ELEM_POOL),
             "GG": S(_GROUP_POOL),
@@ -681,7 +681,7 @@ _TEMPLATES_C: list[Template] = [
         name="matrix_coeff_fn",
         latex=(r"{fn1}({gg})_{{ij}} = \langle {fn1}({gg})\, e_j,\, e_i \rangle"),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "gg": S(_ELEM_POOL),
             "GG": S(_GROUP_POOL),
         },
@@ -743,4 +743,4 @@ _REPR_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("representation_theory", _REPR_TEMPLATES, 0.01)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("representation_theory", _REPR_TEMPLATES)

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -861,8 +861,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({nat}_{{{obj2}}} \circ {fun1}({mor}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nat": S(_NAT_POOL),
             "fun1": S(_FUN_POOL),
             "fun2": X(_FUN_POOL, ("fun1",)),
@@ -878,8 +878,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({fun2}({fun1}({obj})))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nat": S(_NAT_POOL),
             "fun1": S(_FUN_POOL),
             "fun2": X(_FUN_POOL, ("fun1",)),
@@ -893,8 +893,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({nat}_{{{obj}}} \circ {mon}({mor2}) \circ {mor1})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nat": S(_NAT_POOL),
             "mon": S(_MONAD_POOL),
             "mor1": S(_MOR_POOL),
@@ -909,8 +909,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}(\operatorname{{im}}({mor1}: {obj1} \to {obj2}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "obj1": S(_OBJ_POOL),
             "obj2": X(_OBJ_POOL, ("obj1",)),
             "obj3": X(_OBJ_POOL, ("obj1", "obj2")),
@@ -925,8 +925,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({fun}({mor2}) \circ {fun}({mor1}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "fun": S(_FUN_POOL),
             "mor1": S(_MOR_POOL),
             "mor2": X(_MOR_POOL, ("mor1",)),
@@ -939,8 +939,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({fun}({obj}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "obj": S(_OBJ_POOL),
             "fun": S(_FUN_POOL),
         },
@@ -1062,4 +1062,4 @@ _CATTHY_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("category_theory", _CATTHY_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("category_theory", _CATTHY_TEMPLATES)

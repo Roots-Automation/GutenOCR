@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -134,7 +134,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" = \frac{{\partial {ham}}}{{\partial q}}\frac{{\partial {fn}}}{{\partial p}}"
             r" - \frac{{\partial {ham}}}{{\partial p}}\frac{{\partial {fn}}}{{\partial q}}"
         ),
-        slots={"ham": S(_HAM_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"ham": S(_HAM_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="euler_lagrange_alt",
@@ -308,7 +308,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r"\langle {psi} | \hat{{A}} | {psi} \rangle"
             r" = \int{lim_mod}_{{-\infty}}^{{\infty}} {psi}^*\!(x)\,{fn}(x)\,{psi}(x)\,dx"
         ),
-        slots={"lim_mod": _LIM_MOD, "psi": S(_PSI_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"lim_mod": _LIM_MOD, "psi": S(_PSI_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="time_evolution_state",
@@ -479,7 +479,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r"\frac{{\partial^2 {fn}}}{{\partial t^2}}"
             r" = {vv}^2\,\frac{{\partial^2 {fn}}}{{\partial x^2}}"
         ),
-        slots={"fn": E(_fn_rich_nosub, n=100), "vv": S(_VEL_POOL)},
+        slots={"fn": _FN_SLOT, "vv": S(_VEL_POOL)},
     ),
     Template(
         name="speed_of_light_formula",
@@ -511,7 +511,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r"\delta\int{lim_mod}_{{t_1}}^{{t_2}}"
             r" {fn}\!\left({qq},\,\dot{{{qq}}},\,t\right)\,dt = 0"
         ),
-        slots={"lim_mod": _LIM_MOD, "fn": E(_fn_rich_nosub, n=100), "qq": S(_Q_POOL)},
+        slots={"lim_mod": _LIM_MOD, "fn": _FN_SLOT, "qq": S(_Q_POOL)},
     ),
     Template(
         name="euler_lagrange_functional",
@@ -519,7 +519,7 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r"\frac{{d}}{{dt}}\frac{{\partial {fn}}}{{\partial \dot{{{qq}}}}}"
             r" - \frac{{\partial {fn}}}{{\partial {qq}}} = 0"
         ),
-        slots={"fn": E(_fn_rich_nosub, n=100), "qq": S(_Q_POOL)},
+        slots={"fn": _FN_SLOT, "qq": S(_Q_POOL)},
     ),
     Template(
         name="generalized_uncertainty_principle",
@@ -528,19 +528,19 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" \geq \tfrac{{1}}{{2}}\bigl|\bigl\langle"
             r" [{fn1},\,{fn2}]\bigr\rangle\bigr|"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="operator_commutator_def",
         latex=r"\bigl[{fn1},\,{fn2}\bigr] = {fn1}\,{fn2} - {fn2}\,{fn1}",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="greens_function_equation",
         latex=r"{fn1}({cc})\,{fn2}({cc}') = -4\pi\,\delta({cc}-{cc}')",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "cc": S(_COORD_POOL),
         },
     ),
@@ -552,8 +552,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" \bigl| {fn2} \bigr\rangle"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ham": S(_HAM_POOL),
             "hb": S(_HBAR_POOL),
         },
@@ -566,8 +566,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "qq": S(_Q_POOL),
         },
     ),
@@ -578,8 +578,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" = {fn2}({fn1}) - V({fn1})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
@@ -591,8 +591,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r"\,\delta {fn2}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
@@ -603,8 +603,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" = \langle {fn1} | {ham} | {fn2} \rangle"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ham": S(_HAM_POOL),
         },
     ),
@@ -615,8 +615,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
             r" - \frac{{\partial \mathcal{{L}}}}{{\partial {fn2}}} = 0"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "mu": S(_SPACETIME_IDX_POOL),
         },
     ),
@@ -628,8 +628,8 @@ _PHYSICS_TEMPLATES += [
         name="fn_boltzmann_weight",
         latex=r"{fn1}\!\left(e^{{-{bt}\,E_{{{ii}}}}}\right) = {fn2}\!\left(\frac{{1}}{{Z}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "bt": S(_BETA_POOL),
             "ii": S(_IDX_POOL),
         },
@@ -638,8 +638,8 @@ _PHYSICS_TEMPLATES += [
         name="fn_dispersion_relation",
         latex=r"{fn1}({om}) = {fn2}({kk}\,c)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "om": S(_OMEGA_POOL),
             "kk": S(_K_POOL),
         },
@@ -648,8 +648,8 @@ _PHYSICS_TEMPLATES += [
         name="fn_lorentz_factor_pair",
         latex=r"{fn1}({gm}) = {fn2}\!\left(\frac{{1}}{{\sqrt{{1-{vv}^2/c^2}}}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "gm": S(_GAMMA_POOL),
             "vv": S(_VEL_POOL),
         },
@@ -661,8 +661,8 @@ _PHYSICS_TEMPLATES += [
             r" = {fn2}\,\frac{{\partial^2 {fn1}}}{{\partial {cc}^2}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "cc": S(_COORD_POOL),
         },
     ),
@@ -670,8 +670,8 @@ _PHYSICS_TEMPLATES += [
         name="fn_correlation_fn",
         latex=r"{fn1}(r) = {fn2}\!\left(\langle {psi}(0)\,{psi}(r)\rangle\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "psi": S(_PSI_POOL),
         },
     ),
@@ -680,8 +680,8 @@ _PHYSICS_TEMPLATES += [
         latex=r"{fn1}(Z) = {fn2}\!\left(\sum{lim_mod}_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "bt": S(_BETA_POOL),
             "ii": S(_IDX_POOL),
         },
@@ -693,8 +693,8 @@ _PHYSICS_TEMPLATES += [
             r" = {fn2}\!\left(c^2\,\nabla^2 {ef}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ef": S(_E_FIELD),
         },
     ),
@@ -705,8 +705,8 @@ _PHYSICS_TEMPLATES += [
             r" = {fn2}\!\left(e^{{-i\,{ham}\,t/{hb}}}\,|{psi}(0)\rangle\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "psi": S(_PSI_POOL),
             "ham": S(_HAM_POOL),
             "hb": S(_HBAR_POOL),
@@ -1072,4 +1072,4 @@ _PHYSICS_TEMPLATES += _PART_ANTICOMMUTATOR
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("physics", _PHYSICS_TEMPLATES, 0.06)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("physics", _PHYSICS_TEMPLATES)

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import E, S, Template, register_domain
+from .._template_dsl import E, S, Template
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -498,4 +499,4 @@ _GEO_TEMPLATES = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("geometry", _GEO_TEMPLATES, 0.07)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("geometry", _GEO_TEMPLATES)

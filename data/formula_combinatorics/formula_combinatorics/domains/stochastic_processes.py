@@ -3,8 +3,8 @@ continuous-time martingales, Markov generators, jump processes, control."""
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Pools
@@ -976,8 +976,8 @@ _TEMPLATES_C: list[Template] = [
             r"\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "func": S(_FUNC_POOL),
             "bm": S(_BM_POOL),
             "t": S(_TIME_POOL),
@@ -994,8 +994,8 @@ _TEMPLATES_C: list[Template] = [
             r"\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "proc": S(_PROC_POOL),
             "drift": S(_FUNC_POOL),
             "diff": X(_FUNC_POOL, ("drift",)),
@@ -1013,8 +1013,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}({proc}_{{{t1}}})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "proc": S(_PROC_POOL),
             "filt": S(_FILT_POOL),
             "t1": S(_TIME_POOL),
@@ -1032,8 +1032,8 @@ _TEMPLATES_C: list[Template] = [
             r"\!\left({diff}(x)^2\, {func}\right)\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "func": S(_FUNC_POOL),
             "drift": X(_FUNC_POOL, ("func",)),
             "diff": X(_FUNC_POOL, ("func", "drift")),
@@ -1050,8 +1050,8 @@ _TEMPLATES_C: list[Template] = [
             r"\right]\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "func": S(_FUNC_POOL),
             "func2": X(_FUNC_POOL, ("func",)),
             "proc": S(_PROC_POOL),
@@ -1070,8 +1070,8 @@ _TEMPLATES_C: list[Template] = [
             r"\right)\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "meas1": S(_MEAS_POOL),
             "meas2": X(_MEAS_POOL, ("meas1",)),
             "coeff": S(_COEFF_POOL),
@@ -1121,4 +1121,4 @@ _SPROC_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("stochastic_processes", _SPROC_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("stochastic_processes", _SPROC_TEMPLATES)

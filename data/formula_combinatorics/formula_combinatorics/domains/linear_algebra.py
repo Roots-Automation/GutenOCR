@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _ATOM_SLOT, _LIM_MOD, E, S, Template, X
 from .._templates import _matrix_env, _matrix_with_ellipsis, _smallmatrix_inline
-from .._vocab import _MATRIX_NAMES, _atom
+from .._vocab import _MATRIX_NAMES
 from .._vocab import _STATS_N as _N_POOL
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -34,10 +35,10 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
             r"= {e0} {e3} - {e1} {e2}\end{{equation*}}"
         ),
         slots={
-            "e0": E(_atom, n=150),
-            "e1": E(_atom, n=150),
-            "e2": E(_atom, n=150),
-            "e3": E(_atom, n=150),
+            "e0": _ATOM_SLOT,
+            "e1": _ATOM_SLOT,
+            "e2": _ATOM_SLOT,
+            "e3": _ATOM_SLOT,
         },
     ),
     Template(
@@ -98,10 +99,10 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
             r"{e0} {e2} + {e1} {e3}\end{{equation*}}"
         ),
         slots={
-            "e0": E(_atom, n=150),
-            "e1": E(_atom, n=150),
-            "e2": E(_atom, n=150),
-            "e3": E(_atom, n=150),
+            "e0": _ATOM_SLOT,
+            "e1": _ATOM_SLOT,
+            "e2": _ATOM_SLOT,
+            "e3": _ATOM_SLOT,
         },
     ),
     Template(
@@ -336,4 +337,4 @@ _LINEAR_ALGEBRA_TEMPLATES += _PART_LVERT_NORMS
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("linear_algebra", _LINEAR_ALGEBRA_TEMPLATES, 0.08)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("linear_algebra", _LINEAR_ALGEBRA_TEMPLATES)

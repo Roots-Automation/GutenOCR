@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_RICH_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
 from .._templates import _def_integral, _indef_integral, _interval, _substack_prod, _substack_sum
-from .._vocab import _SCALARS, _VARS, _atom, _expr, _fn_rich, _fn_rich_nosub
+from .._vocab import _SCALARS, _VARS
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -33,7 +34,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\frac{{d}}{{d{v}}}\left[{expr}\right]",
         slots={
             "v": S(_VARS),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
         },
     ),
     # nth-order derivative (expanded pool, was 3-item _order_n)
@@ -43,7 +44,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         slots={
             "v": S(_VARS),
             "n": S(("2", "3", "4", "n", "m")),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
         },
     ),
     # indefinite integral
@@ -65,7 +66,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         slots={
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
         },
     ),
     # limit to scalar/inf/0 (fixed sampling bug: was _pt_scalar_inf_zero)
@@ -75,7 +76,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         slots={
             "v": S(_VARS),
             "pt": S(tuple(_SCALARS) + (r"\infty", "0")),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
         },
     ),
     # limit of ratio (fixed sampling bug: was _pt_inf_zero_scalar)
@@ -85,8 +86,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
         slots={
             "v": S(_VARS),
             "pt": S((r"\infty", "0") + tuple(_SCALARS)),
-            "num": E(_expr, n=5000),
-            "den": E(_expr, n=5000),
+            "num": _EXPR_SLOT,
+            "den": _EXPR_SLOT,
         },
     ),
     # mixed partial derivative (proper slotted template, was E(_mixed_partial, n=500))
@@ -94,7 +95,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         name="mixed_partial",
         latex=r"\frac{{\partial^2 {f}}}{{\partial {v} \, \partial {v2}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
         },
@@ -105,9 +106,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}({a})}}{{n!}} \left({v} - {a}\right)^n",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
         },
     ),
     # Maclaurin series (Taylor at a=0)
@@ -116,7 +117,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}(0)}}{{n!}} {v}^n",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
         },
     ),
@@ -128,9 +129,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{{f}''({a})}}{{2!}}({v} - {a})^2 + \cdots"
         ),
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
         },
     ),
     # fundamental theorem of calculus
@@ -139,10 +140,10 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}'({v}) \, d{v} = {f}({b}) - {f}({a})",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # chain rule — prime notation (standalone; high n_eff, separate from Leibniz group)
@@ -154,8 +155,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
         ),
         slots={
             "v": S(_VARS),
-            "f": E(_fn_rich_nosub, n=100),
-            "g2": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g2": _FN_SLOT,
         },
     ),
     # chain rule — Leibniz notation (2 variants; expanded z pool, was 3-item _FUNC_Z_POOL)
@@ -177,8 +178,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 name="chain_rule_leibniz_composed",
                 latex=(r"\frac{{d{f}}}{{d{v}}} = \frac{{d{f}}}{{d{gg}}} \cdot \frac{{d{gg}}}{{d{v}}}"),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "gg": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "gg": _FN_SLOT,
                     "v": S(_VARS),
                 },
             ),
@@ -193,7 +194,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial {f}}}{{\partial {v2}}} \mathbf{{e}}_2"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
         },
@@ -207,7 +208,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial {f}}}{{\partial {v2}}} \hat{{j}}"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
         },
@@ -222,7 +223,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial {f}}}{{\partial {v3}}} \mathbf{{e}}_3"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
             "v3": X(_VARS, ("v", "v2")),
@@ -278,7 +279,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial^2 {f}}}{{\partial {v2}^2}}"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
         },
@@ -292,7 +293,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial^2 {f}}}{{\partial {v2}^2}}"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
         },
@@ -307,7 +308,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\frac{{\partial^2 {f}}}{{\partial {v3}^2}}"
         ),
         slots={
-            "f": E(_fn_rich, n=272),
+            "f": _FN_RICH_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
             "v3": X(_VARS, ("v", "v2")),
@@ -399,11 +400,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # L'Hôpital's rule
@@ -415,9 +416,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
         ),
         slots={
             "v": S(_VARS),
-            "f": E(_fn_rich_nosub, n=100),
-            "g2": E(_fn_rich_nosub, n=100),
-            "a": E(_atom, n=150),
+            "f": _FN_SLOT,
+            "g2": _FN_SLOT,
+            "a": _ATOM_SLOT,
         },
     ),
     # integration by parts (symbolic form)
@@ -425,8 +426,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
         name="integration_by_parts",
         latex=r"\int {f} \, d{g2} = {f} {g2} - \int {g2} \, d{f}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "g2": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g2": _FN_SLOT,
         },
     ),
     # integration by parts (definite form)
@@ -438,10 +439,10 @@ _CALCULUS_TEMPLATES: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
-            "g2": E(_fn_rich_nosub, n=100),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "f": _FN_SLOT,
+            "g2": _FN_SLOT,
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # Leibniz integral rule (integration variable now a slot)
@@ -455,7 +456,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "v": S(_VARS),
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "it": S(("t", "s", r"\tau", r"\sigma")),
         },
     ),
@@ -464,9 +465,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
         name="mean_value_theorem",
         latex=r"\exists c \in ({a}, {b}) : {f}'(c) = \frac{{{f}({b}) - {f}({a})}}{{{b} - {a}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "f": _FN_SLOT,
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # mean value theorem (integral form)
@@ -475,10 +476,10 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\frac{{1}}{{{b} - {a}}} \int{lim_mod}_{{{a}}}^{{{b}}} {f}({v}) \, d{v} = {f}(c)",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # ---- New templates ----
@@ -496,8 +497,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "v": S(_VARS),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g2": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g2": _FN_SLOT,
                 },
             ),
             Template(
@@ -508,8 +509,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "v": S(_VARS),
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g2": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g2": _FN_SLOT,
                 },
             ),
             Template(
@@ -528,7 +529,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "v": S(_VARS),
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "n": S(("n", "m", "p", "k", r"\alpha")),
                 },
             ),
@@ -548,10 +549,10 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "v": S(_VARS),
-                    "a": E(_atom, n=150),
-                    "b": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "b": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -562,10 +563,10 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "v": S(_VARS),
-                    "a": E(_atom, n=150),
-                    "b": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "b": _ATOM_SLOT,
                 },
             ),
             Template(
@@ -580,8 +581,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
                     "v": S(_VARS),
                     "px": S((r"\phi", r"\psi", r"\xi", "p", "q")),
                     "py": S((r"\phi", r"\psi", r"\xi", "p", "q")),
-                    "a": E(_atom, n=150),
-                    "b": E(_atom, n=150),
+                    "a": _ATOM_SLOT,
+                    "b": _ATOM_SLOT,
                 },
                 distinct=[["px", "py"]],
             ),
@@ -597,7 +598,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
                 name="dir_deriv_dot",
                 latex=r"D_{{\mathbf{{{u}}}}} {f} = \nabla {f} \cdot \mathbf{{{u}}}",
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "u": S(("u", "v", "e", "n")),
                 },
             ),
@@ -608,7 +609,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
                     r"\lim_{{h \to 0}} \frac{{{f}({x} + h\mathbf{{{u}}}) - {f}({x})}}{{h}}"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
                     "u": S(("u", "v", "e", "n")),
                     "x": S(_VARS),
                 },
@@ -620,9 +621,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
         name="rolles_theorem",
         latex=r"{f}({a}) = {f}({b}) \implies \exists c \in ({a}, {b}) : {f}'(c) = 0",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "f": _FN_SLOT,
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # B5: change of variables (Jacobian substitution)
@@ -634,9 +635,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
             r"\left|\frac{{\partial(x, y)}}{{\partial(u, v)}}\right| \, du \, dv"
         ),
         slots={
-            "f": E(_fn_rich_nosub, n=100),
-            "g2": E(_fn_rich_nosub, n=100),
-            "h": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g2": _FN_SLOT,
+            "h": _FN_SLOT,
         },
     ),
     # B6: implicit differentiation (implicit function theorem and chain-rule form)
@@ -652,7 +653,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
                     r"\frac{{d{y}}}{{d{v}}} = -\frac{{{ff}_{{{v}}}}}{{{ff}_{{{y}}}}}"
                 ),
                 slots={
-                    "ff": E(_fn_rich_nosub, n=100),
+                    "ff": _FN_SLOT,
                     "v": S(_VARS),
                     "y": X(_VARS, ("v",)),
                 },
@@ -665,8 +666,8 @@ _CALCULUS_TEMPLATES: list[Template] = [
                     r"\frac{{\partial {f}}}{{\partial {y}}} {g2}'({v})"
                 ),
                 slots={
-                    "f": E(_fn_rich_nosub, n=100),
-                    "g2": E(_fn_rich_nosub, n=100),
+                    "f": _FN_SLOT,
+                    "g2": _FN_SLOT,
                     "v": S(_VARS),
                     "y": X(_VARS, ("v",)),
                 },
@@ -784,7 +785,7 @@ _CALCULUS_TEMPLATES += [
             "lim_mod": _LIM_MOD,
             "C": S(("C", r"\gamma", r"\partial D", "L", r"\Gamma")),
             "v": S(_VARS),
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
         },
     ),
     Template(
@@ -794,8 +795,8 @@ _CALCULUS_TEMPLATES += [
             "lim_mod": _LIM_MOD,
             "C": S(("C", r"\gamma", r"\partial D", "L")),
             "v": S(_VARS),
-            "ff": E(_fn_rich_nosub, n=100),
-            "val": E(_atom, n=150),
+            "ff": _FN_SLOT,
+            "val": _ATOM_SLOT,
         },
     ),
 ]
@@ -833,10 +834,10 @@ _EVAL_BAR: list[Template] = [
         name="antiderivative_eval_bar",
         latex=r"{f}({v})\Big|_{{{a}}}^{{{b}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # FTC with \left. ... \right| invisible-left evaluation bar
@@ -845,11 +846,11 @@ _EVAL_BAR: list[Template] = [
         latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = \left.{g}({v})\right|_{{{a}}}^{{{b}}}",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
-            "g": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # FTC three-part: integral = antiderivative bar = F(b) - F(a)
@@ -858,11 +859,11 @@ _EVAL_BAR: list[Template] = [
         latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = {g}({v})\bigg|_{{{a}}}^{{{b}}} = {g}({b}) - {g}({a})",
         slots={
             "lim_mod": _LIM_MOD,
-            "f": E(_fn_rich_nosub, n=100),
-            "g": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
+            "g": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # IBP using \Big| evaluation bar instead of square-bracket notation
@@ -871,10 +872,10 @@ _EVAL_BAR: list[Template] = [
         latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {u}\,d{w} = {u}\,{w}\Big|_{{{a}}}^{{{b}}} - \int{lim_mod}_{{{a}}}^{{{b}}} {w}\,d{u}",
         slots={
             "lim_mod": _LIM_MOD,
-            "u": E(_fn_rich_nosub, n=100),
-            "w": E(_fn_rich_nosub, n=100),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "u": _FN_SLOT,
+            "w": _FN_SLOT,
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # First derivative evaluated at a point: \left. d/dv [...] \right|_{v=a}
@@ -883,8 +884,8 @@ _EVAL_BAR: list[Template] = [
         latex=r"\left.\frac{{d}}{{d{v}}}\left[{expr}\right]\right|_{{{v}={a}}}",
         slots={
             "v": S(_VARS),
-            "expr": E(_expr, n=5000),
-            "a": E(_atom, n=150),
+            "expr": _EXPR_SLOT,
+            "a": _ATOM_SLOT,
         },
     ),
     # Second derivative evaluated at a point
@@ -893,8 +894,8 @@ _EVAL_BAR: list[Template] = [
         latex=r"\left.\frac{{d^2}}{{d{v}^2}}\left[{expr}\right]\right|_{{{v}={a}}}",
         slots={
             "v": S(_VARS),
-            "expr": E(_expr, n=5000),
-            "a": E(_atom, n=150),
+            "expr": _EXPR_SLOT,
+            "a": _ATOM_SLOT,
         },
     ),
     # Mixed partial evaluated at a point — uses \bigg| for tall fraction
@@ -902,11 +903,11 @@ _EVAL_BAR: list[Template] = [
         name="mixed_partial_eval_point",
         latex=r"\frac{{\partial^2 {f}}}{{\partial {v}\,\partial {w}}}\bigg|_{{({a},{b})}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
             "w": X(_VARS, ("v",)),
-            "a": E(_atom, n=150),
-            "b": E(_atom, n=150),
+            "a": _ATOM_SLOT,
+            "b": _ATOM_SLOT,
         },
     ),
     # Gradient evaluated at a point
@@ -914,9 +915,9 @@ _EVAL_BAR: list[Template] = [
         name="gradient_eval_point",
         latex=r"\nabla {f}\bigg|_{{{v}={a}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
         },
     ),
     # Partial derivative evaluated on a surface w = c
@@ -924,10 +925,10 @@ _EVAL_BAR: list[Template] = [
         name="partial_eval_surface",
         latex=r"\left.\frac{{\partial {f}}}{{\partial {v}}}\right|_{{{w}={c}}}",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
             "w": X(_VARS, ("v",)),
-            "c": E(_atom, n=150),
+            "c": _ATOM_SLOT,
         },
     ),
     # Lagrange remainder — common companion to Taylor templates
@@ -935,9 +936,9 @@ _EVAL_BAR: list[Template] = [
         name="lagrange_remainder",
         latex=r"R_{{{n}}}({v}) = \frac{{{f}^{{({n}+1)}}(\xi)}}{{({n}+1)!}}\,({v}-{a})^{{{n}+1}},\quad \xi \in ({a},{v})",
         slots={
-            "f": E(_fn_rich_nosub, n=100),
+            "f": _FN_SLOT,
             "v": S(_VARS),
-            "a": E(_atom, n=150),
+            "a": _ATOM_SLOT,
             "n": S(("n", "N", "k")),
         },
     ),
@@ -954,7 +955,7 @@ _PART_MEDSPACE: list[Template] = [
         latex=r"\iint_{{{dom}}} {ff}({v1},{v2}) \: d{v1} \: d{v2}",
         slots={
             "dom": S(("D", "R", r"\Omega", "S", "U")),
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "v1": S(_VARS),
             "v2": X(_VARS, ("v1",)),
         },
@@ -964,7 +965,7 @@ _PART_MEDSPACE: list[Template] = [
         latex=r"\iiint_{{{dom}}} {ff} \: d{v1} \: d{v2} \: d{v3}",
         slots={
             "dom": S(("V", r"\Omega", "D")),
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "v1": S(_VARS),
             "v2": X(_VARS, ("v1",)),
             "v3": X(_VARS, ("v1", "v2")),
@@ -974,9 +975,9 @@ _PART_MEDSPACE: list[Template] = [
         name="medspace_forall_qualifier",
         latex=r"{ff}({vv}) = {expr}, \: \forall {vv} \in {dom}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
-            "expr": E(_expr, n=5000),
+            "expr": _EXPR_SLOT,
             "dom": S((r"\mathbb{R}", r"\mathbb{Z}", r"[a,b]", r"\mathbb{N}", r"(0,\infty)")),
         },
     ),
@@ -994,7 +995,7 @@ _PART_MEDSPACE: list[Template] = [
         latex=r"\int_{{{dom}}} {ff}({vv}) \: d\mu({vv})",
         slots={
             "dom": S(("E", "X", r"\Omega", "A")),
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
         },
     ),
@@ -1002,7 +1003,7 @@ _PART_MEDSPACE: list[Template] = [
         name="medspace_differential_form",
         latex=r"{ff}({vv}) \: d{v1} \wedge d{v2}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "vv": S(_VARS),
             "v1": S(_VARS),
             "v2": X(_VARS, ("v1",)),
@@ -1013,8 +1014,8 @@ _PART_MEDSPACE: list[Template] = [
         latex=r"\lim_{{{vv} \to \infty}} {ff}({vv}) = {expr}, \: {ff} \text{{ monotone}}",
         slots={
             "vv": S(_VARS),
-            "ff": E(_fn_rich_nosub, n=100),
-            "expr": E(_atom, n=150),
+            "ff": _FN_SLOT,
+            "expr": _ATOM_SLOT,
         },
     ),
 ]
@@ -1056,4 +1057,4 @@ _CALCULUS_TEMPLATES += [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("calculus", _CALCULUS_TEMPLATES, 0.10)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("calculus", _CALCULUS_TEMPLATES)

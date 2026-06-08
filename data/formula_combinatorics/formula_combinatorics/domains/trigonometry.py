@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
 from .._vocab import (
     _GEO_N,
     _SCALARS,
@@ -22,13 +22,13 @@ from .._vocab import (
     _cosh_nm,
     _cot_nm,
     _csc_nm,
-    _fn_rich_nosub,
     _sec_nm,
     _sin_nm,
     _sinh_nm,
     _tan_nm,
     _tanh_nm,
 )
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -1507,7 +1507,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "lim_mod": _LIM_MOD,
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "v": S(tuple(_VARS), idx=0.35),
                     "ca": S(tuple(_SCALARS)),
                     "cb": X(tuple(_SCALARS), ("ca",)),
@@ -1521,7 +1521,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     r"\int_0^{{{L}}} {fn}({v}) \cos\frac{{n\pi {v}}}{{{L}}} \, d{v}"
                 ),
                 slots={
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "v": S(tuple(_VARS), idx=0.35),
                     "ca": S(tuple(_SCALARS)),
                     "L": X(tuple(_SCALARS), ("ca",)),
@@ -1534,7 +1534,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     r"\int_0^{{{L}}} {fn}({v}) \sin\frac{{n\pi {v}}}{{{L}}} \, d{v}"
                 ),
                 slots={
-                    "fn": E(_fn_rich_nosub, n=100),
+                    "fn": _FN_SLOT,
                     "v": S(tuple(_VARS), idx=0.35),
                     "cb": S(tuple(_SCALARS)),
                     "L": X(tuple(_SCALARS), ("cb",)),
@@ -1551,4 +1551,4 @@ _TRIG_TEMPLATES: list[Template] = [
 # ---------------------------------------------------------------------------
 
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("trigonometry", _TRIG_TEMPLATES, 0.04, cap=75_000_000)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("trigonometry", _TRIG_TEMPLATES)

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _INDICES, _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _INDICES
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -435,7 +436,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             r" = {fn1}^* {om} \wedge {fn1}^* {al}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "om": S(_FORM_POOL),
             "al": X(_FORM_POOL, ("om",)),
         },
@@ -443,12 +444,12 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
     Template(
         name="pullback_form",
         latex=r"({fn1}^* {om})_p(v) = {om}_{{{fn1}(p)}}(d{fn1}_p \cdot v)",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "om": S(_FORM_POOL)},
+        slots={"fn1": _FN_SLOT, "om": S(_FORM_POOL)},
     ),
     Template(
         name="pushforward_vector",
         latex=r"({fn1}_* {xx})_q = d{fn1}_p \cdot {xx}_p",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "xx": S(_VF_POOL)},
+        slots={"fn1": _FN_SLOT, "xx": S(_VF_POOL)},
     ),
     # ---- B3: covariant derivative identities --------------------------------
     Template(
@@ -460,7 +461,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         slots={
             "xx": S(_VF_POOL),
             "yy": X(_VF_POOL, ("xx",)),
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
         },
     ),
     Template(
@@ -610,8 +611,8 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -623,8 +624,8 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         ),
         slots={
             "met": S(_METRIC_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -637,7 +638,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "xx": S(_VF_POOL),
             "met": S(_METRIC_POOL),
         },
@@ -649,8 +650,8 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             r" = {fn2}^*\!\left({fn1}^* {om}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "om": S(_FORM_POOL),
         },
     ),
@@ -664,15 +665,15 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "met": S(_METRIC_POOL),
         },
     ),
     Template(
         name="exterior_deriv_product_fn",
         latex=r"d({fn1} \cdot {fn2}) = {fn2} \, d{fn1} + {fn1} \, d{fn2}",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="gradient_product_rule",
@@ -683,8 +684,8 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         ),
         slots={
             "met": S(_METRIC_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     # ---- B10: Lie derivative (split: fn×fn variant dominates) --------------
@@ -697,8 +698,8 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
         ),
         slots={
             "xx": S(_VF_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -970,8 +971,8 @@ _DIFFGEOM_TEMPLATES += [
             r" = {fn2}\!\left(\operatorname{{tr}}_{{{met}}} T\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "met": S(_METRIC_POOL),
             "ii": S(_IDX_POOL),
             "jj": X(_IDX_POOL, ("ii",)),
@@ -984,8 +985,8 @@ _DIFFGEOM_TEMPLATES += [
             r" = {fn2}\!\left({met}^{{{kk}{ll}}} R_{{{kk}{ii}{ll}{jj}}}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "met": S(_METRIC_POOL),
             "ii": S(_IDX_POOL),
             "jj": X(_IDX_POOL, ("ii",)),
@@ -997,8 +998,8 @@ _DIFFGEOM_TEMPLATES += [
         name="fn_lie_bracket",
         latex=r"{fn1}([{xx},{yy}]) = {fn2}({xx} {yy} - {yy} {xx})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "xx": S(_VF_POOL),
             "yy": X(_VF_POOL, ("xx",)),
         },
@@ -1007,8 +1008,8 @@ _DIFFGEOM_TEMPLATES += [
         name="fn_exterior_product",
         latex=r"{fn1}({om} \wedge {al}) = {fn2}((-1)^{{pq}}\,{al} \wedge {om})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "om": S(_FORM_POOL),
             "al": X(_FORM_POOL, ("om",)),
         },
@@ -1017,8 +1018,8 @@ _DIFFGEOM_TEMPLATES += [
         name="fn_hodge_dual",
         latex=r"{fn1}(\star {om}) = {fn2}\!\left(\langle {om}, {al} \rangle\,\mathrm{{vol}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "om": S(_FORM_POOL),
             "al": X(_FORM_POOL, ("om",)),
         },
@@ -1030,8 +1031,8 @@ _DIFFGEOM_TEMPLATES += [
             r" = {fn2}(R({xx}, \dot{{\gamma}})\dot{{\gamma}})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "xx": S(_VF_POOL),
             "par": S(_PARAM_POOL),
         },
@@ -1043,8 +1044,8 @@ _DIFFGEOM_TEMPLATES += [
             r" = {fn2}\!\left({xx}({yy}) + \omega({xx})\,{yy}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "xx": S(_VF_POOL),
             "yy": X(_VF_POOL, ("xx",)),
         },
@@ -1056,8 +1057,8 @@ _DIFFGEOM_TEMPLATES += [
             r" = {fn2}\!\left(\bigl\{{P_\gamma : \gamma \in \Omega_p({mfld})\bigr\}}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "mfld": S(_MFLD_POOL),
         },
     ),
@@ -1359,4 +1360,4 @@ _DIFFGEOM_TEMPLATES += [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_geometry", _DIFFGEOM_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_geometry", _DIFFGEOM_TEMPLATES)

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
 from .._templates import _substack_prod, _substack_sum
-from .._vocab import _fn_rich_nosub
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Pools
@@ -1013,8 +1013,8 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
         },
     ),
@@ -1025,7 +1025,7 @@ _TEMPLATES_C: list[Template] = [
             r" \implies {fn1}({mm}\,{nn}) = {fn1}({mm})\,{fn1}({nn})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "mm": S(_MOD_POOL),
             "nn": X(_MOD_POOL, ("mm",)),
         },
@@ -1040,8 +1040,8 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
             "ss": S(_ALPHA_POOL),
         },
@@ -1054,8 +1054,8 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
         },
     ),
@@ -1067,8 +1067,8 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
         },
     ),
@@ -1080,7 +1080,7 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "pp": S(_PRIME_POOL),
             "nn": S(_IDX_POOL),
             "ss": S(_ALPHA_POOL),
@@ -1095,8 +1095,8 @@ _TEMPLATES_C += [
         latex=r"{fn1}(\sigma({nn})) = {fn2}\!\left(\sum{lim_mod}_{{d \mid {nn}}} d\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
         },
     ),
@@ -1105,8 +1105,8 @@ _TEMPLATES_C += [
         latex=r"{fn1}(\pi({nn})) = {fn2}\!\left(\sum{lim_mod}_{{{pp} \leq {nn},\,{pp}\text{{ prime}}}} 1\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -1116,8 +1116,8 @@ _TEMPLATES_C += [
         latex=r"{fn1}(\varphi({nn})) = {fn2}\!\left({nn} \prod{lim_mod}_{{{pp} \mid {nn}}} \!\!\left(1 - \frac{{1}}{{{pp}}}\right)\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -1127,8 +1127,8 @@ _TEMPLATES_C += [
         latex=r"{fn1}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d) \iff {fn2}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_IDX_POOL),
         },
     ),
@@ -1137,8 +1137,8 @@ _TEMPLATES_C += [
         latex=r"{fn1}(\zeta({ss})) = {fn2}\!\left(\prod{lim_mod}_{{{pp}\text{{ prime}}}} \frac{{1}}{{1-{pp}^{{-{ss}}}}}\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ss": S(_ALPHA_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -1147,8 +1147,8 @@ _TEMPLATES_C += [
         name="fn_arithmetic_pair",
         latex=r"{fn1}({aa} \cdot {bb}) = {fn2}({aa}) \cdot {fn2}({bb}),\quad \gcd({aa},{bb})=1",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "aa": S(_INT_POOL),
             "bb": X(_INT_POOL, ("aa",)),
         },
@@ -1205,4 +1205,4 @@ _NUMBER_THEORY_TEMPLATES = list(_NUMBER_THEORY_TEMPLATES) + [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("number_theory", _NUMBER_THEORY_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("number_theory", _NUMBER_THEORY_TEMPLATES)

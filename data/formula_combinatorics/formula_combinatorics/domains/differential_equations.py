@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -872,9 +872,9 @@ _TEMPLATES_C: list[Template] = [
             r" \quad \text{{in }} {sp}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "op": S(_OP_POOL),
             "ff": S(_FUNC_POOL),
             "lam": S(_PARAM_POOL),
@@ -889,8 +889,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad ({vv} \in {sp})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ff": S(_FUNC_POOL),
             "pp": S(_COEFF_POOL),
             "vv": S(_VAR_POOL),
@@ -904,8 +904,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}\!\bigl({ff}({vv})\bigr)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "ss": X(_VAR_POOL, ("vv",)),
@@ -919,9 +919,9 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn3}\!\bigl({ff}({vv})\bigr)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "vv": S(_VAR_POOL),
@@ -935,8 +935,8 @@ _TEMPLATES_C: list[Template] = [
             r" \leq {fn2}\!\bigl({VV}({vv})\bigr)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "VV": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
         },
@@ -949,9 +949,9 @@ _TEMPLATES_C: list[Template] = [
             r" \cdot {fn3}\!\bigl({hh}({tt})\bigr)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "hh": X(_FUNC_POOL, ("ff", "gg")),
@@ -982,4 +982,4 @@ _DIFFEQ_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_equations", _DIFFEQ_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("differential_equations", _DIFFEQ_TEMPLATES)

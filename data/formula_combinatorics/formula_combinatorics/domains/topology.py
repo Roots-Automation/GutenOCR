@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -593,8 +593,8 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r"\; H(\cdot,1) = {fn2}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "sp": S(_SPACE_POOL),
             "tp": X(_SPACE_POOL, ("sp",)),
         },
@@ -605,7 +605,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r"{fn1}_* : H_{{{nn}}}(C_*) \to H_{{{nn}}}(D_*)"
             r" \text{{ induced by chain map }} {fn1}"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "nn": S(_IDX_POOL)},
+        slots={"fn1": _FN_SLOT, "nn": S(_IDX_POOL)},
     ),
     Template(
         name="cohomology_functoriality",
@@ -615,8 +615,8 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r" : H^*({sp}) \to H^*({tp})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "sp": S(_SPACE_POOL),
             "tp": X(_SPACE_POOL, ("sp",)),
         },
@@ -624,17 +624,17 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     Template(
         name="degree_composition",
         latex=r"\deg({fn1} \circ {fn2}) = \deg({fn1}) \cdot \deg({fn2})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="homology_functoriality",
         latex=r"({fn1} \circ {fn2})_* = {fn1}_* \circ {fn2}_*",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="natural_transformation_square",
         latex=r"{fn2}_* \circ i_* = j_* \circ {fn1}_*",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="induced_iso_homotopy_equiv",
@@ -644,8 +644,8 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r" : H_{{{nn}}}({sp}) \to H_{{{nn}}}({tp})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "sp": S(_SPACE_POOL),
             "tp": X(_SPACE_POOL, ("sp",)),
             "nn": S(_IDX_POOL),
@@ -659,7 +659,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r" \text{{ for }} {fn1} : ({sp},{aa}) \to ({tp},{bb})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "nn": S(_IDX_POOL),
             "sp": S(_SPACE_POOL),
             "tp": X(_SPACE_POOL, ("sp",)),
@@ -675,4 +675,4 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("topology", _TOPOLOGY_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("topology", _TOPOLOGY_TEMPLATES)

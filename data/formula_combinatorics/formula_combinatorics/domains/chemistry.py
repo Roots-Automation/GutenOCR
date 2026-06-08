@@ -3,7 +3,8 @@ acid/base, and electrochemistry formula templates."""
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, S, Template, X, register_domain
+from .._template_dsl import _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Symbol pools
@@ -814,4 +815,4 @@ _CHEM_TEMPLATES += [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("chemistry", _CHEM_TEMPLATES, 0.05)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("chemistry", _CHEM_TEMPLATES)

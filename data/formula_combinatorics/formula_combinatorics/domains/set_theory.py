@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -752,7 +752,7 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="bijection_pair",
         latex=r"{fn1}: {AA} \xrightarrow{{\sim}} {BB}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "AA": S(_SET_POOL),
             "BB": X(_SET_POOL, ("AA",)),
         },
@@ -761,8 +761,8 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="injection_pair",
         latex=r"{fn1} \circ {fn2}: {AA} \hookrightarrow {CC}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "AA": S(_SET_POOL),
             "CC": X(_SET_POOL, ("AA",)),
         },
@@ -771,8 +771,8 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="composition_pair",
         latex=r"({fn1} \circ {fn2})({vv}) = {fn1}({fn2}({vv}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -780,8 +780,8 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="image_pair",
         latex=r"{fn1}({fn2}({AA})) \subseteq {fn1}({BB})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "AA": S(_SET_POOL),
             "BB": X(_SET_POOL, ("AA",)),
         },
@@ -793,26 +793,26 @@ _SET_THEORY_TEMPLATES: list[Template] = [
             r" = {fn2}^{{-1}}({fn1}^{{-1}}({AA}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "AA": S(_SET_POOL),
         },
     ),
     Template(
         name="cardinality_pair",
         latex=r"|{fn1}({AA})| \leq |{AA}|",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "AA": S(_SET_POOL)},
+        slots={"fn1": _FN_SLOT, "AA": S(_SET_POOL)},
     ),
     Template(
         name="product_pair",
         latex=r"|{fn1} \times {fn2}| = |{fn1}| \cdot |{fn2}|",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="fixed_point_pair",
         latex=r"\exists {vv} \in {AA},\; {fn1}({vv}) = {vv}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "AA": S(_SET_POOL),
             "vv": S(_VAR_POOL),
         },
@@ -825,8 +825,8 @@ _SET_THEORY_TEMPLATES += [
         name="fn_powerset_pair",
         latex=r"{fn1}(\mathcal{{P}}({ss})) = {fn2}\!\left(\{{T : T \subseteq {ss}\}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ss": S(_SET_POOL),
         },
     ),
@@ -834,8 +834,8 @@ _SET_THEORY_TEMPLATES += [
         name="fn_cardinal_pair",
         latex=r"{fn1}(|{ss1} \times {ss2}|) = {fn2}(|{ss1}| \cdot |{ss2}|)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ss1": S(_SET_POOL),
             "ss2": X(_SET_POOL, ("ss1",)),
         },
@@ -936,4 +936,4 @@ _SET_THEORY_TEMPLATES += _PART_MISC
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("set_theory", _SET_THEORY_TEMPLATES, 0.05)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("set_theory", _SET_THEORY_TEMPLATES)

@@ -5,10 +5,9 @@ survival analysis."""
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
 from .._vocab import (
     _EXP_OP,
-    _fn_rich_nosub,
 )
 from .._vocab import (
     _LAM_STATS as _LAM_POOL,
@@ -28,6 +27,7 @@ from .._vocab import (
 from .._vocab import (
     _STATS_N as _N_POOL,
 )
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -182,7 +182,7 @@ _TEMPLATES_B1: list[Template] = [
             r" \xrightarrow{{d}} \mathcal{{N}}\!\left(0,\,{fn}'({mu})^2\,{sig}^2\right)"
         ),
         slots={
-            "fn": E(_fn_rich_nosub, n=100),
+            "fn": _FN_SLOT,
             "rv": S(_RV_POOL),
             "mu": S(_MU_POOL),
             "sig": S(_SIG_POOL),
@@ -230,8 +230,8 @@ _TEMPLATES_B2: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "nn": S(_N_POOL),
         },
     ),
@@ -243,8 +243,8 @@ _TEMPLATES_B2: list[Template] = [
         ),
         slots={
             "op": S(_EXP_OP),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv1": S(_RV_POOL),
             "rv2": X(_RV_POOL, ("rv1",)),
         },
@@ -843,8 +843,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}(\Lambda)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "par": S(_PARAM_POOL),
         },
     ),
@@ -855,8 +855,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}\!\left({op}[{par} \mid \mathbf{{x}}]\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "op": S(_EXP_OP),
             "par": S(_PARAM_POOL),
         },
@@ -868,8 +868,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}\!\left((X^\top X)^{{-1}}X^\top {resp}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "coeff": S(_COEFF_VEC_POOL),
             "resp": S(_RESP_POOL),
         },
@@ -881,8 +881,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}(t_{{{nn}-1}})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv": S(_RV_POOL),
             "mu": S(_MU_POOL),
             "nn": S(_N_POOL),
@@ -895,8 +895,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}(g(T(\mathbf{{x}}),\,{par})\,h(\mathbf{{x}}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "par": S(_PARAM_POOL),
         },
     ),
@@ -907,8 +907,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}\!\left(\exp\!\left(-\int_0^{{{tt}}} h(s)\,ds\right)\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "tt": S(_TIME_POOL),
         },
     ),
@@ -939,4 +939,4 @@ _STAT_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("statistics", _STAT_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("statistics", _STAT_TEMPLATES)

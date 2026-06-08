@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _BBOLD, _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _BBOLD
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -619,7 +620,7 @@ _TEMPLATES_B8: list[Template] = [
 
 # ---------------------------------------------------------------------------
 # Part C: High-n_eff predicate-pair templates (6)
-# Each uses E(_fn_rich_nosub, n=100) — n_eff 110k-11M per template
+# Each uses _FN_SLOT — n_eff 110k-11M per template
 # ---------------------------------------------------------------------------
 
 _TEMPLATES_C: list[Template] = [
@@ -627,8 +628,8 @@ _TEMPLATES_C: list[Template] = [
         name="predicate_implication_pair",
         latex=r"\forall {vv}\,({fn1}({vv}) \Rightarrow {fn2}({vv}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -636,8 +637,8 @@ _TEMPLATES_C: list[Template] = [
         name="predicate_equivalence_pair",
         latex=r"\forall {vv}\,({fn1}({vv}) \Leftrightarrow {fn2}({vv}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -645,8 +646,8 @@ _TEMPLATES_C: list[Template] = [
         name="predicate_conjunction_pair",
         latex=r"\forall {vv}\,({fn1}({vv}) \land {fn2}({vv}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -654,8 +655,8 @@ _TEMPLATES_C: list[Template] = [
         name="forall_exists_pair",
         latex=r"\forall {vv}\,\exists {uu}\,({fn1}({vv}) \land {fn2}({uu}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
             "uu": X(_VAR_POOL, ("vv",)),
         },
@@ -664,8 +665,8 @@ _TEMPLATES_C: list[Template] = [
         name="binary_predicate_pair",
         latex=r"\forall {vv}\,\forall {uu}\,({fn1}({vv},{uu}) \Rightarrow {fn2}({vv},{uu}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "vv": S(_VAR_POOL),
             "uu": X(_VAR_POOL, ("vv",)),
         },
@@ -674,9 +675,9 @@ _TEMPLATES_C: list[Template] = [
         name="predicate_chain",
         latex=r"\forall {vv}\,({fn1}({vv}) \Rightarrow {fn2}({vv}) \Rightarrow {fn3}({vv}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "vv": S(_VAR_POOL),
         },
     ),
@@ -1437,4 +1438,4 @@ _LOGIC_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("logic", _LOGIC_TEMPLATES, 0.05)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("logic", _LOGIC_TEMPLATES)

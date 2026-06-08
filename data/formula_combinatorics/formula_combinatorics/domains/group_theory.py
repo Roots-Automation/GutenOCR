@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _ELT_POOL, _GRP_NAMES
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools (kept local to avoid cross-domain coupling)
@@ -938,7 +939,7 @@ _GROUP_THEORY_TEMPLATES.append(
 )
 
 # ---------------------------------------------------------------------------
-# Part C — high-n_eff function-decorated templates (E(_fn_rich_nosub, n=100))
+# Part C — high-n_eff function-decorated templates (_FN_SLOT)
 # ---------------------------------------------------------------------------
 
 # c=44
@@ -947,8 +948,8 @@ _GROUP_THEORY_TEMPLATES.append(
         name="fn_group_order",
         latex=r"{fn1}(|{G}|) = {fn2}([{G}:{H}] \cdot |{H}|)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
         },
@@ -961,8 +962,8 @@ _GROUP_THEORY_TEMPLATES.append(
         name="fn_index_tower",
         latex=r"{fn1}([{G}:{K}]) = {fn2}([{G}:{H}] \cdot [{H}:{K}])",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
             "K": X(_SIMPLE_T, ("G", "H")),
@@ -976,8 +977,8 @@ _GROUP_THEORY_TEMPLATES.append(
         name="fn_conjugation_apply",
         latex=r"{fn1}({g_el} {h_el} {g_el}^{{-1}}) = {fn2}({h_el})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "g_el": S(_ELEMS_T),
             "h_el": X(_ELEMS_T, ("g_el",)),
         },
@@ -993,8 +994,8 @@ _GROUP_THEORY_TEMPLATES.append(
             r" = {fn2}(|\operatorname{{Orb}}_{{{G}}}({g_el})| \cdot |\operatorname{{Stab}}_{{{G}}}({g_el})|)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
             "g_el": S(_ELEMS_T),
         },
@@ -1010,8 +1011,8 @@ _GROUP_THEORY_TEMPLATES.append(
             r" = {fn2}\!\left(\{{g \in {G} : {phi}({g_el}) = e\}}\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "phi": S(_HOMOS_T),
             "G": S(_G_POOL),
             "g_el": S(_ELEMS_T),
@@ -1028,8 +1029,8 @@ _GROUP_THEORY_TEMPLATES.append(
             r"\quad \gcd({p}, m) = 1"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
             "p": S(_P_POOL),
             "n": S(_N_POOL),
@@ -1043,8 +1044,8 @@ _GROUP_THEORY_TEMPLATES.append(
         name="fn_abelianization",
         latex=r"{fn1}({G}^{{\mathrm{{ab}}}}) = {fn2}({G}/[{G},{G}])",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
         },
     )
@@ -1060,8 +1061,8 @@ _GROUP_THEORY_TEMPLATES.append(
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "G": S(_G_POOL),
             "g_el": S(_ELEMS_T),
         },
@@ -1114,8 +1115,22 @@ _GROUP_THEORY_TEMPLATES += [
 
 # ---------------------------------------------------------------------------
 
+# Homomorphism / conjugation templates (from algebra domain)
+_GROUP_THEORY_TEMPLATES += [
+    Template(
+        name="group_homomorphism_rightarrow",
+        latex=r"\phi: {GG} \rightarrow {HH} \text{{ is a group homomorphism}}",
+        slots={"GG": S(_GRP_NAMES), "HH": X(_GRP_NAMES, ("GG",))},
+    ),
+    Template(
+        name="conjugation_mapsto",
+        latex=r"\phi_h: {gg} \mapsto h{gg}h^{{-1}}, \quad {gg} \in {GG}",
+        slots={"gg": S(_ELT_POOL), "GG": S(_GRP_NAMES)},
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("group_theory", _GROUP_THEORY_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("group_theory", _GROUP_THEORY_TEMPLATES)

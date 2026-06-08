@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _ELT_POOL, _RING_NAMES
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -599,9 +600,9 @@ _TEMPLATES_C: list[Template] = [
         name="fn_triple_ring",
         latex=r"{fn1}({aa} \cdot {bb}) = {fn2}({aa}) \cdot {fn3}({bb})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "aa": S(_ELEM_POOL),
             "bb": X(_ELEM_POOL, ("aa",)),
         },
@@ -610,8 +611,8 @@ _TEMPLATES_C: list[Template] = [
         name="fn_pair_ring_hom",
         latex=r"{fn1}({phi}({aa})) = {fn2}({aa}) \quad \forall {aa} \in {RR}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "phi": S(_HOMO_POOL),
             "RR": S(_RING_POOL),
             "aa": S(_ELEM_POOL),
@@ -624,8 +625,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad ({sigma} \in \operatorname{{Gal}}({KK}/{FF}))"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "sigma": S(_HOMO_POOL),
             "KK": S(_FIELD_POOL),
             "FF": X(_FIELD_POOL, ("KK",)),
@@ -639,8 +640,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad \forall r \in {RR},\, m \in {MM}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "RR": S(_RING_POOL),
             "MM": S(_MODULE_POOL),
         },
@@ -649,8 +650,8 @@ _TEMPLATES_C: list[Template] = [
         name="fn_ideal_coset",
         latex=r"{fn1}({aa} + {II}) = {fn2}({aa}) \quad \text{{in }} {RR}/{II}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "II": S(_IDEAL_POOL),
             "RR": S(_RING_POOL),
             "aa": S(_ELEM_POOL),
@@ -663,8 +664,8 @@ _TEMPLATES_C: list[Template] = [
             r" = N_{{{KK}/{FF}}}({aa})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "aa": S(_ELEM_POOL),
             "sigma": S(_HOMO_POOL),
             "KK": S(_FIELD_POOL),
@@ -689,8 +690,22 @@ _RING_TEMPLATES: list[Template] = (
 )
 
 
+# Homomorphism / endomorphism templates (from algebra domain)
+_RING_TEMPLATES += [
+    Template(
+        name="ring_homomorphism_rightarrow",
+        latex=r"f: {RR} \rightarrow {SS},\quad f(1_{{{RR}}}) = 1_{{{SS}}}",
+        slots={"RR": S(_RING_NAMES), "SS": X(_RING_NAMES, ("RR",))},
+    ),
+    Template(
+        name="frobenius_endomorphism_longmapsto",
+        latex=r"\mathrm{{Frob}}: {rr} \longmapsto {rr}^p \quad (p\text{{ prime}})",
+        slots={"rr": S(_ELT_POOL)},
+    ),
+]
+
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("ring_field_theory", _RING_TEMPLATES, 0.01)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("ring_field_theory", _RING_TEMPLATES)

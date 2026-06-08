@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _LIM_MOD, E, P, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, P, S, Template, X
 from .._vocab import _COMB_K as _K_POOL
 from .._vocab import _COMB_N as _N_POOL
-from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
+from .._vocab import _SCALARS, _VARS
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -131,7 +132,7 @@ _PART_A: list[Template] = [
         name="master_theorem_recurrence",
         latex=r"{ff}({n}) = {aa}\,{ff}\!\left(\frac{{{n}}}{{{bb}}}\right) + {rhs}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "n": S(_N_POOL),
             "aa": S(("2", "3", "4", "a", "b")),
             "bb": S(("2", "3", "4", "b", "c")),
@@ -156,7 +157,7 @@ _PART_A: list[Template] = [
         name="named_sequence_recurrence",
         latex=r"{ff}_{{{n}}} = {c1}\,{ff}_{{{n}-1}} + {c2}\,{ff}_{{{n}-2}}",
         slots={
-            "ff": E(_fn_rich_nosub, n=100),
+            "ff": _FN_SLOT,
             "n": S(_N_POOL),
             "c1": P(_lin_rec_a, param="n", n=8),
             "_na": P(_lin_rec_na_combo, param="n", n=8),
@@ -170,7 +171,7 @@ _PART_A: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
-            "gg": E(_fn_rich_nosub, n=100),
+            "gg": _FN_SLOT,
             "v": S(_VARS),
             "sc": S(_SCALARS),
         },
@@ -371,7 +372,7 @@ _PART_A: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
-            "gg": E(_fn_rich_nosub, n=100),
+            "gg": _FN_SLOT,
             "v": S(_VARS),
             "sc": S(_SCALARS),
         },
@@ -415,8 +416,8 @@ _PART_B: list[Template] = [
         name="fn_binomial_symmetry",
         latex=r"{fn1}\!\binom{{{n}}}{{{k}}} = {fn2}\!\binom{{{n}}}{{{n}-{k}}}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
         },
@@ -426,8 +427,8 @@ _PART_B: list[Template] = [
         latex=r"{fn1}\!\left(\sum{lim_mod}_{{{n}\geq 0}} {sc}_{{{n}}}\,{v}^{{{n}}}\right) = {fn2}({v})",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
             "sc": S(_SCALARS),
             "v": S(_VARS),
@@ -437,8 +438,8 @@ _PART_B: list[Template] = [
         name="fn_recurrence_pair",
         latex=r"{fn1}(a_{{{n}}}) = {fn2}\!\left(a_{{{n}-1}} + a_{{{n}-2}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
         },
     ),
@@ -447,8 +448,8 @@ _PART_B: list[Template] = [
         latex=r"{fn1}(S({n},{k})) = {fn2}\!\left(\frac{{1}}{{{k}!}}\sum{lim_mod}_{{j=0}}^{{{k}}} (-1)^{{{k}-j}}\binom{{{k}}}{{j}} j^{{{n}}}\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
         },
@@ -458,8 +459,8 @@ _PART_B: list[Template] = [
         latex=r"{fn1}(B_{{{n}+1}}) = {fn2}\!\left(\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
         },
@@ -468,8 +469,8 @@ _PART_B: list[Template] = [
         name="fn_catalan_formula",
         latex=r"{fn1}(C_{{{n}}}) = {fn2}\!\left(\frac{{1}}{{{n}+1}}\binom{{2{n}}}{{{n}}}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "n": S(_N_POOL),
         },
     ),
@@ -485,4 +486,4 @@ _COMBINATORICS_TEMPLATES: list[Template] = _PART_A + _PART_B
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("combinatorics", _COMBINATORICS_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("combinatorics", _COMBINATORICS_TEMPLATES)

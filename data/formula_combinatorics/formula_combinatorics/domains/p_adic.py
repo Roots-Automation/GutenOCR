@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -816,8 +816,8 @@ _TEMPLATES_C: list[Template] = [
         name="fn_padic_norm",
         latex=r"{fn1}(|{xx}|_{{{pp}}}) = {fn2}({xx})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
         },
@@ -829,8 +829,8 @@ _TEMPLATES_C: list[Template] = [
             r" = {fn2}\!\left(v_{{{pp}}}({xx} \cdot {yy})\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "yy": X(_ELEM_POOL, ("xx",)),
@@ -843,8 +843,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad \bigl(|{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}\bigr)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
         },
@@ -856,8 +856,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad ({xx} \in {KK})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "KK": S(_FIELD_POOL),
             "FF": X(_FIELD_POOL, ("KK",)),
             "xx": S(_ELEM_POOL),
@@ -871,9 +871,9 @@ _TEMPLATES_C: list[Template] = [
             r" \quad \text{{in }} \mathbb{{Q}}_{{{pp}}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "yy": X(_ELEM_POOL, ("xx",)),
@@ -886,8 +886,8 @@ _TEMPLATES_C: list[Template] = [
             r" \quad ({xx} \in {KK})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "KK": S(_FIELD_POOL),
             "xx": S(_ELEM_POOL),
         },
@@ -914,4 +914,4 @@ _PADIC_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("p_adic", _PADIC_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("p_adic", _PADIC_TEMPLATES)

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -541,8 +541,8 @@ _TEMPLATES_C: list[Template] = [
             r"\text{{ holomorphic}}"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "zz": S(_VAR_POOL),
         },
     ),
@@ -550,8 +550,8 @@ _TEMPLATES_C: list[Template] = [
         name="composition_analytic",
         latex=(r"({fn1} \circ {fn2})({zz}) = {fn1}({fn2}({zz}))\text{{ analytic}}"),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "zz": S(_VAR_POOL),
         },
     ),
@@ -562,8 +562,8 @@ _TEMPLATES_C: list[Template] = [
             r"{fn1}'({zz}){fn2}({zz}) + {fn1}({zz}){fn2}'({zz})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "zz": S(_VAR_POOL),
         },
     ),
@@ -574,7 +574,7 @@ _TEMPLATES_C: list[Template] = [
             r"\text{{ on }} |{zz}-{aa}|=r"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "aa": S(_CENTER_POOL),
             "zz": S(_VAR_POOL),
         },
@@ -584,8 +584,8 @@ _TEMPLATES_C: list[Template] = [
         latex=r"\oint{lim_mod}_{{{CC}}} {fn1}({zz}) {fn2}({zz}) \, d{zz}",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "CC": S(_CURVE_POOL),
             "zz": S(_VAR_POOL),
         },
@@ -594,9 +594,9 @@ _TEMPLATES_C: list[Template] = [
         name="fn_triple_composition",
         latex=r"{fn1}({fn2}({fn3}({zz})))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "zz": S(_VAR_POOL),
         },
     ),
@@ -726,4 +726,4 @@ _COMPLEX_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("complex_analysis", _COMPLEX_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("complex_analysis", _COMPLEX_TEMPLATES)

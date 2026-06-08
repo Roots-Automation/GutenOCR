@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import S, Template, X, register_domain
+from .._template_dsl import S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -287,4 +288,4 @@ _QUANTUM_NOTATION_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PAR
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("quantum_notation", _QUANTUM_NOTATION_TEMPLATES, 0.04)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("quantum_notation", _QUANTUM_NOTATION_TEMPLATES)

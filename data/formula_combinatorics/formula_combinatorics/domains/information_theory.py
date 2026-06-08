@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -633,7 +633,7 @@ _TEMPLATES_C: list[Template] = [
             r"D_{{KL}}({fn1} \| {fn2})"
             r" = \int {fn1}(x)\, \ln \frac{{{fn1}(x)}}{{{fn2}(x)}}\, dx"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="entropy_pair_joint",
@@ -642,7 +642,7 @@ _TEMPLATES_C: list[Template] = [
             r" = -\iint {fn1}(x)\,{fn2}(y)\,"
             r"\ln\!\left[{fn1}(x)\,{fn2}(y)\right]\, dx\, dy"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="mi_pair",
@@ -650,7 +650,7 @@ _TEMPLATES_C: list[Template] = [
             r"I({fn1};\, {fn2})"
             r" = \iint p(x,y)\, \ln \frac{{p(x,y)}}{{{fn1}(x)\, {fn2}(y)}}\, dx\, dy"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="cross_entropy_pair",
@@ -658,7 +658,7 @@ _TEMPLATES_C: list[Template] = [
             r"H({fn1},\, {fn2})"
             r" = -\int {fn1}(x)\, \ln {fn2}(x)\, dx"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="js_pair",
@@ -668,7 +668,7 @@ _TEMPLATES_C: list[Template] = [
             r" + \tfrac{{1}}{{2}} D_{{KL}}({fn2} \| M),"
             r"\quad M = \tfrac{{{fn1}+{fn2}}}{{2}}"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="total_variation_pair",
@@ -676,7 +676,7 @@ _TEMPLATES_C: list[Template] = [
             r"\mathrm{{TV}}({fn1},\, {fn2})"
             r" = \sup_{{A}} \left|{fn1}(A) - {fn2}(A)\right|"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="renyi_divergence_pair",
@@ -686,8 +686,8 @@ _TEMPLATES_C: list[Template] = [
             r" \ln \int {fn1}(x)^{{{aa}}}\, {fn2}(x)^{{1-{aa}}}\, dx"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "aa": S(_ALPHA_POOL),
         },
     ),
@@ -699,7 +699,7 @@ _TEMPLATES_C: list[Template] = [
             r"\frac{{\partial^2 \ln {fn1}(x;\,{pa})}}{{\partial {pa}^2}}"
             r"\right]"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "pa": S(_PARAM_POOL)},
+        slots={"fn1": _FN_SLOT, "pa": S(_PARAM_POOL)},
     ),
     Template(
         name="mutual_info_three_pair",
@@ -708,15 +708,15 @@ _TEMPLATES_C: list[Template] = [
             r" = H({fn1} \mid {fn3}) - H({fn1} \mid {fn2},\, {fn3})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
         },
     ),
     Template(
         name="capacity_pair",
         latex=r"C = \max_{{{fn1}}} I({fn1};\, {fn2})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="data_processing_pair",
@@ -725,8 +725,8 @@ _TEMPLATES_C: list[Template] = [
             r" \leq D_{{KL}}\!\left({fn1}({XX}) \| {fn2}({XX})\right)"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "XX": S(_RV_POOL),
             "YY": X(_RV_POOL, ("XX",)),
         },
@@ -737,7 +737,7 @@ _TEMPLATES_C: list[Template] = [
             r"e^{{2h({fn1}+{fn2})}}"
             r" \geq e^{{2h({fn1})}} + e^{{2h({fn2})}}"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
 ]
 
@@ -765,8 +765,8 @@ _INFOTH_TEMPLATES += [
         name="fn_channel_capacity_pair",
         latex=r"{fn1}(C) = {fn2}\!\left(\max_{{{pp}}} I({XX}; {YY})\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "pp": S(_DIST_POOL),
             "XX": S(_RV_POOL),
             "YY": X(_RV_POOL, ("XX",)),
@@ -777,8 +777,8 @@ _INFOTH_TEMPLATES += [
         latex=r"{fn1}(L^*) = {fn2}\!\left(\sum{lim_mod}_{{x}} p(x)\, {lb}\, \frac{{1}}{{p(x)}}\right)",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "lb": S(_LOG_POOL),
         },
     ),
@@ -786,16 +786,16 @@ _INFOTH_TEMPLATES += [
         name="fn_rate_distortion_pair",
         latex=r"{fn1}(R(D)) = {fn2}\!\left(\min_{{p(\hat{{x}}|x):\,\mathbb{{E}}[d]\leq D}} I(X;\hat{{X}})\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
         name="fn_entropy_bound_pair",
         latex=r"{fn1}(H({XX})) \leq {fn2}({lb}\,|\mathcal{{X}}|)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "XX": S(_RV_POOL),
             "lb": S(_LOG_POOL),
         },
@@ -838,4 +838,4 @@ _INFOTH_TEMPLATES += [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("information_theory", _INFOTH_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("information_theory", _INFOTH_TEMPLATES)

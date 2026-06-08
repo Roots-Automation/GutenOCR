@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _CALLIGRAPHIC, _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _CALLIGRAPHIC
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -786,7 +787,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     Template(
         name="gradient_flow_ode",
         latex=r"\dot{{{xx}}}(t) = -\nabla {fn}({xx}(t))",
-        slots={"xx": S(_X_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"xx": S(_X_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="envelope_theorem",
@@ -794,7 +795,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\frac{{d}}{{d\theta}}\,V(\theta)"
             r" = \frac{{\partial {fn}({xx}^*(\theta),\,\theta)}}{{\partial\theta}}"
         ),
-        slots={"xx": S(_X_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"xx": S(_X_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="variational_inequality",
@@ -802,7 +803,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\bigl\langle {fn}({xx}^*),\,{xx}-{xx}^*\bigr\rangle"
             r" \geq 0\;\forall\,{xx}\in C"
         ),
-        slots={"xx": S(_X_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"xx": S(_X_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="saddle_point_lagrangian",
@@ -811,7 +812,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r" \leq {fn}({xx}^*,{lam}^*)"
             r" \leq {fn}({xx},{lam}^*)"
         ),
-        slots={"xx": S(_X_POOL), "lam": S(_LAM_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"xx": S(_X_POOL), "lam": S(_LAM_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="fixed_point_iteration",
@@ -819,15 +820,15 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"{xx}^{{k+1}} = {fn}({xx}^k),"
             r"\quad {xx}^* = {fn}({xx}^*)"
         ),
-        slots={"xx": S(_X_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"xx": S(_X_POOL), "fn": _FN_SLOT},
     ),
     Template(
         name="operator_splitting",
         latex=r"{fn1}({xx}) + {fn2}({xx}) = 0",
         slots={
             "xx": S(_X_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -841,8 +842,8 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         slots={
             "xx": S(_X_POOL),
             "eta": S(_ETA_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
         },
     ),
     Template(
@@ -855,7 +856,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         slots={
             "xx": S(_X_POOL),
             "eta": S(_ETA_POOL),
-            "fn": E(_fn_rich_nosub, n=100),
+            "fn": _FN_SLOT,
         },
     ),
     Template(
@@ -868,8 +869,8 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         ),
         slots={
             "xx": S(_X_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "eta": S(_ETA_POOL),
             "kk": S(_IDX_POOL),
         },
@@ -882,8 +883,8 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         ),
         slots={
             "xx": S(_X_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "lam": S(_LAM_POOL),
         },
     ),
@@ -895,8 +896,8 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         ),
         slots={
             "xx": S(_X_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "kk": S(_IDX_POOL),
         },
     ),
@@ -909,8 +910,8 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         ),
         slots={
             "xx": S(_X_POOL),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "eta": S(_ETA_POOL),
             "tt": S(_T_POOL),
         },
@@ -1012,4 +1013,4 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("optimization", _OPTIMIZATION_TEMPLATES, 0.05)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("optimization", _OPTIMIZATION_TEMPLATES)

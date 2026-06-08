@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
 from .._vocab import (
     _EXP_OP,
-    _fn_rich_nosub,
 )
 from .._vocab import (
     _LAM_STATS as _LAM_POOL,
@@ -25,6 +24,7 @@ from .._vocab import (
 from .._vocab import (
     _STATS_N as _N_POOL,
 )
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -155,7 +155,7 @@ _PROB_TEMPLATES: list[Template] = [
         name="jensens_inequality",
         latex=r"{fn}\!\bigl({op}[{rv}]\bigr) \leq {op}\!\bigl[{fn}({rv})\bigr]",
         slots={
-            "fn": E(_fn_rich_nosub, n=100),
+            "fn": _FN_SLOT,
             "op": S(_EXP_OP),
             "rv": S(_RV_POOL),
         },
@@ -634,7 +634,7 @@ _PROB_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "op": S(_EXP_OP),
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "rv": S(_RV_POOL),
         },
     ),
@@ -647,8 +647,8 @@ _PROB_TEMPLATES: list[Template] = [
         ),
         slots={
             "op": S(_EXP_OP),
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv1": S(_RV_POOL),
             "rv2": X(_RV_POOL, ("rv1",)),
         },
@@ -660,7 +660,7 @@ _PROB_TEMPLATES: list[Template] = [
             r" = {op}\!\left[e^{{t\,{fn1}({rv})}}\right]"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "op": S(_EXP_OP),
             "rv": S(_RV_POOL),
         },
@@ -672,8 +672,8 @@ _PROB_TEMPLATES: list[Template] = [
             r" = f_{{{rv1}}}\!\left({fn1}(y)\right)\,\bigl|{fn2}(y)\bigr|"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv1": S(_RV_POOL),
             "rv2": X(_RV_POOL, ("rv1",)),
         },
@@ -686,8 +686,8 @@ _PROB_TEMPLATES += [
         name="fn_cdf_pair",
         latex=r"{fn1}(F_{{{rv}}}({aa})) = {fn2}({op}({rv} \leq {aa}))",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv": S(_RV_POOL),
             "aa": S(_A_POOL),
             "op": S(_PROB_OP),
@@ -697,8 +697,8 @@ _PROB_TEMPLATES += [
         name="fn_moment_pair",
         latex=r"{fn1}(\mathbb{{E}}[{rv}^{{{kk}}}]) = {fn2}\!\left(\int {aa}^{{{kk}}} f_{{{rv}}}({aa})\,d{aa}\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv": S(_RV_POOL),
             "kk": S(_K_POOL),
             "aa": S(_A_POOL),
@@ -708,8 +708,8 @@ _PROB_TEMPLATES += [
         name="fn_characteristic_fn_pair",
         latex=r"{fn1}(\varphi_{{{rv}}}({tt})) = {fn2}\!\left(\mathbb{{E}}[e^{{i{tt} {rv}}}]\right)",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "rv": S(_RV_POOL),
             "tt": S(_A_POOL),
         },
@@ -743,4 +743,4 @@ _PROB_TEMPLATES += [
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("probability", _PROB_TEMPLATES, 0.07)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("probability", _PROB_TEMPLATES)

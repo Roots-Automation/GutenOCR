@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -463,12 +463,12 @@ _PART_C: list[Template] = [
     Template(
         name="plancherel_pair",
         latex=r"\langle {fn1},\, {fn2} \rangle_{{L^2}} = \langle \hat{{{fn1}}},\, \hat{{{fn2}}} \rangle_{{L^2}}",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="convolution_pair_ft",
         latex=r"\widehat{{{fn1} * {fn2}}}({xi}) = \hat{{{fn1}}}({xi})\cdot\hat{{{fn2}}}({xi})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "xi": S(_FREQ_POOL)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT, "xi": S(_FREQ_POOL)},
     ),
     Template(
         name="laplace_superposition",
@@ -477,17 +477,17 @@ _PART_C: list[Template] = [
             r" = \mathcal{{L}}\left\{{{fn1}\right\}}({ss})"
             r" + \mathcal{{L}}\left\{{{fn2}\right\}}({ss})"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "ss": S(_S_POOL)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT, "ss": S(_S_POOL)},
     ),
     Template(
         name="ft_product_convolution",
         latex=r"\widehat{{{fn1} \cdot {fn2}}}({xi}) = \hat{{{fn1}}}({xi}) * \hat{{{fn2}}}({xi})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "xi": S(_FREQ_POOL)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT, "xi": S(_FREQ_POOL)},
     ),
     Template(
         name="cross_correlation_ft",
         latex=r"\widehat{{R_{{{fn1} {fn2}}}}}({xi}) = \overline{{\hat{{{fn1}}}({xi})}}\,\hat{{{fn2}}}({xi})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "xi": S(_FREQ_POOL)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT, "xi": S(_FREQ_POOL)},
     ),
     Template(
         name="z_superposition",
@@ -495,22 +495,22 @@ _PART_C: list[Template] = [
             r"\mathcal{{Z}}\left\{{{fn1}[n] + {fn2}[n]\right\}}(z)"
             r" = X_1(z) + X_2(z)"
         ),
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="ft_3way_convolution",
         latex=r"\widehat{{{fn1} * {fn2} * {fn3}}}({xi}) = \hat{{{fn1}}}({xi})\cdot\hat{{{fn2}}}({xi})\cdot\hat{{{fn3}}}({xi})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "xi": S(_FREQ_POOL),
         },
     ),
     Template(
         name="ft_inversion_pair",
         latex=r"\widehat{{\hat{{{fn1}}}}}({tt}) = {fn2}(-{tt})",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100), "tt": S(_TIME_POOL)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT, "tt": S(_TIME_POOL)},
     ),
     Template(
         name="autocorrelation_pair",
@@ -520,8 +520,8 @@ _PART_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "tau": S(_TVAR_POOL),
             "tt": S(_TIME_POOL),
         },
@@ -529,7 +529,7 @@ _PART_C: list[Template] = [
     Template(
         name="l2_triangle_pair",
         latex=r"\|{fn1} + {fn2}\|_{{L^2}}^2 = \|{fn1}\|^2 + 2\,\mathrm{{Re}}\langle {fn1},{fn2}\rangle + \|{fn2}\|^2",
-        slots={"fn1": E(_fn_rich_nosub, n=100), "fn2": E(_fn_rich_nosub, n=100)},
+        slots={"fn1": _FN_SLOT, "fn2": _FN_SLOT},
     ),
     Template(
         name="laplace_product_pair",
@@ -539,8 +539,8 @@ _PART_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "ss": S(_S_POOL),
             "cc": S(_COEFF_POOL),
         },
@@ -549,8 +549,8 @@ _PART_C: list[Template] = [
         name="ft_modulation_pair",
         latex=r"\widehat{{e^{{2\pi i\,{aa}\,{tt}}}\,{fn1}}}({xi}) = \hat{{{fn2}}}({xi} - {aa})",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "xi": S(_FREQ_POOL),
             "aa": S(_COEFF_POOL),
             "tt": S(_TIME_POOL),
@@ -621,4 +621,4 @@ _FOURIER_TEMPLATES: list[Template] = _PART_A + _PART_B + _PART_C + _PART_D + _PA
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("fourier", _FOURIER_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("fourier", _FOURIER_TEMPLATES)

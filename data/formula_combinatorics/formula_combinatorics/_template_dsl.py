@@ -20,6 +20,33 @@ ParamSub    — sub-generator whose second arg is the value of another drawn slo
 
 Convenience constructors: ``S``, ``X``, ``E``, ``P`` (see module bottom).
 
+Reusable slot constants (bottom of this module)
+------------------------------------------------
+Use these instead of spelling out the constructor every time::
+
+    _LIM_MOD     — S(("", r"\\limits"))            optional \\limits modifier
+    _VAR_SLOT    — S(_VARS, idx=0.35)               bound variable  x, y, z, …
+    _SCALAR_SLOT — S(_SCALARS)                      scalar          a, b, c, k, …
+    _GREEK_SLOT  — S(_GREEK)                        Greek letter    α, β, γ, …
+    _INDEX_SLOT  — S(_INDICES)                      index           i, j, k, …
+    _EXPR_SLOT   — E(_expr, n=5_000)                generic expression
+    _ATOM_SLOT   — E(_atom, n=150)                  atomic symbol
+    _FN_SLOT     — E(_fn_rich_nosub, n=100)         function name (no subscript)
+    _FN_RICH_SLOT— E(_fn_rich, n=272)               function name with decoration
+
+Slot naming convention
+----------------------
+Use these standard names in ``slots`` dicts so that template metadata is
+consistent across domains (important for filtering / benchmarks)::
+
+    var   — the primary bound variable  (x, y, z, …)
+    fn    — a function name             (f, g, F, …); fn1/fn2 if multiple
+    expr  — a generic sub-expression
+    coef  — a scalar / coefficient      (a, b, k, …)
+    idx   — an index or subscript       (i, j, k, …)
+    mat   — a matrix name               (A, B, M, …)
+    rel   — a relation symbol           (=, \\leq, \\sim, …)
+
 Template latex convention
 -------------------------
 Identical to the existing ``rf"..."`` strings in domain files:
@@ -421,6 +448,41 @@ def register_domain(
     Returns (GENERATORS, WEIGHTS, TEMPLATES) ready for tuple-unpacking::
 
         GENERATORS, WEIGHTS, TEMPLATES = register_domain("algebra", _TEMPLATES, 0.09)
+
+    Domain modules should call the wrapper in ``domains._config`` instead, which
+    resolves weight and cap from the central ``DOMAIN_CONFIG`` dict.
     """
     w = compute_weights(templates, cap=cap)
     return {name: make_dispatcher(templates, w)}, {name: weight}, {name: templates}
+
+
+# ---------------------------------------------------------------------------
+# Reusable slot constants
+# ---------------------------------------------------------------------------
+# Import vocabulary here (not at module top) to keep _vocab.py independent of
+# the template DSL — neither module imports the other at its own top level.
+# ---------------------------------------------------------------------------
+
+from ._vocab import (  # noqa: E402
+    _GREEK,
+    _INDICES,
+    _SCALARS,
+    _VARS,
+    _atom,
+    _expr,
+    _fn_rich,
+    _fn_rich_nosub,
+)
+
+# Fixed-pool variable / scalar / index slots
+_VAR_SLOT: Slot = S(tuple(_VARS), idx=0.35)
+_SCALAR_SLOT: Slot = S(tuple(_SCALARS))
+_GREEK_SLOT: Slot = S(tuple(_GREEK))
+_INDEX_SLOT: Slot = S(tuple(_INDICES))
+
+# Sub-generator slots — n_eff estimates match the corpus-wide defaults so that
+# weighting is consistent across all domains that adopt these constants.
+_EXPR_SLOT: Sub = E(_expr, n=5_000)
+_ATOM_SLOT: Sub = E(_atom, n=150)
+_FN_SLOT: Sub = E(_fn_rich_nosub, n=100)
+_FN_RICH_SLOT: Sub = E(_fn_rich, n=272)

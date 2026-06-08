@@ -51,6 +51,19 @@ _INDICES = list("ijklmn")
 _POS_INTS = ["1", "2", "3", "4", "5", "6"]
 _BOUNDS = ["0", "1", "a", "b", r"\pi", "T", "L", "-1"]
 _GEO_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "p", "r")
+
+# Composite pools (derived from the primitives above)
+_VARS_SCALARS: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
+_GREEK_SCALARS: tuple[str, ...] = tuple(_SCALARS) + tuple(_GREEK)
+
+# Abstract-algebra name pools (used across algebra, group_theory, ring_field_theory)
+_GRP_NAMES: tuple[str, ...] = ("G", "H", "K", "N", "Q")
+_RING_NAMES: tuple[str, ...] = ("R", "S", "A", "B")
+_ELT_POOL: tuple[str, ...] = ("g", "h", "x", "r", "s", "a")
+
+# Logarithm base pool (algebra, analysis, calculus)
+_LOG_BASES: tuple[str, ...] = ("2", "10", "e") + tuple(_SCALARS) + (r"\alpha", r"\beta", r"\lambda", r"\mu")
+
 _COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
     r"\alpha",
     r"\beta",

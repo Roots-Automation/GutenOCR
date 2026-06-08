@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -635,8 +635,8 @@ _TEMPLATES_C: list[Template] = [
         latex=r"\int{lim_mod}_{{{AA}}} {fn1}({xx}) {fn2}({xx}) \, d{mu}({xx})",
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "AA": S(_SET_POOL),
             "xx": S(_VAR_POOL),
             "mu": S(_MU_POOL),
@@ -646,8 +646,8 @@ _TEMPLATES_C: list[Template] = [
         name="lp_fn_sum",
         latex=r"\|{fn1} + {fn2}\|_{{L^{{{pp}}}({mu})}}",
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "pp": S(_EXP_POOL),
             "mu": S(_MU_POOL),
         },
@@ -660,7 +660,7 @@ _TEMPLATES_C: list[Template] = [
         ),
         slots={
             "lim_mod": _LIM_MOD,
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "AA": S(_SET_POOL),
             "xx": S(_VAR_POOL),
             "mu": S(_MU_POOL),
@@ -671,7 +671,7 @@ _TEMPLATES_C: list[Template] = [
         name="conditional_expectation_fn",
         latex=(r"\mathbb{{E}}[{fn1} \mid {FF}] \text{{ is }} {FF}\text{{-measurable}}"),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
             "FF": S(_SIGALG_POOL),
         },
     ),
@@ -682,8 +682,8 @@ _TEMPLATES_C: list[Template] = [
             r"\int {fn1}({fn2}({xx})) \, d{mu}({xx})"
         ),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
             "xx": S(_VAR_POOL),
             "mu": S(_MU_POOL),
         },
@@ -692,9 +692,9 @@ _TEMPLATES_C: list[Template] = [
         name="fn_triple_integral",
         latex=(r"\int {fn1}({fn2}({xx})) \, {fn3}({xx}) \, d{mu}({xx})"),
         slots={
-            "fn1": E(_fn_rich_nosub, n=100),
-            "fn2": E(_fn_rich_nosub, n=100),
-            "fn3": E(_fn_rich_nosub, n=100),
+            "fn1": _FN_SLOT,
+            "fn2": _FN_SLOT,
+            "fn3": _FN_SLOT,
             "xx": S(_VAR_POOL),
             "mu": S(_MU_POOL),
         },
@@ -722,4 +722,4 @@ _MEASURE_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("measure_theory", _MEASURE_TEMPLATES, 0.02)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("measure_theory", _MEASURE_TEMPLATES)

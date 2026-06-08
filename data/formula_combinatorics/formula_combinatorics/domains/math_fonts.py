@@ -3,8 +3,9 @@ and full-expression font wrapping."""
 
 from __future__ import annotations
 
-from .._template_dsl import E, S, Template, X, register_domain
+from .._template_dsl import E, S, Template, X
 from .._vocab import _SCALARS, _VARS, _atom, _expr
+from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Shared pools
@@ -271,4 +272,4 @@ _MATH_FONTS_TEMPLATES: list[Template] = (
 # Registry
 # ---------------------------------------------------------------------------
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("math_fonts", _MATH_FONTS_TEMPLATES, 0.03)
+GENERATORS, WEIGHTS, TEMPLATES = register_domain("math_fonts", _MATH_FONTS_TEMPLATES)
