@@ -21,11 +21,11 @@ from ._config import register_domain
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_VAR_POOL: tuple[str, ...] = tuple(_VARS)
-_COEFF: tuple[str, ...] = tuple(_SCALARS)
+_VAR_POOL: tuple[str, ...] = _VARS
+_COEFF: tuple[str, ...] = _SCALARS
 _POLY_POOL = ("p", "q", "f", "g", "h")
 _MAT_POOL = ("A", "B", "M", "P", "Q", "S")
-_N_POOL: tuple[str, ...] = tuple(_GEO_N)
+_N_POOL: tuple[str, ...] = _GEO_N
 _MATHCLASS_SYMS: tuple[str, ...] = (
     r"\#",
     r"\dagger",
@@ -346,17 +346,17 @@ _INTL_TEMPLATES: list[Template] = [
     Template(
         name="intl_sh_equals_sinh",
         latex=r"\operatorname{{sh}}({vv}) = \sinh({vv})",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="intl_ch_equals_cosh",
         latex=r"\operatorname{{ch}}({vv}) = \cosh({vv})",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="intl_th_equals_tanh",
         latex=r"\operatorname{{th}}({vv}) = \tanh({vv})",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="intl_arctg_value",

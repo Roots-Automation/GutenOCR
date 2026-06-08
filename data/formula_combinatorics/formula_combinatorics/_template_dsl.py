@@ -47,6 +47,12 @@ consistent across domains (important for filtering / benchmarks)::
     mat   — a matrix name               (A, B, M, …)
     rel   — a relation symbol           (=, \\leq, \\sim, …)
 
+Domain-specific parameter names are acceptable as extensions when they carry
+clear semantic meaning (e.g. ``rv`` for random variable, ``lam`` for lambda,
+``mu``, ``sig``, ``op`` for operator pool).  Avoid opaque abbreviations like
+``kk``, ``nn``, ``vv`` — prefer the canonical names above with numeric suffixes
+(``idx1``/``idx2``) when multiple slots of the same kind are needed.
+
 Template latex convention
 -------------------------
 Identical to the existing ``rf"..."`` strings in domain files:

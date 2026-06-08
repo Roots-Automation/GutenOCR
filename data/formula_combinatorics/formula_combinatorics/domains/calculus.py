@@ -75,7 +75,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\lim_{{{v} \to {pt}}} {expr}",
         slots={
             "v": S(_VARS),
-            "pt": S(tuple(_SCALARS) + (r"\infty", "0")),
+            "pt": S(_SCALARS + (r"\infty", "0")),
             "expr": _EXPR_SLOT,
         },
     ),
@@ -85,7 +85,7 @@ _CALCULUS_TEMPLATES: list[Template] = [
         latex=r"\lim_{{{v} \to {pt}}} \frac{{{num}}}{{{den}}}",
         slots={
             "v": S(_VARS),
-            "pt": S((r"\infty", "0") + tuple(_SCALARS)),
+            "pt": S((r"\infty", "0") + (_SCALARS)),
             "num": _EXPR_SLOT,
             "den": _EXPR_SLOT,
         },

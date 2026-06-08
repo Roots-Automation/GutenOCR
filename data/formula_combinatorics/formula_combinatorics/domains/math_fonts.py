@@ -57,7 +57,7 @@ _MATHSF_TEMPLATES: list[Template] = [
         latex=r"\chi(\mathsf{{{gg}}}) \leq {kk}",
         slots={
             "gg": S(_GRAPH_POOL),
-            "kk": S(tuple(_SCALARS)),
+            "kk": S(_SCALARS),
         },
     ),
     # Algorithm complexity with sans-serif algorithm name
@@ -133,7 +133,7 @@ _MATHIT_TEMPLATES: list[Template] = [
         latex=r"\dfrac{{d\mathit{{{ff}}}}}{{d\mathit{{{xx}}}}}",
         slots={
             "ff": S(tuple(_FN_LETTER_POOL)),
-            "xx": S(tuple(_VARS)),
+            "xx": S(_VARS),
         },
     ),
     # Composed maps in italic
@@ -152,9 +152,9 @@ _MATHIT_TEMPLATES: list[Template] = [
         name="mathit_inline_relation",
         latex=r"\mathit{{{aa}}} \leq \mathit{{{xx}}} \leq \mathit{{{bb}}}",
         slots={
-            "aa": S(tuple(_SCALARS)),
-            "xx": S(tuple(_VARS)),
-            "bb": X(tuple(_SCALARS), ("aa",)),
+            "aa": S(_SCALARS),
+            "xx": S(_VARS),
+            "bb": X(_SCALARS, ("aa",)),
         },
     ),
 ]
@@ -168,15 +168,15 @@ _MATHNORMAL_TEMPLATES: list[Template] = [
     Template(
         name="mathnormal_single",
         latex=r"\mathnormal{{{ll}}}",
-        slots={"ll": S(tuple(_VARS))},
+        slots={"ll": S(_VARS)},
     ),
     # Constraint pair with explicit \mathnormal
     Template(
         name="mathnormal_constraint",
         latex=r"\mathnormal{{{aa}}} \geq 0, \quad \mathnormal{{{bb}}} \leq 1",
         slots={
-            "aa": S(tuple(_SCALARS)),
-            "bb": X(tuple(_SCALARS), ("aa",)),
+            "aa": S(_SCALARS),
+            "bb": X(_SCALARS, ("aa",)),
         },
     ),
 ]
@@ -192,8 +192,8 @@ _FONT_WRAP_TEMPLATES: list[Template] = [
         latex=r"\mathbf{{{AA} {xx} = {bb}}}",
         slots={
             "AA": S(tuple(_SET_LETTER_POOL)),
-            "xx": S(tuple(_VARS)),
-            "bb": X(tuple(_SCALARS), ()),
+            "xx": S(_VARS),
+            "bb": X(_SCALARS, ()),
         },
     ),
     # Sans-serif: object–arrow–object chain entirely in \mathsf
@@ -213,9 +213,9 @@ _FONT_WRAP_TEMPLATES: list[Template] = [
         name="fontit_polynomial_expr",
         latex=r"\mathit{{{aa} x^2 + {bb} x + {cc} = 0}}",
         slots={
-            "aa": S(tuple(_SCALARS)),
-            "bb": X(tuple(_SCALARS), ("aa",)),
-            "cc": X(tuple(_SCALARS), ("aa", "bb")),
+            "aa": S(_SCALARS),
+            "bb": X(_SCALARS, ("aa",)),
+            "cc": X(_SCALARS, ("aa", "bb")),
         },
     ),
 ]
@@ -245,12 +245,12 @@ _PMB_TEMPLATES: list[Template] = [
     Template(
         name="boldsymbol_eq",
         latex=r"\boldsymbol{{{g}}} = {a} \mathbf{{{v}}}",
-        slots={"g": S(_BOLD_EXPR_POOL), "a": S(tuple(_SCALARS)), "v": S(tuple(_SET_LETTER_POOL))},
+        slots={"g": S(_BOLD_EXPR_POOL), "a": S(_SCALARS), "v": S(tuple(_SET_LETTER_POOL))},
     ),
     Template(
         name="bf_declaration",
         latex=r"{{\bf {v}}} = {a}",
-        slots={"v": S(tuple(_SET_LETTER_POOL)), "a": S(tuple(_SCALARS))},
+        slots={"v": S(tuple(_SET_LETTER_POOL)), "a": S(_SCALARS)},
     ),
 ]
 

@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 
 # ---------------------------------------------------------------------------
 # Vocabulary pools
 # ---------------------------------------------------------------------------
 
-_VARS = ["x", "y", "z", "t", "u", "v", "r", "s"]
-_GREEK = [
+_VARS: tuple[str, ...] = ("x", "y", "z", "t", "u", "v", "r", "s")
+_GREEK: tuple[str, ...] = (
     r"\alpha",
     r"\beta",
     r"\gamma",
@@ -33,8 +34,8 @@ _GREEK = [
     r"\varepsilon",
     r"\varphi",
     r"\vartheta",
-]
-_GREEK_UPPER = [
+)
+_GREEK_UPPER: tuple[str, ...] = (
     r"\Gamma",
     r"\Delta",
     r"\Lambda",
@@ -45,16 +46,19 @@ _GREEK_UPPER = [
     r"\Pi",
     r"\Xi",
     r"\Theta",
-]
-_SCALARS = list("abcdkmnpq")
-_INDICES = list("ijklmn")
-_POS_INTS = ["1", "2", "3", "4", "5", "6"]
-_BOUNDS = ["0", "1", "a", "b", r"\pi", "T", "L", "-1"]
-_GEO_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "p", "r")
+)
+_SCALARS: tuple[str, ...] = tuple("abcdkmnpq")
+_INDICES: tuple[str, ...] = tuple("ijklmn")
+_POS_INTS: tuple[str, ...] = ("1", "2", "3", "4", "5", "6")
+_BOUNDS: tuple[str, ...] = ("0", "1", "a", "b", r"\pi", "T", "L", "-1")
+# Canonical "how many" / loop-bound pool (replaces domain-local _N_POOL_STYLE etc.)
+_LOOP_N: tuple[str, ...] = ("n", "m", "N", "M", "K", "k", "p", "r")
+# Backward-compat alias used across domains
+_GEO_N: tuple[str, ...] = _LOOP_N
 
 # Composite pools (derived from the primitives above)
 _VARS_SCALARS: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
-_GREEK_SCALARS: tuple[str, ...] = tuple(_SCALARS) + tuple(_GREEK)
+_GREEK_SCALARS: tuple[str, ...] = _SCALARS + _GREEK
 
 # Abstract-algebra name pools (used across algebra, group_theory, ring_field_theory)
 _GRP_NAMES: tuple[str, ...] = ("G", "H", "K", "N", "Q")
@@ -62,9 +66,9 @@ _RING_NAMES: tuple[str, ...] = ("R", "S", "A", "B")
 _ELT_POOL: tuple[str, ...] = ("g", "h", "x", "r", "s", "a")
 
 # Logarithm base pool (algebra, analysis, calculus)
-_LOG_BASES: tuple[str, ...] = ("2", "10", "e") + tuple(_SCALARS) + (r"\alpha", r"\beta", r"\lambda", r"\mu")
+_LOG_BASES: tuple[str, ...] = ("2", "10", "e") + _SCALARS + (r"\alpha", r"\beta", r"\lambda", r"\mu")
 
-_COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
+_COEFF_POOL: tuple[str, ...] = _SCALARS + (
     r"\alpha",
     r"\beta",
     r"\gamma",
@@ -74,9 +78,9 @@ _COEFF_POOL: tuple[str, ...] = tuple(_SCALARS) + (
     r"\kappa",
     r"\theta",
 )
-_VEC_POOL: list[str] = list("abcdefghijklmnopqrstuvwxyz")
-_MATRIX_NAMES = ["A", "B", "M", "P", "Q", "R"]
-_CALLIGRAPHIC = [
+_VEC_POOL: tuple[str, ...] = tuple("abcdefghijklmnopqrstuvwxyz")
+_MATRIX_NAMES: tuple[str, ...] = ("A", "B", "M", "P", "Q", "R")
+_CALLIGRAPHIC: tuple[str, ...] = (
     r"\mathcal{A}",
     r"\mathcal{B}",
     r"\mathcal{C}",
@@ -95,8 +99,8 @@ _CALLIGRAPHIC = [
     r"\mathcal{T}",
     r"\mathcal{U}",
     r"\mathcal{V}",
-]
-_FRAKTUR = [
+)
+_FRAKTUR: tuple[str, ...] = (
     r"\mathfrak{a}",
     r"\mathfrak{b}",
     r"\mathfrak{g}",
@@ -105,8 +109,8 @@ _FRAKTUR = [
     r"\mathfrak{n}",
     r"\mathfrak{p}",
     r"\mathfrak{q}",
-]
-_FUNCS = [
+)
+_FUNCS: tuple[str, ...] = (
     r"\sin",
     r"\cos",
     r"\tan",
@@ -124,8 +128,8 @@ _FUNCS = [
     r"\cot",
     r"\operatorname{erf}",
     r"\operatorname{sgn}",
-]
-_BBOLD = [
+)
+_BBOLD: tuple[str, ...] = (
     r"\mathbb{C}",
     r"\mathbb{F}",
     r"\mathbb{H}",
@@ -135,9 +139,9 @@ _BBOLD = [
     r"\mathbb{R}",
     r"\mathbb{T}",
     r"\mathbb{Z}",
-]
-_SETS = ["A", "B", "C", "S", "T", "U"]
-_PROPS = ["P", "Q", "R"]
+)
+_SETS: tuple[str, ...] = ("A", "B", "C", "S", "T", "U")
+_PROPS: tuple[str, ...] = ("P", "Q", "R")
 # Bold Latin and Greek vector/tensor names
 _BOLD_VECS: tuple[str, ...] = (
     r"\mathbf{a}",
@@ -167,7 +171,7 @@ _BOLD_GREEK: tuple[str, ...] = (
     r"\boldsymbol{\theta}",
     r"\boldsymbol{\xi}",
 )
-_RELATIONS = [
+_RELATIONS: tuple[str, ...] = (
     r"\sim",
     r"\cong",
     r"\simeq",
@@ -179,7 +183,7 @@ _RELATIONS = [
     r"\succeq",
     r"\parallel",
     r"\perp",
-]
+)
 
 # ---------------------------------------------------------------------------
 # Shared statistical / probability pools
@@ -223,11 +227,11 @@ def _i(rng: random.Random) -> str:
 
 
 def _eps_sub(rng: random.Random) -> str:
-    return rng.choice([r"\epsilon", r"\varepsilon"])
+    return rng.choice((r"\epsilon", r"\varepsilon"))
 
 
 def _tol_sub(rng: random.Random) -> str:
-    return rng.choice([r"\epsilon", r"\varepsilon", r"\delta"])
+    return rng.choice((r"\epsilon", r"\varepsilon", r"\delta"))
 
 
 def _cal(rng: random.Random) -> str:
@@ -242,7 +246,7 @@ def _bgreek(rng: random.Random) -> str:
     return rng.choice(_BOLD_GREEK)
 
 
-_DECO_CMDS = [
+_DECO_CMDS: tuple[str, ...] = (
     r"\hat",
     r"\bar",
     r"\tilde",
@@ -253,24 +257,24 @@ _DECO_CMDS = [
     r"\overline",
     r"\dot",
     r"\mathring",
-]
+)
 _DECO_WEIGHTS = [22, 18, 14, 12, 8, 8, 6, 6, 4, 2]
 
 
 def _deco(rng: random.Random) -> str:
     cmd = rng.choices(_DECO_CMDS, weights=_DECO_WEIGHTS, k=1)[0]
-    target = rng.choice(_VARS + list("abcfghpqrs"))
+    target = rng.choice(_VARS + tuple("abcfghpqrs"))
     return rf"{cmd}{{{target}}}"
 
 
 def _prime_deco(rng: random.Random, base: str) -> str:
     return rng.choice(
-        [
+        (
             f"{base}'",
             f"{base}''",
             rf"{base}^{{\prime}}",
             rf"{base}^{{\prime\prime}}",
-        ]
+        )
     )
 
 
@@ -289,7 +293,7 @@ def _atom(rng: random.Random) -> str:
         lambda: _bvec(rng),
         lambda: _bgreek(rng),
         lambda: _prime_deco(rng, _v(rng)),
-        lambda: _prime_deco(rng, rng.choice(["f", "g", "h", "F", "G"])),
+        lambda: _prime_deco(rng, rng.choice(("f", "g", "h", "F", "G"))),
     ]
     return rng.choice(builders)()
 
@@ -301,7 +305,7 @@ def _expr(rng: random.Random, depth: int = 2) -> str:
     r = rng.random()
     if r < 0.20:
         return _atom(rng)
-    exp = rng.choice(["2", "3", "n", r"\alpha"])
+    exp = rng.choice(("2", "3", "n", r"\alpha"))
     if r < 0.30:
         return rf"{_atom(rng)}^{{{exp}}}"
     if r < 0.42:
@@ -318,11 +322,11 @@ def _expr(rng: random.Random, depth: int = 2) -> str:
         fn = rng.choice(_FUNCS)
         return rf"{fn}\!\left({_expr(rng, depth - 1)}\right)"
     if r < 0.83:
-        n = rng.choice(["n", "m", "N"])
-        k = rng.choice(["k", "r", "j"])
+        n = rng.choice(("n", "m", "N"))
+        k = rng.choice(("k", "r", "j"))
         return rf"\binom{{{n}}}{{{k}}}"
     if r < 0.88:
-        op = rng.choice([r"\max", r"\min", r"\sup", r"\inf"])
+        op = rng.choice((r"\max", r"\min", r"\sup", r"\inf"))
         return rf"{op}\!\left({_expr(rng, depth - 1)}\right)"
     if r < 0.92:
         return rf"\left\lfloor {_expr(rng, depth - 1)} \right\rfloor"
@@ -351,21 +355,21 @@ def _maybe_idx(rng: random.Random, var: str, prob: float = 0.35) -> str:
     atoms (e.g. a_{j}, x_1, \\bar{x}) to avoid double-subscript output.
     """
     if rng.random() < prob:
-        return rf"{var}_{{{rng.choice(['0', '1', '2', 'i', 'j', 'k', 'n', 'm'])}}}"
+        return rf"{var}_{{{rng.choice(('0', '1', '2', 'i', 'j', 'k', 'n', 'm'))}}}"
     return var
 
 
-def _two(rng: random.Random, pool: list[str]) -> tuple[str, str]:
+def _two(rng: random.Random, pool: tuple[str, ...]) -> tuple[str, str]:
     a, b = rng.sample(pool, 2)
     return a, b
 
 
 def _lower(rng: random.Random) -> str:
-    return rng.choice(_BOUNDS + [r"-\infty"])
+    return rng.choice(_BOUNDS + (r"-\infty",))
 
 
 def _upper(rng: random.Random) -> str:
-    return rng.choice(_BOUNDS + [r"\infty", r"+\infty"])
+    return rng.choice(_BOUNDS + (r"\infty", r"+\infty"))
 
 
 def _underbrace(expr: str, label: str) -> str:
@@ -451,96 +455,91 @@ def _fn_rich_nosub(rng: random.Random) -> str:
 # Trig function-name pools and selectors (reusable across algebra, calculus, …)
 # ---------------------------------------------------------------------------
 
-# Forward trig
-_SIN_NAMES: tuple[str, ...] = (r"\sin", r"\text{sine}")
-_COS_NAMES: tuple[str, ...] = (r"\cos", r"\text{cosine}")
-_TAN_NAMES: tuple[str, ...] = (r"\tan", r"\text{tangent}")
-_SEC_NAMES: tuple[str, ...] = (r"\sec", r"\text{secant}")
-_CSC_NAMES: tuple[str, ...] = (r"\csc", r"\text{cosecant}")
-_COT_NAMES: tuple[str, ...] = (r"\cot", r"\text{cotangent}")
-# Hyperbolic (sh/ch/th = Russian/European shorthand)
-_SINH_NAMES: tuple[str, ...] = (r"\sinh", r"\text{sh}")
-_COSH_NAMES: tuple[str, ...] = (r"\cosh", r"\text{ch}")
-_TANH_NAMES: tuple[str, ...] = (r"\tanh", r"\text{th}")
-# Inverse — 4 visually distinct forms each
-_ARCSIN_NAMES: tuple[str, ...] = (r"\arcsin", r"\sin^{-1}", r"\text{asin}", r"\text{Arcsin}")
-_ARCCOS_NAMES: tuple[str, ...] = (r"\arccos", r"\cos^{-1}", r"\text{acos}", r"\text{Arccos}")
-_ARCTAN_NAMES: tuple[str, ...] = (r"\arctan", r"\tan^{-1}", r"\text{atan}", r"\text{Arctan}")
-_ARCCOT_NAMES: tuple[str, ...] = (r"\text{arccot}", r"\cot^{-1}", r"\text{acot}")
-_ARCSEC_NAMES: tuple[str, ...] = (r"\text{arcsec}", r"\sec^{-1}", r"\text{asec}")
-_ARCCSC_NAMES: tuple[str, ...] = (r"\text{arccsc}", r"\csc^{-1}", r"\text{acsc}")
-_ARCTANH_NAMES: tuple[str, ...] = (r"\text{arctanh}", r"\tanh^{-1}", r"\text{atanh}")
-_ARCSINH_NAMES: tuple[str, ...] = (r"\text{arcsinh}", r"\sinh^{-1}", r"\text{asinh}")
-_ARCCOSH_NAMES: tuple[str, ...] = (r"\text{arccosh}", r"\cosh^{-1}", r"\text{acosh}")
+_TRIG_NAME_POOLS: dict[str, tuple[str, ...]] = {
+    # Forward trig
+    "sin": (r"\sin", r"\text{sine}"),
+    "cos": (r"\cos", r"\text{cosine}"),
+    "tan": (r"\tan", r"\text{tangent}"),
+    "sec": (r"\sec", r"\text{secant}"),
+    "csc": (r"\csc", r"\text{cosecant}"),
+    "cot": (r"\cot", r"\text{cotangent}"),
+    # Hyperbolic (sh/ch/th = Russian/European shorthand)
+    "sinh": (r"\sinh", r"\text{sh}"),
+    "cosh": (r"\cosh", r"\text{ch}"),
+    "tanh": (r"\tanh", r"\text{th}"),
+    # Inverse — 4 visually distinct forms each
+    "arcsin": (r"\arcsin", r"\sin^{-1}", r"\text{asin}", r"\text{Arcsin}"),
+    "arccos": (r"\arccos", r"\cos^{-1}", r"\text{acos}", r"\text{Arccos}"),
+    "arctan": (r"\arctan", r"\tan^{-1}", r"\text{atan}", r"\text{Arctan}"),
+    "arccot": (r"\text{arccot}", r"\cot^{-1}", r"\text{acot}"),
+    "arcsec": (r"\text{arcsec}", r"\sec^{-1}", r"\text{asec}"),
+    "arccsc": (r"\text{arccsc}", r"\csc^{-1}", r"\text{acsc}"),
+    "arctanh": (r"\text{arctanh}", r"\tanh^{-1}", r"\text{atanh}"),
+    "arcsinh": (r"\text{arcsinh}", r"\sinh^{-1}", r"\text{asinh}"),
+    "arccosh": (r"\text{arccosh}", r"\cosh^{-1}", r"\text{acosh}"),
+}
+
+# Individual pools — aliases into _TRIG_NAME_POOLS for direct use as slot pools
+_SIN_NAMES = _TRIG_NAME_POOLS["sin"]
+_COS_NAMES = _TRIG_NAME_POOLS["cos"]
+_TAN_NAMES = _TRIG_NAME_POOLS["tan"]
+_SEC_NAMES = _TRIG_NAME_POOLS["sec"]
+_CSC_NAMES = _TRIG_NAME_POOLS["csc"]
+_COT_NAMES = _TRIG_NAME_POOLS["cot"]
+_SINH_NAMES = _TRIG_NAME_POOLS["sinh"]
+_COSH_NAMES = _TRIG_NAME_POOLS["cosh"]
+_TANH_NAMES = _TRIG_NAME_POOLS["tanh"]
+_ARCSIN_NAMES = _TRIG_NAME_POOLS["arcsin"]
+_ARCCOS_NAMES = _TRIG_NAME_POOLS["arccos"]
+_ARCTAN_NAMES = _TRIG_NAME_POOLS["arctan"]
+_ARCCOT_NAMES = _TRIG_NAME_POOLS["arccot"]
+_ARCSEC_NAMES = _TRIG_NAME_POOLS["arcsec"]
+_ARCCSC_NAMES = _TRIG_NAME_POOLS["arccsc"]
+_ARCTANH_NAMES = _TRIG_NAME_POOLS["arctanh"]
+_ARCSINH_NAMES = _TRIG_NAME_POOLS["arcsinh"]
+_ARCCOSH_NAMES = _TRIG_NAME_POOLS["arccosh"]
+
+# Flat pool of common trig function LaTeX commands (forward + hyperbolic; primary forms only).
+# Used by domains that need a random trig function name in integrals / identities.
+_TRIG_INT_FN: tuple[str, ...] = (
+    r"\sin",
+    r"\cos",
+    r"\tan",
+    r"\sinh",
+    r"\cosh",
+    r"\sec",
+    r"\text{sine}",
+    r"\text{cosine}",
+    r"\text{tangent}",
+    r"\text{sh}",
+    r"\text{ch}",
+)
+
+# Pool for Fourier series degree / harmonic index
+_FOURIER_N: tuple[str, ...] = ("2", "3", "4", "5", "6", "n", "m", "N", "M", "K", "p")
 
 
-def _sin_nm(rng: random.Random) -> str:
-    return rng.choice(_SIN_NAMES)
+def _trig_nm_factory(key: str) -> Callable[[random.Random], str]:
+    pool = _TRIG_NAME_POOLS[key]
+    return lambda rng: rng.choice(pool)
 
 
-def _cos_nm(rng: random.Random) -> str:
-    return rng.choice(_COS_NAMES)
-
-
-def _tan_nm(rng: random.Random) -> str:
-    return rng.choice(_TAN_NAMES)
-
-
-def _sec_nm(rng: random.Random) -> str:
-    return rng.choice(_SEC_NAMES)
-
-
-def _csc_nm(rng: random.Random) -> str:
-    return rng.choice(_CSC_NAMES)
-
-
-def _cot_nm(rng: random.Random) -> str:
-    return rng.choice(_COT_NAMES)
-
-
-def _sinh_nm(rng: random.Random) -> str:
-    return rng.choice(_SINH_NAMES)
-
-
-def _cosh_nm(rng: random.Random) -> str:
-    return rng.choice(_COSH_NAMES)
-
-
-def _tanh_nm(rng: random.Random) -> str:
-    return rng.choice(_TANH_NAMES)
-
-
-def _arcsin_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCSIN_NAMES)
-
-
-def _arccos_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCCOS_NAMES)
-
-
-def _arctan_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCTAN_NAMES)
-
-
-def _arccot_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCCOT_NAMES)
-
-
-def _arcsec_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCSEC_NAMES)
-
-
-def _arccsc_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCCSC_NAMES)
-
-
-def _arctanh_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCTANH_NAMES)
-
-
-def _arcsinh_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCSINH_NAMES)
-
-
-def _arccosh_nm(rng: random.Random) -> str:
-    return rng.choice(_ARCCOSH_NAMES)
+# Single-item trig-name samplers — one-liner shims generated from the dict above
+_sin_nm = _trig_nm_factory("sin")
+_cos_nm = _trig_nm_factory("cos")
+_tan_nm = _trig_nm_factory("tan")
+_sec_nm = _trig_nm_factory("sec")
+_csc_nm = _trig_nm_factory("csc")
+_cot_nm = _trig_nm_factory("cot")
+_sinh_nm = _trig_nm_factory("sinh")
+_cosh_nm = _trig_nm_factory("cosh")
+_tanh_nm = _trig_nm_factory("tanh")
+_arcsin_nm = _trig_nm_factory("arcsin")
+_arccos_nm = _trig_nm_factory("arccos")
+_arctan_nm = _trig_nm_factory("arctan")
+_arccot_nm = _trig_nm_factory("arccot")
+_arcsec_nm = _trig_nm_factory("arcsec")
+_arccsc_nm = _trig_nm_factory("arccsc")
+_arctanh_nm = _trig_nm_factory("arctanh")
+_arcsinh_nm = _trig_nm_factory("arcsinh")
+_arccosh_nm = _trig_nm_factory("arccosh")

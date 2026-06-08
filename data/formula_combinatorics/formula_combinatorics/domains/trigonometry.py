@@ -6,8 +6,10 @@ import random
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
 from .._vocab import (
+    _FOURIER_N,
     _GEO_N,
     _SCALARS,
+    _TRIG_INT_FN,
     _VARS,
     _arccos_nm,
     _arccosh_nm,
@@ -36,7 +38,7 @@ from ._config import register_domain
 
 _SIDES_POOL: tuple[str, ...] = ("a", "b", "c", "p", "q", "r")
 _ANGLES_POOL: tuple[str, ...] = ("A", "B", "C", "P", "Q", "R")
-_TRIG_ARG_POOL: tuple[str, ...] = tuple(_SCALARS) + (
+_TRIG_ARG_POOL: tuple[str, ...] = _SCALARS + (
     r"\theta",
     r"\phi",
     r"\varphi",
@@ -51,28 +53,6 @@ _TRIG_ARG_POOL: tuple[str, ...] = tuple(_SCALARS) + (
 # ---------------------------------------------------------------------------
 # Inline sub-generators
 # ---------------------------------------------------------------------------
-
-
-def _fourier_n_sub(rng: random.Random) -> str:
-    return rng.choice(["2", "3", "4", "5", "6", "n", "m", "N", "M", "K", "p"])
-
-
-def _trig_fn_int_sub(rng: random.Random) -> str:
-    return rng.choice(
-        [
-            r"\sin",
-            r"\cos",
-            r"\tan",
-            r"\sinh",
-            r"\cosh",
-            r"\sec",
-            r"\text{sine}",
-            r"\text{cosine}",
-            r"\text{tangent}",
-            r"\text{sh}",
-            r"\text{ch}",
-        ]
-    )
 
 
 def _sin_dbl_coeff_sub(rng: random.Random) -> str:
@@ -128,7 +108,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -138,7 +118,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -148,7 +128,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -164,7 +144,7 @@ _TRIG_TEMPLATES: list[Template] = [
             "sn": E(_sin_nm, n=2),
             "cn": E(_cos_nm, n=2),
             "coeff": E(_sin_dbl_coeff_sub, n=72),
-            "x": S(tuple(_VARS), idx=0.35),
+            "x": S(_VARS, idx=0.35),
         },
     ),
     # c=2: double-angle cosine
@@ -178,7 +158,7 @@ _TRIG_TEMPLATES: list[Template] = [
             "sn": E(_sin_nm, n=2),
             "cn": E(_cos_nm, n=2),
             "coeff": E(_cos_dbl_coeff_sub, n=70),
-            "x": S(tuple(_VARS), idx=0.35),
+            "x": S(_VARS, idx=0.35),
         },
     ),
     # c=3: sine addition formula
@@ -216,7 +196,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "tn": E(_tan_nm, n=2),
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -227,7 +207,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -237,7 +217,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "ctn": E(_cot_nm, n=2),
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -248,7 +228,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -312,9 +292,9 @@ _TRIG_TEMPLATES: list[Template] = [
         name="trig_integral",
         latex=r"\int {fn}\!\left({coeff} {x}\right) \, d{x}",
         slots={
-            "fn": E(_trig_fn_int_sub, n=11),
+            "fn": E(lambda rng: rng.choice(_TRIG_INT_FN), n=11),
             "coeff": S(_TRIG_ARG_POOL, idx=0.35),
-            "x": S(tuple(_VARS), idx=0.35),
+            "x": S(_VARS, idx=0.35),
         },
     ),
     # c=10: arctan of ratio
@@ -381,7 +361,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -412,7 +392,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -425,7 +405,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -463,57 +443,57 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="arcsin_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{asn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 - {x}^2}}}}",
-                slots={"asn": E(_arcsin_nm, n=4), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"asn": E(_arcsin_nm, n=4), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arcsin_derivative_coeff",
                 latex=r"\frac{{d}}{{d{x}}}{asn}\!\left({c} {x}\right) = \frac{{{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}",
-                slots={"asn": E(_arcsin_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"asn": E(_arcsin_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arccos_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{acn}\!\left({x}\right) = \frac{{-1}}{{\sqrt{{1 - {x}^2}}}}",
-                slots={"acn": E(_arccos_nm, n=4), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"acn": E(_arccos_nm, n=4), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arccos_derivative_coeff",
                 latex=r"\frac{{d}}{{d{x}}}{acn}\!\left({c} {x}\right) = \frac{{-{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}",
-                slots={"acn": E(_arccos_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"acn": E(_arccos_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arctan_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{atn}\!\left({x}\right) = \frac{{1}}{{1 + {x}^2}}",
-                slots={"atn": E(_arctan_nm, n=4), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"atn": E(_arctan_nm, n=4), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arctan_derivative_coeff",
                 latex=r"\frac{{d}}{{d{x}}}{atn}\!\left({c} {x}\right) = \frac{{{c}}}{{1 + {c}^2{x}^2}}",
-                slots={"atn": E(_arctan_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"atn": E(_arctan_nm, n=4), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arccot_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{actn}\!\left({x}\right) = \frac{{-1}}{{1 + {x}^2}}",
-                slots={"actn": E(_arccot_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"actn": E(_arccot_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arcsec_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{asecn}\!\left({x}\right) = \frac{{1}}{{{x}\sqrt{{{x}^2 - 1}}}}",
-                slots={"asecn": E(_arcsec_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"asecn": E(_arcsec_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arccsc_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{acscn}\!\left({x}\right) = \frac{{-1}}{{{x}\sqrt{{{x}^2 - 1}}}}",
-                slots={"acscn": E(_arccsc_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"acscn": E(_arccsc_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arctanh_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{athn}\!\left({x}\right) = \frac{{1}}{{1 - {x}^2}}",
-                slots={"athn": E(_arctanh_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"athn": E(_arctanh_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arcsinh_derivative",
                 latex=r"\frac{{d}}{{d{x}}}{ashn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 + {x}^2}}}}",
-                slots={"ashn": E(_arcsinh_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"ashn": E(_arcsinh_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
         ],
     ),
@@ -547,7 +527,7 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="taylor_tan_approx",
                 latex=r"{tn} {x} \approx {x} + \frac{{{x}^3}}{{3}} + \frac{{2{x}^5}}{{15}} + \cdots",
-                slots={"tn": E(_tan_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"tn": E(_tan_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="taylor_tan_approx_coeff",
@@ -555,7 +535,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "tn": E(_tan_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -569,17 +549,17 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="cofunction_sin_cos",
                 latex=r"{sn} {x} = {cn}\!\left(\frac{{\pi}}{{2}} - {x}\right)",
-                slots={"sn": E(_sin_nm, n=2), "cn": E(_cos_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"sn": E(_sin_nm, n=2), "cn": E(_cos_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="cofunction_tan_cot",
                 latex=r"{tn} {x} = {ctn}\!\left(\frac{{\pi}}{{2}} - {x}\right)",
-                slots={"tn": E(_tan_nm, n=2), "ctn": E(_cot_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"tn": E(_tan_nm, n=2), "ctn": E(_cot_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="cofunction_sec_csc",
                 latex=r"{secn} {x} = {cscn}\!\left(\frac{{\pi}}{{2}} - {x}\right)",
-                slots={"secn": E(_sec_nm, n=2), "cscn": E(_csc_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"secn": E(_sec_nm, n=2), "cscn": E(_csc_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="cofunction_sin_cos_coeff",
@@ -588,7 +568,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -598,7 +578,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "tn": E(_tan_nm, n=2),
                     "ctn": E(_cot_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -608,7 +588,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "secn": E(_sec_nm, n=2),
                     "cscn": E(_csc_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -635,7 +615,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "asn": E(_arcsin_nm, n=4),
                     "acn": E(_arccos_nm, n=4),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -645,13 +625,13 @@ _TRIG_TEMPLATES: list[Template] = [
                     "asn": E(_arcsin_nm, n=4),
                     "acn": E(_arccos_nm, n=4),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
                 name="arctan_reciprocal_bare",
                 latex=r"{atn}({x}) + {atn}\!\left(\frac{{1}}{{{x}}}\right) = \frac{{\pi}}{{2}}",
-                slots={"atn": E(_arctan_nm, n=4), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"atn": E(_arctan_nm, n=4), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arctan_reciprocal_coeff",
@@ -659,7 +639,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "atn": E(_arctan_nm, n=4),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -681,7 +661,7 @@ _TRIG_TEMPLATES: list[Template] = [
             "sn": E(_sin_nm, n=2),
             "cn": E(_cos_nm, n=2),
             "a": S(_TRIG_ARG_POOL, idx=0.35),
-            "x": S(tuple(_VARS), idx=0.35),
+            "x": S(_VARS, idx=0.35),
         },
     ),
     # c=24: Fourier/Euler roots of unity summation
@@ -691,8 +671,8 @@ _TRIG_TEMPLATES: list[Template] = [
         slots={
             "lim_mod": _LIM_MOD,
             "k": S(("j", "k", "l", "m", "r", "s", "t")),
-            "n": E(_fourier_n_sub, n=11),
-            "x": S(tuple(_VARS), idx=0.35),
+            "n": E(lambda rng: rng.choice(_FOURIER_N), n=11),
+            "x": S(_VARS, idx=0.35),
         },
     ),
     # ── Triple-angle formulas ─────────────────────────────────────────────────
@@ -719,12 +699,12 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="triple_angle_sin_coeff",
                 latex=r"{sn}(3{c} {x}) = 3{sn}({c} {x}) - 4{sn}^3({c} {x})",
-                slots={"sn": E(_sin_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"sn": E(_sin_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="triple_angle_cos_coeff",
                 latex=r"{cn}(3{c} {x}) = 4{cn}^3({c} {x}) - 3{cn}({c} {x})",
-                slots={"cn": E(_cos_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"cn": E(_cos_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
         ],
     ),
@@ -766,13 +746,13 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
                 name="power_reduction_cos2_coeff",
                 latex=r"{cn}^2({c} {x}) = \frac{{1 + {cn}(2{c} {x})}}{{2}}",
-                slots={"cn": E(_cos_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"cn": E(_cos_nm, n=2), "c": S(_TRIG_ARG_POOL, idx=0.35), "x": S(_VARS, idx=0.35)},
             ),
         ],
     ),
@@ -900,7 +880,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "shn": E(_sinh_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -909,7 +889,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "chn": E(_cosh_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -955,17 +935,17 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="negative_angle_sin",
                 latex=r"{sn}(-{x}) = -{sn} {x}",
-                slots={"sn": E(_sin_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"sn": E(_sin_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="negative_angle_cos",
                 latex=r"{cn}(-{x}) = {cn} {x}",
-                slots={"cn": E(_cos_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"cn": E(_cos_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="negative_angle_tan",
                 latex=r"{tn}(-{x}) = -{tn} {x}",
-                slots={"tn": E(_tan_nm, n=2), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"tn": E(_tan_nm, n=2), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="negative_angle_sin_coeff",
@@ -973,7 +953,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "sn": E(_sin_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -982,7 +962,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -991,7 +971,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "tn": E(_tan_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -1025,7 +1005,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                     "n": S(_GEO_N),
                 },
             ),
@@ -1142,7 +1122,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "shn": E(_sinh_nm, n=2),
                     "chn": E(_cosh_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1152,7 +1132,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "chn": E(_cosh_nm, n=2),
                     "shn": E(_sinh_nm, n=2),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -1166,17 +1146,17 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="arcsinh_log",
                 latex=r"{ashn}({x}) = \ln\!\left({x} + \sqrt{{{x}^2 + 1}}\right)",
-                slots={"ashn": E(_arcsinh_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"ashn": E(_arcsinh_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arccosh_log",
                 latex=r"{achn}({x}) = \ln\!\left({x} + \sqrt{{{x}^2 - 1}}\right)",
-                slots={"achn": E(_arccosh_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"achn": E(_arccosh_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arctanh_log",
                 latex=r"{athn}({x}) = \tfrac{{1}}{{2}} \ln \frac{{1 + {x}}}{{1 - {x}}}",
-                slots={"athn": E(_arctanh_nm, n=3), "x": S(tuple(_VARS), idx=0.35)},
+                slots={"athn": E(_arctanh_nm, n=3), "x": S(_VARS, idx=0.35)},
             ),
             Template(
                 name="arcsinh_log_coeff",
@@ -1184,7 +1164,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "ashn": E(_arcsinh_nm, n=3),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1193,7 +1173,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "achn": E(_arccosh_nm, n=3),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1202,7 +1182,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "athn": E(_arctanh_nm, n=3),
                     "c": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -1229,7 +1209,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "secn": E(_sec_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1238,7 +1218,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "cscn": E(_csc_nm, n=2),
                     "sn": E(_sin_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1248,7 +1228,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "secn": E(_sec_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1258,7 +1238,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "cscn": E(_csc_nm, n=2),
                     "sn": E(_sin_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -1290,8 +1270,8 @@ _TRIG_TEMPLATES: list[Template] = [
                 latex=r"{t} = {tn}\!\frac{{{x}}}{{2}}",
                 slots={
                     "tn": E(_tan_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
             Template(
@@ -1299,8 +1279,8 @@ _TRIG_TEMPLATES: list[Template] = [
                 latex=r"{sn} {x} = \frac{{2{t}}}{{1 + {t}^2}}",
                 slots={
                     "sn": E(_sin_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
             Template(
@@ -1308,8 +1288,8 @@ _TRIG_TEMPLATES: list[Template] = [
                 latex=r"{cn} {x} = \frac{{1 - {t}^2}}{{1 + {t}^2}}",
                 slots={
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
             Template(
@@ -1317,16 +1297,16 @@ _TRIG_TEMPLATES: list[Template] = [
                 latex=r"{tn} {x} = \frac{{2{t}}}{{1 - {t}^2}}",
                 slots={
                     "tn": E(_tan_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
             Template(
                 name="weierstrass_dx",
                 latex=r"d{x} = \frac{{2}}{{1 + {t}^2}} \, d{t}",
                 slots={
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
             Template(
@@ -1340,8 +1320,8 @@ _TRIG_TEMPLATES: list[Template] = [
                     "tn": E(_tan_nm, n=2),
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
-                    "t": X(tuple(_VARS), ("x",), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
+                    "t": X(_VARS, ("x",), idx=0.35),
                 },
             ),
         ],
@@ -1358,7 +1338,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1367,7 +1347,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1377,7 +1357,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1387,7 +1367,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "sn": E(_sin_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1397,7 +1377,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "tn": E(_tan_nm, n=2),
                     "cn": E(_cos_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1407,7 +1387,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "tn": E(_tan_nm, n=2),
                     "secn": E(_sec_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1417,7 +1397,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "secn": E(_sec_nm, n=2),
                     "tn": E(_tan_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1427,7 +1407,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "cscn": E(_csc_nm, n=2),
                     "ctn": E(_cot_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
             Template(
@@ -1440,7 +1420,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     "secn": E(_sec_nm, n=2),
                     "tn": E(_tan_nm, n=2),
                     "a": S(_TRIG_ARG_POOL, idx=0.35),
-                    "x": S(tuple(_VARS), idx=0.35),
+                    "x": S(_VARS, idx=0.35),
                 },
             ),
         ],
@@ -1469,27 +1449,27 @@ _TRIG_TEMPLATES: list[Template] = [
     Template(
         name="sech_reciprocal",
         latex=r"\operatorname{{sech}}({vv}) = \frac{{1}}{{\cosh({vv})}}",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="csch_reciprocal",
         latex=r"\operatorname{{csch}}({vv}) = \frac{{1}}{{\sinh({vv})}}",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="sech_exp_form",
         latex=r"\operatorname{{sech}}({vv}) = \frac{{2}}{{e^{{{vv}}} + e^{{-{vv}}}}}",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="csch_exp_form",
         latex=r"\operatorname{{csch}}({vv}) = \frac{{2}}{{e^{{{vv}}} - e^{{-{vv}}}}}",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     Template(
         name="csch_sq_identity",
         latex=r"\operatorname{{csch}}^2({vv}) = \coth^2({vv}) - 1",
-        slots={"vv": S(tuple(_VARS), idx=0.2)},
+        slots={"vv": S(_VARS, idx=0.2)},
     ),
     # ── Fourier series ────────────────────────────────────────────────────────
     Template(
@@ -1508,10 +1488,10 @@ _TRIG_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "fn": _FN_SLOT,
-                    "v": S(tuple(_VARS), idx=0.35),
-                    "ca": S(tuple(_SCALARS)),
-                    "cb": X(tuple(_SCALARS), ("ca",)),
-                    "L": X(tuple(_SCALARS), ("ca", "cb")),
+                    "v": S(_VARS, idx=0.35),
+                    "ca": S(_SCALARS),
+                    "cb": X(_SCALARS, ("ca",)),
+                    "L": X(_SCALARS, ("ca", "cb")),
                 },
             ),
             Template(
@@ -1522,9 +1502,9 @@ _TRIG_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "fn": _FN_SLOT,
-                    "v": S(tuple(_VARS), idx=0.35),
-                    "ca": S(tuple(_SCALARS)),
-                    "L": X(tuple(_SCALARS), ("ca",)),
+                    "v": S(_VARS, idx=0.35),
+                    "ca": S(_SCALARS),
+                    "L": X(_SCALARS, ("ca",)),
                 },
             ),
             Template(
@@ -1535,9 +1515,9 @@ _TRIG_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "fn": _FN_SLOT,
-                    "v": S(tuple(_VARS), idx=0.35),
-                    "cb": S(tuple(_SCALARS)),
-                    "L": X(tuple(_SCALARS), ("cb",)),
+                    "v": S(_VARS, idx=0.35),
+                    "cb": S(_SCALARS),
+                    "L": X(_SCALARS, ("cb",)),
                 },
             ),
         ],

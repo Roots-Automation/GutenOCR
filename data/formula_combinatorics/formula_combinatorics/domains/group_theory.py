@@ -10,17 +10,28 @@ from ._config import register_domain
 # Shared pools (kept local to avoid cross-domain coupling)
 # ---------------------------------------------------------------------------
 
-_ELEMS = ["g", "h", "a", "b", "x", "y", r"\sigma", r"\tau", r"\alpha", r"\beta", r"\gamma", r"\delta", r"\omega"]
-_HOMOS = [r"\phi", r"\varphi", r"\psi", "f", r"\theta", r"\rho", r"\pi"]
-_SIMPLE = ["G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W"]
+_ELEMS: tuple[str, ...] = (
+    "g",
+    "h",
+    "a",
+    "b",
+    "x",
+    "y",
+    r"\sigma",
+    r"\tau",
+    r"\alpha",
+    r"\beta",
+    r"\gamma",
+    r"\delta",
+    r"\omega",
+)
+_HOMOS: tuple[str, ...] = (r"\phi", r"\varphi", r"\psi", "f", r"\theta", r"\rho", r"\pi")
+_SIMPLE: tuple[str, ...] = ("G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W")
 
 _NV_POOL: tuple[str, ...] = ("n", "m", "4", "5", "6", "7", "8", "p", "q", "r")
 _QV_POOL: tuple[str, ...] = ("q", "2", "3", "4", "5", "p")
 _P_POOL: tuple[str, ...] = ("p", "q", r"\ell", "r", "s", r"p_1", r"p_2")
 _N_POOL: tuple[str, ...] = ("n", "m", "r", "k", "d", r"n_1", r"n_2")
-_SIMPLE_T: tuple[str, ...] = tuple(_SIMPLE)
-_ELEMS_T: tuple[str, ...] = tuple(_ELEMS)
-_HOMOS_T: tuple[str, ...] = tuple(_HOMOS)
 
 
 def _build_named_groups() -> tuple[str, ...]:
@@ -47,7 +58,7 @@ def _build_named_groups() -> tuple[str, ...]:
 
 
 _NAMED_GROUPS: tuple[str, ...] = _build_named_groups()
-_G_POOL: tuple[str, ...] = tuple(_SIMPLE) + _NAMED_GROUPS
+_G_POOL: tuple[str, ...] = _SIMPLE + _NAMED_GROUPS
 
 # ---------------------------------------------------------------------------
 # Group theory templates
@@ -65,7 +76,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"|{H}| \mid |{G}|",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
             Template(
@@ -73,7 +84,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"[{G}:{H}] = \frac{{|{G}|}}{{|{H}|}}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
             Template(
@@ -81,7 +92,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"|{G}| = [{G}:{H}] \cdot |{H}|",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
         ],
@@ -92,7 +103,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         latex=r"{G}/\ker {phi} \cong \operatorname{{im}}\, {phi}",
         slots={
             "G": S(_G_POOL),
-            "phi": S(_HOMOS_T),
+            "phi": S(_HOMOS),
         },
     ),
     # c=2 — second isomorphism theorem
@@ -100,8 +111,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         name="second_isomorphism_theorem",
         latex=r"{H}/({H} \cap {N_sub}) \cong {H}{N_sub}/{N_sub}",
         slots={
-            "H": S(_SIMPLE_T),
-            "N_sub": X(_SIMPLE_T, ("H",)),
+            "H": S(_SIMPLE),
+            "N_sub": X(_SIMPLE, ("H",)),
         },
     ),
     # c=3 — third isomorphism theorem
@@ -110,8 +121,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         latex=r"({G}/{N_sub})/({H}/{N_sub}) \cong {G}/{H}",
         slots={
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "N_sub": X(_SIMPLE_T, ("G", "H")),
+            "H": X(_SIMPLE, ("G",)),
+            "N_sub": X(_SIMPLE, ("G", "H")),
         },
     ),
     # c=4 — element order (3 forms)
@@ -125,7 +136,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"\operatorname{{ord}}({g_el}) \mid |{G}|",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
@@ -133,15 +144,15 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{g_el}^{{|{G}|}} = e",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
                 name="element_order_lcm",
                 latex=r"\operatorname{{ord}}({g_el} {h_el}) \mid \operatorname{{lcm}}(\operatorname{{ord}}({g_el}), \operatorname{{ord}}({h_el}))",
                 slots={
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
         ],
@@ -152,7 +163,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         latex=r"|{G}| = |\operatorname{{Orb}}({g_el})| \cdot |\operatorname{{Stab}}_{{{G}}}({g_el})|",
         slots={
             "G": S(_G_POOL),
-            "g_el": S(_ELEMS_T),
+            "g_el": S(_ELEMS),
         },
     ),
     # c=6 — class equation (2 forms)
@@ -167,7 +178,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
@@ -176,7 +187,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
         ],
@@ -223,17 +234,17 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="commutator_definition",
                 latex=r"[{g_el}, {h_el}] = {g_el}^{{-1}} {h_el}^{{-1}} {g_el} {h_el}",
                 slots={
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
                 name="commutator_product_rule",
                 latex=r"[{g_el}, {h_el} {N_sub}] = [{g_el},{h_el}] \cdot [{g_el},{N_sub}]^{{{h_el}}}",
                 slots={
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
-                    "N_sub": S(_SIMPLE_T),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
+                    "N_sub": S(_SIMPLE),
                 },
             ),
         ],
@@ -249,8 +260,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"[{G}, {G}] = \langle [{g_el}, {h_el}] : {g_el}, {h_el} \in {G} \rangle",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
@@ -271,8 +282,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"Z({G}) = \left\{{{g_el} \in {G} \mid {g_el} {h_el} = {h_el} {g_el}\; \forall {h_el} \in {G}\right\}}",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
@@ -298,8 +309,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{g_el} \sim {h_el} \iff \exists\, {n} \in {G} : {n} {g_el} {n}^{{-1}} = {h_el}",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                     "n": S(_N_POOL),
                 },
             ),
@@ -308,7 +319,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"|[{g_el}]_{{{G}}}| = [{G} : C_{{{G}}}({g_el})]",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
         ],
@@ -324,8 +335,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"N_{{{G}}}({H}) = \left\{{{g_el} \in {G} : {g_el} {H} {g_el}^{{-1}} = {H}\right\}}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
-                    "g_el": S(_ELEMS_T),
+                    "H": X(_SIMPLE, ("G",)),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
@@ -333,7 +344,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{H} \trianglelefteq {G} \iff N_{{{G}}}({H}) = {G}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
         ],
@@ -349,8 +360,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"C_{{{G}}}({g_el}) = \left\{{{h_el} \in {G} : {h_el} {g_el} = {g_el} {h_el}\right\}}",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
@@ -358,7 +369,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"|{G}| = |C_{{{G}}}({g_el})| \cdot |[{g_el}]|",
                 slots={
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
         ],
@@ -373,26 +384,26 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="homomorphism_multiplicativity",
                 latex=r"{phi}({g_el} {h_el}) = {phi}({g_el})\,{phi}({h_el})",
                 slots={
-                    "phi": S(_HOMOS_T),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "phi": S(_HOMOS),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
                 name="homomorphism_identity_inverse",
                 latex=r"{phi}({g_el}^{{-1}}) = {phi}({g_el})^{{-1}},\quad {phi}(e) = e",
                 slots={
-                    "phi": S(_HOMOS_T),
-                    "g_el": S(_ELEMS_T),
+                    "phi": S(_HOMOS),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
                 name="isomorphism_bijective_homo",
                 latex=r"{phi} : {G} \to {H} \text{{ iso.}} \iff {phi} \text{{ bij. hom.}}",
                 slots={
-                    "phi": S(_HOMOS_T),
+                    "phi": S(_HOMOS),
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
         ],
@@ -407,18 +418,18 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="kernel_definition",
                 latex=r"\ker {phi} = \left\{{{g_el} \in {G} : {phi}({g_el}) = e\right\}}",
                 slots={
-                    "phi": S(_HOMOS_T),
+                    "phi": S(_HOMOS),
                     "G": S(_G_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
                 name="kernel_normal_embedding",
                 latex=r"\ker {phi} \trianglelefteq {G},\quad {G}/\ker {phi} \hookrightarrow {H}",
                 slots={
-                    "phi": S(_HOMOS_T),
+                    "phi": S(_HOMOS),
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
         ],
@@ -434,7 +445,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{G} \times {H}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                 },
             ),
             Template(
@@ -442,8 +453,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{G} \times {H} \times {N_sub}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
-                    "N_sub": X(_SIMPLE_T, ("G", "H")),
+                    "H": X(_SIMPLE, ("G",)),
+                    "N_sub": X(_SIMPLE, ("G", "H")),
                 },
             ),
             Template(
@@ -464,8 +475,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{G} \cong {N_sub} \rtimes {H}",
                 slots={
                     "G": S(_G_POOL),
-                    "N_sub": X(_SIMPLE_T, ("G",)),
-                    "H": X(_SIMPLE_T, ("G", "N_sub")),
+                    "N_sub": X(_SIMPLE, ("G",)),
+                    "H": X(_SIMPLE, ("G", "N_sub")),
                 },
             ),
             Template(
@@ -473,8 +484,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"{N_sub} \trianglelefteq {G},\quad {G} = {N_sub}{H},\quad {N_sub} \cap {H} = \{{e\}}",
                 slots={
                     "G": S(_G_POOL),
-                    "N_sub": X(_SIMPLE_T, ("G",)),
-                    "H": X(_SIMPLE_T, ("G", "N_sub")),
+                    "N_sub": X(_SIMPLE, ("G",)),
+                    "H": X(_SIMPLE, ("G", "N_sub")),
                 },
             ),
         ],
@@ -493,8 +504,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 ),
                 slots={
                     "nv": S(_NV_POOL),
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
             Template(
@@ -502,7 +513,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"\mathbb{{Z}}/{nv}\mathbb{{Z}} = \langle {g_el} \mid {g_el}^{{{nv}}} = e \rangle",
                 slots={
                     "nv": S(_NV_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
@@ -512,8 +523,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                     r"{g_el}^4 = e,\; {g_el}^2 = {h_el}^2,\; {h_el} {g_el} {h_el}^{{-1}} = {g_el}^{{-1}} \rangle"
                 ),
                 slots={
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
         ],
@@ -529,15 +540,15 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"F_{{{nv}}} = \langle {g_el}_1, \ldots, {g_el}_{{{nv}}} \mid \varnothing \rangle",
                 slots={
                     "nv": S(_NV_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
             Template(
                 name="free_group_rank_2_nonabelian",
                 latex=r"F_2 = \langle {g_el}, {h_el} \rangle,\quad [{g_el},{h_el}] \neq e",
                 slots={
-                    "g_el": S(_ELEMS_T),
-                    "h_el": X(_ELEMS_T, ("g_el",)),
+                    "g_el": S(_ELEMS),
+                    "h_el": X(_ELEMS, ("g_el",)),
                 },
             ),
         ],
@@ -559,9 +570,9 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"0 \to {H} \xrightarrow{{{phi}}} {G} \xrightarrow{{{psi}}} {G}/{H} \to 0",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
-                    "phi": S(_HOMOS_T),
-                    "psi": X(_HOMOS_T, ("phi",)),
+                    "H": X(_SIMPLE, ("G",)),
+                    "phi": S(_HOMOS),
+                    "psi": X(_HOMOS, ("phi",)),
                 },
             ),
             Template(
@@ -569,7 +580,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"1 \to {N_sub} \to {G} \to {G}/{N_sub} \to 1",
                 slots={
                     "G": S(_G_POOL),
-                    "N_sub": X(_SIMPLE_T, ("G",)),
+                    "N_sub": X(_SIMPLE, ("G",)),
                 },
             ),
         ],
@@ -584,8 +595,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="exactness_ker_im",
                 latex=r"\ker {psi} = \operatorname{{im}}\, {phi}",
                 slots={
-                    "phi": S(_HOMOS_T),
-                    "psi": X(_HOMOS_T, ("phi",)),
+                    "phi": S(_HOMOS),
+                    "psi": X(_HOMOS, ("phi",)),
                 },
             ),
             Template(
@@ -593,8 +604,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"0 \to {H} \xrightarrow{{{phi}}} {G} \text{{ exact}} \iff {phi} \text{{ injective}}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
-                    "phi": S(_HOMOS_T),
+                    "H": X(_SIMPLE, ("G",)),
+                    "phi": S(_HOMOS),
                 },
             ),
         ],
@@ -635,8 +646,8 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         latex=r"[{G}:{H} \cap {N_sub}] \leq [{G}:{H}] \cdot [{G}:{N_sub}]",
         slots={
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "N_sub": X(_SIMPLE_T, ("G", "H")),
+            "H": X(_SIMPLE, ("G",)),
+            "N_sub": X(_SIMPLE, ("G", "H")),
         },
     ),
     # c=27 — p-group centre is non-trivial (2 forms)
@@ -659,7 +670,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 latex=r"|{G}| = {p}^{{{n}}},\; {H} \leq {G} \implies {H} \trianglelefteq {G}",
                 slots={
                     "G": S(_G_POOL),
-                    "H": X(_SIMPLE_T, ("G",)),
+                    "H": X(_SIMPLE, ("G",)),
                     "p": S(_P_POOL),
                     "n": S(_N_POOL),
                 },
@@ -719,7 +730,7 @@ _GROUP_THEORY_TEMPLATES.append(
                 ),
                 slots={
                     "nv": S(_NV_POOL),
-                    "g_el": S(_ELEMS_T),
+                    "g_el": S(_ELEMS),
                 },
             ),
         ],
@@ -737,8 +748,8 @@ _GROUP_THEORY_TEMPLATES.append(
         slots={
             "lim_mod": _LIM_MOD,
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "g_el": S(_ELEMS_T),
+            "H": X(_SIMPLE, ("G",)),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -752,9 +763,9 @@ _GROUP_THEORY_TEMPLATES.append(
             r" = \left\{{{h_el} \in {H} : {g_el} \cdot {h_el} = {h_el}\right\}}"
         ),
         slots={
-            "H": S(_SIMPLE_T),
-            "g_el": S(_ELEMS_T),
-            "h_el": X(_ELEMS_T, ("g_el",)),
+            "H": S(_SIMPLE),
+            "g_el": S(_ELEMS),
+            "h_el": X(_ELEMS, ("g_el",)),
         },
     )
 )
@@ -766,7 +777,7 @@ _GROUP_THEORY_TEMPLATES.append(
         latex=r"{G}/\operatorname{{Stab}}_{{{G}}}({g_el}) \cong {G} \cdot {g_el}",
         slots={
             "G": S(_G_POOL),
-            "g_el": S(_ELEMS_T),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -781,10 +792,10 @@ _GROUP_THEORY_TEMPLATES.append(
             r" \bigcap_{{{g_el} \in {H}}} \operatorname{{Stab}}_{{{G}}}({g_el}) = \{{e\}}"
         ),
         slots={
-            "phi": S(_HOMOS_T),
+            "phi": S(_HOMOS),
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "g_el": S(_ELEMS_T),
+            "H": X(_SIMPLE, ("G",)),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -799,10 +810,10 @@ _GROUP_THEORY_TEMPLATES.append(
         ),
         slots={
             "G": S(_G_POOL),
-            "N_sub": X(_SIMPLE_T, ("G",)),
-            "H": X(_SIMPLE_T, ("G", "N_sub")),
-            "phi": S(_HOMOS_T),
-            "psi": X(_HOMOS_T, ("phi",)),
+            "N_sub": X(_SIMPLE, ("G",)),
+            "H": X(_SIMPLE, ("G", "N_sub")),
+            "phi": S(_HOMOS),
+            "psi": X(_HOMOS, ("phi",)),
         },
     )
 )
@@ -817,9 +828,9 @@ _GROUP_THEORY_TEMPLATES.append(
         ),
         slots={
             "G": S(_G_POOL),
-            "N_sub": X(_SIMPLE_T, ("G",)),
-            "H": X(_SIMPLE_T, ("G", "N_sub")),
-            "phi": S(_HOMOS_T),
+            "N_sub": X(_SIMPLE, ("G",)),
+            "H": X(_SIMPLE, ("G", "N_sub")),
+            "phi": S(_HOMOS),
         },
     )
 )
@@ -830,8 +841,8 @@ _GROUP_THEORY_TEMPLATES.append(
         name="second_cohomology_extensions",
         latex=r"H^2({H},\, {N_sub}) \cong \operatorname{{Ext}}({H},\, {N_sub})",
         slots={
-            "H": S(_SIMPLE_T),
-            "N_sub": X(_SIMPLE_T, ("H",)),
+            "H": S(_SIMPLE),
+            "N_sub": X(_SIMPLE, ("H",)),
         },
     )
 )
@@ -846,7 +857,7 @@ _GROUP_THEORY_TEMPLATES.append(
             r"\quad {G}_k = [{G}, {G}_{{k-1}}]"
         ),
         slots={
-            "G": S(_SIMPLE_T),  # named groups (e.g. \mathbb{Z}_{n}) already carry a subscript
+            "G": S(_SIMPLE),  # named groups (e.g. \mathbb{Z}_{n}) already carry a subscript
             "n": S(_N_POOL),
         },
     )
@@ -893,8 +904,8 @@ _GROUP_THEORY_TEMPLATES.append(
         ),
         slots={
             "G": S(_G_POOL),
-            "N_sub": X(_SIMPLE_T, ("G",)),
-            "H": X(_SIMPLE_T, ("G", "N_sub")),
+            "N_sub": X(_SIMPLE, ("G",)),
+            "H": X(_SIMPLE, ("G", "N_sub")),
         },
     )
 )
@@ -931,9 +942,9 @@ _GROUP_THEORY_TEMPLATES.append(
         slots={
             "lim_mod": _LIM_MOD,
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "phi": S(_HOMOS_T),
-            "g_el": S(_ELEMS_T),
+            "H": X(_SIMPLE, ("G",)),
+            "phi": S(_HOMOS),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -951,7 +962,7 @@ _GROUP_THEORY_TEMPLATES.append(
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
+            "H": X(_SIMPLE, ("G",)),
         },
     )
 )
@@ -965,8 +976,8 @@ _GROUP_THEORY_TEMPLATES.append(
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
             "G": S(_G_POOL),
-            "H": X(_SIMPLE_T, ("G",)),
-            "K": X(_SIMPLE_T, ("G", "H")),
+            "H": X(_SIMPLE, ("G",)),
+            "K": X(_SIMPLE, ("G", "H")),
         },
     )
 )
@@ -979,8 +990,8 @@ _GROUP_THEORY_TEMPLATES.append(
         slots={
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
-            "g_el": S(_ELEMS_T),
-            "h_el": X(_ELEMS_T, ("g_el",)),
+            "g_el": S(_ELEMS),
+            "h_el": X(_ELEMS, ("g_el",)),
         },
     )
 )
@@ -997,7 +1008,7 @@ _GROUP_THEORY_TEMPLATES.append(
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
             "G": S(_G_POOL),
-            "g_el": S(_ELEMS_T),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -1013,9 +1024,9 @@ _GROUP_THEORY_TEMPLATES.append(
         slots={
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
-            "phi": S(_HOMOS_T),
+            "phi": S(_HOMOS),
             "G": S(_G_POOL),
-            "g_el": S(_ELEMS_T),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -1064,7 +1075,7 @@ _GROUP_THEORY_TEMPLATES.append(
             "fn1": _FN_SLOT,
             "fn2": _FN_SLOT,
             "G": S(_G_POOL),
-            "g_el": S(_ELEMS_T),
+            "g_el": S(_ELEMS),
         },
     )
 )
@@ -1074,41 +1085,41 @@ _GROUP_THEORY_TEMPLATES += [
     Template(
         name="normal_subgroup_left",
         latex=r"{NN} \vartriangleleft {GG}",
-        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+        slots={"NN": S(_SIMPLE), "GG": S(_G_POOL)},
     ),
     Template(
         name="normal_subgroup_quotient",
         latex=r"{NN} \vartriangleleft {GG} \Rightarrow {GG}/{NN} \text{{ is a group}}",
-        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+        slots={"NN": S(_SIMPLE), "GG": S(_G_POOL)},
     ),
     Template(
         name="normal_subgroup_right",
         latex=r"{GG} \vartriangleright {NN}",
-        slots={"NN": S(_SIMPLE_T), "GG": S(_G_POOL)},
+        slots={"NN": S(_SIMPLE), "GG": S(_G_POOL)},
     ),
     # \ltimes — left semidirect product
     Template(
         name="semidirect_left",
         latex=r"{GG} = {KK} \ltimes {NN}",
-        slots={"GG": S(_SIMPLE_T), "KK": S(_SIMPLE_T), "NN": S(_SIMPLE_T)},
+        slots={"GG": S(_SIMPLE), "KK": S(_SIMPLE), "NN": S(_SIMPLE)},
         distinct=[["GG", "KK", "NN"]],
     ),
     Template(
         name="semidirect_left_action",
         latex=r"{GG} = {NN} \rtimes {KK} \cong {KK} \ltimes {NN}",
-        slots={"GG": S(_SIMPLE_T), "KK": S(_SIMPLE_T), "NN": S(_SIMPLE_T)},
+        slots={"GG": S(_SIMPLE), "KK": S(_SIMPLE), "NN": S(_SIMPLE)},
         distinct=[["GG", "KK", "NN"]],
     ),
     # \wr — wreath product
     Template(
         name="wreath_product",
         latex=r"{GG} \wr S_{{{nn}}}",
-        slots={"GG": S(_SIMPLE_T), "nn": S(_NV_POOL)},
+        slots={"GG": S(_SIMPLE), "nn": S(_NV_POOL)},
     ),
     Template(
         name="wreath_product_iterated",
         latex=r"{GG} \wr {HH} \cong {GG}^{{|{HH}|}} \rtimes {HH}",
-        slots={"GG": S(_SIMPLE_T), "HH": S(_SIMPLE_T)},
+        slots={"GG": S(_SIMPLE), "HH": S(_SIMPLE)},
         distinct=[["GG", "HH"]],
     ),
 ]

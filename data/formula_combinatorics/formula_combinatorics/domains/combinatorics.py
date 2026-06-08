@@ -5,9 +5,16 @@ from __future__ import annotations
 import random
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, P, S, Template, X
-from .._vocab import _COMB_K as _K_POOL
-from .._vocab import _COMB_N as _N_POOL
-from .._vocab import _SCALARS, _VARS
+from .._vocab import (
+    _COMB_K as _K_POOL,
+)
+from .._vocab import (
+    _COMB_N as _N_POOL,
+)
+from .._vocab import (
+    _SCALARS,
+    _VARS,
+)
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

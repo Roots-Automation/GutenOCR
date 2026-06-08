@@ -4,14 +4,18 @@ from __future__ import annotations
 
 from .._template_dsl import _ATOM_SLOT, _LIM_MOD, E, S, Template, X
 from .._templates import _matrix_env, _matrix_with_ellipsis, _smallmatrix_inline
-from .._vocab import _MATRIX_NAMES
-from .._vocab import _STATS_N as _N_POOL
+from .._vocab import (
+    _MATRIX_NAMES,
+)
+from .._vocab import (
+    _STATS_N as _N_POOL,
+)
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
-_P_NORM_POOL = ["1", "2", r"\infty", "F"]
+_P_NORM_POOL: tuple[str, ...] = ("1", "2", r"\infty", "F")
 
 # ---------------------------------------------------------------------------
 # Templates

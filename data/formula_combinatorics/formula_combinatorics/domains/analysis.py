@@ -15,7 +15,7 @@ from ._config import register_domain
 # Bound-variable pool: proper letter variables (no digits, no calligraphic) with
 # optional subscript decoration, used wherever a symbol is quantified over or
 # acts as an integration / limit / function-argument dummy variable.
-_BVAR = tuple(_VARS)  # ("x","y","z","t","u","v","r","s")
+_BVAR = _VARS  # ("x","y","z","t","u","v","r","s")
 
 # ---------------------------------------------------------------------------
 # Real analysis templates
@@ -130,7 +130,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\left\|\sum{lim_mod}_{{k=1}}^{{{n}}} {u}_k\right\| "
                     r"\leq \sum{lim_mod}_{{k=1}}^{{{n}}} \left\|{u}_k\right\|"
                 ),
-                slots={"lim_mod": _LIM_MOD, "u": _FN_SLOT, "n": S(tuple(_GEO_N))},
+                slots={"lim_mod": _LIM_MOD, "u": _FN_SLOT, "n": S(_GEO_N)},
             ),
             Template(
                 name="minkowski_integral",
@@ -160,7 +160,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -169,7 +169,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -178,7 +178,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -187,7 +187,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -196,7 +196,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -205,7 +205,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -214,7 +214,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
         ],
@@ -300,7 +300,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
                     "h": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -310,7 +310,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
                     "h": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -319,7 +319,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
         ],
@@ -340,7 +340,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -349,7 +349,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -358,7 +358,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
             Template(
@@ -370,7 +370,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "f": _FN_SLOT,
                     "g": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                 },
             ),
         ],
@@ -387,7 +387,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "f": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                     "a": S(_BVAR),
                     "k": S(("k", "j", "m")),
                 },
@@ -402,7 +402,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 slots={
                     "lim_mod": _LIM_MOD,
                     "f": _FN_SLOT,
-                    "v": S(tuple(_GEO_N)),
+                    "v": S(_GEO_N),
                     "a": S(_BVAR),
                     "k": S(("k", "j", "m")),
                     "N": S(("N", "n", "M", "K")),

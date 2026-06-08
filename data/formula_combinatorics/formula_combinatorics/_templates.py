@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from collections.abc import Callable
 
 from ._vocab import (
     _BOUNDS,
@@ -22,7 +23,7 @@ from ._vocab import (
 def _limit(rng: random.Random, *, pt: str | None = None) -> str:
     """Return a \\lim expression: \\lim_{v \\to pt} expr."""
     var = _v(rng)
-    point = pt if pt is not None else rng.choice(_BOUNDS + [r"\infty", "0", _s(rng)])
+    point = pt if pt is not None else rng.choice(_BOUNDS + (r"\infty", "0", _s(rng)))
     return rf"\lim_{{{var} \to {point}}} {_expr(rng)}"
 
 
@@ -76,12 +77,12 @@ def _matrix_env(
     return rf"\begin{{{env}}} {body} \end{{{env}}}"
 
 
-_SMALLMATRIX_DELIMS = [
+_SMALLMATRIX_DELIMS: tuple[tuple[str, str], ...] = (
     (r"\bigl(", r"\bigr)"),
     (r"\bigl[", r"\bigr]"),
     (r"\bigl\{", r"\bigr\}"),
     (r"\bigl\langle", r"\bigr\rangle"),
-]
+)
 
 
 def _smallmatrix_inline(
@@ -187,6 +188,20 @@ def _interval(rng: random.Random) -> str:
         ]
     )
     return rf"{left} {a}, {b} {right}"
+
+
+def _poly_mid_factory(max_exp: int) -> Callable[[random.Random, str], str]:
+    """Factory for expanded-polynomial middle-term generators.
+
+    Returns a ParamSub-compatible function that produces the inner terms
+    ``c_{max_exp} v^{max_exp} + ... + c_2 v^2`` for use in fully-expanded
+    polynomial templates (degree = max_exp + 1).
+    """
+
+    def _poly_mid(rng: random.Random, v: str) -> str:
+        return " + ".join(rf"{_s(rng)} {v}^{{{i}}}" for i in range(max_exp, 1, -1))
+
+    return _poly_mid
 
 
 def _poly(rng: random.Random, var: str, *, max_degree: int = 5) -> str:
