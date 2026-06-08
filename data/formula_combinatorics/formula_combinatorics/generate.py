@@ -74,10 +74,32 @@ def main() -> None:
         metavar="F",
         help="Fraction of multi-line align* environments (default: 0.15).",
     )
+    parser.add_argument(
+        "--display-fraction",
+        type=float,
+        default=0.20,
+        metavar="F",
+        help="Fraction of bare formulas wrapped in display-math environments (default: 0.20).",
+    )
+    parser.add_argument(
+        "--inline-fraction",
+        type=float,
+        default=0.10,
+        metavar="F",
+        help="Fraction of bare formulas wrapped in inline $...$ delimiters (default: 0.10).",
+    )
     args = parser.parse_args()
 
     if not 0.0 <= args.align_fraction <= 1.0:
         logger.error("--align-fraction must be in [0, 1]")
+        sys.exit(1)
+
+    if not 0.0 <= args.display_fraction <= 1.0:
+        logger.error("--display-fraction must be in [0, 1]")
+        sys.exit(1)
+
+    if not 0.0 <= args.inline_fraction <= 1.0:
+        logger.error("--inline-fraction must be in [0, 1]")
         sys.exit(1)
 
     logger.info(
@@ -94,6 +116,8 @@ def main() -> None:
         weights=DEFAULT_WEIGHTS,
         seed=args.seed,
         align_fraction=args.align_fraction,
+        display_fraction=args.display_fraction,
+        inline_fraction=args.inline_fraction,
     )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
