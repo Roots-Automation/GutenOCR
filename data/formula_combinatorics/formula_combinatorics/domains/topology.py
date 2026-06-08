@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -86,7 +86,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     Template(
         name="euler_characteristic",
         latex=r"\chi({sp}) = \sum{lim_mod}_{{{nn} \geq 0}} (-1)^{{{nn}}} b_{{{nn}}}({sp})",
-        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="boundary_squared",
@@ -101,7 +101,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     Template(
         name="stokes_topology",
         latex=r"\int{lim_mod}_{{\partial {mm}}} {om} = \int{lim_mod}_{{{mm}}} d{om}",
-        slots={"lim_mod": S(("", r"\limits")), "mm": S(_SPACE_POOL), "om": S(_OMEGA_POOL)},
+        slots={"lim_mod": _LIM_MOD, "mm": S(_SPACE_POOL), "om": S(_OMEGA_POOL)},
     ),
     Template(
         name="homology_disjoint_union",
@@ -219,7 +219,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r"\pi_{{{nn}}}^{{-1}}({uu})"
             r" \text{{ form a sub-basis for }} \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "uu": S(_OPEN_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "sp": S(_SPACE_POOL), "uu": S(_OPEN_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="tychonoff_theorem",
@@ -227,7 +227,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r"\Bigl(\forall\, {nn} : {sp}_{{{nn}}} \text{{ compact}}\Bigr)"
             r" \implies \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}} \text{{ compact}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="baire_category_theorem",
@@ -533,7 +533,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r" = \sum{lim_mod}_{{x \in {ff}^{{-1}}(y)}}"
             r" \operatorname{{sign}}\, d{ff}_x"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "ff": S(_MAP_POOL)},
+        slots={"lim_mod": _LIM_MOD, "ff": S(_MAP_POOL)},
     ),
     Template(
         name="morse_inequality",
@@ -546,7 +546,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
             r"L({ff}) = \sum{lim_mod}_{{k=0}}^{{{nn}}} (-1)^k"
             r" \mathrm{{Tr}}\bigl({ff}_* : H_k \to H_k\bigr)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "ff": S(_MAP_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "ff": S(_MAP_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="lefschetz_fixed_point",

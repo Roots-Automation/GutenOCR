@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import (
     _GEO_N,
     _VARS,
@@ -105,7 +105,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\sum{lim_mod}_{{i=1}}^{{{n}}} {a}_i^2 \cdot \sum{lim_mod}_{{i=1}}^{{{n}}} {b}_i^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(("n", "N", "m", "M", "K", "L", "P")),
             "a": S(("a", "u", "p", "x", "c")),
             "b": S(("b", "v", "q", "y", "d")),
@@ -134,7 +134,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\left\|\sum{lim_mod}_{{k=1}}^{{{n}}} {u}_k\right\| "
                     r"\leq \sum{lim_mod}_{{k=1}}^{{{n}}} \left\|{u}_k\right\|"
                 ),
-                slots={"lim_mod": S(("", r"\limits")), "u": E(_fn_rich_nosub, n=100), "n": S(tuple(_GEO_N))},
+                slots={"lim_mod": _LIM_MOD, "u": E(_fn_rich_nosub, n=100), "n": S(tuple(_GEO_N))},
             ),
             Template(
                 name="minkowski_integral",
@@ -389,7 +389,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                 name="poincare_series",
                 latex=r"{f}({v}) \sim \sum{lim_mod}_{{{k}=0}}^{{\infty}} {a}_{{{k}}}\,{v}^{{-{k}}} \text{{ as }} {v} \to \infty",
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "f": E(_fn_rich_nosub, n=100),
                     "v": S(tuple(_GEO_N)),
                     "a": S(_BVAR),
@@ -404,7 +404,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r" + O\!\left({v}^{{-{N}-1}}\right)"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "f": E(_fn_rich_nosub, n=100),
                     "v": S(tuple(_GEO_N)),
                     "a": S(_BVAR),
@@ -418,7 +418,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
     Template(
         name="p_series_convergence",
         latex=r"\sum{lim_mod}_{{k=1}}^{{\infty}} \frac{{1}}{{k^{{{s}}}}} < \infty \iff {s} > 1",
-        slots={"lim_mod": S(("", r"\limits")), "s": S(("p", "2", "3", "q", "r", "4", "5", r"\alpha", r"\beta"))},
+        slots={"lim_mod": _LIM_MOD, "s": S(("p", "2", "3", "q", "r", "4", "5", r"\alpha", r"\beta"))},
     ),
     # --- Hölder's inequality ---
     Template(
@@ -624,7 +624,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\implies \sum{lim_mod}_{{n=1}}^\infty {f}_n \text{{ converges uniformly}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "f": E(_fn_rich_nosub, n=100),
             "x": S(_BVAR, idx=0.35),  # function argument variable
             "M": S(("M", "C", "K", "B", "A", "L")),
@@ -673,7 +673,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\iff \int_1^\infty {f}({t})\,d{t} < \infty"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "f": E(_fn_rich_nosub, n=100),
                     "t": S(_BVAR, idx=0.35),  # integration variable
                 },
@@ -726,7 +726,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r"\sum{lim_mod}_{{{v}={v0}}}^\infty (-1)^{{{v}}} {a}_{{{v}}} \text{{ converges}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "a": S(("a", "b", "c", "x", "y", "u", "v", "p")),
             "v": S(("n", "m", "k", "j")),
             "v0": S(("0", "1", "2", "3", r"n_0", "N")),
@@ -772,7 +772,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     r"\implies \int{lim_mod}_{{{a}}}^{{{b}}} {f}_n \to \int{lim_mod}_{{{a}}}^{{{b}}} {f}"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "f": E(_fn_rich_nosub, n=100),
                     "a": E(_atom, n=150),  # integration bounds (any value)
                     "b": E(_atom, n=150),
@@ -844,7 +844,7 @@ _ANALYSIS_TEMPLATES: list[Template] = [
             r" \leq \frac{{M}}{{({n}+1)!}} \left|{x} - {a}\right|^{{{n}+1}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "f": E(_fn_rich_nosub, n=100),
             "x": E(_atom, n=150),  # evaluation point (specific value)
             "a": E(_atom, n=150),  # expansion point (specific value)
@@ -939,7 +939,7 @@ _ANALYSIS_TEMPLATES += [
         name="fn_series_tail",
         latex=r"\sum{lim_mod}_{{n={v}}}^{{\infty}} {fn1}(a_n) \leq {fn2}\!\left(\sum{lim_mod}_{{n={v}}}^{{\infty}} |a_n|\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "v": S(("n", "m", "k", "j", "N", "M")),
@@ -991,7 +991,7 @@ _ANALYSIS_TEMPLATES += [
             r"F(\varsigma) = \sum{lim_mod}_{{n=1}}^{{\infty}} \frac{{a_n}}{{n^\varsigma}},"
             r"\quad \operatorname{{Re}}(\varsigma) > {cc}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "cc": S(_BVAR)},
+        slots={"lim_mod": _LIM_MOD, "cc": S(_BVAR)},
     ),
     # \digamma — digamma function (logarithmic derivative of \Gamma)
     Template(
@@ -1014,7 +1014,7 @@ _ANALYSIS_TEMPLATES += [
             r" + \sum{lim_mod}_{{n=0}}^{{\infty}}"
             r"\left(\frac{{1}}{{n+1}} - \frac{{1}}{{n+{xx}}}\right)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_BVAR)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_BVAR)},
     ),
     Template(
         name="digamma_integral_rep",
@@ -1055,7 +1055,7 @@ _ANALYSIS_TEMPLATES += [
             r" = -n\gamma + \sum{lim_mod}_{{k=1}}^{{n}} H_{{k-1}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
         },
     ),
 ]

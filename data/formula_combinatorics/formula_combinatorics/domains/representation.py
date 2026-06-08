@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -70,12 +70,12 @@ _TEMPLATES_A: list[Template] = [
             r"\frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} "
             r"\chi_i({gg})\,\overline{{\chi_j({gg})}} = \delta_{{ij}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 80
     Template(
         name="character_centralizer",
         latex=r"\sum{lim_mod}_{{i}} |\chi_i({gg})|^2 = |C_{{{GG}}}({gg})|",
-        slots={"lim_mod": S(("", r"\limits")), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 80
     Template(
         name="irreducible_decomposition",
@@ -93,7 +93,7 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="burnside_orbit",
         latex=(r"|X/{GG}| = \frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} |X^{{{gg}}}|"),
-        slots={"lim_mod": S(("", r"\limits")), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 80
     Template(
         name="burnside_fixed_points",
@@ -101,7 +101,7 @@ _TEMPLATES_A: list[Template] = [
             r"|\text{{orbits}}| = \frac{{1}}{{|{GG}|}} "
             r"\sum{lim_mod}_{{{gg} \in {GG}}} |\{{x : {gg} \cdot x = x\}}|"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 80
     Template(
         name="schur_linear_map",
@@ -160,7 +160,7 @@ _TEMPLATES_B1: list[Template] = [
             r"\chi_{{{rr}}}({gg})\, \overline{{\chi_{{{ss}}}({gg})}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rr": S(_REP_POOL),
             "ss": X(_REP_POOL, ("rr",)),
             "GG": S(_GROUP_POOL),
@@ -173,7 +173,7 @@ _TEMPLATES_B1: list[Template] = [
             r"\sum{lim_mod}_{{{gg} \in {GG}}} \chi_{{{rr}}}({gg}) = "
             r"\langle \chi_{{{rr}}}, \mathbf{{1}} \rangle \cdot |{GG}|"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "rr": S(_REP_POOL), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "rr": S(_REP_POOL), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 640
     Template(
         name="character_product",
@@ -210,7 +210,7 @@ _TEMPLATES_B1: list[Template] = [
             r"m_{{{rr}}} = \frac{{1}}{{|{GG}|}} "
             r"\sum{lim_mod}_{{{gg} \in {GG}}} \chi_V({gg})\, \overline{{\chi_{{{rr}}}({gg})}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "rr": S(_REP_POOL), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "rr": S(_REP_POOL), "GG": S(_GROUP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 640
 ]
 
@@ -312,7 +312,7 @@ _TEMPLATES_B3: list[Template] = [
             r"\chi_{{{rr}}}(x^{{-1}} {gg} x)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "GG": S(_GROUP_POOL),
             "HH": X(_GROUP_POOL, ("GG",)),
             "rr": S(_REP_POOL),
@@ -507,7 +507,7 @@ _TEMPLATES_B6: list[Template] = [
     Template(
         name="hook_length_formula",
         latex=(r"\dim S^{{{ll}}} = \frac{{n!}}{{\prod{lim_mod}_{{(i,j) \in {ll}}} h(i,j)}}"),
-        slots={"lim_mod": S(("", r"\limits")), "ll": S(_WEIGHT_POOL)},
+        slots={"lim_mod": _LIM_MOD, "ll": S(_WEIGHT_POOL)},
     ),  # n_eff = 7
     Template(
         name="young_symmetrizer",
@@ -622,7 +622,7 @@ _TEMPLATES_C: list[Template] = [
             r"{fn1}({gg}) \cdot \overline{{{fn2}({gg})}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "GG": S(_GROUP_POOL),

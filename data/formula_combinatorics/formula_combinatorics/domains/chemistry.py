@@ -6,7 +6,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, S, Template, X, compute_weights, make_dispatcher
 
 # ---------------------------------------------------------------------------
 # Symbol pools
@@ -562,7 +562,7 @@ _CHEM_TEMPLATES += [
         latex=r"\Delta S_{{mix}} = -{R}\,\sum{lm} x_i \ln x_i",
         slots={
             "R": S(_R_POOL),
-            "lm": S(("", r"\limits")),
+            "lm": _LIM_MOD,
         },
     ),
     Template(

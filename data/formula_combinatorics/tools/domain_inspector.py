@@ -182,9 +182,9 @@ _HTML_TAIL = """\
 def _card(idx: int, latex: str) -> str:
     """Render one formula card (rendered MathJax + raw source)."""
     escaped = html.escape(latex)
-    # Wrap in $$ for display math unless it already has an environment
+    # \begin{...} environments are already display-math; others need $$ wrapping
     if latex.startswith(r"\begin"):
-        display = f"$${escaped}$$"
+        display = escaped
     else:
         display = f"$${escaped}$$"
     return (

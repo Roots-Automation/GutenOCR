@@ -5,25 +5,39 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import (
+    _EXP_OP,
+    _fn_rich_nosub,
+)
+from .._vocab import (
+    _LAM_STATS as _LAM_POOL,
+)
+from .._vocab import (
+    _MU_STATS as _MU_POOL,
+)
+from .._vocab import (
+    _PROB_OP_FULL as _PROB_OP,
+)
+from .._vocab import (
+    _RV_BASE as _RV_POOL,
+)
+from .._vocab import (
+    _SIG_STATS as _SIG_POOL,
+)
+from .._vocab import (
+    _STATS_N as _N_POOL,
+)
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_RV_POOL = ("X", "Y", "Z", "W", "U", "V")
 _EVENT_POOL = ("A", "B", "C", "D", "E", "F", r"A_1", r"B_1")
-_N_POOL = ("n", "m", "N", "M")
 _K_POOL = (r"k", r"\ell", "j", "r")
 _IDX_POOL = ("i", "j", "k", "t")
 _P_POOL = ("p", "q", r"\theta", r"\pi", r"\rho")
-_LAM_POOL = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")
-_MU_POOL = (r"\mu", r"\mu_0", r"\nu", "m")
-_SIG_POOL = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")
 _A_POOL = ("a", "b", "c", r"\varepsilon")
-_PROB_OP = ("P", r"\mathbb{P}", r"\Pr", r"\mathbf{P}", r"\hat{P}", r"\tilde{P}")
-_EXP_OP = ("E", r"\mathbb{E}", r"\mathrm{E}", r"\mathbf{E}", r"\hat{E}", r"\mathbb{E}_\theta")
 _AB_POOL = ("a", "b", r"\alpha", r"\beta")
 _BERN_K = ("0", "1", "2", "3")
 
@@ -70,12 +84,12 @@ _PROB_TEMPLATES: list[Template] = [
     Template(
         name="expected_value_discrete",
         latex=r"{op}[{rv}] = \sum{lim_mod}_{{k}} k \cdot P({rv} = k)",
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="expected_value_continuous",
         latex=r"{op}[{rv}] = \int{lim_mod}_{{-\infty}}^{{\infty}} x\, f_{{{rv}}}(x)\, dx",
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="variance",
@@ -103,7 +117,7 @@ _PROB_TEMPLATES: list[Template] = [
             r"{op}({ev}) = \sum{lim_mod}_{{i=1}}^{{{nn}}}"
             r" {op}({ev} \mid B_i)\,{op}(B_i)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "ev": S(_EVENT_POOL), "nn": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_PROB_OP), "ev": S(_EVENT_POOL), "nn": S(_N_POOL)},
     ),
     Template(
         name="mgf",
@@ -111,7 +125,7 @@ _PROB_TEMPLATES: list[Template] = [
             r"M_{{{rv}}}(t) = {op}\!\left[e^{{t\,{rv}}}\right]"
             r" = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{op}[{rv}^k]}}{{k!}}\,t^k"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="covariance",
@@ -128,7 +142,7 @@ _PROB_TEMPLATES: list[Template] = [
     Template(
         name="cdf",
         latex=r"F_{{{rv}}}(x) = {op}({rv} \leq x) = \int{lim_mod}_{{-\infty}}^{{x}} f_{{{rv}}}(t)\, dt",
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_PROB_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="geometric_pmf",
@@ -249,7 +263,7 @@ _PROB_TEMPLATES: list[Template] = [
             r"{op}\!\Bigl(\bigcup_{{i=1}}^{{{nn}}} A_i\Bigr)"
             r" \leq \sum{lim_mod}_{{i=1}}^{{{nn}}} {op}(A_i)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "nn": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_PROB_OP), "nn": S(_N_POOL)},
     ),
     # Continuous distributions
     Template(
@@ -522,7 +536,7 @@ _PROB_TEMPLATES: list[Template] = [
             r"f_{{{rv1}}}(x)"
             r" = \int{lim_mod}_{{-\infty}}^{{\infty}} f_{{{rv1},{rv2}}}(x,y)\, dy"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+        slots={"lim_mod": _LIM_MOD, "rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
     ),
     Template(
         name="conditional_pdf_def",
@@ -565,7 +579,7 @@ _PROB_TEMPLATES: list[Template] = [
             r"G_{{{rv}}}(z) = {op}\!\left[z^{{{rv}}}\right]"
             r" = \sum{lim_mod}_{{k=0}}^{{\infty}} {op}({rv} = k)\,z^k"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="pgf_mean",
@@ -593,7 +607,7 @@ _PROB_TEMPLATES: list[Template] = [
             r" = \frac{{1}}{{2\pi}}"
             r" \int{lim_mod}_{{-\infty}}^{{\infty}} e^{{-itx}}\,\varphi_{{{rv}}}(t)\, dt"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "rv": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "rv": S(_RV_POOL)},
     ),
     # Convergence
     Template(
@@ -621,7 +635,7 @@ _PROB_TEMPLATES: list[Template] = [
             r" = \int{lim_mod}_{{-\infty}}^{{\infty}} {fn1}(x)\, f_{{{rv}}}(x)\, dx"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "op": S(_EXP_OP),
             "fn1": E(_fn_rich_nosub, n=100),
             "rv": S(_RV_POOL),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -24,26 +24,31 @@ _SIMPLE_T: tuple[str, ...] = tuple(_SIMPLE)
 _ELEMS_T: tuple[str, ...] = tuple(_ELEMS)
 _HOMOS_T: tuple[str, ...] = tuple(_HOMOS)
 
-# Pre-expand the full named-group pool over all (nv, qv) combinations so that
-# G can be sampled from a static pool, faithfully covering every string the
-# original generator could produce.
-_NAMED_GROUPS: list[str] = []
-_seen_ng: set[str] = set()
-for _nv in _NV_POOL:
-    for _qv in _QV_POOL:
-        for _candidate in [
-            rf"S_{{{_nv}}}",
-            rf"D_{{{_nv}}}",
-            rf"A_{{{_nv}}}",
-            rf"GL_{{{_nv}}}(\mathbb{{F}}_{{{_qv}}})",
-            rf"SL_{{{_nv}}}(\mathbb{{F}}_{{{_qv}}})",
-            rf"\mathbb{{Z}}_{{{_nv}}}",
-            rf"\mathbb{{Z}}/{_nv}\mathbb{{Z}}",
-        ]:
-            if _candidate not in _seen_ng:
-                _NAMED_GROUPS.append(_candidate)
-                _seen_ng.add(_candidate)
 
+def _build_named_groups() -> list[str]:
+    # Pre-expand the full named-group pool over all (nv, qv) combinations so
+    # that G can be sampled from a static pool, faithfully covering every
+    # string the original generator could produce.
+    seen: set[str] = set()
+    result: list[str] = []
+    for nv in _NV_POOL:
+        for qv in _QV_POOL:
+            for candidate in [
+                rf"S_{{{nv}}}",
+                rf"D_{{{nv}}}",
+                rf"A_{{{nv}}}",
+                rf"GL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})",
+                rf"SL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})",
+                rf"\mathbb{{Z}}_{{{nv}}}",
+                rf"\mathbb{{Z}}/{nv}\mathbb{{Z}}",
+            ]:
+                if candidate not in seen:
+                    result.append(candidate)
+                    seen.add(candidate)
+    return result
+
+
+_NAMED_GROUPS: list[str] = _build_named_groups()
 _G_POOL: tuple[str, ...] = tuple(_SIMPLE + _NAMED_GROUPS)
 
 # ---------------------------------------------------------------------------
@@ -162,7 +167,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="class_equation_center",
                 latex=r"|{G}| = |Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]",
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
                 },
@@ -171,7 +176,7 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
                 name="class_equation_conjugacy",
                 latex=r"|{G}| = \sum{lim_mod}_{{[{g_el}]}} \frac{{|{G}|}}{{|C_{{{G}}}({g_el})|}}",
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
                 },
@@ -686,7 +691,7 @@ _GROUP_THEORY_TEMPLATES.append(
                 name="gl_order_formula",
                 latex=r"|GL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})| = \prod{lim_mod}_{{k=0}}^{{{nv}-1}} ({qv}^{{{nv}}} - {qv}^k)",
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "nv": S(_NV_POOL),
                     "qv": S(_QV_POOL),
                 },
@@ -732,7 +737,7 @@ _GROUP_THEORY_TEMPLATES.append(
             r" = \tfrac{{1}}{{|{G}|}}\sum{lim_mod}_{{{g_el} \in {G}}} \left|{H}^{{{g_el}}}\right|"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
             "g_el": S(_ELEMS_T),
@@ -926,7 +931,7 @@ _GROUP_THEORY_TEMPLATES.append(
             r"\quad {phi}({g_el}) = \prod{lim_mod}_{{t}} t{g_el} t^{{-1}} \bmod [{H},{H}]"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
             "phi": S(_HOMOS_T),
@@ -1057,7 +1062,7 @@ _GROUP_THEORY_TEMPLATES.append(
             r" = {fn2}\!\left(|Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "G": S(_G_POOL),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -200,17 +200,17 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             Template(
                 name="stokes_general",
                 latex=r"\int{lim_mod}_{{{mfld}}} d{om} = \int{lim_mod}_{{\partial {mfld}}} {om}",
-                slots={"lim_mod": S(("", r"\limits")), "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
+                slots={"lim_mod": _LIM_MOD, "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
             ),
             Template(
                 name="stokes_oint",
                 latex=r"\int{lim_mod}_{{{mfld}}} d{om} = \oint{lim_mod}_{{\partial {mfld}}} {om}",
-                slots={"lim_mod": S(("", r"\limits")), "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
+                slots={"lim_mod": _LIM_MOD, "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
             ),
             Template(
                 name="stokes_no_boundary",
                 latex=r"\partial {mfld} = \emptyset \implies \int{lim_mod}_{{{mfld}}} d{om} = 0",
-                slots={"lim_mod": S(("", r"\limits")), "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
+                slots={"lim_mod": _LIM_MOD, "mfld": S(_MFLD_POOL), "om": S(_FORM_POOL)},
             ),
         ],
     ),
@@ -383,12 +383,12 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
                     r" + \int{lim_mod}_{{\partial {mfld}}} \kappa_g \, ds"
                     r" = 2\pi \chi({mfld})"
                 ),
-                slots={"lim_mod": S(("", r"\limits")), "mfld": S(_MFLD_POOL)},
+                slots={"lim_mod": _LIM_MOD, "mfld": S(_MFLD_POOL)},
             ),
             Template(
                 name="gauss_bonnet_closed",
                 latex=r"\int{lim_mod}_{{{mfld}}} K \, dA = 2\pi \chi({mfld})",
-                slots={"lim_mod": S(("", r"\limits")), "mfld": S(_MFLD_POOL)},
+                slots={"lim_mod": _LIM_MOD, "mfld": S(_MFLD_POOL)},
             ),
         ],
     ),
@@ -549,7 +549,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
     Template(
         name="ricci_scalar_sectional",
         latex=r"R = \sum{lim_mod}_{{{ii} < {jj}}} 2\, K(e_{{{ii}}}, e_{{{jj}}})",
-        slots={"lim_mod": S(("", r"\limits")), "ii": S(_IDX_POOL), "jj": X(_IDX_POOL, ("ii",))},
+        slots={"lim_mod": _LIM_MOD, "ii": S(_IDX_POOL), "jj": X(_IDX_POOL, ("ii",))},
     ),
     # ---- B7: Hodge star ----------------------------------------------------
     Template(
@@ -611,7 +611,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             r" \, \operatorname{{vol}} = 0"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
@@ -638,7 +638,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             r" + \int{lim_mod}_{{\partial {mfld}}} {fn1} \langle {xx}, \nu \rangle \, dA"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
             "fn1": E(_fn_rich_nosub, n=100),
             "xx": S(_VF_POOL),
@@ -665,7 +665,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
             r" \rangle_{{{met}}} \, \operatorname{{vol}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mfld": S(_MFLD_POOL),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
@@ -735,7 +735,7 @@ _DIFFGEOM_TEMPLATES: list[Template] = [
     Template(
         name="darboux_theorem",
         latex=r"{om} = \sum{lim_mod}_{{i=1}}^n dp_i \wedge dq_i",
-        slots={"lim_mod": S(("", r"\limits")), "om": S(_FORM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "om": S(_FORM_POOL)},
     ),
     # ---- B12: de Rham cohomology -------------------------------------------
     Template(
@@ -1090,7 +1090,7 @@ _DIFFGEOM_TEMPLATES += [
             r" + \int{lim_mod}_{{\partial {mm}}} \varkappa_g \, ds"
             r" = 2\pi \chi({mm})"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "mm": S(_MFLD_POOL)},
+        slots={"lim_mod": _LIM_MOD, "mm": S(_MFLD_POOL)},
     ),
     Template(
         name="geodesic_curvature_signed",

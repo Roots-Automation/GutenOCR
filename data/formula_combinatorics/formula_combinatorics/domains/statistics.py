@@ -8,23 +8,37 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._vocab import _fn_rich_nosub
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import (
+    _EXP_OP,
+    _fn_rich_nosub,
+)
+from .._vocab import (
+    _LAM_STATS as _LAM_POOL,
+)
+from .._vocab import (
+    _MU_STATS as _MU_POOL,
+)
+from .._vocab import (
+    _PROB_OP_FULL as _PROB_OP,
+)
+from .._vocab import (
+    _RV_BASE as _RV_POOL,
+)
+from .._vocab import (
+    _SIG_STATS as _SIG_POOL,
+)
+from .._vocab import (
+    _STATS_N as _N_POOL,
+)
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
 _PARAM_POOL = (r"\theta", r"\mu", r"\sigma", r"\lambda", r"\beta", r"\alpha", r"\eta", r"\phi")  # 8
-_LAM_POOL = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")  # 5 — for migrated templates
-_RV_POOL = ("X", "Y", "Z", "W", "U", "V")  # 6
-_N_POOL = ("n", "m", "N", "M")  # 4
 _K_POOL = ("k", "p", "q", "r")  # 4
 _IDX_POOL = ("i", "j", "k", "t")  # 4
-_MU_POOL = (r"\mu", r"\mu_0", r"\nu", "m")  # 4
-_SIG_POOL = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")  # 4
-_EXP_OP = ("E", r"\mathbb{E}", r"\mathrm{E}", r"\mathbf{E}", r"\hat{E}", r"\mathbb{E}_\theta")  # 6
-_PROB_OP = ("P", r"\mathbb{P}", r"\Pr", r"\mathbf{P}")  # 4
 _TIME_POOL = ("t", "s", "T", r"t_0", r"t_1")  # 5
 _MM_POOL = ("m", "M", r"\ell", "K")  # 4 — number of tests / hypotheses
 _RESP_POOL = ("y", "z", "w", r"\mathbf{y}", r"\mathbf{z}")  # 5 — response vectors
@@ -43,7 +57,7 @@ _TEMPLATES_A: list[Template] = [
             r"\sum{lim_mod}_{{i=1}}^{{{nn}}} {rv}_i"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "nn": S(_N_POOL),
         },
@@ -55,7 +69,7 @@ _TEMPLATES_A: list[Template] = [
             r"\sum{lim_mod}_{{i=1}}^{{{nn}}}({rv}_i - \bar{{{rv}}})^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "nn": S(_N_POOL),
         },
@@ -67,7 +81,7 @@ _TEMPLATES_A: list[Template] = [
             r"\sum{lim_mod}_{{i=1}}^{{{nn}}}({rv}_i - \bar{{{rv}}})^2}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "nn": S(_N_POOL),
         },
@@ -80,7 +94,7 @@ _TEMPLATES_A: list[Template] = [
             r"({rv1}_i - \bar{{{rv1}}})({rv2}_i - \bar{{{rv2}}})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv1": S(_RV_POOL),
             "rv2": X(_RV_POOL, ("rv1",)),
             "nn": S(_N_POOL),
@@ -101,7 +115,7 @@ _TEMPLATES_A: list[Template] = [
             r"\sum{lim_mod}_{{i=1}}^{{{nn}}} \mathbf{{1}}[{rv}_i \leq x]"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "nn": S(_N_POOL),
         },
@@ -218,7 +232,7 @@ _TEMPLATES_B2: list[Template] = [
             r" \log {fn2}(x_i \mid {fn1})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_N_POOL),
@@ -331,7 +345,7 @@ _TEMPLATES_B3: list[Template] = [
             r" \sim \chi^2_{{{kk}-1}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "kk": S(_K_POOL),
         },
     ),
@@ -551,7 +565,7 @@ _TEMPLATES_B6: list[Template] = [
             r" {nn}_i(\bar{{X}}_{{i\cdot}} - \bar{{X}}_{{\cdot\cdot}})^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "kk": S(_K_POOL),
             "nn": S(_N_POOL),
         },
@@ -660,7 +674,7 @@ _TEMPLATES_B8: list[Template] = [
             r"r_s = 1 - \frac{{6\sum{lim_mod}_{{i=1}}^{{{nn}}} d_i^2}}"
             r"{{{nn}({nn}^2-1)}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "nn": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "nn": S(_N_POOL)},
     ),
     Template(
         name="wilcoxon_signed_rank",
@@ -669,7 +683,7 @@ _TEMPLATES_B8: list[Template] = [
             r" R_i\,\mathbf{{1}}[{rv}_i > {mu}]"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "mu": S(_MU_POOL),
             "nn": S(_N_POOL),
@@ -696,7 +710,7 @@ _TEMPLATES_B8: list[Template] = [
             r" \sim \mathrm{{Bin}}\!\left({nn},\tfrac{{1}}{{2}}\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "rv": S(_RV_POOL),
             "mu": S(_MU_POOL),
             "nn": S(_N_POOL),

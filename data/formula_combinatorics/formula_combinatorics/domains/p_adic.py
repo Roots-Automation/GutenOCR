@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -125,7 +125,7 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="padic_expansion",
         latex=r"{xx} = \sum{lim_mod}_{{k=0}}^{{\infty}} a_k {pp}^k,\quad 0 \leq a_k < {pp}",
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
     ),
     Template(
         name="ultrametric_inequality",
@@ -168,7 +168,7 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="product_formula",
         latex=r"|{xx}|_\infty \cdot \prod{lim_mod}_{{{pp}}} |{xx}|_{{{pp}}} = 1",
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
     ),
     Template(
         name="hensels_lemma",
@@ -190,7 +190,7 @@ _TEMPLATES_A: list[Template] = [
             r"v_{{{pp}}}({nn}!) ="
             r" \sum{lim_mod}_{{k=1}}^{{\infty}} \left\lfloor \frac{{{nn}}}{{{pp}^k}} \right\rfloor"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "pp": S(_PRIME_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "pp": S(_PRIME_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="qp_completion",
@@ -211,7 +211,7 @@ _TEMPLATES_A: list[Template] = [
             r"\exp_{{{pp}}}({xx}) = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{xx}^k}}{{k!}},\quad"
             r" |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "pp": S(_PRIME_POOL), "xx": S(_ELEM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "pp": S(_PRIME_POOL), "xx": S(_ELEM_POOL)},
     ),
     Template(
         name="padic_binomial_valuation",
@@ -333,7 +333,7 @@ _TEMPLATES_B2: list[Template] = [
             r" = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{(-1)^{{{nn}+1}} {xx}^{{{nn}}}}}{{{nn}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -347,7 +347,7 @@ _TEMPLATES_B2: list[Template] = [
             r" |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -361,7 +361,7 @@ _TEMPLATES_B2: list[Template] = [
             r" \iff a_{{{nn}}} \to 0"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "pp": S(_PRIME_POOL),
             "ff": S(_POLY_POOL),
             "xx": S(_ELEM_POOL),
@@ -375,7 +375,7 @@ _TEMPLATES_B2: list[Template] = [
             r"\quad [{xx}_{{{nn}}}] \text{{ Teichm\"{{u}}ller lift}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -659,7 +659,7 @@ _TEMPLATES_B5: list[Template] = [
             r" c_{{{nn}}} = \Delta^{{{nn}}} {ff}(0)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_POLY_POOL),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
@@ -688,7 +688,7 @@ _TEMPLATES_B5: list[Template] = [
             r" \text{{ on some ball}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_POLY_POOL),
             "KK": S(_FIELD_POOL),
             "xx": S(_ELEM_POOL),
@@ -717,7 +717,7 @@ _TEMPLATES_B5: list[Template] = [
             r" {ff}(a)\, \mu\!\left(a + {pp}^{{{nn}}} \mathbb{{Z}}_{{{pp}}}\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_POLY_POOL),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),

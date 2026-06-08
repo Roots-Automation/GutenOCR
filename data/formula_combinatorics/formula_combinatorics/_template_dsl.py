@@ -374,6 +374,10 @@ def P(
     return ParamSub(gen, param_slot=param, n_eff_estimate=n)
 
 
+# Reusable slot for the optional \limits modifier on \sum, \prod, \int, etc.
+_LIM_MOD = S(("", r"\limits"))
+
+
 # ---------------------------------------------------------------------------
 # Domain helpers
 # ---------------------------------------------------------------------------

@@ -6,7 +6,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -681,7 +681,7 @@ _TEMPLATES_B4: list[Template] = [
             r"\right]"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "func": S(_FUNC_POOL),
             "func2": X(_FUNC_POOL, ("func",)),
             "proc": S(_PROC_POOL),
@@ -744,7 +744,7 @@ _TEMPLATES_B5: list[Template] = [
         name="compound_poisson_process",
         latex=(r"{proc1}_{{{t}}} = \sum{lim_mod}_{{k=1}}^{{{proc2}_{{{t}}}}} {func}_k"),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "proc1": S(_PROC_POOL),
             "proc2": X(_PROC_POOL, ("proc1",)),
             "func": S(_FUNC_POOL),
@@ -827,7 +827,7 @@ _TEMPLATES_B5: list[Template] = [
             r" + \int{lim_mod}_{{|z|\ge 1}} z\, N({t},\, dz)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "proc": S(_PROC_POOL),
             "drift": S(_COEFF_POOL),
             "diff": S(_DIFF_POOL),
@@ -866,7 +866,7 @@ _TEMPLATES_B6: list[Template] = [
             r"\right]"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "func": S(_FUNC_POOL),
             "func2": X(_FUNC_POOL, ("func",)),
             "proc": S(_PROC_POOL),

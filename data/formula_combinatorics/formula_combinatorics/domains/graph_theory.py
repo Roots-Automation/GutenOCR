@@ -5,7 +5,8 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
+from .._vocab import _STATS_N as _N_POOL
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -14,7 +15,6 @@ from .._vocab import _fn_rich_nosub
 
 _GRAPH_POOL = ("G", "H", r"\Gamma", "D", "T")
 _VTX_POOL = ("u", "v", "w", "x", "y")
-_N_POOL = ("n", "m", "N", "M")
 _R_POOL = ("r", "s", "t", "k")
 _P_POOL = ("p", "q", r"\rho")
 _LAM_POOL = (
@@ -36,7 +36,7 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
     Template(
         name="handshaking_lemma",
         latex=r"\sum{lim_mod}_{{v \in V({gg})}} \deg_{{{gg}}}(v) = 2|E({gg})|",
-        slots={"lim_mod": S(("", r"\limits")), "gg": S(_GRAPH_POOL)},
+        slots={"lim_mod": _LIM_MOD, "gg": S(_GRAPH_POOL)},
     ),
     Template(
         name="complete_graph_edges",
@@ -105,7 +105,7 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
     Template(
         name="degree_sequence_sum",
         latex=r"2|E({gg})| = \sum{lim_mod}_{{k \geq 0}} k \cdot n_k({gg})",
-        slots={"lim_mod": S(("", r"\limits")), "gg": S(_GRAPH_POOL)},
+        slots={"lim_mod": _LIM_MOD, "gg": S(_GRAPH_POOL)},
     ),
     Template(
         name="ramsey_bound",
@@ -392,7 +392,7 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r"\,\bigl({fn1}({uu}) - {fn1}({vv})\bigr) = 0"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "uu": S(_VTX_POOL),
@@ -408,7 +408,7 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
             r" + {fn1}({vv}){fn2}({uu})\bigr)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "gg": S(_GRAPH_POOL),

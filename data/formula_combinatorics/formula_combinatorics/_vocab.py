@@ -169,6 +169,18 @@ _RELATIONS = [
 ]
 
 # ---------------------------------------------------------------------------
+# Shared statistical / probability pools
+# ---------------------------------------------------------------------------
+
+_RV_BASE: tuple[str, ...] = ("X", "Y", "Z", "W", "U", "V")
+_STATS_N: tuple[str, ...] = ("n", "m", "N", "M")
+_LAM_STATS: tuple[str, ...] = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")
+_MU_STATS: tuple[str, ...] = (r"\mu", r"\mu_0", r"\nu", "m")
+_SIG_STATS: tuple[str, ...] = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")
+_EXP_OP: tuple[str, ...] = ("E", r"\mathbb{E}", r"\mathrm{E}", r"\mathbf{E}", r"\hat{E}", r"\mathbb{E}_\theta")
+_PROB_OP_FULL: tuple[str, ...] = ("P", r"\mathbb{P}", r"\Pr", r"\mathbf{P}", r"\hat{P}", r"\tilde{P}")
+
+# ---------------------------------------------------------------------------
 # Single-item samplers
 # ---------------------------------------------------------------------------
 

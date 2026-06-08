@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -278,7 +278,7 @@ _TEMPLATES_B1: list[Template] = [
             r"e^{{-\int{lim_mod}_{{v_0}}^{{{vv}}} {aa}(s)\,ds}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff1": S(_FUNC_POOL),
             "ff2": X(_FUNC_POOL, ("ff1",)),
             "vv": S(_VAR_POOL),
@@ -488,7 +488,7 @@ _TEMPLATES_B3: list[Template] = [
             r" {vv}^{{{nn}-1-k}} {ff}^{{(k)}}(0)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -523,7 +523,7 @@ _TEMPLATES_B3: list[Template] = [
         name="greens_function_solution",
         latex=(r"{ff}({vv}) = \int{lim_mod}_{{{dom}}} G({vv}, {xi}) \, {gg}({xi}) \, d{xi}"),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "vv": S(_VAR_POOL),
@@ -552,7 +552,7 @@ _TEMPLATES_B3: list[Template] = [
             r" a_{{{nn}}} e^{{-{lam}_{{{nn}}} t}} \varphi_{{{nn}}}({vv})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -605,7 +605,7 @@ _TEMPLATES_B4: list[Template] = [
             r" = \delta_{{{mm}{nn}}} \|\varphi_{{{nn}}}\|^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "dom": S(_DOMAIN_POOL),
             "mm": S(_IDX_POOL),
             "nn": X(_IDX_POOL, ("mm",)),
@@ -621,7 +621,7 @@ _TEMPLATES_B4: list[Template] = [
             r"{{\|\varphi_{{{nn}}}\|^2}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "nn": S(_IDX_POOL),
@@ -682,7 +682,7 @@ _TEMPLATES_B5: list[Template] = [
             r" a_{{{nn}}} ({vv} - {vv}_0)^{{{nn}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -696,7 +696,7 @@ _TEMPLATES_B5: list[Template] = [
             r" \text{{ near regular singular point}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "rr": S(_PARAM_POOL),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -55,12 +55,12 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="entropy",
         latex=r"H({XX}) = -\sum{lim_mod}_{{x \in {Sx}}} p(x)\, {lb}\, p(x)",
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "Sx": S(_SET_POOL), "lb": S(_LOG_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "Sx": S(_SET_POOL), "lb": S(_LOG_POOL)},
     ),
     Template(
         name="joint_entropy",
         latex=r"H({XX}, {YY}) = -\sum{lim_mod}_{{x,y}} p(x,y)\, {lb}\, p(x,y)",
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "YY": X(_RV_POOL, ("XX",)), "lb": S(_LOG_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "YY": X(_RV_POOL, ("XX",)), "lb": S(_LOG_POOL)},
     ),
     Template(
         name="conditional_entropy",
@@ -94,7 +94,7 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="entropy_subadditivity",
         latex=r"H({XX}_1, \ldots, {XX}_{{{nn}}}) \leq \sum{lim_mod}_{{i=1}}^{{{nn}}} H({XX}_i)",
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="mutual_info_nonneg",
@@ -147,7 +147,7 @@ _TEMPLATES_A: list[Template] = [
             r"H({XX}_1, \ldots, {XX}_{{{nn}}})"
             r" = \sum{lim_mod}_{{i=1}}^{{{nn}}} H({XX}_i \mid {XX}_1, \ldots, {XX}_{{i-1}})"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
     ),
 ]
 
@@ -164,7 +164,7 @@ _TEMPLATES_B_ENTROPY: list[Template] = [
             r"\, {lb}\!\left(\sum{lim_mod}_{{x \in {Sx}}} p(x)^{{{aa}}}\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "XX": S(_RV_POOL),
             "aa": S(_ALPHA_POOL),
             "Sx": S(_SET_POOL),
@@ -177,12 +177,12 @@ _TEMPLATES_B_ENTROPY: list[Template] = [
             r"S_{{{aa}}}({XX}) = \frac{{1}}{{{aa} - 1}}"
             r"\left(1 - \sum{lim_mod}_{{x}} p(x)^{{{aa}}}\right)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "aa": S(_ALPHA_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "aa": S(_ALPHA_POOL)},
     ),
     Template(
         name="differential_entropy",
         latex=r"h({XX}) = -\int{lim_mod}_{{-\infty}}^{{\infty}} p(x)\, {lb}\, p(x)\, dx",
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "lb": S(_LOG_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "lb": S(_LOG_POOL)},
     ),
     Template(
         name="conditional_differential_entropy",
@@ -253,7 +253,7 @@ _TEMPLATES_B_MI: list[Template] = [
             r" = \sum{lim_mod}_{{i=1}}^{{{nn}}} I({XX}; {YY}_i \mid {YY}_1, \ldots, {YY}_{{i-1}})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "XX": S(_RV_POOL),
             "YY": X(_RV_POOL, ("XX",)),
             "nn": S(_IDX_POOL),
@@ -278,7 +278,7 @@ _TEMPLATES_B_MI: list[Template] = [
             r" = \sum{lim_mod}_{{S \subseteq [{nn}]}} (-1)^{{|S|+1}}"
             r" H\!\left(\{{{{XX}}_i\}}_{{i \in S}}\right)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="mi_integral_form",
@@ -401,7 +401,7 @@ _TEMPLATES_B_CHAN: list[Template] = [
             r" \tfrac{{1}}{{2}}\, {lb}\!\left(1 + \frac{{{pw}_k}}{{{nz}_k}}\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "lb": S(_LOG_POOL),
             "pw": S(_PWR_BASE_POOL),
@@ -444,7 +444,7 @@ _TEMPLATES_B_SRC: list[Template] = [
     Template(
         name="kraft_inequality",
         latex=r"\sum{lim_mod}_{{k=1}}^{{{nn}}} D^{{-l_k}} \leq 1",
-        slots={"lim_mod": S(("", r"\limits")), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "nn": S(_IDX_POOL)},
     ),
     Template(
         name="lempel_ziv_rate",
@@ -779,7 +779,7 @@ _INFOTH_TEMPLATES += [
         name="fn_source_coding_pair",
         latex=r"{fn1}(L^*) = {fn2}\!\left(\sum{lim_mod}_{{x}} p(x)\, {lb}\, \frac{{1}}{{p(x)}}\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "lb": S(_LOG_POOL),
@@ -810,7 +810,7 @@ _INFOTH_TEMPLATES += [
     Template(
         name="entropy_lg",
         latex=r"H({XX}) = -\sum{lim_mod}_{{x}} p(x) \lg p(x)",
-        slots={"lim_mod": S(("", r"\limits")), "XX": S(_RV_POOL)},
+        slots={"lim_mod": _LIM_MOD, "XX": S(_RV_POOL)},
     ),
     Template(
         name="shannon_hartley_lg",
@@ -828,7 +828,7 @@ _INFOTH_TEMPLATES += [
             r" = \sum{lim_mod}_{{x,y}} p(x,y) \lg \frac{{p(x,y)}}{{p(x)\,p(y)}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "XX": S(_RV_POOL),
             "YY": X(_RV_POOL, ("XX",)),
         },

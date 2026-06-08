@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _CALLIGRAPHIC, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -134,7 +134,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r" {ff}({xx}_t) - {ff}({xx}^*)"
             r" \leq O\!\left(\frac{{1}}{{\sqrt{{{tt}}}}}\right)"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
     ),
     Template(
         name="linear_convergence",
@@ -342,7 +342,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\nabla {ff}_i({xx}_{{{kk}}})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -356,7 +356,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r" {ff}_t({xx}_t)"
             r" - \min_{{{xx}}}\sum{lim_mod}_{{t=1}}^{{{tt}}} {ff}_t({xx})"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
     ),
     Template(
         name="regret_bound_ogd",
@@ -366,7 +366,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\|\nabla {ff}_t({xx}_t)\|^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -381,7 +381,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\nabla {ff}_i^{{{kk}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -720,7 +720,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r" + {eta}\sum{lim_mod}_{{t=1}}^{{{tt}}}\|g_t\|_*^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_X_POOL),
             "hh": S(_H_POOL),
             "eta": S(_ETA_POOL),
@@ -783,7 +783,7 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             r"\min_{{{xx}}}\;{ff}({xx})"
             r" + {lam}\sum{lim_mod}_{{g}}\|{xx}_g\|"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "lam": S(_LAM_POOL)},
+        slots={"lim_mod": _LIM_MOD, "xx": S(_X_POOL), "ff": S(_F_POOL), "lam": S(_LAM_POOL)},
     ),
     # ---- Part C: High-n_eff function-pair templates (8) --------------------
     Template(
@@ -1010,9 +1010,9 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     ),
 ]
 
-_W = compute_weights(_OPTIMIZATION_TEMPLATES)
+_W_OPT = compute_weights(_OPTIMIZATION_TEMPLATES)
 
-_optimization = make_dispatcher(_OPTIMIZATION_TEMPLATES, _W)
+_optimization = make_dispatcher(_OPTIMIZATION_TEMPLATES, _W_OPT)
 
 
 # ---------------------------------------------------------------------------

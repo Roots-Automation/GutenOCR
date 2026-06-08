@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -451,7 +451,7 @@ _TEMPLATES_B4: list[Template] = [
             r" = \prod{lim_mod}_{{{phi} \in \operatorname{{Gal}}({KK}/{FF})}} {phi}({aa})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "aa": S(_ELEM_POOL),
             "KK": S(_FIELD_POOL),
             "FF": X(_FIELD_POOL, ("KK",)),
@@ -691,8 +691,8 @@ _RING_TEMPLATES: list[Template] = (
     + _TEMPLATES_C
 )
 
-_W = compute_weights(_RING_TEMPLATES)
-_ring_field_theory = make_dispatcher(_RING_TEMPLATES, _W)
+_W_RT = compute_weights(_RING_TEMPLATES)
+_ring_field_theory = make_dispatcher(_RING_TEMPLATES, _W_RT)
 
 GENERATORS: dict[str, Callable[[random.Random], str]] = {
     "ring_field_theory": _ring_field_theory,

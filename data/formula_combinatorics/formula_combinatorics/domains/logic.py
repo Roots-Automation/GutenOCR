@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _BBOLD, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -517,7 +517,7 @@ _TEMPLATES_B6: list[Template] = [
         name="dependent_product",
         latex=r"\prod{lim_mod}_{{{xx}:{sa}}} {ta}({xx})",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_VAR_POOL),
             "sa": S(_TYPE_POOL),
             "ta": X(_TYPE_POOL, ("sa",)),

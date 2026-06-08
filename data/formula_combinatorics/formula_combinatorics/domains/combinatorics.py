@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, P, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, P, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -87,14 +87,14 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
     Template(
         name="derangements_sum",
         latex=r"D_{{{n}}} = {n}!\sum{lim_mod}_{{{ii}=0}}^{{{n}}} \frac{{(-1)^{{{ii}}}}}{{{ii}!}}",
-        slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL), "ii": S(("j", "i", "k", "l"))},
+        slots={"lim_mod": _LIM_MOD, "n": S(_N_POOL), "ii": S(("j", "i", "k", "l"))},
     ),
     # c=2 — sum of all binomial coefficients
     Template(
         name="sum_binomials",
         latex=r"\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} = 2^{{{n}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
         },
@@ -104,7 +104,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         name="binomial_theorem",
         latex=r"\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} {v}^{{{k}}} = (1+{v})^{{{n}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
             "v": S(_VARS),
@@ -170,7 +170,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         name="ordinary_generating_function",
         latex=r"{gg}({v}) = \sum{lim_mod}_{{{n} \geq 0}} {sc}_{{{n}}}\, {v}^{{{n}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
             "gg": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
@@ -197,7 +197,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         name="hockey_stick_identity",
         latex=r"\sum{lim_mod}_{{{k}=0}}^{{{r2}}} \binom{{{n}+{k}}}{{{k}}} = \binom{{{n}+{r2}+1}}{{{r2}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
             "k": S(_K_POOL),
             "r2": S(("r", "s", "R", "N")),
@@ -246,7 +246,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         name="vandermonde_identity",
         latex=r"\binom{{{mm}+{n}}}{{{k}}} = \sum{lim_mod}_{{{j}=0}}^{{{k}}} \binom{{{mm}}}{{{j}}}\binom{{{n}}}{{{k}-{j}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mm": S(_N_POOL),
             "n": X(_N_POOL, ("mm",)),
             "k": S(_K_POOL),
@@ -272,7 +272,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             Template(
                 name="catalan_recurrence",
                 latex=r"C_{{{n}+1}} = \sum{lim_mod}_{{{k}=0}}^{{{n}}} C_{{{k}}} C_{{{n}-{k}}}",
-                slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL), "k": S(_K_POOL)},
+                slots={"lim_mod": _LIM_MOD, "n": S(_N_POOL), "k": S(_K_POOL)},
             ),
         ],
     ),
@@ -331,7 +331,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
     Template(
         name="bell_number_recurrence",
         latex=r"B_{{{n}+1}} = \sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}",
-        slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL), "k": S(_K_POOL)},
+        slots={"lim_mod": _LIM_MOD, "n": S(_N_POOL), "k": S(_K_POOL)},
     ),
     # c=21 — inclusion-exclusion principle (2-set and 3-set forms)
     Template(
@@ -371,7 +371,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
         name="exponential_generating_function",
         latex=r"{gg}({v}) = \sum{lim_mod}_{{{n} \geq 0}} {sc}_{{{n}}}\, \frac{{{v}^{{{n}}}}}{{{n}!}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "n": S(_N_POOL),
             "gg": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
@@ -397,7 +397,7 @@ _COMBINATORICS_TEMPLATES: list[Template] = [
             Template(
                 name="fibonacci_sum",
                 latex=r"\sum{lim_mod}_{{{k}=1}}^{{{n}}} F_{{{k}}} = F_{{{n}+2}} - 1",
-                slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL), "k": S(_K_POOL)},
+                slots={"lim_mod": _LIM_MOD, "n": S(_N_POOL), "k": S(_K_POOL)},
             ),
             Template(
                 name="cassini_identity",
@@ -427,7 +427,7 @@ _COMBINATORICS_TEMPLATES += [
         name="fn_generating_func",
         latex=r"{fn1}\!\left(\sum{lim_mod}_{{{n}\geq 0}} {sc}_{{{n}}}\,{v}^{{{n}}}\right) = {fn2}({v})",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "n": S(_N_POOL),
@@ -448,7 +448,7 @@ _COMBINATORICS_TEMPLATES += [
         name="fn_stirling_transform",
         latex=r"{fn1}(S({n},{k})) = {fn2}\!\left(\frac{{1}}{{{k}!}}\sum{lim_mod}_{{j=0}}^{{{k}}} (-1)^{{{k}-j}}\binom{{{k}}}{{j}} j^{{{n}}}\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "n": S(_N_POOL),
@@ -459,7 +459,7 @@ _COMBINATORICS_TEMPLATES += [
         name="fn_bell_recurrence",
         latex=r"{fn1}(B_{{{n}+1}}) = {fn2}\!\left(\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "n": S(_N_POOL),

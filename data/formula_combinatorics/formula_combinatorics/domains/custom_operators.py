@@ -487,9 +487,9 @@ _CUSTOM_OP_TEMPLATES: list[Template] = (
     + _MATHBIN_TEMPLATES
 )
 
-_W = compute_weights(_CUSTOM_OP_TEMPLATES)
+_W_CO = compute_weights(_CUSTOM_OP_TEMPLATES)
 
-_custom_operators = make_dispatcher(_CUSTOM_OP_TEMPLATES, _W)
+_custom_operators = make_dispatcher(_CUSTOM_OP_TEMPLATES, _W_CO)
 
 # ---------------------------------------------------------------------------
 # Registry

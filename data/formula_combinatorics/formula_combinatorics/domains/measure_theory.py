@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -54,7 +54,7 @@ _TEMPLATES_A: list[Template] = [
             r"\int{lim_mod}_{{{AA}}} \frac{{d{mu}}}{{d{nu}}} \, d{nu}({xx})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
             "AA": S(_SET_POOL),
@@ -78,7 +78,7 @@ _TEMPLATES_A: list[Template] = [
             r"\int_X \int_Y {ff}({xx},{yy}) \, d{nu}({yy}) \, d{mu}({xx})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
@@ -218,7 +218,7 @@ _TEMPLATES_B1: list[Template] = [
             r"\mathbf{{1}}_{{{AA}_k}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "nn": S(_INT_POOL),
             "aa": S(_SCALAR_POOL),
@@ -437,7 +437,7 @@ _TEMPLATES_B5: list[Template] = [
             r"\lim_{{r \to 0}} \frac{{1}}{{{mu}(B_r({xx}))}}"
             r"\int{lim_mod}_{{B_r({xx})}} {ff} \, d{mu} = {ff}({xx}) \text{{ a.e.}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "mu": S(_MU_POOL), "xx": S(_VAR_POOL)},
+        slots={"lim_mod": _LIM_MOD, "ff": S(_FUNC_POOL), "mu": S(_MU_POOL), "xx": S(_VAR_POOL)},
     ),
     Template(
         name="hardy_littlewood",
@@ -512,7 +512,7 @@ _TEMPLATES_B6: list[Template] = [
             r"\int{lim_mod}_{{{AA}}} {gg}({ff}({xx})) |\det D{ff}({xx})| \, d{mu}({xx})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "mu": S(_MU_POOL),
@@ -529,7 +529,7 @@ _TEMPLATES_B6: list[Template] = [
             r" \quad \text{{(disintegration over }} {nu}\text{{)}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
             "YY": S(_SPACE_POOL),
@@ -637,7 +637,7 @@ _TEMPLATES_C: list[Template] = [
         name="integrand_product_fn",
         latex=r"\int{lim_mod}_{{{AA}}} {fn1}({xx}) {fn2}({xx}) \, d{mu}({xx})",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "AA": S(_SET_POOL),
@@ -662,7 +662,7 @@ _TEMPLATES_C: list[Template] = [
             r" \quad ({fn1} = \tfrac{{d{mu}}}{{d{nu}}})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "AA": S(_SET_POOL),
             "xx": S(_VAR_POOL),

@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._templates import _substack_prod, _substack_sum
 from .._vocab import _fn_rich_nosub
 
@@ -96,7 +96,7 @@ _TEMPLATES_A: list[Template] = [
             r" = \frac{{{nn}({nn}+1)}}{{2}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -108,7 +108,7 @@ _TEMPLATES_A: list[Template] = [
             r" = \frac{{{nn}({nn}+1)(2{nn}+1)}}{{6}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -128,7 +128,7 @@ _TEMPLATES_A: list[Template] = [
             r" \left(1 - \frac{{1}}{{{pp}}}\right)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -153,7 +153,7 @@ _TEMPLATES_A: list[Template] = [
             r" = \frac{{1 - {aa}^{{{nn}+1}}}}{{1 - {aa}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
             "aa": S(_INT_POOL),
@@ -163,7 +163,7 @@ _TEMPLATES_A: list[Template] = [
         name="factorial_product",
         latex=r"{nn}! = \prod{lim_mod}_{{{kk}=1}}^{{{nn}}} {kk}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -174,7 +174,7 @@ _TEMPLATES_A: list[Template] = [
             r"\sum{lim_mod}_{{{kk}=0}}^{{\infty}} \frac{{(-1)^{{{kk}}}}}{{2{kk}+1}}"
             r" = \frac{{\pi}}{{4}}"
         ),
-        slots={"lim_mod": S(("", r"\limits")), "kk": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "kk": S(_IDX_POOL)},
     ),
     Template(
         name="wilson_theorem",
@@ -185,7 +185,7 @@ _TEMPLATES_A: list[Template] = [
         name="sum_of_divisors",
         latex=r"\sigma_{{{kk}}}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} d^{{{kk}}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -194,7 +194,7 @@ _TEMPLATES_A: list[Template] = [
         name="number_of_divisors",
         latex=r"\tau({nn}) = \sum{lim_mod}_{{d \mid {nn}}} 1 = \prod{lim_mod}_{{{pp}^k \| {nn}}} (k+1)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -211,7 +211,7 @@ _TEMPLATES_A: list[Template] = [
             r" \implies {gg}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{ff}({nn}/d)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "nn": S(_IDX_POOL),
@@ -226,7 +226,7 @@ _TEMPLATES_A: list[Template] = [
             r" \frac{{1}}{{1-{pp}^{{-{ss}}}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ss": S(_ALPHA_POOL),
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
@@ -239,7 +239,7 @@ _TEMPLATES_A: list[Template] = [
             r" = \left(\frac{{{nn}({nn}+1)}}{{2}}\right)^2"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -297,13 +297,13 @@ _TEMPLATES_B1: list[Template] = [
     Template(
         name="divisor_sum_phi",
         latex=r"\sum{lim_mod}_{{d \mid {nn}}} \phi(d) = {nn}",
-        slots={"lim_mod": S(("", r"\limits")), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": _LIM_MOD, "nn": S(_IDX_POOL)},
     ),
     Template(
         name="prime_factorization",
         latex=r"{nn} = \prod{lim_mod}_{{i=1}}^{{{kk}}} {pp}_i^{{e_i}}",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
             "pp": S(_PRIME_BASE_POOL),
@@ -473,7 +473,7 @@ _TEMPLATES_B3: list[Template] = [
             r" = \sum{lim_mod}_{{d \mid {nn}}} {ff}(d)\,{gg}({nn}/d)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "nn": S(_IDX_POOL),
@@ -500,7 +500,7 @@ _TEMPLATES_B3: list[Template] = [
             r"\quad \Omega({nn}) = \sum{lim_mod}_{{{pp}^k \mid\mid {nn}}} k"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -546,7 +546,7 @@ _TEMPLATES_B4: list[Template] = [
             r" = \binom{{{mm}+{nn}}}{{{rr}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mm": S(_IDX_POOL),
             "nn": X(_IDX_POOL, ("mm",)),
             "kk": X(_IDX_POOL, ("mm", "nn")),
@@ -560,7 +560,7 @@ _TEMPLATES_B4: list[Template] = [
             r" = \binom{{{nn}+1}}{{{rr}+1}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "rr": X(_IDX_POOL, ("nn",)),
             "ii": X(_IDX_POOL, ("nn", "rr")),
@@ -586,7 +586,7 @@ _TEMPLATES_B4: list[Template] = [
             r" \pmod{{{pp}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "mm": S(_IDX_POOL),
             "nn": X(_IDX_POOL, ("mm",)),
             "kk": X(_IDX_POOL, ("mm", "nn")),
@@ -600,7 +600,7 @@ _TEMPLATES_B4: list[Template] = [
             r"\sum{lim_mod}_{{j=0}}^{{{kk}}} (-1)^j \binom{{{kk}}}{{j}} ({kk}-j)^{{{nn}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -621,7 +621,7 @@ _TEMPLATES_B4: list[Template] = [
         name="bell_number",
         latex=r"B_{{{nn}}} = \sum{lim_mod}_{{{kk}=0}}^{{{nn}}} S({nn},{kk})",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "nn": S(_IDX_POOL),
             "kk": X(_IDX_POOL, ("nn",)),
         },
@@ -780,7 +780,7 @@ _TEMPLATES_B6: list[Template] = [
             r" \frac{{{ff}({nn})}}{{{nn}^{{{ss}}}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ss": S(_ALPHA_POOL),
             "nn": S(_IDX_POOL),
             "ff": S(_FUNC_POOL),
@@ -793,7 +793,7 @@ _TEMPLATES_B6: list[Template] = [
             r" \left(1 - \frac{{{ff}({pp})}}{{{pp}^{{{ss}}}}}\right)^{{-1}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ss": S(_ALPHA_POOL),
             "pp": S(_PRIME_POOL),
             "ff": S(_FUNC_POOL),
@@ -814,7 +814,7 @@ _TEMPLATES_B6: list[Template] = [
             r" \frac{{\chi({nn})}}{{{nn}^{{{ss}}}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ss": S(_ALPHA_POOL),
             "nn": S(_IDX_POOL),
         },
@@ -823,7 +823,7 @@ _TEMPLATES_B6: list[Template] = [
         name="chebyshev_psi",
         latex=(r"\psi({xx}) = \sum{lim_mod}_{{{pp}^{{{kk}}} \leq {xx}}} \log {pp}"),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_INT_POOL),
             "pp": S(_PRIME_POOL),
             "kk": S(_IDX_POOL),
@@ -853,7 +853,7 @@ _TEMPLATES_B6: list[Template] = [
             r" \sim \frac{{e^{{-\gamma}}}}{{\ln {xx}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "xx": S(_INT_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -872,7 +872,7 @@ _TEMPLATES_B7: list[Template] = [
             r" = \prod{lim_mod}_{{i=1}}^{{{nn}}} \sigma_i({al})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "KK": S(_FIELD_POOL),
             "al": S(_ALPHA_POOL),
             "nn": S(_IDX_POOL),
@@ -885,7 +885,7 @@ _TEMPLATES_B7: list[Template] = [
             r" = \sum{lim_mod}_{{i=1}}^{{{nn}}} \sigma_i({al})"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "KK": S(_FIELD_POOL),
             "al": S(_ALPHA_POOL),
             "nn": S(_IDX_POOL),
@@ -898,7 +898,7 @@ _TEMPLATES_B7: list[Template] = [
             r" = \prod{lim_mod}_{{i=1}}^{{{gg}}} \mathfrak{{P}}_i^{{e_i}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "pp": S(_PRIME_POOL),
             "gg": S(_IDX_POOL),
         },
@@ -971,7 +971,7 @@ _TEMPLATES_B8: list[Template] = [
             r"\quad a_{{{kk}}} \in \{{0,\ldots,{pp}-1\}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "aa": S(_INT_POOL),
             "pp": S(_PRIME_POOL),
             "kk": S(_IDX_POOL),
@@ -996,7 +996,7 @@ _TEMPLATES_B8: list[Template] = [
         name="product_formula",
         latex=(r"\|{aa}\|_\infty \cdot \prod{lim_mod}_{{{pp}}} \|{aa}\|_{{{pp}}} = 1"),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "aa": S(_INT_POOL),
             "pp": S(_PRIME_POOL),
         },
@@ -1015,7 +1015,7 @@ _TEMPLATES_C: list[Template] = [
             r" = \sum{lim_mod}_{{d \mid {nn}}} {fn1}(d)\,{fn2}({nn}/d)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1042,7 +1042,7 @@ _TEMPLATES_C: list[Template] = [
             r" \frac{{({fn1}*{fn2})({nn})}}{{{nn}^{{{ss}}}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1056,7 +1056,7 @@ _TEMPLATES_C: list[Template] = [
             r" \iff {fn2}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1069,7 +1069,7 @@ _TEMPLATES_C: list[Template] = [
             r" = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d)\,{fn1}({nn}/d)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1082,7 +1082,7 @@ _TEMPLATES_C: list[Template] = [
             r" = \sum{lim_mod}_{{{nn}=1}}^\infty \frac{{{fn1}({nn})}}{{{nn}^{{{ss}}}}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "pp": S(_PRIME_POOL),
             "nn": S(_IDX_POOL),
@@ -1097,7 +1097,7 @@ _TEMPLATES_C += [
         name="fn_divisor_identity",
         latex=r"{fn1}(\sigma({nn})) = {fn2}\!\left(\sum{lim_mod}_{{d \mid {nn}}} d\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1107,7 +1107,7 @@ _TEMPLATES_C += [
         name="fn_prime_count",
         latex=r"{fn1}(\pi({nn})) = {fn2}\!\left(\sum{lim_mod}_{{{pp} \leq {nn},\,{pp}\text{{ prime}}}} 1\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1118,7 +1118,7 @@ _TEMPLATES_C += [
         name="fn_euler_phi_product",
         latex=r"{fn1}(\varphi({nn})) = {fn2}\!\left({nn} \prod{lim_mod}_{{{pp} \mid {nn}}} \!\!\left(1 - \frac{{1}}{{{pp}}}\right)\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1129,7 +1129,7 @@ _TEMPLATES_C += [
         name="fn_moebius_inversion",
         latex=r"{fn1}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d) \iff {fn2}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_IDX_POOL),
@@ -1139,7 +1139,7 @@ _TEMPLATES_C += [
         name="fn_zeta_product",
         latex=r"{fn1}(\zeta({ss})) = {fn2}\!\left(\prod{lim_mod}_{{{pp}\text{{ prime}}}} \frac{{1}}{{1-{pp}^{{-{ss}}}}}\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "ss": S(_ALPHA_POOL),

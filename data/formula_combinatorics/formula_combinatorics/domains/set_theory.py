@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
@@ -159,7 +159,7 @@ _SET_THEORY_TEMPLATES: list[Template] = [
             r" - \sum{lim_mod}_{{{ii} < {jj}}} |{AA}_{{{ii}}} \cap {AA}_{{{jj}}}| + \cdots"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "AA": S(_SET_POOL),
             "nn": S(_IDX_POOL),
             "ii": X(_IDX_POOL, ("nn",)),
@@ -611,7 +611,7 @@ _SET_THEORY_TEMPLATES: list[Template] = [
             r"{ff}({ii}) \in {AA}_{{{ii}}}\}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "ii": S(_IDX_POOL),
             "II": S(_SET_POOL),
             "AA": X(_SET_POOL, ("II",)),
@@ -625,7 +625,7 @@ _SET_THEORY_TEMPLATES: list[Template] = [
             r"\quad \prod{lim_mod}_{{{ii} \in {II}}} {AA}_{{{ii}}} \neq \emptyset"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "AA": S(_SET_POOL),
             "ii": S(_IDX_POOL),
             "II": X(_SET_POOL, ("AA",)),

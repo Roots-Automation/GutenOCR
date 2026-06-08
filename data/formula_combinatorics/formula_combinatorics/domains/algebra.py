@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, P, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, P, S, Template, X, compute_weights, make_dispatcher
 from .._templates import _poly, _substack_prod, _substack_sum
 from .._vocab import (
     _COEFF_POOL,
@@ -406,7 +406,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             r"\sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "exp": S(("n", "m", "k", "p", "r", "2", "3", "4", "5", "6")),
             "u": E(_expr, n=5000),
             "w": E(_expr, n=5000),
@@ -682,7 +682,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         name="product_formula",
         latex=r"\prod{lim_mod}_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "v": S(tuple(_VARS), 0.35),
             "n": S(("n", "m", "N", "M", "r"), idx=0.35),
             "a11": S(("a", "b", "c", "d", "m", "n", "p", "q"), idx=0.35),
@@ -836,7 +836,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"\leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "a": S(_COEFF_POOL),
                     "n": S(_GEO_N),
                 },
@@ -856,7 +856,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"\cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "idx": S(("i", "j", "k", "l", "m", "r")),
                     "ub": S(("n", "m", "N", "M", "K", "L", "P")),
                     "p1": S(tuple(_SCALARS)),
@@ -871,7 +871,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"\cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "v": S(tuple(_VARS), 0.35),
                     "lo": E(_atom, n=150),
                     "hi": E(_atom, n=150),
@@ -1012,7 +1012,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="sum_of_integers",
                 latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}",
-                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
+                slots={"lim_mod": _LIM_MOD, "n": S(_GEO_N)},
             ),
             Template(
                 name="sum_of_integers_ellipsis",
@@ -1039,12 +1039,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="sum_of_squares",
                 latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}",
-                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
+                slots={"lim_mod": _LIM_MOD, "n": S(_GEO_N)},
             ),
             Template(
                 name="sum_of_cubes",
                 latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2",
-                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
+                slots={"lim_mod": _LIM_MOD, "n": S(_GEO_N)},
             ),
             Template(
                 name="arithmetic_progression_sum",
@@ -1053,7 +1053,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"= \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "a": S(_COEFF_POOL, idx=0.35),
                     "d": X(_COEFF_POOL, ("a",), idx=0.35),
                     "n": S(_GEO_N),
@@ -1113,7 +1113,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     r"= {fn}({n}+1) - {fn}(1)"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "fn": E(_fn_rich_nosub, n=100),
                     "n": S(_GEO_N),
                 },
@@ -1129,7 +1129,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 name="geometric_series_finite",
                 latex=(r"\sum{lim_mod}_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "a": S(_COEFF_POOL, idx=0.35),
                     "r": X(_COEFF_POOL, ("a",), idx=0.35),
                     "n": S(_GEO_N),
@@ -1140,7 +1140,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 name="geometric_series_finite_unit",
                 latex=(r"\sum{lim_mod}_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "r": S(_COEFF_POOL, idx=0.35),
                     "n": S(_GEO_N),
                 },
@@ -1149,7 +1149,7 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 name="geometric_series_infinite",
                 latex=r"\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}",
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "a": S(_COEFF_POOL, idx=0.35),
                     "r": X(_COEFF_POOL, ("a",), idx=0.35),
                 },
@@ -1607,7 +1607,7 @@ _LARGE_BRACKET: list[Template] = [
             r"\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k \biggr)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "a": S(list("abcdefg")),
             "b": S(list("hijklmn")),
             "n": S(("n", "N", "m")),
@@ -1622,7 +1622,7 @@ _LARGE_BRACKET: list[Template] = [
             r"\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)"
         ),
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "a": S(list("abcde")),
             "b": S(list("fghij")),
             "n": S(("n", "N", "m")),

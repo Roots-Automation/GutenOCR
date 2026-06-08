@@ -5,7 +5,7 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._vocab import (
     _GEO_N,
     _SCALARS,
@@ -538,12 +538,12 @@ _TRIG_TEMPLATES: list[Template] = [
             Template(
                 name="taylor_sin",
                 latex=r"{sn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n+1}}}}{{(2n+1)!}}",
-                slots={"lim_mod": S(("", r"\limits")), "sn": E(_sin_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
+                slots={"lim_mod": _LIM_MOD, "sn": E(_sin_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
             ),
             Template(
                 name="taylor_cos",
                 latex=r"{cn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n}}}}{{(2n)!}}",
-                slots={"lim_mod": S(("", r"\limits")), "cn": E(_cos_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
+                slots={"lim_mod": _LIM_MOD, "cn": E(_cos_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
             ),
             Template(
                 name="taylor_tan_approx",
@@ -690,7 +690,7 @@ _TRIG_TEMPLATES: list[Template] = [
         name="roots_of_unity_sum",
         latex=r"\sum{lim_mod}_{{{k}=0}}^{{{n}-1}} e^{{2\pi i {k} {x} / {n}}} = 0",
         slots={
-            "lim_mod": S(("", r"\limits")),
+            "lim_mod": _LIM_MOD,
             "k": S(("j", "k", "l", "m", "r", "s", "t")),
             "n": E(_fourier_n_sub, n=11),
             "x": S(tuple(_VARS), idx=0.35),
@@ -1507,7 +1507,7 @@ _TRIG_TEMPLATES: list[Template] = [
                     r"+ {cb}_k \sin\frac{{k\pi {v}}}{{{L}}}\right)"
                 ),
                 slots={
-                    "lim_mod": S(("", r"\limits")),
+                    "lim_mod": _LIM_MOD,
                     "fn": E(_fn_rich_nosub, n=100),
                     "v": S(tuple(_VARS), idx=0.35),
                     "ca": S(tuple(_SCALARS)),

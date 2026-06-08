@@ -5,15 +5,14 @@ from __future__ import annotations
 import random
 from collections.abc import Callable
 
-from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
+from .._template_dsl import _LIM_MOD, E, S, Template, X, compute_weights, make_dispatcher
 from .._templates import _matrix_env, _matrix_with_ellipsis, _smallmatrix_inline
 from .._vocab import _MATRIX_NAMES, _atom
+from .._vocab import _STATS_N as _N_POOL
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
-
-_N_POOL = ["n", "m", "N"]
 _P_NORM_POOL = ["1", "2", r"\infty", "F"]
 
 # ---------------------------------------------------------------------------
@@ -62,7 +61,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     Template(
         name="dot_product",
         latex=r"\mathbf{{u}} \cdot \mathbf{{v}} = \sum{lim_mod}_{{i=1}}^{{{n}}} u_i v_i",
-        slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "n": S(_N_POOL)},
     ),
     Template(
         name="cross_product",
@@ -82,7 +81,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     Template(
         name="trace_det_eigenvalues",
         latex=r"\operatorname{{tr}}({m}) = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod{lim_mod}_{{i=1}}^{{{n}}} \lambda_i",
-        slots={"lim_mod": S(("", r"\limits")), "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
     Template(
         name="svd",
@@ -131,7 +130,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     Template(
         name="spectral_decomposition",
         latex=r"{m} = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i \mathbf{{u}}_i \mathbf{{u}}_i^\top",
-        slots={"lim_mod": S(("", r"\limits")), "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+        slots={"lim_mod": _LIM_MOD, "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
 ]
 
@@ -335,9 +334,9 @@ _PART_LVERT_NORMS: list[Template] = [
 
 _LINEAR_ALGEBRA_TEMPLATES += _PART_LVERT_NORMS
 
-_W = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
+_W_LA = compute_weights(_LINEAR_ALGEBRA_TEMPLATES)
 
-_linear_algebra = make_dispatcher(_LINEAR_ALGEBRA_TEMPLATES, _W)
+_linear_algebra = make_dispatcher(_LINEAR_ALGEBRA_TEMPLATES, _W_LA)
 
 
 # ---------------------------------------------------------------------------
