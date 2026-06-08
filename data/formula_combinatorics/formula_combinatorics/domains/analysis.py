@@ -185,6 +185,233 @@ _ANALYSIS_TEMPLATES: list[Template] = [
                     "v": S(tuple(_GEO_N)),
                 },
             ),
+            Template(
+                name="big_omega",
+                latex=r"{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="little_omega",
+                latex=r"{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="asymptotic_equiv",
+                latex=r"{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="soft_o",
+                latex=r"{f}({v}) = \tilde{{O}}\!\left({g}({v})\right) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+        ],
+    ),
+    # --- Landau notation at finite / one-sided limit points ---
+    Template(
+        name="asymptotic_directional",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="big_o_at",
+                latex=r"{f}({v}) = O\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+            Template(
+                name="little_o_at",
+                latex=r"{f}({v}) = o\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+            Template(
+                name="big_theta_at",
+                latex=r"{f}({v}) = \Theta\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+            Template(
+                name="big_omega_at",
+                latex=r"{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+            Template(
+                name="little_omega_at",
+                latex=r"{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+            Template(
+                name="asymptotic_equiv_at",
+                latex=r"{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to {lp}",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(_BVAR),
+                    "lp": S(("0", r"0^+", r"0^-", "1", "a", "b")),
+                },
+            ),
+        ],
+    ),
+    # --- Asymptotic error-term / remainder form ---
+    Template(
+        name="asymptotic_error_term",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="error_big_o",
+                latex=r"{f}({v}) = {g}({v}) + O\!\left({h}({v})\right) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "h": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="error_little_o",
+                latex=r"{f}({v}) = {g}({v}) + o\!\left({h}({v})\right) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "h": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="error_little_o_one",
+                latex=r"{f}({v}) = {g}({v}) + o(1) \text{{ as }} {v} \to \infty",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+        ],
+    ),
+    # --- Formal definitions of Landau notation ---
+    Template(
+        name="asymptotic_definition",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="big_o_existential",
+                latex=(
+                    r"\exists\, C > 0,\; {v}_0 :\;"
+                    r"|{f}({v})| \leq C\,|{g}({v})|\;"
+                    r"\text{{ for all }} {v} \geq {v}_0"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="little_o_limit",
+                latex=r"\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 0",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="asymptotic_equiv_limit",
+                latex=r"\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 1",
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+            Template(
+                name="big_theta_sandwich",
+                latex=(
+                    r"c_1\,{g}({v}) \leq {f}({v}) \leq c_2\,{g}({v})"
+                    r"\text{{ for all large }} {v}"
+                ),
+                slots={
+                    "f": E(_fn_rich_nosub, n=100),
+                    "g": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                },
+            ),
+        ],
+    ),
+    # --- Poincaré asymptotic expansions ---
+    Template(
+        name="asymptotic_expansion",
+        latex="",
+        slots={},
+        variants=[
+            Template(
+                name="poincare_series",
+                latex=r"{f}({v}) \sim \sum{lim_mod}_{{{k}=0}}^{{\infty}} {a}_{{{k}}}\,{v}^{{-{k}}} \text{{ as }} {v} \to \infty",
+                slots={
+                    "lim_mod": S(("", r"\limits")),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                    "a": S(_BVAR),
+                    "k": S(("k", "j", "m")),
+                },
+            ),
+            Template(
+                name="poincare_partial",
+                latex=(
+                    r"{f}({v}) = \sum{lim_mod}_{{{k}=0}}^{{{N}}}"
+                    r" {a}_{{{k}}}\,{v}^{{-{k}}}"
+                    r" + O\!\left({v}^{{-{N}-1}}\right)"
+                ),
+                slots={
+                    "lim_mod": S(("", r"\limits")),
+                    "f": E(_fn_rich_nosub, n=100),
+                    "v": S(tuple(_GEO_N)),
+                    "a": S(_BVAR),
+                    "k": S(("k", "j", "m")),
+                    "N": S(("N", "n", "M", "K")),
+                },
+            ),
         ],
     ),
     # --- p-series convergence ---
