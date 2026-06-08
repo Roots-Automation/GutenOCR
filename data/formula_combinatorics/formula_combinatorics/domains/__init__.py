@@ -24,6 +24,9 @@ from .combinatorics import WEIGHTS as _W_COMB
 from .complex_analysis import GENERATORS as _G_COMPLEX
 from .complex_analysis import TEMPLATES as _T_COMPLEX
 from .complex_analysis import WEIGHTS as _W_COMPLEX
+from .custom_operators import GENERATORS as _G_CUSTOP
+from .custom_operators import TEMPLATES as _T_CUSTOP
+from .custom_operators import WEIGHTS as _W_CUSTOP
 from .differential_equations import GENERATORS as _G_DIFFEQ
 from .differential_equations import TEMPLATES as _T_DIFFEQ
 from .differential_equations import WEIGHTS as _W_DIFFEQ
@@ -112,6 +115,7 @@ GENERATORS: dict[str, Callable[[random.Random], str]] = {
     **_G_SET,
     **_G_LOGIC,
     **_G_SPROC,
+    **_G_CUSTOP,
 }
 
 DEFAULT_WEIGHTS: dict[str, float] = {
@@ -141,6 +145,7 @@ DEFAULT_WEIGHTS: dict[str, float] = {
     **_W_SET,
     **_W_LOGIC,
     **_W_SPROC,
+    **_W_CUSTOP,
 }
 
 # Maps domain name → list of Template objects.
@@ -173,6 +178,7 @@ TEMPLATES: dict[str, list[Template]] = {
     **_T_SET,
     **_T_LOGIC,
     **_T_SPROC,
+    **_T_CUSTOP,
 }
 
 assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (

@@ -1827,6 +1827,58 @@ _TEXT_FRAC_TEMPLATES: list[Template] = [
 
 _ALGEBRA_TEMPLATES += _TEXT_FRAC_TEMPLATES
 
+# ── Polynomial degree operator as primary formula subject ──────────────────
+_DEG_POLY_POOL = ("p", "q", "f", "g", "h", "r", "s")
+_DEG_N_POOL = ("n", "m", "d", "k", "r", "N")
+
+_DEG_TEMPLATES: list[Template] = [
+    Template(
+        name="deg_definition",
+        latex=r"\deg({pp}) = {nn}",
+        slots={
+            "pp": S(_DEG_POLY_POOL),
+            "nn": S(_DEG_N_POOL),
+        },
+        distinct=[["pp", "nn"]],
+    ),
+    Template(
+        name="deg_product",
+        latex=r"\deg({pp} \cdot {qq}) = \deg({pp}) + \deg({qq})",
+        slots={
+            "pp": S(_DEG_POLY_POOL),
+            "qq": X(_DEG_POLY_POOL, ("pp",)),
+        },
+    ),
+    Template(
+        name="deg_sum_ineq",
+        latex=r"\deg({pp} + {qq}) \leq \max(\deg({pp}),\, \deg({qq}))",
+        slots={
+            "pp": S(_DEG_POLY_POOL),
+            "qq": X(_DEG_POLY_POOL, ("pp",)),
+        },
+    ),
+    Template(
+        name="deg_composition",
+        latex=r"\deg({pp} \circ {qq}) = \deg({pp}) \cdot \deg({qq})",
+        slots={
+            "pp": S(_DEG_POLY_POOL),
+            "qq": X(_DEG_POLY_POOL, ("pp",)),
+        },
+    ),
+    Template(
+        name="deg_monomial",
+        latex=r"\deg({aa} {vv}^{{{nn}}}) = {nn}",
+        slots={
+            "aa": S(tuple(_SCALARS)),
+            "vv": S(tuple(_VARS)),
+            "nn": S(_DEG_N_POOL),
+        },
+        distinct=[["aa", "nn"]],
+    ),
+]
+
+_ALGEBRA_TEMPLATES += _DEG_TEMPLATES
+
 # cap=75M: prevents _expr-heavy branches (n_eff~10^14) from crowding out named identities
 _W_ALGEBRA: list[float] = compute_weights(_ALGEBRA_TEMPLATES, cap=75_000_000)
 

@@ -1446,6 +1446,52 @@ _TRIG_TEMPLATES: list[Template] = [
             ),
         ],
     ),
+    # ── Reciprocal and hyperbolic-reciprocal identities ──────────────────────
+    Template(
+        name="sec_reciprocal",
+        latex=r"\sec({vv}) = \frac{{1}}{{\cos({vv})}}",
+        slots={"vv": S(_TRIG_ARG_POOL, idx=0.2)},
+    ),
+    Template(
+        name="sec_sq_pythagorean",
+        latex=r"\sec^2({vv}) = 1 + \tan^2({vv})",
+        slots={"vv": S(_TRIG_ARG_POOL, idx=0.2)},
+    ),
+    Template(
+        name="csc_reciprocal",
+        latex=r"\csc({vv}) = \frac{{1}}{{\sin({vv})}}",
+        slots={"vv": S(_TRIG_ARG_POOL, idx=0.2)},
+    ),
+    Template(
+        name="cot_reciprocal",
+        latex=r"\cot({vv}) = \frac{{\cos({vv})}}{{\sin({vv})}}",
+        slots={"vv": S(_TRIG_ARG_POOL, idx=0.2)},
+    ),
+    Template(
+        name="sech_reciprocal",
+        latex=r"\operatorname{{sech}}({vv}) = \frac{{1}}{{\cosh({vv})}}",
+        slots={"vv": S(tuple(_VARS), idx=0.2)},
+    ),
+    Template(
+        name="csch_reciprocal",
+        latex=r"\operatorname{{csch}}({vv}) = \frac{{1}}{{\sinh({vv})}}",
+        slots={"vv": S(tuple(_VARS), idx=0.2)},
+    ),
+    Template(
+        name="sech_exp_form",
+        latex=r"\operatorname{{sech}}({vv}) = \frac{{2}}{{e^{{{vv}}} + e^{{-{vv}}}}}",
+        slots={"vv": S(tuple(_VARS), idx=0.2)},
+    ),
+    Template(
+        name="csch_exp_form",
+        latex=r"\operatorname{{csch}}({vv}) = \frac{{2}}{{e^{{{vv}}} - e^{{-{vv}}}}}",
+        slots={"vv": S(tuple(_VARS), idx=0.2)},
+    ),
+    Template(
+        name="csch_sq_identity",
+        latex=r"\operatorname{{csch}}^2({vv}) = \coth^2({vv}) - 1",
+        slots={"vv": S(tuple(_VARS), idx=0.2)},
+    ),
     # ── Fourier series ────────────────────────────────────────────────────────
     Template(
         name="fourier_series",

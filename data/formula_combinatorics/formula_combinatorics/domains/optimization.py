@@ -6,7 +6,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import E, S, Template, X, compute_weights, make_dispatcher
-from .._vocab import _fn_rich_nosub
+from .._vocab import _CALLIGRAPHIC, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -916,6 +916,96 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
             "fn2": E(_fn_rich_nosub, n=100),
             "eta": S(_ETA_POOL),
             "tt": S(_T_POOL),
+        },
+    ),
+    # ---- Argmin / Argmax (starred operator form, \operatorname*) -----------
+    Template(
+        name="argmin_basic",
+        latex=r"\operatorname*{{argmin}}_{{{xx}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+        },
+    ),
+    Template(
+        name="argmax_basic",
+        latex=r"\operatorname*{{argmax}}_{{{xx}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+        },
+    ),
+    Template(
+        name="argmin_constrained",
+        latex=r"\operatorname*{{argmin}}_{{{xx} \in {CC}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+            "CC": S(tuple(_CALLIGRAPHIC)),
+        },
+    ),
+    Template(
+        name="argmax_constrained",
+        latex=r"\operatorname*{{argmax}}_{{{xx} \in {CC}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+            "CC": S(tuple(_CALLIGRAPHIC)),
+        },
+    ),
+    Template(
+        name="argmin_assignment",
+        latex=r"{xx}^* = \operatorname*{{argmin}}_{{{xx}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+        },
+    ),
+    Template(
+        name="argmax_assignment",
+        latex=r"\hat{{{par}}} = \operatorname*{{argmax}}_{{{par}}} {ll}({par})",
+        slots={
+            "par": S((_X_POOL[2],) + (_X_POOL[0],) + tuple(_ETA_POOL[:3])),
+            "ll": S((_F_POOL[0],) + (_F_POOL[1],) + (r"\mathcal{L}", r"\ell")),
+        },
+    ),
+    Template(
+        name="argmin_norm_sq",
+        latex=r"\operatorname*{{argmin}}_{{{xx}}} \|{AA}{xx} - {bb}\|^2",
+        slots={
+            "xx": S(_X_POOL),
+            "AA": S(("A", "B", "M", "W", "H")),
+            "bb": S(("b", "c", "d", "y", r"\mathbf{b}", r"\mathbf{y}")),
+        },
+    ),
+    Template(
+        name="argmin_sum",
+        latex=(
+            r"\operatorname*{{argmin}}_{{{xx}}}"
+            r" \sum_{{i=1}}^{{{nn}}} {ff}_i({xx})"
+        ),
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+            "nn": S(("n", "N", "T", "m", "M")),
+        },
+    ),
+    Template(
+        name="argmin_limits_variant",
+        latex=r"\operatorname*{{argmin}}\limits_{{{xx} \in {CC}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+            "CC": S(tuple(_CALLIGRAPHIC)),
+        },
+    ),
+    Template(
+        name="argmax_limits_variant",
+        latex=r"\operatorname*{{argmax}}\limits_{{{xx} \in {CC}}} {ff}({xx})",
+        slots={
+            "xx": S(_X_POOL),
+            "ff": S(_F_POOL),
+            "CC": S(tuple(_CALLIGRAPHIC)),
         },
     ),
 ]
