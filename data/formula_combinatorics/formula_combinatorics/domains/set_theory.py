@@ -155,10 +155,11 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="inclusion_exclusion_general",
         latex=(
             r"\left|\bigcup_{{{ii}=1}}^{{{nn}}} {AA}_{{{ii}}}\right|"
-            r" = \sum_{{{ii}}} |{AA}_{{{ii}}}|"
-            r" - \sum_{{{ii} < {jj}}} |{AA}_{{{ii}}} \cap {AA}_{{{jj}}}| + \cdots"
+            r" = \sum{lim_mod}_{{{ii}}} |{AA}_{{{ii}}}|"
+            r" - \sum{lim_mod}_{{{ii} < {jj}}} |{AA}_{{{ii}}} \cap {AA}_{{{jj}}}| + \cdots"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "AA": S(_SET_POOL),
             "nn": S(_IDX_POOL),
             "ii": X(_IDX_POOL, ("nn",)),
@@ -605,11 +606,12 @@ _SET_THEORY_TEMPLATES: list[Template] = [
     Template(
         name="general_cartesian_product",
         latex=(
-            r"\prod_{{{ii} \in {II}}} {AA}_{{{ii}}}"
+            r"\prod{lim_mod}_{{{ii} \in {II}}} {AA}_{{{ii}}}"
             r" = \{{{ff} \mid \forall {ii} \in {II},\;"
             r"{ff}({ii}) \in {AA}_{{{ii}}}\}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ii": S(_IDX_POOL),
             "II": S(_SET_POOL),
             "AA": X(_SET_POOL, ("II",)),
@@ -620,9 +622,10 @@ _SET_THEORY_TEMPLATES: list[Template] = [
         name="axiom_of_choice",
         latex=(
             r"\forall \{{{AA}_{{{ii}}}\}}_{{{ii} \in {II}}},"
-            r"\quad \prod_{{{ii} \in {II}}} {AA}_{{{ii}}} \neq \emptyset"
+            r"\quad \prod{lim_mod}_{{{ii} \in {II}}} {AA}_{{{ii}}} \neq \emptyset"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "AA": S(_SET_POOL),
             "ii": S(_IDX_POOL),
             "II": X(_SET_POOL, ("AA",)),

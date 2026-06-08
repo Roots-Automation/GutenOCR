@@ -130,11 +130,11 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     Template(
         name="sublinear_convergence_rate",
         latex=(
-            r"\frac{{1}}{{{tt}}}\sum_{{t=1}}^{{{tt}}}"
+            r"\frac{{1}}{{{tt}}}\sum{lim_mod}_{{t=1}}^{{{tt}}}"
             r" {ff}({xx}_t) - {ff}({xx}^*)"
             r" \leq O\!\left(\frac{{1}}{{\sqrt{{{tt}}}}}\right)"
         ),
-        slots={"xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
     ),
     Template(
         name="linear_convergence",
@@ -338,10 +338,11 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         name="minibatch_gradient",
         latex=(
             r"{xx}_{{{kk}+1}} = {xx}_{{{kk}}}"
-            r" - \frac{{{eta}}}{{|B|}}\sum_{{i\in B}}"
+            r" - \frac{{{eta}}}{{|B|}}\sum{lim_mod}_{{i\in B}}"
             r"\nabla {ff}_i({xx}_{{{kk}}})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -351,20 +352,21 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     Template(
         name="online_regret_def",
         latex=(
-            r"R_{{{tt}}} = \sum_{{t=1}}^{{{tt}}}"
+            r"R_{{{tt}}} = \sum{lim_mod}_{{t=1}}^{{{tt}}}"
             r" {ff}_t({xx}_t)"
-            r" - \min_{{{xx}}}\sum_{{t=1}}^{{{tt}}} {ff}_t({xx})"
+            r" - \min_{{{xx}}}\sum{lim_mod}_{{t=1}}^{{{tt}}} {ff}_t({xx})"
         ),
-        slots={"xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "tt": S(_T_POOL)},
     ),
     Template(
         name="regret_bound_ogd",
         latex=(
             r"R_{{{tt}}} \leq \frac{{\|{xx}_1-{xx}^*\|^2}}{{2{eta}}}"
-            r" + \frac{{{eta}}}{{2}}\sum_{{t=1}}^{{{tt}}}"
+            r" + \frac{{{eta}}}{{2}}\sum{lim_mod}_{{t=1}}^{{{tt}}}"
             r"\|\nabla {ff}_t({xx}_t)\|^2"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -375,10 +377,11 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         name="sag_update",
         latex=(
             r"{xx}_{{{kk}+1}} = {xx}_{{{kk}}}"
-            r" - \frac{{{eta}}}{{n}}\sum_{{i=1}}^{{n}}"
+            r" - \frac{{{eta}}}{{n}}\sum{lim_mod}_{{i=1}}^{{n}}"
             r"\nabla {ff}_i^{{{kk}}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "xx": S(_X_POOL),
             "ff": S(_F_POOL),
             "eta": S(_ETA_POOL),
@@ -712,11 +715,12 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
     Template(
         name="mirror_descent_regret",
         latex=(
-            r"\sum_{{t=1}}^{{{tt}}}\langle g_t,\,{xx}_t-u\rangle"
+            r"\sum{lim_mod}_{{t=1}}^{{{tt}}}\langle g_t,\,{xx}_t-u\rangle"
             r" \leq \frac{{D_{{{hh}}}(u,\,{xx}_1)}}{{{eta}}}"
-            r" + {eta}\sum_{{t=1}}^{{{tt}}}\|g_t\|_*^2"
+            r" + {eta}\sum{lim_mod}_{{t=1}}^{{{tt}}}\|g_t\|_*^2"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "xx": S(_X_POOL),
             "hh": S(_H_POOL),
             "eta": S(_ETA_POOL),
@@ -777,9 +781,9 @@ _OPTIMIZATION_TEMPLATES: list[Template] = [
         name="group_lasso",
         latex=(
             r"\min_{{{xx}}}\;{ff}({xx})"
-            r" + {lam}\sum_{{g}}\|{xx}_g\|"
+            r" + {lam}\sum{lim_mod}_{{g}}\|{xx}_g\|"
         ),
-        slots={"xx": S(_X_POOL), "ff": S(_F_POOL), "lam": S(_LAM_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_X_POOL), "ff": S(_F_POOL), "lam": S(_LAM_POOL)},
     ),
     # ---- Part C: High-n_eff function-pair templates (8) --------------------
     Template(

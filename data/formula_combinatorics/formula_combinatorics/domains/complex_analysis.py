@@ -71,19 +71,19 @@ _TEMPLATES_A: list[Template] = [
         name="cauchy_integral_formula",
         latex=(
             r"{ff}({aa}) = \frac{{1}}{{2\pi i}}"
-            r"\oint_{{{CC}}} \frac{{{ff}(z)}}{{z - {aa}}} \, dz"
+            r"\oint{lim_mod}_{{{CC}}} \frac{{{ff}(z)}}{{z - {aa}}} \, dz"
         ),
-        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "CC": S(_CURVE_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="residue_theorem",
-        latex=(r"\oint_{{{CC}}} {ff}(z) \, dz = 2\pi i \sum_k \operatorname{{Res}}({ff}, z_k)"),
-        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
+        latex=(r"\oint{lim_mod}_{{{CC}}} {ff}(z) \, dz = 2\pi i \sum_k \operatorname{{Res}}({ff}, z_k)"),
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="laurent_series",
-        latex=r"{ff}(z) = \sum_{{n=-\infty}}^{{\infty}} c_n (z - {aa})^n",
-        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL)},
+        latex=r"{ff}(z) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n (z - {aa})^n",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL)},
     ),
     Template(
         name="mobius_transformation",
@@ -122,8 +122,8 @@ _TEMPLATES_A: list[Template] = [
     ),
     Template(
         name="argument_principle",
-        latex=(r"\frac{{1}}{{2\pi i}} \oint_{{{CC}}} \frac{{{ff}'(z)}}{{{ff}(z)}} \, dz = N - P"),
-        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
+        latex=(r"\frac{{1}}{{2\pi i}} \oint{lim_mod}_{{{CC}}} \frac{{{ff}'(z)}}{{{ff}(z)}} \, dz = N - P"),
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL)},
     ),
     Template(
         name="rouche_theorem",
@@ -250,9 +250,10 @@ _TEMPLATES_B3: list[Template] = [
         name="cauchy_nth_derivative",
         latex=(
             r"{ff}^{{({nn})}}({aa}) = \frac{{{nn}!}}{{2\pi i}}"
-            r"\oint_{{{CC}}} \frac{{{ff}({zz})}}{{({zz}-{aa})^{{{nn}+1}}}} \, d{zz}"
+            r"\oint{lim_mod}_{{{CC}}} \frac{{{ff}({zz})}}{{({zz}-{aa})^{{{nn}+1}}}} \, d{zz}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "nn": S(_INT_POOL),
             "aa": S(_CENTER_POOL),
@@ -293,29 +294,29 @@ _TEMPLATES_B3: list[Template] = [
     ),
     Template(
         name="ml_inequality",
-        latex=(r"\left| \oint_{{{CC}}} {ff}({zz}) \, d{zz} \right| \leq M \cdot L"),
-        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+        latex=(r"\left| \oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} \right| \leq M \cdot L"),
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
     ),
     Template(
         name="cauchy_goursat",
-        latex=r"\oint_{{{CC}}} {ff}({zz}) \, d{zz} = 0",
-        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+        latex=r"\oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} = 0",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
     ),
     Template(
         name="residue_sum_formula",
         latex=(
-            r"\oint_{{{CC}}} {ff}({zz}) \, d{zz} = "
+            r"\oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} = "
             r"2\pi i \sum_k \operatorname{{Res}}({ff}, a_k)"
         ),
-        slots={"ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "CC": S(_CURVE_POOL), "zz": S(_VAR_POOL)},
     ),
     Template(
         name="jordan_estimate",
         latex=(
-            r"\left| \int_{{C_R}} {ff}({zz}) e^{{i{aa} {zz}}} \, d{zz} \right| \to 0"
+            r"\left| \int{lim_mod}_{{C_R}} {ff}({zz}) e^{{i{aa} {zz}}} \, d{zz} \right| \to 0"
             r"\text{{ as }} R \to \infty"
         ),
-        slots={"ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "zz": S(_VAR_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "aa": S(_CENTER_POOL), "zz": S(_VAR_POOL)},
     ),
 ]
 
@@ -327,26 +328,26 @@ _TEMPLATES_B4: list[Template] = [
     Template(
         name="taylor_complex",
         latex=(
-            r"{ff}({zz}) = \sum_{{n=0}}^{{\infty}} "
+            r"{ff}({zz}) = \sum{lim_mod}_{{n=0}}^{{\infty}} "
             r"\frac{{{ff}^{{(n)}}({aa})}}{{n!}} ({zz} - {aa})^n"
         ),
-        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
     ),
     Template(
         name="power_series_domain",
         latex=(
-            r"{ff}({zz}) = \sum_{{n=0}}^{{\infty}} c_n ({zz} - {aa})^n,"
+            r"{ff}({zz}) = \sum{lim_mod}_{{n=0}}^{{\infty}} c_n ({zz} - {aa})^n,"
             r"\quad |{zz} - {aa}| < R"
         ),
-        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
     ),
     Template(
         name="laurent_annulus",
         latex=(
-            r"{ff}({zz}) = \sum_{{n=-\infty}}^{{\infty}} c_n ({zz} - {aa})^n,"
+            r"{ff}({zz}) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n ({zz} - {aa})^n,"
             r"\quad r < |{zz} - {aa}| < R"
         ),
-        slots={"ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "zz": S(_VAR_POOL), "aa": S(_CENTER_POOL)},
     ),
     Template(
         name="radius_limsup",
@@ -496,10 +497,10 @@ _TEMPLATES_B7: list[Template] = [
     Template(
         name="riemann_zeta_def",
         latex=(
-            r"\zeta({ss}) = \sum_{{n=1}}^{{\infty}} \frac{{1}}{{n^{{{ss}}}}},"
+            r"\zeta({ss}) = \sum{lim_mod}_{{n=1}}^{{\infty}} \frac{{1}}{{n^{{{ss}}}}},"
             r"\quad \operatorname{{Re}}({ss}) > 1"
         ),
-        slots={"ss": S(_VAR_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ss": S(_VAR_POOL)},
     ),
     Template(
         name="zeta_functional_eq",
@@ -525,9 +526,9 @@ _TEMPLATES_B7: list[Template] = [
         name="hurwitz_zeta",
         latex=(
             r"\zeta({ss}, {aa}) = "
-            r"\sum_{{n=0}}^{{\infty}} \frac{{1}}{{(n + {aa})^{{{ss}}}}}"
+            r"\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{1}}{{(n + {aa})^{{{ss}}}}}"
         ),
-        slots={"ss": S(_VAR_POOL), "aa": X(_VAR_POOL, ("ss",))},
+        slots={"lim_mod": S(("", r"\limits")), "ss": S(_VAR_POOL), "aa": X(_VAR_POOL, ("ss",))},
     ),
 ]
 
@@ -583,8 +584,9 @@ _TEMPLATES_C: list[Template] = [
     ),
     Template(
         name="contour_fn_pair",
-        latex=r"\oint_{{{CC}}} {fn1}({zz}) {fn2}({zz}) \, d{zz}",
+        latex=r"\oint{lim_mod}_{{{CC}}} {fn1}({zz}) {fn2}({zz}) \, d{zz}",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "CC": S(_CURVE_POOL),
@@ -616,17 +618,17 @@ _TEMPLATES_D: list[Template] = [
         name="jacobi_theta_series",
         latex=(
             r"\vartheta_3({zz}, {qq}) = "
-            r"\sum_{{n=-\infty}}^{{\infty}} {qq}^{{n^2}} e^{{2\pi i n {zz}}}"
+            r"\sum{lim_mod}_{{n=-\infty}}^{{\infty}} {qq}^{{n^2}} e^{{2\pi i n {zz}}}"
         ),
-        slots={"zz": S(_VAR_POOL), "qq": S(_NOME_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "zz": S(_VAR_POOL), "qq": S(_NOME_POOL)},
     ),
     Template(
         name="jacobi_theta_product",
         latex=(
             r"\vartheta_3(0, {qq}) = "
-            r"\prod_{{n=1}}^{{\infty}} (1-{qq}^{{2n}})(1+{qq}^{{2n-1}})^2"
+            r"\prod{lim_mod}_{{n=1}}^{{\infty}} (1-{qq}^{{2n}})(1+{qq}^{{2n-1}})^2"
         ),
-        slots={"qq": S(_NOME_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "qq": S(_NOME_POOL)},
     ),
     Template(
         name="jacobi_theta_identity",
@@ -653,11 +655,13 @@ _TEMPLATES_E: list[Template] = [
         name="weierstrass_p_definition",
         latex=(
             r"\wp(z;\, g_2, g_3) = \frac{{1}}{{z^2}}"
-            r" + \sum_{{(m,n)\neq(0,0)}} \left("
+            r" + \sum{lim_mod}_{{(m,n)\neq(0,0)}} \left("
             r"\frac{{1}}{{(z - \omega_{{mn}})^2}} - \frac{{1}}{{\omega_{{mn}}^2}}"
             r"\right)"
         ),
-        slots={},
+        slots={
+            "lim_mod": S(("", r"\limits")),
+        },
     ),
     Template(
         name="weierstrass_p_ode",

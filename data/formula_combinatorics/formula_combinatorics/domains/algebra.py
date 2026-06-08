@@ -403,9 +403,10 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         name="binomial_theorem",
         latex=(
             r"\left({u} + {w}\right)^{{{exp}}} = "
-            r"\sum_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}"
+            r"\sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "exp": S(("n", "m", "k", "p", "r", "2", "3", "4", "5", "6")),
             "u": E(_expr, n=5000),
             "w": E(_expr, n=5000),
@@ -679,8 +680,9 @@ _ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="product_formula",
-        latex=r"\prod_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)",
+        latex=r"\prod{lim_mod}_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "v": S(tuple(_VARS), 0.35),
             "n": S(("n", "m", "N", "M", "r"), idx=0.35),
             "a11": S(("a", "b", "c", "d", "m", "n", "p", "q"), idx=0.35),
@@ -829,11 +831,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="am_gm_hm_inequality",
                 latex=(
-                    r"\frac{{{n}}}{{\sum_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} "
-                    r"\leq \left(\prod_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} "
-                    r"\leq \frac{{1}}{{{n}}} \sum_{{k=1}}^{{{n}}} {a}_k"
+                    r"\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} "
+                    r"\leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} "
+                    r"\leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "a": S(_COEFF_POOL),
                     "n": S(_GEO_N),
                 },
@@ -848,11 +851,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="cauchy_schwarz_sum",
                 latex=(
-                    r"\left(\sum_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 "
-                    r"\leq \sum_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 "
-                    r"\cdot \sum_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2"
+                    r"\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 "
+                    r"\leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 "
+                    r"\cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "idx": S(("i", "j", "k", "l", "m", "r")),
                     "ub": S(("n", "m", "N", "M", "K", "L", "P")),
                     "p1": S(tuple(_SCALARS)),
@@ -862,11 +866,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="cauchy_schwarz_integral",
                 latex=(
-                    r"\left(\int_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 "
-                    r"\leq \int_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} "
-                    r"\cdot \int_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}"
+                    r"\left(\int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 "
+                    r"\leq \int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} "
+                    r"\cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "v": S(tuple(_VARS), 0.35),
                     "lo": E(_atom, n=150),
                     "hi": E(_atom, n=150),
@@ -1006,8 +1011,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="sum_of_integers",
-                latex=r"\sum_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}",
-                slots={"n": S(_GEO_N)},
+                latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}",
+                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
             ),
             Template(
                 name="sum_of_integers_ellipsis",
@@ -1033,21 +1038,22 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             ),
             Template(
                 name="sum_of_squares",
-                latex=r"\sum_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}",
-                slots={"n": S(_GEO_N)},
+                latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}",
+                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
             ),
             Template(
                 name="sum_of_cubes",
-                latex=r"\sum_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2",
-                slots={"n": S(_GEO_N)},
+                latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2",
+                slots={"lim_mod": S(("", r"\limits")), "n": S(_GEO_N)},
             ),
             Template(
                 name="arithmetic_progression_sum",
                 latex=(
-                    r"\sum_{{k=0}}^{{{n}}} \left({a} + k{d}\right) "
+                    r"\sum{lim_mod}_{{k=0}}^{{{n}}} \left({a} + k{d}\right) "
                     r"= \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "a": S(_COEFF_POOL, idx=0.35),
                     "d": X(_COEFF_POOL, ("a",), idx=0.35),
                     "n": S(_GEO_N),
@@ -1103,10 +1109,11 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             Template(
                 name="telescoping_sum",
                 latex=(
-                    r"\sum_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) "
+                    r"\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) "
                     r"= {fn}({n}+1) - {fn}(1)"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fn": E(_fn_rich_nosub, n=100),
                     "n": S(_GEO_N),
                 },
@@ -1120,8 +1127,9 @@ _ALGEBRA_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="geometric_series_finite",
-                latex=(r"\sum_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
+                latex=(r"\sum{lim_mod}_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "a": S(_COEFF_POOL, idx=0.35),
                     "r": X(_COEFF_POOL, ("a",), idx=0.35),
                     "n": S(_GEO_N),
@@ -1130,16 +1138,18 @@ _ALGEBRA_TEMPLATES: list[Template] = [
             ),
             Template(
                 name="geometric_series_finite_unit",
-                latex=(r"\sum_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
+                latex=(r"\sum{lim_mod}_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}"),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "r": S(_COEFF_POOL, idx=0.35),
                     "n": S(_GEO_N),
                 },
             ),
             Template(
                 name="geometric_series_infinite",
-                latex=r"\sum_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}",
+                latex=r"\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}",
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "a": S(_COEFF_POOL, idx=0.35),
                     "r": X(_COEFF_POOL, ("a",), idx=0.35),
                 },

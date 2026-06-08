@@ -537,13 +537,13 @@ _TRIG_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="taylor_sin",
-                latex=r"{sn}({arg}) = \sum_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n+1}}}}{{(2n+1)!}}",
-                slots={"sn": E(_sin_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
+                latex=r"{sn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n+1}}}}{{(2n+1)!}}",
+                slots={"lim_mod": S(("", r"\limits")), "sn": E(_sin_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
             ),
             Template(
                 name="taylor_cos",
-                latex=r"{cn}({arg}) = \sum_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n}}}}{{(2n)!}}",
-                slots={"cn": E(_cos_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
+                latex=r"{cn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n}}}}{{(2n)!}}",
+                slots={"lim_mod": S(("", r"\limits")), "cn": E(_cos_nm, n=2), "arg": E(_taylor_arg_sub, n=450)},
             ),
             Template(
                 name="taylor_tan_approx",
@@ -688,8 +688,9 @@ _TRIG_TEMPLATES: list[Template] = [
     # c=24: Fourier/Euler roots of unity summation
     Template(
         name="roots_of_unity_sum",
-        latex=r"\sum_{{{k}=0}}^{{{n}-1}} e^{{2\pi i {k} {x} / {n}}} = 0",
+        latex=r"\sum{lim_mod}_{{{k}=0}}^{{{n}-1}} e^{{2\pi i {k} {x} / {n}}} = 0",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "k": S(("j", "k", "l", "m", "r", "s", "t")),
             "n": E(_fourier_n_sub, n=11),
             "x": S(tuple(_VARS), idx=0.35),
@@ -1455,11 +1456,12 @@ _TRIG_TEMPLATES: list[Template] = [
                 name="fourier_series_full",
                 latex=(
                     r"{fn}({v}) = \frac{{{ca}_0}}{{2}} + "
-                    r"\sum_{{k=1}}^{{\infty}}\!\left("
+                    r"\sum{lim_mod}_{{k=1}}^{{\infty}}\!\left("
                     r"{ca}_k \cos\frac{{k\pi {v}}}{{{L}}} "
                     r"+ {cb}_k \sin\frac{{k\pi {v}}}{{{L}}}\right)"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fn": E(_fn_rich_nosub, n=100),
                     "v": S(tuple(_VARS), idx=0.35),
                     "ca": S(tuple(_SCALARS)),

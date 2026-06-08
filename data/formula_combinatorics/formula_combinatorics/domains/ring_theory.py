@@ -448,9 +448,10 @@ _TEMPLATES_B4: list[Template] = [
         name="norm_trace",
         latex=(
             r"N_{{{KK}/{FF}}}({aa})"
-            r" = \prod_{{{phi} \in \operatorname{{Gal}}({KK}/{FF})}} {phi}({aa})"
+            r" = \prod{lim_mod}_{{{phi} \in \operatorname{{Gal}}({KK}/{FF})}} {phi}({aa})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "aa": S(_ELEM_POOL),
             "KK": S(_FIELD_POOL),
             "FF": X(_FIELD_POOL, ("KK",)),

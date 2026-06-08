@@ -51,9 +51,10 @@ _TEMPLATES_A: list[Template] = [
         name="radon_nikodym",
         latex=(
             r"\frac{{d{mu}}}{{d{nu}}} \geq 0, \quad {mu}({AA}) = "
-            r"\int_{{{AA}}} \frac{{d{mu}}}{{d{nu}}} \, d{nu}({xx})"
+            r"\int{lim_mod}_{{{AA}}} \frac{{d{mu}}}{{d{nu}}} \, d{nu}({xx})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
             "AA": S(_SET_POOL),
@@ -73,10 +74,11 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="fubini_tonelli",
         latex=(
-            r"\int_{{X \times Y}} {ff} \, d({mu} \otimes {nu}) = "
+            r"\int{lim_mod}_{{X \times Y}} {ff} \, d({mu} \otimes {nu}) = "
             r"\int_X \int_Y {ff}({xx},{yy}) \, d{nu}({yy}) \, d{mu}({xx})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
@@ -212,10 +214,11 @@ _TEMPLATES_B1: list[Template] = [
     Template(
         name="simple_function",
         latex=(
-            r"{ff} = \sum_{{k=1}}^{{{nn}}} {aa}_k \, "
+            r"{ff} = \sum{lim_mod}_{{k=1}}^{{{nn}}} {aa}_k \, "
             r"\mathbf{{1}}_{{{AA}_k}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "nn": S(_INT_POOL),
             "aa": S(_SCALAR_POOL),
@@ -432,9 +435,9 @@ _TEMPLATES_B5: list[Template] = [
         name="lebesgue_diff_theorem",
         latex=(
             r"\lim_{{r \to 0}} \frac{{1}}{{{mu}(B_r({xx}))}}"
-            r"\int_{{B_r({xx})}} {ff} \, d{mu} = {ff}({xx}) \text{{ a.e.}}"
+            r"\int{lim_mod}_{{B_r({xx})}} {ff} \, d{mu} = {ff}({xx}) \text{{ a.e.}}"
         ),
-        slots={"ff": S(_FUNC_POOL), "mu": S(_MU_POOL), "xx": S(_VAR_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "mu": S(_MU_POOL), "xx": S(_VAR_POOL)},
     ),
     Template(
         name="hardy_littlewood",
@@ -505,10 +508,11 @@ _TEMPLATES_B6: list[Template] = [
     Template(
         name="change_of_variables",
         latex=(
-            r"\int_{{f({AA})}} {gg}({yy}) \, d{nu}({yy}) = "
-            r"\int_{{{AA}}} {gg}({ff}({xx})) |\det D{ff}({xx})| \, d{mu}({xx})"
+            r"\int{lim_mod}_{{f({AA})}} {gg}({yy}) \, d{nu}({yy}) = "
+            r"\int{lim_mod}_{{{AA}}} {gg}({ff}({xx})) |\det D{ff}({xx})| \, d{mu}({xx})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "mu": S(_MU_POOL),
@@ -521,10 +525,11 @@ _TEMPLATES_B6: list[Template] = [
     Template(
         name="disintegration",
         latex=(
-            r"{mu} = \int_{{{YY}}} {mu}^{{{yy}}} \, d{nu}({yy})"
+            r"{mu} = \int{lim_mod}_{{{YY}}} {mu}^{{{yy}}} \, d{nu}({yy})"
             r" \quad \text{{(disintegration over }} {nu}\text{{)}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "mu": S(_MU_POOL),
             "nu": X(_MU_POOL, ("mu",)),
             "YY": S(_SPACE_POOL),
@@ -630,8 +635,9 @@ _TEMPLATES_B7: list[Template] = [
 _TEMPLATES_C: list[Template] = [
     Template(
         name="integrand_product_fn",
-        latex=r"\int_{{{AA}}} {fn1}({xx}) {fn2}({xx}) \, d{mu}({xx})",
+        latex=r"\int{lim_mod}_{{{AA}}} {fn1}({xx}) {fn2}({xx}) \, d{mu}({xx})",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "AA": S(_SET_POOL),
@@ -652,10 +658,11 @@ _TEMPLATES_C: list[Template] = [
     Template(
         name="radon_nikodym_fn",
         latex=(
-            r"{mu}({AA}) = \int_{{{AA}}} {fn1}({xx}) \, d{nu}({xx})"
+            r"{mu}({AA}) = \int{lim_mod}_{{{AA}}} {fn1}({xx}) \, d{nu}({xx})"
             r" \quad ({fn1} = \tfrac{{d{mu}}}{{d{nu}}})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "AA": S(_SET_POOL),
             "xx": S(_VAR_POOL),

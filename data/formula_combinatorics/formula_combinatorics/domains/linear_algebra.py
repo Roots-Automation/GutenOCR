@@ -61,8 +61,8 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="dot_product",
-        latex=r"\mathbf{{u}} \cdot \mathbf{{v}} = \sum_{{i=1}}^{{{n}}} u_i v_i",
-        slots={"n": S(_N_POOL)},
+        latex=r"\mathbf{{u}} \cdot \mathbf{{v}} = \sum{lim_mod}_{{i=1}}^{{{n}}} u_i v_i",
+        slots={"lim_mod": S(("", r"\limits")), "n": S(_N_POOL)},
     ),
     Template(
         name="cross_product",
@@ -81,8 +81,8 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="trace_det_eigenvalues",
-        latex=r"\operatorname{{tr}}({m}) = \sum_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod_{{i=1}}^{{{n}}} \lambda_i",
-        slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+        latex=r"\operatorname{{tr}}({m}) = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod{lim_mod}_{{i=1}}^{{{n}}} \lambda_i",
+        slots={"lim_mod": S(("", r"\limits")), "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
     Template(
         name="svd",
@@ -130,8 +130,8 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     ),
     Template(
         name="spectral_decomposition",
-        latex=r"{m} = \sum_{{i=1}}^{{{n}}} \lambda_i \mathbf{{u}}_i \mathbf{{u}}_i^\top",
-        slots={"m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
+        latex=r"{m} = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i \mathbf{{u}}_i \mathbf{{u}}_i^\top",
+        slots={"lim_mod": S(("", r"\limits")), "m": S(_MATRIX_NAMES), "n": S(_N_POOL)},
     ),
 ]
 

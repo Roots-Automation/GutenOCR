@@ -512,8 +512,9 @@ _TEMPLATES_B6: list[Template] = [
     ),
     Template(
         name="dependent_product",
-        latex=r"\prod_{{{xx}:{sa}}} {ta}({xx})",
+        latex=r"\prod{lim_mod}_{{{xx}:{sa}}} {ta}({xx})",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "xx": S(_VAR_POOL),
             "sa": S(_TYPE_POOL),
             "ta": X(_TYPE_POOL, ("sa",)),

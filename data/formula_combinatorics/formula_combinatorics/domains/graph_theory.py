@@ -35,8 +35,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
     # ------------------------------------------------------------------
     Template(
         name="handshaking_lemma",
-        latex=r"\sum_{{v \in V({gg})}} \deg_{{{gg}}}(v) = 2|E({gg})|",
-        slots={"gg": S(_GRAPH_POOL)},
+        latex=r"\sum{lim_mod}_{{v \in V({gg})}} \deg_{{{gg}}}(v) = 2|E({gg})|",
+        slots={"lim_mod": S(("", r"\limits")), "gg": S(_GRAPH_POOL)},
     ),
     Template(
         name="complete_graph_edges",
@@ -104,8 +104,8 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
     ),
     Template(
         name="degree_sequence_sum",
-        latex=r"2|E({gg})| = \sum_{{k \geq 0}} k \cdot n_k({gg})",
-        slots={"gg": S(_GRAPH_POOL)},
+        latex=r"2|E({gg})| = \sum{lim_mod}_{{k \geq 0}} k \cdot n_k({gg})",
+        slots={"lim_mod": S(("", r"\limits")), "gg": S(_GRAPH_POOL)},
     ),
     Template(
         name="ramsey_bound",
@@ -388,10 +388,11 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
     Template(
         name="kirchhoff_potential",
         latex=(
-            r"\sum_{{{uu} \sim {vv}}} {fn2}({uu},{vv})"
+            r"\sum{lim_mod}_{{{uu} \sim {vv}}} {fn2}({uu},{vv})"
             r"\,\bigl({fn1}({uu}) - {fn1}({vv})\bigr) = 0"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "uu": S(_VTX_POOL),
@@ -402,11 +403,12 @@ _GRAPH_THEORY_TEMPLATES: list[Template] = [
         name="spectral_quadratic_form",
         latex=(
             r"{fn1}^\top A({gg})\,{fn2}"
-            r" = \sum_{{({uu},{vv}) \in E({gg})}}"
+            r" = \sum{lim_mod}_{{({uu},{vv}) \in E({gg})}}"
             r" \bigl({fn1}({uu}){fn2}({vv})"
             r" + {fn1}({vv}){fn2}({uu})\bigr)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "gg": S(_GRAPH_POOL),

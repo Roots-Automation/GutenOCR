@@ -275,9 +275,10 @@ _TEMPLATES_B1: list[Template] = [
         name="abel_identity",
         latex=(
             r"W_{{{ff1},{ff2}}}({vv}) = W_0 \,"
-            r"e^{{-\int_{{v_0}}^{{{vv}}} {aa}(s)\,ds}}"
+            r"e^{{-\int{lim_mod}_{{v_0}}^{{{vv}}} {aa}(s)\,ds}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff1": S(_FUNC_POOL),
             "ff2": X(_FUNC_POOL, ("ff1",)),
             "vv": S(_VAR_POOL),
@@ -483,10 +484,11 @@ _TEMPLATES_B3: list[Template] = [
         name="laplace_derivative_rule",
         latex=(
             r"\mathcal{{L}}[{ff}^{{({nn})}}]({vv}) = "
-            r"{vv}^{{{nn}}} F({vv}) - \sum_{{k=0}}^{{{nn}-1}}"
+            r"{vv}^{{{nn}}} F({vv}) - \sum{lim_mod}_{{k=0}}^{{{nn}-1}}"
             r" {vv}^{{{nn}-1-k}} {ff}^{{(k)}}(0)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -519,8 +521,9 @@ _TEMPLATES_B3: list[Template] = [
     ),  # n_eff = 12 × 11 × 8 × 7 = 7,392
     Template(
         name="greens_function_solution",
-        latex=(r"{ff}({vv}) = \int_{{{dom}}} G({vv}, {xi}) \, {gg}({xi}) \, d{xi}"),
+        latex=(r"{ff}({vv}) = \int{lim_mod}_{{{dom}}} G({vv}, {xi}) \, {gg}({xi}) \, d{xi}"),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "vv": S(_VAR_POOL),
@@ -545,10 +548,11 @@ _TEMPLATES_B3: list[Template] = [
     Template(
         name="fourier_eigenfunction_series",
         latex=(
-            r"{ff}({vv}, t) = \sum_{{{nn}=1}}^{{\infty}}"
+            r"{ff}({vv}, t) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}}"
             r" a_{{{nn}}} e^{{-{lam}_{{{nn}}} t}} \varphi_{{{nn}}}({vv})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -597,10 +601,11 @@ _TEMPLATES_B4: list[Template] = [
     Template(
         name="eigenfunction_orthogonality",
         latex=(
-            r"\int_{{{dom}}} \varphi_{{{mm}}} \varphi_{{{nn}}} {ww} \, d{vv}"
+            r"\int{lim_mod}_{{{dom}}} \varphi_{{{mm}}} \varphi_{{{nn}}} {ww} \, d{vv}"
             r" = \delta_{{{mm}{nn}}} \|\varphi_{{{nn}}}\|^2"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "dom": S(_DOMAIN_POOL),
             "mm": S(_IDX_POOL),
             "nn": X(_IDX_POOL, ("mm",)),
@@ -611,11 +616,12 @@ _TEMPLATES_B4: list[Template] = [
     Template(
         name="eigenfunction_expansion",
         latex=(
-            r"{ff} = \sum_{{{nn}}} c_{{{nn}}} \varphi_{{{nn}}}, \quad"
+            r"{ff} = \sum{lim_mod}_{{{nn}}} c_{{{nn}}} \varphi_{{{nn}}}, \quad"
             r" c_{{{nn}}} = \frac{{\langle {gg}, \varphi_{{{nn}}} \rangle}}"
             r"{{\|\varphi_{{{nn}}}\|^2}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "nn": S(_IDX_POOL),
@@ -672,10 +678,11 @@ _TEMPLATES_B5: list[Template] = [
     Template(
         name="power_series_ode",
         latex=(
-            r"{ff}({vv}) = \sum_{{{nn}=0}}^{{\infty}}"
+            r"{ff}({vv}) = \sum{lim_mod}_{{{nn}=0}}^{{\infty}}"
             r" a_{{{nn}}} ({vv} - {vv}_0)^{{{nn}}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "nn": S(_IDX_POOL),
@@ -685,10 +692,11 @@ _TEMPLATES_B5: list[Template] = [
         name="frobenius_method",
         latex=(
             r"{ff}({vv}) = {vv}^{{{rr}}}"
-            r" \sum_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {vv}^{{{nn}}}"
+            r" \sum{lim_mod}_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {vv}^{{{nn}}}"
             r" \text{{ near regular singular point}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "vv": S(_VAR_POOL),
             "rr": S(_PARAM_POOL),

@@ -31,18 +31,18 @@ _S_POOL = ("s", r"s + j\omega", r"\sigma + i\omega", r"\lambda")
 _PART_A: list[Template] = [
     Template(
         name="fourier_transform",
-        latex=r"\hat{{{ff}}}({xi}) = \int_{{-\infty}}^{{\infty}} {ff}({tt})\, e^{{-2\pi i {tt} {xi}}} \, d{tt}",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+        latex=r"\hat{{{ff}}}({xi}) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt})\, e^{{-2\pi i {tt} {xi}}} \, d{tt}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="inverse_fourier_transform",
-        latex=r"{ff}({tt}) = \int_{{-\infty}}^{{\infty}} \hat{{{ff}}}({xi})\, e^{{2\pi i {tt} {xi}}} \, d{xi}",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+        latex=r"{ff}({tt}) = \int{lim_mod}_{{-\infty}}^{{\infty}} \hat{{{ff}}}({xi})\, e^{{2\pi i {tt} {xi}}} \, d{xi}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="fourier_series",
-        latex=r"{ff}({vv}) = \sum_{{n=-\infty}}^{{\infty}} c_n\, e^{{2\pi i n {vv} / {T}}}",
-        slots={"ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
+        latex=r"{ff}({vv}) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n\, e^{{2\pi i n {vv} / {T}}}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
     ),
     Template(
         name="fourier_coefficients",
@@ -51,13 +51,19 @@ _PART_A: list[Template] = [
     ),
     Template(
         name="parseval",
-        latex=r"\int_{{-\infty}}^{{\infty}} |{ff}({tt})|^2 \, d{tt} = \int_{{-\infty}}^{{\infty}} |\hat{{{ff}}}({xi})|^2 \, d{xi}",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+        latex=r"\int{lim_mod}_{{-\infty}}^{{\infty}} |{ff}({tt})|^2 \, d{tt} = \int{lim_mod}_{{-\infty}}^{{\infty}} |\hat{{{ff}}}({xi})|^2 \, d{xi}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="convolution",
-        latex=r"({ff} * {gg})({tt}) = \int_{{-\infty}}^{{\infty}} {ff}({tau})\, {gg}({tt} - {tau}) \, d{tau}",
-        slots={"ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
+        latex=r"({ff} * {gg})({tt}) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tau})\, {gg}({tt} - {tau}) \, d{tau}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "ff": S(_FUNC_POOL),
+            "gg": X(_FUNC_POOL, ("ff",)),
+            "tt": S(_TIME_POOL),
+            "tau": S(_TVAR_POOL),
+        },
     ),
     Template(
         name="convolution_theorem",
@@ -71,18 +77,18 @@ _PART_A: list[Template] = [
     ),
     Template(
         name="z_transform",
-        latex=r"X(z) = \sum_{{{nn}=-\infty}}^{{\infty}} {xx}[{nn}]\, z^{{-{nn}}}",
-        slots={"xx": S(_SIGNAL_POOL), "nn": S(_IDX_POOL)},
+        latex=r"X(z) = \sum{lim_mod}_{{{nn}=-\infty}}^{{\infty}} {xx}[{nn}]\, z^{{-{nn}}}",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="dft",
-        latex=r"X[k] = \sum_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\, e^{{-2\pi i k {nn} / {N}}}",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\, e^{{-2\pi i k {nn} / {N}}}",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="dirac_delta_sifting",
-        latex=r"\int_{{-\infty}}^{{\infty}} \delta({tt} - {aa})\, {ff}({tt}) \, d{tt} = {ff}({aa})",
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "aa": S(_COEFF_POOL)},
+        latex=r"\int{lim_mod}_{{-\infty}}^{{\infty}} \delta({tt} - {aa})\, {ff}({tt}) \, d{tt} = {ff}({aa})",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "aa": S(_COEFF_POOL)},
     ),
     Template(
         name="time_frequency_uncertainty",
@@ -91,8 +97,8 @@ _PART_A: list[Template] = [
     ),
     Template(
         name="poisson_summation",
-        latex=r"\sum_{{{nn}=-\infty}}^{{\infty}} {ff}({nn}) = \sum_{{k=-\infty}}^{{\infty}} \hat{{{ff}}}(k)",
-        slots={"ff": S(_FUNC_POOL), "nn": S(_IDX_POOL)},
+        latex=r"\sum{lim_mod}_{{{nn}=-\infty}}^{{\infty}} {ff}({nn}) = \sum{lim_mod}_{{k=-\infty}}^{{\infty}} \hat{{{ff}}}(k)",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="transfer_function",
@@ -155,10 +161,10 @@ _PART_B_FS: list[Template] = [
         name="fourier_series_real",
         latex=(
             r"{ff}({vv}) = \frac{{a_0}}{{2}}"
-            r" + \sum_{{n=1}}^\infty \Bigl(a_n\cos\tfrac{{2\pi n\,{vv}}}{{{T}}}"
+            r" + \sum{lim_mod}_{{n=1}}^\infty \Bigl(a_n\cos\tfrac{{2\pi n\,{vv}}}{{{T}}}"
             r" + b_n\sin\tfrac{{2\pi n\,{vv}}}{{{T}}}\Bigr)"
         ),
-        slots={"ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
     ),
     Template(
         name="fourier_coeff_cosine",
@@ -172,23 +178,23 @@ _PART_B_FS: list[Template] = [
     ),
     Template(
         name="dirichlet_kernel",
-        latex=r"D_{{{nn}}}({vv}) = \sum_{{k=-{nn}}}^{{{nn}}} e^{{ik{vv}}} = \frac{{\sin\bigl(({nn}+\tfrac{{1}}{{2}}){vv}\bigr)}}{{\sin({vv}/2)}}",
-        slots={"nn": S(_IDX_POOL), "vv": S(_TIME_POOL)},
+        latex=r"D_{{{nn}}}({vv}) = \sum{lim_mod}_{{k=-{nn}}}^{{{nn}}} e^{{ik{vv}}} = \frac{{\sin\bigl(({nn}+\tfrac{{1}}{{2}}){vv}\bigr)}}{{\sin({vv}/2)}}",
+        slots={"lim_mod": S(("", r"\limits")), "nn": S(_IDX_POOL), "vv": S(_TIME_POOL)},
     ),
     Template(
         name="fejer_kernel",
-        latex=r"F_{{{nn}}}({vv}) = \frac{{1}}{{{nn}}}\sum_{{k=0}}^{{{nn}-1}} D_k({vv})",
-        slots={"nn": S(_IDX_POOL), "vv": S(_TIME_POOL)},
+        latex=r"F_{{{nn}}}({vv}) = \frac{{1}}{{{nn}}}\sum{lim_mod}_{{k=0}}^{{{nn}-1}} D_k({vv})",
+        slots={"lim_mod": S(("", r"\limits")), "nn": S(_IDX_POOL), "vv": S(_TIME_POOL)},
     ),
     Template(
         name="parseval_series",
-        latex=r"\sum_{{n=-\infty}}^\infty |c_n|^2 = \frac{{1}}{{{T}}}\int_0^{{{T}}} |{ff}({vv})|^2\,d{vv}",
-        slots={"ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
+        latex=r"\sum{lim_mod}_{{n=-\infty}}^\infty |c_n|^2 = \frac{{1}}{{{T}}}\int_0^{{{T}}} |{ff}({vv})|^2\,d{vv}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "T": S(_PERIOD_POOL), "vv": S(_TIME_POOL)},
     ),
     Template(
         name="bessel_inequality",
-        latex=r"\sum_{{n=0}}^\infty \bigl|\langle {ff},\, e_n\rangle\bigr|^2 \leq \|{ff}\|^2",
-        slots={"ff": S(_FUNC_POOL)},
+        latex=r"\sum{lim_mod}_{{n=0}}^\infty \bigl|\langle {ff},\, e_n\rangle\bigr|^2 \leq \|{ff}\|^2",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL)},
     ),
     Template(
         name="orthonormality_trig",
@@ -209,8 +215,8 @@ _PART_B_FS: list[Template] = [
 _PART_B_DFT: list[Template] = [
     Template(
         name="idft",
-        latex=r"{xx}[{nn}] = \frac{{1}}{{{N}}}\sum_{{k=0}}^{{{N}-1}} X[k]\,e^{{2\pi i k\,{nn}/{N}}}",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"{xx}[{nn}] = \frac{{1}}{{{N}}}\sum{lim_mod}_{{k=0}}^{{{N}-1}} X[k]\,e^{{2\pi i k\,{nn}/{N}}}",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="dft_shift",
@@ -219,8 +225,8 @@ _PART_B_DFT: list[Template] = [
     ),
     Template(
         name="dft_parseval",
-        latex=r"\sum_{{{nn}=0}}^{{{N}-1}}|{xx}[{nn}]|^2 = \frac{{1}}{{{N}}}\sum_{{k=0}}^{{{N}-1}}|X[k]|^2",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"\sum{lim_mod}_{{{nn}=0}}^{{{N}-1}}|{xx}[{nn}]|^2 = \frac{{1}}{{{N}}}\sum{lim_mod}_{{k=0}}^{{{N}-1}}|X[k]|^2",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="dft_convolution",
@@ -229,8 +235,8 @@ _PART_B_DFT: list[Template] = [
     ),
     Template(
         name="twiddle_factor",
-        latex=r"W_{{{N}}} = e^{{-2\pi i/{N}}},\quad X[k] = \sum_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\,W_{{{N}}}^{{{nn} k}}",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"W_{{{N}}} = e^{{-2\pi i/{N}}},\quad X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\,W_{{{N}}}^{{{nn} k}}",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="nyquist_sampling",
@@ -301,32 +307,38 @@ _PART_B_ZT: list[Template] = [
 _PART_B_HA: list[Template] = [
     Template(
         name="l2_norm_def",
-        latex=r"\|{ff}\|_{{L^2}} = \left(\int_{{-\infty}}^{{\infty}} |{ff}({tt})|^2\,d{tt}\right)^{{1/2}}",
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
+        latex=r"\|{ff}\|_{{L^2}} = \left(\int{lim_mod}_{{-\infty}}^{{\infty}} |{ff}({tt})|^2\,d{tt}\right)^{{1/2}}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="inner_product_L2",
-        latex=r"\langle {ff},\, {gg}\rangle = \int_{{-\infty}}^{{\infty}} {ff}({tt})\,\overline{{{gg}({tt})}}\,d{tt}",
-        slots={"ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL)},
+        latex=r"\langle {ff},\, {gg}\rangle = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt})\,\overline{{{gg}({tt})}}\,d{tt}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="hilbert_transform",
         latex=(
             r"\mathcal{{H}}\left\{{{ff}\right\}}({tt})"
             r" = \frac{{1}}{{\pi}}\,\mathrm{{p.v.}}"
-            r"\int_{{-\infty}}^\infty \frac{{{ff}({tau})}}{{{tt} - {tau}}}\,d{tau}"
+            r"\int{lim_mod}_{{-\infty}}^\infty \frac{{{ff}({tau})}}{{{tt} - {tau}}}\,d{tau}"
         ),
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
     ),
     Template(
         name="autocorrelation",
-        latex=r"R_{{{ff}{ff}}}({tau}) = \int_{{-\infty}}^\infty {ff}({tt})\,\overline{{{ff}({tt}-{tau})}}\,d{tt}",
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
+        latex=r"R_{{{ff}{ff}}}({tau}) = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{ff}({tt}-{tau})}}\,d{tt}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
     ),
     Template(
         name="cross_correlation",
-        latex=r"R_{{{ff} {gg}}}({tau}) = \int_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,d{tt}",
-        slots={"ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL), "tau": S(_TVAR_POOL)},
+        latex=r"R_{{{ff} {gg}}}({tau}) = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,d{tt}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "ff": S(_FUNC_POOL),
+            "gg": X(_FUNC_POOL, ("ff",)),
+            "tt": S(_TIME_POOL),
+            "tau": S(_TVAR_POOL),
+        },
     ),
     Template(
         name="power_spectral_density",
@@ -341,10 +353,11 @@ _PART_B_WAV: list[Template] = [
         name="stft",
         latex=(
             r"V_{{{ff}}}({xi},\,{tau})"
-            r" = \int_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}"
+            r" = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}"
             r"\,e^{{-2\pi i\,{xi}\,{tt}}}\,d{tt}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_FUNC_POOL),
             "gg": X(_FUNC_POOL, ("ff",)),
             "xi": S(_FREQ_POOL),
@@ -357,9 +370,9 @@ _PART_B_WAV: list[Template] = [
         latex=(
             r"W_{{{ff}}}(a,b)"
             r" = \frac{{1}}{{\sqrt{{|a|}}}}"
-            r"\int_{{-\infty}}^\infty {ff}({tt})\,\overline{{\psi\!\left(\frac{{{tt}-b}}{{a}}\right)}}\,d{tt}"
+            r"\int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{\psi\!\left(\frac{{{tt}-b}}{{a}}\right)}}\,d{tt}"
         ),
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="admissibility_condition",
@@ -370,10 +383,10 @@ _PART_B_WAV: list[Template] = [
         name="wavelet_reconstruction",
         latex=(
             r"{ff}({tt}) = \frac{{1}}{{C_\psi}}"
-            r"\int_0^\infty\!\int_{{-\infty}}^\infty W_{{{ff}}}(a,b)\,\psi_{{a,b}}({tt})"
+            r"\int_0^\infty\!\int{lim_mod}_{{-\infty}}^\infty W_{{{ff}}}(a,b)\,\psi_{{a,b}}({tt})"
             r"\,\frac{{db\,da}}{{a^2}}"
         ),
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
     ),
 ]
 
@@ -381,13 +394,13 @@ _PART_B_WAV: list[Template] = [
 _PART_B_OTH: list[Template] = [
     Template(
         name="dct_type2",
-        latex=r"X[k] = \sum_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\cos\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\cos\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="dst_type2",
-        latex=r"X[k] = \sum_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\sin\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)",
-        slots={"xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\sin\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_SIGNAL_POOL), "N": S(_SIZE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="hadamard_transform",
@@ -408,13 +421,18 @@ _PART_B_OTH: list[Template] = [
 _PART_B_FILT: list[Template] = [
     Template(
         name="frequency_response",
-        latex=r"H({fo}) = \sum_{{n=-\infty}}^\infty {hh}[n]\,e^{{-i\,{fo}\,n}}",
-        slots={"hh": S(_KERNEL_POOL), "fo": S(_FREQ_POOL)},
+        latex=r"H({fo}) = \sum{lim_mod}_{{n=-\infty}}^\infty {hh}[n]\,e^{{-i\,{fo}\,n}}",
+        slots={"lim_mod": S(("", r"\limits")), "hh": S(_KERNEL_POOL), "fo": S(_FREQ_POOL)},
     ),
     Template(
         name="impulse_response_convolution",
-        latex=r"{yy}[n] = \sum_{{k=-\infty}}^\infty {hh}[k]\,{xx}[n-k]",
-        slots={"xx": S(_SIGNAL_POOL), "yy": X(_SIGNAL_POOL, ("xx",)), "hh": S(_KERNEL_POOL)},
+        latex=r"{yy}[n] = \sum{lim_mod}_{{k=-\infty}}^\infty {hh}[k]\,{xx}[n-k]",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "xx": S(_SIGNAL_POOL),
+            "yy": X(_SIGNAL_POOL, ("xx",)),
+            "hh": S(_KERNEL_POOL),
+        },
     ),
     Template(
         name="group_delay",
@@ -501,9 +519,10 @@ _PART_C: list[Template] = [
         name="autocorrelation_pair",
         latex=(
             r"R_{{{fn1} {fn2}}}({tau})"
-            r" = \int_{{-\infty}}^\infty {fn1}({tt})\,\overline{{{fn2}({tt}-{tau})}}\,d{tt}"
+            r" = \int{lim_mod}_{{-\infty}}^\infty {fn1}({tt})\,\overline{{{fn2}({tt}-{tau})}}\,d{tt}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "tau": S(_TVAR_POOL),
@@ -519,9 +538,10 @@ _PART_C: list[Template] = [
         name="laplace_product_pair",
         latex=(
             r"\mathcal{{L}}\left\{{{fn1}(t) \cdot {fn2}(t)\right\}}({ss})"
-            r" = \frac{{1}}{{2\pi i}}\int_{{{cc}-i\infty}}^{{{cc}+i\infty}} F_1(\sigma)\,F_2({ss}-\sigma)\,d\sigma"
+            r" = \frac{{1}}{{2\pi i}}\int{lim_mod}_{{{cc}-i\infty}}^{{{cc}+i\infty}} F_1(\sigma)\,F_2({ss}-\sigma)\,d\sigma"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "ss": S(_S_POOL),
@@ -563,8 +583,14 @@ _PART_D: list[Template] = [
     ),
     Template(
         name="fourier_truncation_approx",
-        latex=r"{ff}({tt}) \approx \sum_{{|k| \leq {N}}} \hat{{{ff}}}(k)\, e^{{2\pi i\,k\,{tt}/{T}}}",
-        slots={"ff": S(_FUNC_POOL), "tt": S(_TIME_POOL), "T": S(_PERIOD_POOL), "N": S(_SIZE_POOL)},
+        latex=r"{ff}({tt}) \approx \sum{lim_mod}_{{|k| \leq {N}}} \hat{{{ff}}}(k)\, e^{{2\pi i\,k\,{tt}/{T}}}",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "ff": S(_FUNC_POOL),
+            "tt": S(_TIME_POOL),
+            "T": S(_PERIOD_POOL),
+            "N": S(_SIZE_POOL),
+        },
     ),
     Template(
         name="dft_cft_approx",
@@ -576,18 +602,18 @@ _PART_D: list[Template] = [
 _PART_E: list[Template] = [
     Template(
         name="fourier_real_part",
-        latex=r"\Re(\hat{{{ff}}}({xi})) = \int_{{-\infty}}^{{\infty}} {ff}({tt}) \cos(2\pi {xi} {tt})\,d{tt}",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+        latex=r"\Re(\hat{{{ff}}}({xi})) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt}) \cos(2\pi {xi} {tt})\,d{tt}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="fourier_imaginary_part",
-        latex=r"\Im(\hat{{{ff}}}({xi})) = -\int_{{-\infty}}^{{\infty}} {ff}({tt}) \sin(2\pi {xi} {tt})\,d{tt}",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
+        latex=r"\Im(\hat{{{ff}}}({xi})) = -\int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt}) \sin(2\pi {xi} {tt})\,d{tt}",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
         name="power_spectral_density_Re",
-        latex=r"S_{{{ff}}}({xi}) = \Re\!\left(\int_{{-\infty}}^{{\infty}} R_{{{ff}}}(\tau)\,e^{{-2\pi i {xi} \tau}}\,d\tau\right)",
-        slots={"ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL)},
+        latex=r"S_{{{ff}}}({xi}) = \Re\!\left(\int{lim_mod}_{{-\infty}}^{{\infty}} R_{{{ff}}}(\tau)\,e^{{-2\pi i {xi} \tau}}\,d\tau\right)",
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL)},
     ),
 ]
 

@@ -126,8 +126,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
     ),
     Template(
         name="partition_function",
-        latex=r"Z = \sum_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}",
-        slots={"bt": S(_BETA_POOL), "ii": S(_IDX_POOL)},
+        latex=r"Z = \sum{lim_mod}_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}",
+        slots={"lim_mod": S(("", r"\limits")), "bt": S(_BETA_POOL), "ii": S(_IDX_POOL)},
     ),
     Template(
         name="poisson_bracket",
@@ -209,8 +209,12 @@ _PHYSICS_TEMPLATES: list[Template] = [
     ),
     Template(
         name="moment_of_inertia_sum",
-        latex=r"I = \sum_{{{ii}}} {mm}_{{{ii}}}\,r_{{{ii}}}^2",
-        slots={"ii": S(_IDX_POOL), "mm": S(tuple(v for v in _MASS_POOL if "_" not in v))},
+        latex=r"I = \sum{lim_mod}_{{{ii}}} {mm}_{{{ii}}}\,r_{{{ii}}}^2",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+            "ii": S(_IDX_POOL),
+            "mm": S(tuple(v for v in _MASS_POOL if "_" not in v)),
+        },
     ),
     Template(
         name="torque_cross_product",
@@ -304,9 +308,9 @@ _PHYSICS_TEMPLATES: list[Template] = [
         name="expectation_value_qm",
         latex=(
             r"\langle {psi} | \hat{{A}} | {psi} \rangle"
-            r" = \int_{{-\infty}}^{{\infty}} {psi}^*\!(x)\,{fn}(x)\,{psi}(x)\,dx"
+            r" = \int{lim_mod}_{{-\infty}}^{{\infty}} {psi}^*\!(x)\,{fn}(x)\,{psi}(x)\,dx"
         ),
-        slots={"psi": S(_PSI_POOL), "fn": E(_fn_rich_nosub, n=100)},
+        slots={"lim_mod": S(("", r"\limits")), "psi": S(_PSI_POOL), "fn": E(_fn_rich_nosub, n=100)},
     ),
     Template(
         name="time_evolution_state",
@@ -364,8 +368,8 @@ _PHYSICS_TEMPLATES: list[Template] = [
     ),
     Template(
         name="entropy_statistical",
-        latex=r"S = -{kb}\sum_{{{ii}}} p_{{{ii}}}\ln p_{{{ii}}}",
-        slots={"kb": S(_KB_POOL), "ii": S(_IDX_POOL)},
+        latex=r"S = -{kb}\sum{lim_mod}_{{{ii}}} p_{{{ii}}}\ln p_{{{ii}}}",
+        slots={"lim_mod": S(("", r"\limits")), "kb": S(_KB_POOL), "ii": S(_IDX_POOL)},
     ),
     Template(
         name="average_energy",
@@ -506,10 +510,10 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="variational_action",
         latex=(
-            r"\delta\int_{{t_1}}^{{t_2}}"
+            r"\delta\int{lim_mod}_{{t_1}}^{{t_2}}"
             r" {fn}\!\left({qq},\,\dot{{{qq}}},\,t\right)\,dt = 0"
         ),
-        slots={"fn": E(_fn_rich_nosub, n=100), "qq": S(_Q_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "fn": E(_fn_rich_nosub, n=100), "qq": S(_Q_POOL)},
     ),
     Template(
         name="euler_lagrange_functional",
@@ -559,10 +563,11 @@ _PHYSICS_TEMPLATES: list[Template] = [
     Template(
         name="action_functional",
         latex=(
-            r"S[{fn1}] = \int_{{t_0}}^{{t_1}}"
+            r"S[{fn1}] = \int{lim_mod}_{{t_0}}^{{t_1}}"
             r" {fn2}\!\left({qq},\,\dot{{{qq}}},\,t\right)\,dt"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "qq": S(_Q_POOL),
@@ -674,8 +679,9 @@ _PHYSICS_TEMPLATES += [
     ),
     Template(
         name="fn_canonical_ensemble",
-        latex=r"{fn1}(Z) = {fn2}\!\left(\sum_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}\right)",
+        latex=r"{fn1}(Z) = {fn2}\!\left(\sum{lim_mod}_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}\right)",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "bt": S(_BETA_POOL),
@@ -739,9 +745,10 @@ _PHYSICS_TEMPLATES += [
         name="grand_canonical_partition",
         latex=(
             r"\Xi(\mu, {vv}, {tt}) = "
-            r"\sum_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})"
+            r"\sum{lim_mod}_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "vv": S(_VOL_POOL),
             "tt": S(_TEMP_POOL),
             "ff": S(_FUG_POOL),

@@ -85,8 +85,8 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     ),
     Template(
         name="euler_characteristic",
-        latex=r"\chi({sp}) = \sum_{{{nn} \geq 0}} (-1)^{{{nn}}} b_{{{nn}}}({sp})",
-        slots={"sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
+        latex=r"\chi({sp}) = \sum{lim_mod}_{{{nn} \geq 0}} (-1)^{{{nn}}} b_{{{nn}}}({sp})",
+        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="boundary_squared",
@@ -100,8 +100,8 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     ),
     Template(
         name="stokes_topology",
-        latex=r"\int_{{\partial {mm}}} {om} = \int_{{{mm}}} d{om}",
-        slots={"mm": S(_SPACE_POOL), "om": S(_OMEGA_POOL)},
+        latex=r"\int{lim_mod}_{{\partial {mm}}} {om} = \int{lim_mod}_{{{mm}}} d{om}",
+        slots={"lim_mod": S(("", r"\limits")), "mm": S(_SPACE_POOL), "om": S(_OMEGA_POOL)},
     ),
     Template(
         name="homology_disjoint_union",
@@ -217,17 +217,17 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
         name="product_topology_subbasis",
         latex=(
             r"\pi_{{{nn}}}^{{-1}}({uu})"
-            r" \text{{ form a sub-basis for }} \prod_{{{nn}}} {sp}_{{{nn}}}"
+            r" \text{{ form a sub-basis for }} \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}}"
         ),
-        slots={"sp": S(_SPACE_POOL), "uu": S(_OPEN_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "uu": S(_OPEN_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="tychonoff_theorem",
         latex=(
             r"\Bigl(\forall\, {nn} : {sp}_{{{nn}}} \text{{ compact}}\Bigr)"
-            r" \implies \prod_{{{nn}}} {sp}_{{{nn}}} \text{{ compact}}"
+            r" \implies \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}} \text{{ compact}}"
         ),
-        slots={"sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "sp": S(_SPACE_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="baire_category_theorem",
@@ -530,10 +530,10 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
         name="degree_of_map",
         latex=(
             r"\deg({ff})"
-            r" = \sum_{{x \in {ff}^{{-1}}(y)}}"
+            r" = \sum{lim_mod}_{{x \in {ff}^{{-1}}(y)}}"
             r" \operatorname{{sign}}\, d{ff}_x"
         ),
-        slots={"ff": S(_MAP_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_MAP_POOL)},
     ),
     Template(
         name="morse_inequality",
@@ -543,10 +543,10 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
     Template(
         name="lefschetz_number",
         latex=(
-            r"L({ff}) = \sum_{{k=0}}^{{{nn}}} (-1)^k"
+            r"L({ff}) = \sum{lim_mod}_{{k=0}}^{{{nn}}} (-1)^k"
             r" \mathrm{{Tr}}\bigl({ff}_* : H_k \to H_k\bigr)"
         ),
-        slots={"ff": S(_MAP_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "ff": S(_MAP_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="lefschetz_fixed_point",

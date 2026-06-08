@@ -160,16 +160,18 @@ _GROUP_THEORY_TEMPLATES: list[Template] = [
         variants=[
             Template(
                 name="class_equation_center",
-                latex=r"|{G}| = |Z({G})| + \sum_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]",
+                latex=r"|{G}| = |Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]",
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
                 },
             ),
             Template(
                 name="class_equation_conjugacy",
-                latex=r"|{G}| = \sum_{{[{g_el}]}} \frac{{|{G}|}}{{|C_{{{G}}}({g_el})|}}",
+                latex=r"|{G}| = \sum{lim_mod}_{{[{g_el}]}} \frac{{|{G}|}}{{|C_{{{G}}}({g_el})|}}",
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "G": S(_G_POOL),
                     "g_el": S(_ELEMS_T),
                 },
@@ -682,8 +684,9 @@ _GROUP_THEORY_TEMPLATES.append(
             ),
             Template(
                 name="gl_order_formula",
-                latex=r"|GL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})| = \prod_{{k=0}}^{{{nv}-1}} ({qv}^{{{nv}}} - {qv}^k)",
+                latex=r"|GL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})| = \prod{lim_mod}_{{k=0}}^{{{nv}-1}} ({qv}^{{{nv}}} - {qv}^k)",
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "nv": S(_NV_POOL),
                     "qv": S(_QV_POOL),
                 },
@@ -726,9 +729,10 @@ _GROUP_THEORY_TEMPLATES.append(
         name="burnside_lemma",
         latex=(
             r"|{H}/{G}|"
-            r" = \tfrac{{1}}{{|{G}|}}\sum_{{{g_el} \in {G}}} \left|{H}^{{{g_el}}}\right|"
+            r" = \tfrac{{1}}{{|{G}|}}\sum{lim_mod}_{{{g_el} \in {G}}} \left|{H}^{{{g_el}}}\right|"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
             "g_el": S(_ELEMS_T),
@@ -919,9 +923,10 @@ _GROUP_THEORY_TEMPLATES.append(
         name="transfer_homomorphism",
         latex=(
             r"\operatorname{{Ver}} : {G} \to {H}/[{H},{H}],"
-            r"\quad {phi}({g_el}) = \prod_{{t}} t{g_el} t^{{-1}} \bmod [{H},{H}]"
+            r"\quad {phi}({g_el}) = \prod{lim_mod}_{{t}} t{g_el} t^{{-1}} \bmod [{H},{H}]"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "G": S(_G_POOL),
             "H": X(_SIMPLE_T, ("G",)),
             "phi": S(_HOMOS_T),
@@ -1049,9 +1054,10 @@ _GROUP_THEORY_TEMPLATES.append(
         name="fn_class_equation",
         latex=(
             r"{fn1}(|{G}|)"
-            r" = {fn2}\!\left(|Z({G})| + \sum_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]\right)"
+            r" = {fn2}\!\left(|Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]\right)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "G": S(_G_POOL),

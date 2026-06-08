@@ -33,7 +33,8 @@ def _def_integral(
     var = _v(rng)
     lower = lo if lo is not None else _lower(rng)
     upper = hi if hi is not None else _upper(rng)
-    return rf"\int_{{{lower}}}^{{{upper}}} {_expr(rng)} \, d{var}"
+    lim = r"\limits" if rng.random() < 0.5 else ""
+    return rf"\int{lim}_{{{lower}}}^{{{upper}}} {_expr(rng)} \, d{var}"
 
 
 def _indef_integral(rng: random.Random) -> str:
@@ -76,7 +77,8 @@ def _matrix_env(
 def _sum_indexed(rng: random.Random, lo: str, hi: str) -> str:
     """Return a \\sum_{idx=lo}^{hi} expr."""
     idx = _i(rng)
-    return rf"\sum_{{{idx}={lo}}}^{{{hi}}} {_expr(rng)}"
+    lim = r"\limits" if rng.random() < 0.5 else ""
+    return rf"\sum{lim}_{{{idx}={lo}}}^{{{hi}}} {_expr(rng)}"
 
 
 def _norm(rng: random.Random, p: str | None = None) -> str:

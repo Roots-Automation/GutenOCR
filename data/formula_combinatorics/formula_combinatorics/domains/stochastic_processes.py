@@ -676,11 +676,12 @@ _TEMPLATES_B4: list[Template] = [
         latex=(
             r"{func}(x, {t})"
             r" = \mathbb{{E}}^x\!\left["
-            r"e^{{-\int_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}})\, d{s}}}"
+            r"e^{{-\int{lim_mod}_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}})\, d{s}}}"
             r"\, {func2}({proc}_{{{T}}})"
             r"\right]"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "func": S(_FUNC_POOL),
             "func2": X(_FUNC_POOL, ("func",)),
             "proc": S(_PROC_POOL),
@@ -741,8 +742,9 @@ _TEMPLATES_B5: list[Template] = [
     ),  # 9×11×7×6 = 4,158
     Template(
         name="compound_poisson_process",
-        latex=(r"{proc1}_{{{t}}} = \sum_{{k=1}}^{{{proc2}_{{{t}}}}} {func}_k"),
+        latex=(r"{proc1}_{{{t}}} = \sum{lim_mod}_{{k=1}}^{{{proc2}_{{{t}}}}} {func}_k"),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "proc1": S(_PROC_POOL),
             "proc2": X(_PROC_POOL, ("proc1",)),
             "func": S(_FUNC_POOL),
@@ -821,10 +823,11 @@ _TEMPLATES_B5: list[Template] = [
         latex=(
             r"{proc}_{{{t}}} = {drift}\, {t}"
             r" + {diff}\, {bm}_{{{t}}}"
-            r" + \int_{{|z|<1}} z\, \tilde{{N}}({t},\, dz)"
-            r" + \int_{{|z|\ge 1}} z\, N({t},\, dz)"
+            r" + \int{lim_mod}_{{|z|<1}} z\, \tilde{{N}}({t},\, dz)"
+            r" + \int{lim_mod}_{{|z|\ge 1}} z\, N({t},\, dz)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "proc": S(_PROC_POOL),
             "drift": S(_COEFF_POOL),
             "diff": S(_DIFF_POOL),
@@ -858,11 +861,12 @@ _TEMPLATES_B6: list[Template] = [
         name="value_function_bellman",
         latex=(
             r"{func}(x, {t}) = \sup_u \mathbb{{E}}\!\left["
-            r"\int_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}}, u_{{{s}}})\, d{s}"
+            r"\int{lim_mod}_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}}, u_{{{s}}})\, d{s}"
             r" + {func2}({proc}_{{{T}}})"
             r"\right]"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "func": S(_FUNC_POOL),
             "func2": X(_FUNC_POOL, ("func",)),
             "proc": S(_PROC_POOL),

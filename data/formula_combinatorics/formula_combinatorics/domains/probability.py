@@ -69,13 +69,13 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="expected_value_discrete",
-        latex=r"{op}[{rv}] = \sum_{{k}} k \cdot P({rv} = k)",
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        latex=r"{op}[{rv}] = \sum{lim_mod}_{{k}} k \cdot P({rv} = k)",
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="expected_value_continuous",
-        latex=r"{op}[{rv}] = \int_{{-\infty}}^{{\infty}} x\, f_{{{rv}}}(x)\, dx",
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        latex=r"{op}[{rv}] = \int{lim_mod}_{{-\infty}}^{{\infty}} x\, f_{{{rv}}}(x)\, dx",
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="variance",
@@ -100,18 +100,18 @@ _PROB_TEMPLATES: list[Template] = [
     Template(
         name="law_of_total_probability",
         latex=(
-            r"{op}({ev}) = \sum_{{i=1}}^{{{nn}}}"
+            r"{op}({ev}) = \sum{lim_mod}_{{i=1}}^{{{nn}}}"
             r" {op}({ev} \mid B_i)\,{op}(B_i)"
         ),
-        slots={"op": S(_PROB_OP), "ev": S(_EVENT_POOL), "nn": S(_N_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "ev": S(_EVENT_POOL), "nn": S(_N_POOL)},
     ),
     Template(
         name="mgf",
         latex=(
             r"M_{{{rv}}}(t) = {op}\!\left[e^{{t\,{rv}}}\right]"
-            r" = \sum_{{k=0}}^{{\infty}} \frac{{{op}[{rv}^k]}}{{k!}}\,t^k"
+            r" = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{op}[{rv}^k]}}{{k!}}\,t^k"
         ),
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="covariance",
@@ -127,8 +127,8 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="cdf",
-        latex=r"F_{{{rv}}}(x) = {op}({rv} \leq x) = \int_{{-\infty}}^{{x}} f_{{{rv}}}(t)\, dt",
-        slots={"op": S(_PROB_OP), "rv": S(_RV_POOL)},
+        latex=r"F_{{{rv}}}(x) = {op}({rv} \leq x) = \int{lim_mod}_{{-\infty}}^{{x}} f_{{{rv}}}(t)\, dt",
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="geometric_pmf",
@@ -247,9 +247,9 @@ _PROB_TEMPLATES: list[Template] = [
         name="union_bound",
         latex=(
             r"{op}\!\Bigl(\bigcup_{{i=1}}^{{{nn}}} A_i\Bigr)"
-            r" \leq \sum_{{i=1}}^{{{nn}}} {op}(A_i)"
+            r" \leq \sum{lim_mod}_{{i=1}}^{{{nn}}} {op}(A_i)"
         ),
-        slots={"op": S(_PROB_OP), "nn": S(_N_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_PROB_OP), "nn": S(_N_POOL)},
     ),
     # Continuous distributions
     Template(
@@ -531,8 +531,10 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="stationary_distribution",
-        latex=r"\pi P = \pi,\quad \sum_{{i}} \pi_i = 1",
-        slots={},
+        latex=r"\pi P = \pi,\quad \sum{lim_mod}_{{i}} \pi_i = 1",
+        slots={
+            "lim_mod": S(("", r"\limits")),
+        },
     ),
     Template(
         name="martingale_def",
@@ -562,9 +564,9 @@ _PROB_TEMPLATES: list[Template] = [
         name="marginal_pdf_cont",
         latex=(
             r"f_{{{rv1}}}(x)"
-            r" = \int_{{-\infty}}^{{\infty}} f_{{{rv1},{rv2}}}(x,y)\, dy"
+            r" = \int{lim_mod}_{{-\infty}}^{{\infty}} f_{{{rv1},{rv2}}}(x,y)\, dy"
         ),
-        slots={"rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
+        slots={"lim_mod": S(("", r"\limits")), "rv1": S(_RV_POOL), "rv2": X(_RV_POOL, ("rv1",))},
     ),
     Template(
         name="conditional_pdf_def",
@@ -605,9 +607,9 @@ _PROB_TEMPLATES: list[Template] = [
         name="pgf_def",
         latex=(
             r"G_{{{rv}}}(z) = {op}\!\left[z^{{{rv}}}\right]"
-            r" = \sum_{{k=0}}^{{\infty}} {op}({rv} = k)\,z^k"
+            r" = \sum{lim_mod}_{{k=0}}^{{\infty}} {op}({rv} = k)\,z^k"
         ),
-        slots={"op": S(_EXP_OP), "rv": S(_RV_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "op": S(_EXP_OP), "rv": S(_RV_POOL)},
     ),
     Template(
         name="pgf_mean",
@@ -633,9 +635,9 @@ _PROB_TEMPLATES: list[Template] = [
         latex=(
             r"f_{{{rv}}}(x)"
             r" = \frac{{1}}{{2\pi}}"
-            r" \int_{{-\infty}}^{{\infty}} e^{{-itx}}\,\varphi_{{{rv}}}(t)\, dt"
+            r" \int{lim_mod}_{{-\infty}}^{{\infty}} e^{{-itx}}\,\varphi_{{{rv}}}(t)\, dt"
         ),
-        slots={"rv": S(_RV_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "rv": S(_RV_POOL)},
     ),
     # Statistical inference
     Template(
@@ -716,9 +718,10 @@ _PROB_TEMPLATES: list[Template] = [
         name="expectation_composition",
         latex=(
             r"{op}[{fn1}({rv})]"
-            r" = \int_{{-\infty}}^{{\infty}} {fn1}(x)\, f_{{{rv}}}(x)\, dx"
+            r" = \int{lim_mod}_{{-\infty}}^{{\infty}} {fn1}(x)\, f_{{{rv}}}(x)\, dx"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "op": S(_EXP_OP),
             "fn1": E(_fn_rich_nosub, n=100),
             "rv": S(_RV_POOL),
@@ -766,8 +769,9 @@ _PROB_TEMPLATES: list[Template] = [
     ),
     Template(
         name="log_likelihood_sum",
-        latex=(r"\ell({fn1}) = \sum_{{i=1}}^{{{nn}}} \log {fn2}(x_i \mid {fn1})"),
+        latex=(r"\ell({fn1}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} \log {fn2}(x_i \mid {fn1})"),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "fn1": E(_fn_rich_nosub, n=100),
             "fn2": E(_fn_rich_nosub, n=100),
             "nn": S(_N_POOL),

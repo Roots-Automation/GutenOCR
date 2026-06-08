@@ -124,8 +124,8 @@ _TEMPLATES_A: list[Template] = [
     ),
     Template(
         name="padic_expansion",
-        latex=r"{xx} = \sum_{{k=0}}^{{\infty}} a_k {pp}^k,\quad 0 \leq a_k < {pp}",
-        slots={"xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
+        latex=r"{xx} = \sum{lim_mod}_{{k=0}}^{{\infty}} a_k {pp}^k,\quad 0 \leq a_k < {pp}",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
     ),
     Template(
         name="ultrametric_inequality",
@@ -167,8 +167,8 @@ _TEMPLATES_A: list[Template] = [
     ),
     Template(
         name="product_formula",
-        latex=r"|{xx}|_\infty \cdot \prod_{{{pp}}} |{xx}|_{{{pp}}} = 1",
-        slots={"xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
+        latex=r"|{xx}|_\infty \cdot \prod{lim_mod}_{{{pp}}} |{xx}|_{{{pp}}} = 1",
+        slots={"lim_mod": S(("", r"\limits")), "xx": S(_ELEM_POOL), "pp": S(_PRIME_POOL)},
     ),
     Template(
         name="hensels_lemma",
@@ -188,9 +188,9 @@ _TEMPLATES_A: list[Template] = [
         name="legendre_factorial_valuation",
         latex=(
             r"v_{{{pp}}}({nn}!) ="
-            r" \sum_{{k=1}}^{{\infty}} \left\lfloor \frac{{{nn}}}{{{pp}^k}} \right\rfloor"
+            r" \sum{lim_mod}_{{k=1}}^{{\infty}} \left\lfloor \frac{{{nn}}}{{{pp}^k}} \right\rfloor"
         ),
-        slots={"pp": S(_PRIME_POOL), "nn": S(_IDX_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "pp": S(_PRIME_POOL), "nn": S(_IDX_POOL)},
     ),
     Template(
         name="qp_completion",
@@ -208,10 +208,10 @@ _TEMPLATES_A: list[Template] = [
     Template(
         name="padic_exponential",
         latex=(
-            r"\exp_{{{pp}}}({xx}) = \sum_{{k=0}}^{{\infty}} \frac{{{xx}^k}}{{k!}},\quad"
+            r"\exp_{{{pp}}}({xx}) = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{xx}^k}}{{k!}},\quad"
             r" |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}"
         ),
-        slots={"pp": S(_PRIME_POOL), "xx": S(_ELEM_POOL)},
+        slots={"lim_mod": S(("", r"\limits")), "pp": S(_PRIME_POOL), "xx": S(_ELEM_POOL)},
     ),
     Template(
         name="padic_binomial_valuation",
@@ -330,9 +330,10 @@ _TEMPLATES_B2: list[Template] = [
         name="padic_log_series",
         latex=(
             r"\log_{{{pp}}}(1 + {xx})"
-            r" = \sum_{{{nn}=1}}^{{\infty}} \frac{{(-1)^{{{nn}+1}} {xx}^{{{nn}}}}}{{{nn}}}"
+            r" = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{(-1)^{{{nn}+1}} {xx}^{{{nn}}}}}{{{nn}}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -342,10 +343,11 @@ _TEMPLATES_B2: list[Template] = [
         name="padic_exp_series",
         latex=(
             r"\exp_{{{pp}}}({xx})"
-            r" = \sum_{{{nn}=0}}^{{\infty}} \frac{{{xx}^{{{nn}}}}}{{{nn}!}},\quad"
+            r" = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} \frac{{{xx}^{{{nn}}}}}{{{nn}!}},\quad"
             r" |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -354,11 +356,12 @@ _TEMPLATES_B2: list[Template] = [
     Template(
         name="padic_power_series_conv",
         latex=(
-            r"\sum_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {xx}^{{{nn}}}"
+            r"\sum{lim_mod}_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {xx}^{{{nn}}}"
             r" \text{{ converges in }} \mathbb{{Q}}_{{{pp}}}"
             r" \iff a_{{{nn}}} \to 0"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "pp": S(_PRIME_POOL),
             "ff": S(_POLY_POOL),
             "xx": S(_ELEM_POOL),
@@ -368,10 +371,11 @@ _TEMPLATES_B2: list[Template] = [
     Template(
         name="teichmuller_decomp",
         latex=(
-            r"{xx} = \sum_{{{nn}=0}}^{{\infty}} [{xx}_{{{nn}}}]\, {pp}^{{{nn}}},"
+            r"{xx} = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} [{xx}_{{{nn}}}]\, {pp}^{{{nn}}},"
             r"\quad [{xx}_{{{nn}}}] \text{{ Teichm\"{{u}}ller lift}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
             "nn": S(_IDX_POOL),
@@ -650,11 +654,12 @@ _TEMPLATES_B5: list[Template] = [
     Template(
         name="mahler_expansion",
         latex=(
-            r"{ff}({xx}) = \sum_{{{nn}=0}}^{{\infty}}"
+            r"{ff}({xx}) = \sum{lim_mod}_{{{nn}=0}}^{{\infty}}"
             r" c_{{{nn}}} \binom{{{xx}}}{{{nn}}},\quad"
             r" c_{{{nn}}} = \Delta^{{{nn}}} {ff}(0)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_POLY_POOL),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),
@@ -679,10 +684,11 @@ _TEMPLATES_B5: list[Template] = [
         latex=(
             r"{ff} : {KK} \to {KK} \text{{ locally analytic}},"
             r"\quad \forall {xx} \in {KK}:\;"
-            r" {ff}({xx}) = \sum_{{n \geq 0}} a_n ({xx} - c)^n"
+            r" {ff}({xx}) = \sum{lim_mod}_{{n \geq 0}} a_n ({xx} - c)^n"
             r" \text{{ on some ball}}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_POLY_POOL),
             "KK": S(_FIELD_POOL),
             "xx": S(_ELEM_POOL),
@@ -706,11 +712,12 @@ _TEMPLATES_B5: list[Template] = [
     Template(
         name="padic_integration",
         latex=(
-            r"\int_{{\mathbb{{Z}}_{{{pp}}}}} {ff}({xx})\, d\mu"
-            r" = \lim_{{{nn}\to\infty}} \sum_{{a=0}}^{{{pp}^{{{nn}}}-1}}"
+            r"\int{lim_mod}_{{\mathbb{{Z}}_{{{pp}}}}} {ff}({xx})\, d\mu"
+            r" = \lim_{{{nn}\to\infty}} \sum{lim_mod}_{{a=0}}^{{{pp}^{{{nn}}}-1}}"
             r" {ff}(a)\, \mu\!\left(a + {pp}^{{{nn}}} \mathbb{{Z}}_{{{pp}}}\right)"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "ff": S(_POLY_POOL),
             "pp": S(_PRIME_POOL),
             "xx": S(_ELEM_POOL),

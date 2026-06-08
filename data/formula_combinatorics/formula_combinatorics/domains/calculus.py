@@ -105,8 +105,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
     # Taylor series
     Template(
         name="taylor_series",
-        latex=r"\sum_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}({a})}}{{n!}} \left({v} - {a}\right)^n",
+        latex=r"\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}({a})}}{{n!}} \left({v} - {a}\right)^n",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
             "a": E(_atom, n=150),
@@ -115,8 +116,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
     # Maclaurin series (Taylor at a=0)
     Template(
         name="maclaurin_series",
-        latex=r"\sum_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}(0)}}{{n!}} {v}^n",
+        latex=r"\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}(0)}}{{n!}} {v}^n",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
         },
@@ -137,8 +139,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
     # fundamental theorem of calculus
     Template(
         name="ftc",
-        latex=r"\int_{{{a}}}^{{{b}}} {f}'({v}) \, d{v} = {f}({b}) - {f}({a})",
+        latex=r"\int{lim_mod}_{{{a}}}^{{{b}}} {f}'({v}) \, d{v} = {f}({b}) - {f}({a})",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
             "a": E(_atom, n=150),
@@ -322,10 +325,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="stokes_standard",
                 latex=(
-                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
                     r"\iint_{{{srf}}} \left(\nabla \times \mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fld": S(_VEC_FIELD_POOL),
                     "srf": S(_SURFACE_POOL),
                     "crv": S(_CURVE_POOL),
@@ -334,10 +338,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="stokes_curl_operator",
                 latex=(
-                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
                     r"\iint_{{{srf}}} \operatorname{{curl}}\!\left(\mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fld": S(_VEC_FIELD_POOL),
                     "srf": S(_SURFACE_POOL),
                     "crv": S(_CURVE_POOL),
@@ -345,8 +350,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
             ),
             Template(
                 name="stokes_differential_forms",
-                latex=r"\int_{{\partial {mfld}}} \omega = \int_{{{mfld}}} d\omega",
+                latex=r"\int{lim_mod}_{{\partial {mfld}}} \omega = \int{lim_mod}_{{{mfld}}} d\omega",
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "mfld": S(_MFLD_POOL),
                 },
             ),
@@ -361,10 +367,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="greens_theorem_flux",
                 latex=(
-                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, ds = "
+                    r"\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, ds = "
                     r"\iint_{{{dom}}} \nabla \cdot \mathbf{{{fld}}} \, dA"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fld": S(_VEC_FIELD_POOL),
                     "crv": S(("C", r"\partial D", r"\partial R")),
                     "dom": S(("D", r"\Omega", "R")),
@@ -373,11 +380,12 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="greens_theorem_circulation",
                 latex=(
-                    r"\oint_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
+                    r"\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = "
                     r"\iint_{{{dom}}} \left(\frac{{\partial Q}}{{\partial x}} - "
                     r"\frac{{\partial P}}{{\partial y}}\right) dA"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "fld": S(_VEC_FIELD_POOL),
                     "crv": S(("C", r"\partial D", r"\partial R")),
                     "dom": S(("D", r"\Omega", "R")),
@@ -389,10 +397,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
     Template(
         name="iterated_integral",
         latex=(
-            r"\int_{{{a}}}^{{{b}}} \int_{{g_1({v})}}^{{g_2({v})}} "
+            r"\int{lim_mod}_{{{a}}}^{{{b}}} \int{lim_mod}_{{g_1({v})}}^{{g_2({v})}} "
             r"{f}({v}, {v2}) \, d{v2} \, d{v}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
             "v2": X(_VARS, ("v",)),
@@ -427,10 +436,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
     Template(
         name="integration_by_parts_definite",
         latex=(
-            r"\int_{{{a}}}^{{{b}}} {f} \, d{g2} = "
-            r"\left[{f} \, {g2}\right]_{{{a}}}^{{{b}}} - \int_{{{a}}}^{{{b}}} {g2} \, d{f}"
+            r"\int{lim_mod}_{{{a}}}^{{{b}}} {f} \, d{g2} = "
+            r"\left[{f} \, {g2}\right]_{{{a}}}^{{{b}}} - \int{lim_mod}_{{{a}}}^{{{b}}} {g2} \, d{f}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "g2": E(_fn_rich_nosub, n=100),
             "a": E(_atom, n=150),
@@ -441,11 +451,12 @@ _CALCULUS_TEMPLATES: list[Template] = [
     Template(
         name="leibniz_integral_rule",
         latex=(
-            r"\frac{{d}}{{d{v}}} \int_{{a({v})}}^{{b({v})}} {f}({v}, {it}) \, d{it} = "
+            r"\frac{{d}}{{d{v}}} \int{lim_mod}_{{a({v})}}^{{b({v})}} {f}({v}, {it}) \, d{it} = "
             r"{f}({v}, b({v})) b'({v}) - {f}({v}, a({v})) a'({v}) + "
-            r"\int_{{a({v})}}^{{b({v})}} \frac{{\partial {f}}}{{\partial {v}}} \, d{it}"
+            r"\int{lim_mod}_{{a({v})}}^{{b({v})}} \frac{{\partial {f}}}{{\partial {v}}} \, d{it}"
         ),
         slots={
+            "lim_mod": S(("", r"\limits")),
             "v": S(_VARS),
             "f": E(_fn_rich_nosub, n=100),
             "it": S(("t", "s", r"\tau", r"\sigma")),
@@ -464,8 +475,9 @@ _CALCULUS_TEMPLATES: list[Template] = [
     # mean value theorem (integral form)
     Template(
         name="mean_value_theorem_integral",
-        latex=r"\frac{{1}}{{{b} - {a}}} \int_{{{a}}}^{{{b}}} {f}({v}) \, d{v} = {f}(c)",
+        latex=r"\frac{{1}}{{{b} - {a}}} \int{lim_mod}_{{{a}}}^{{{b}}} {f}({v}) \, d{v} = {f}(c)",
         slots={
+            "lim_mod": S(("", r"\limits")),
             "f": E(_fn_rich_nosub, n=100),
             "v": S(_VARS),
             "a": E(_atom, n=150),
@@ -534,10 +546,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="arc_length",
                 latex=(
-                    r"L = \int_{{{a}}}^{{{b}}} "
+                    r"L = \int{lim_mod}_{{{a}}}^{{{b}}} "
                     r"\sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "f": E(_fn_rich_nosub, n=100),
                     "v": S(_VARS),
                     "a": E(_atom, n=150),
@@ -547,10 +560,11 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="surface_area_revolution",
                 latex=(
-                    r"S = 2\pi \int_{{{a}}}^{{{b}}} {f}({v}) "
+                    r"S = 2\pi \int{lim_mod}_{{{a}}}^{{{b}}} {f}({v}) "
                     r"\sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "f": E(_fn_rich_nosub, n=100),
                     "v": S(_VARS),
                     "a": E(_atom, n=150),
@@ -560,11 +574,12 @@ _CALCULUS_TEMPLATES: list[Template] = [
             Template(
                 name="parametric_arc_length",
                 latex=(
-                    r"L = \int_{{{a}}}^{{{b}}} \sqrt{{"
+                    r"L = \int{lim_mod}_{{{a}}}^{{{b}}} \sqrt{{"
                     r"\left(\frac{{d{px}}}{{d{v}}}\right)^2 + "
                     r"\left(\frac{{d{py}}}{{d{v}}}\right)^2}} \, d{v}"
                 ),
                 slots={
+                    "lim_mod": S(("", r"\limits")),
                     "v": S(_VARS),
                     "px": S((r"\phi", r"\psi", r"\xi", "p", "q")),
                     "py": S((r"\phi", r"\psi", r"\xi", "p", "q")),
@@ -730,9 +745,9 @@ _CALCULUS_TEMPLATES += [
         name="overbrace_binomial",
         latex=(
             r"\overbrace{{(1 + {vv})^n}}^{{n \text{{ factors}}}} = "
-            r"\sum_{{k=0}}^{{n}} \binom{{n}}{{k}} {vv}^k"
+            r"\sum{lim_mod}_{{k=0}}^{{n}} \binom{{n}}{{k}} {vv}^k"
         ),
-        slots={"vv": S(_VARS)},
+        slots={"lim_mod": S(("", r"\limits")), "vv": S(_VARS)},
     ),
     # C5: four-dimensional integral (iiiint)
     Template(
