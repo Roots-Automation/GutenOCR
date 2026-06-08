@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _LIM_MOD, E, S, Template, X, register_domain
-from .._vocab import _fn_rich_nosub
+from .._vocab import _INDICES, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Slot pools
@@ -24,7 +24,7 @@ _MFLD_POOL = (
     r"\Lambda",
 )
 _METRIC_POOL = ("g", "h", "k", r"\gamma", r"\hat{g}", r"\tilde{g}", r"\bar{g}", r"\mathring{g}")
-_IDX_POOL = ("i", "j", "k", "l", "m", "n")
+_IDX_POOL = tuple(_INDICES)
 _PARAM_POOL = (r"\tau", r"\lambda", "s", "t", r"\sigma", "u", r"\mu", r"\rho")
 _BUNDLE_POOL = (
     "E",

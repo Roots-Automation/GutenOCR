@@ -5,14 +5,13 @@ from __future__ import annotations
 import random
 
 from .._template_dsl import _LIM_MOD, E, P, S, Template, X, register_domain
+from .._vocab import _COMB_K as _K_POOL
+from .._vocab import _COMB_N as _N_POOL
 from .._vocab import _SCALARS, _VARS, _fn_rich_nosub
 
 # ---------------------------------------------------------------------------
 # Shared pools
 # ---------------------------------------------------------------------------
-
-_N_POOL: tuple[str, ...] = ("n", "m", "N", "M", "p", "q", "r", "s", "t", "i", "l", r"n_0")
-_K_POOL: tuple[str, ...] = ("k", "r", "j", "l", "i", "s", "t", "p")
 _SET_POOL: tuple[str, ...] = (
     "A",
     "B",

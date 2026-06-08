@@ -34,8 +34,8 @@ from .._vocab import (
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_SIDES_POOL: list[str] = ["a", "b", "c", "p", "q", "r"]
-_ANGLES_POOL: list[str] = ["A", "B", "C", "P", "Q", "R"]
+_SIDES_POOL: tuple[str, ...] = ("a", "b", "c", "p", "q", "r")
+_ANGLES_POOL: tuple[str, ...] = ("A", "B", "C", "P", "Q", "R")
 _TRIG_ARG_POOL: tuple[str, ...] = tuple(_SCALARS) + (
     r"\theta",
     r"\phi",

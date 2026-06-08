@@ -22,7 +22,7 @@ _ELEMS_T: tuple[str, ...] = tuple(_ELEMS)
 _HOMOS_T: tuple[str, ...] = tuple(_HOMOS)
 
 
-def _build_named_groups() -> list[str]:
+def _build_named_groups() -> tuple[str, ...]:
     # Pre-expand the full named-group pool over all (nv, qv) combinations so
     # that G can be sampled from a static pool, faithfully covering every
     # string the original generator could produce.
@@ -42,11 +42,11 @@ def _build_named_groups() -> list[str]:
                 if candidate not in seen:
                     result.append(candidate)
                     seen.add(candidate)
-    return result
+    return tuple(result)
 
 
-_NAMED_GROUPS: list[str] = _build_named_groups()
-_G_POOL: tuple[str, ...] = tuple(_SIMPLE + _NAMED_GROUPS)
+_NAMED_GROUPS: tuple[str, ...] = _build_named_groups()
+_G_POOL: tuple[str, ...] = tuple(_SIMPLE) + _NAMED_GROUPS
 
 # ---------------------------------------------------------------------------
 # Group theory templates

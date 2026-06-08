@@ -27,8 +27,8 @@ from .._vocab import (
 # Shared pools
 # ---------------------------------------------------------------------------
 
-_UNION: list[str] = sorted(set(_VARS) | set(_SCALARS))
-_LOG_BASES: list[str] = ["2", "10", "e"] + _SCALARS + [r"\alpha", r"\beta", r"\lambda", r"\mu"]
+_UNION: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
+_LOG_BASES: tuple[str, ...] = ("2", "10", "e") + tuple(_SCALARS) + (r"\alpha", r"\beta", r"\lambda", r"\mu")
 _EXP_POOL: tuple[str, ...] = ("2", "3", "4", "m", "n", "p", "q")
 
 # ---------------------------------------------------------------------------

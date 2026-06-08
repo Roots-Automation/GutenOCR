@@ -174,6 +174,10 @@ _RELATIONS = [
 
 _RV_BASE: tuple[str, ...] = ("X", "Y", "Z", "W", "U", "V")
 _STATS_N: tuple[str, ...] = ("n", "m", "N", "M")
+
+# Generic combinatorics / summation index pools — reusable across domains
+_COMB_N: tuple[str, ...] = ("n", "m", "N", "M", "p", "q", "r", "s", "t", "i", "l", r"n_0")
+_COMB_K: tuple[str, ...] = ("k", "r", "j", "l", "i", "s", "t", "p")
 _LAM_STATS: tuple[str, ...] = (r"\lambda", r"\mu", r"\nu", r"\alpha", r"\beta")
 _MU_STATS: tuple[str, ...] = (r"\mu", r"\mu_0", r"\nu", "m")
 _SIG_STATS: tuple[str, ...] = (r"\sigma", r"\sigma_0", r"\tau", r"\eta")
