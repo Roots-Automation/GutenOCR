@@ -12,13 +12,16 @@ empirical probe.
 
 Slot types
 ----------
-Slot        — draw one symbol from a fixed pool; optional _maybe_idx decoration
-ExcludeSlot — like Slot, but excludes values already drawn by named sibling slots
-Sub         — call a sub-generator (e.g. _expr, _atom); n_eff is an estimate
-ParamSub    — sub-generator whose second arg is the value of another drawn slot
-              (used for generators like _poly(rng, v))
+Slot           — draw one symbol from a fixed pool; optional _maybe_idx decoration
+ExcludeSlot    — like Slot, but excludes values already drawn by named sibling slots
+Sub            — call a sub-generator (e.g. _expr, _atom); n_eff is an estimate
+ParamSub       — sub-generator whose second arg is the value of another drawn slot
+                 (used for generators like _poly(rng, v))
+ExcludeParamSub — like ParamSub, but also passes a frozenset of already-drawn values
+                 from named sibling slots so the generator can filter its pool
+                 (signature: gen(rng, param_value, exclude: frozenset[str]) -> str)
 
-Convenience constructors: ``S``, ``X``, ``E``, ``P`` (see module bottom).
+Convenience constructors: ``S``, ``X``, ``E``, ``P``, ``EP`` (see module bottom).
 
 Reusable slot constants (bottom of this module)
 ------------------------------------------------
@@ -226,11 +229,40 @@ class ParamSub:
         return self.n_eff_estimate
 
 
+@dataclass(frozen=True)
+class ExcludeParamSub:
+    """Like ``ParamSub``, but also passes a frozenset of already-drawn base symbols.
+
+    The generator signature is ``gen(rng, param_value, exclude) -> str`` where
+    ``exclude`` is a ``frozenset`` of base symbols drawn by ``exclude_slots``
+    (decoration stripped).  Use this instead of encoding multiple exclusions as
+    a pipe-separated string in a ``ParamSub``.
+
+    Example: draw a coefficient excluding both n and c1::
+
+        "c2": ExcludeParamSub(_lin_rec_b, param_slot="n",
+                              exclude_slots=("n", "c1"), n_eff_estimate=7)
+    """
+
+    gen: Callable[[random.Random, str, frozenset[str]], str]
+    param_slot: str
+    exclude_slots: tuple[str, ...]
+    n_eff_estimate: float = 1e4
+
+    def draw(self, rng: random.Random, draws: dict[str, str]) -> str:
+        param = draws[self.param_slot]
+        exclude = frozenset(draws[s].split("_{")[0].split("_")[0] for s in self.exclude_slots if s in draws)
+        return self.gen(rng, param, exclude)
+
+    def eff_size(self) -> float:
+        return self.n_eff_estimate
+
+
 # ---------------------------------------------------------------------------
 # Template
 # ---------------------------------------------------------------------------
 
-_SlotType = Slot | ExcludeSlot | Sub | ParamSub
+_SlotType = Slot | ExcludeSlot | Sub | ParamSub | ExcludeParamSub
 
 
 @dataclass
@@ -307,7 +339,7 @@ def sample(t: Template, rng: random.Random) -> str:
             continue
         if isinstance(s, Sub):
             draws[name] = s.draw(rng)
-        elif isinstance(s, ParamSub):
+        elif isinstance(s, (ParamSub, ExcludeParamSub)):
             draws[name] = s.draw(rng, draws)
         elif isinstance(s, ExcludeSlot):
             exclude = frozenset(
@@ -352,7 +384,7 @@ def n_eff(t: Template) -> float:
         elif isinstance(s, ExcludeSlot):
             n_excluded = len(s.exclude_from)
             total *= s.eff_size(n_excluded)
-        else:  # Sub or ParamSub
+        else:  # Sub, ParamSub, or ExcludeParamSub
             total *= s.eff_size()
 
     # Distinct groups
@@ -405,6 +437,16 @@ def P(
 ) -> ParamSub:
     """Shorthand for ``ParamSub(gen, param_slot=param, n_eff_estimate=n)``."""
     return ParamSub(gen, param_slot=param, n_eff_estimate=n)
+
+
+def EP(
+    gen: Callable[[random.Random, str, frozenset[str]], str],
+    param: str,
+    exclude: list[str] | tuple[str, ...],
+    n: float = 1e4,
+) -> ExcludeParamSub:
+    """Shorthand for ``ExcludeParamSub(gen, param_slot=param, exclude_slots=..., n_eff_estimate=n)``."""
+    return ExcludeParamSub(gen, param_slot=param, exclude_slots=tuple(exclude), n_eff_estimate=n)
 
 
 # Reusable slot for the optional \limits modifier on \sum, \prod, \int, etc.

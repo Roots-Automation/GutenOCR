@@ -44,7 +44,7 @@ _LIE_POOL = (
     r"\mathfrak{m}",
 )  # 6
 _FIELD_POOL = ("k", r"\mathbb{F}", "K", r"\mathbb{C}", r"\mathbb{R}")  # 5
-_IDX_POOL2 = ("i", "j", "k", "m", "n")  # 5
+_IDX_POOL = ("i", "j", "k", "m", "n")  # 5
 
 # ---------------------------------------------------------------------------
 # Part A: Reparameterized originals (12)
@@ -577,7 +577,7 @@ _TEMPLATES_B7: list[Template] = [
     Template(
         name="adams_operation",
         latex=(r"\psi^{{{kk}}}(\chi_{{{rr}}})({gg}) = \chi_{{{rr}}}({gg}^{{{kk}}})"),
-        slots={"kk": S(_IDX_POOL2), "rr": S(_REP_POOL), "gg": S(_ELEM_POOL)},
+        slots={"kk": S(_IDX_POOL), "rr": S(_REP_POOL), "gg": S(_ELEM_POOL)},
     ),  # n_eff = 400
     Template(
         name="regular_representation",

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import _INDICES
+from .._vocab import _INDICES as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -25,7 +25,6 @@ _MFLD_POOL = (
     r"\Lambda",
 )
 _METRIC_POOL = ("g", "h", "k", r"\gamma", r"\hat{g}", r"\tilde{g}", r"\bar{g}", r"\mathring{g}")
-_IDX_POOL = tuple(_INDICES)
 _PARAM_POOL = (r"\tau", r"\lambda", "s", "t", r"\sigma", "u", r"\mu", r"\rho")
 _BUNDLE_POOL = (
     "E",

@@ -24,7 +24,7 @@ except ImportError:
 
 
 from .corpus import generate
-from .domains import DEFAULT_WEIGHTS, GENERATORS
+from .domains import DEFAULT_WEIGHTS, DOMAIN_TAGS, GENERATORS
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +68,6 @@ def main() -> None:
         help="Random seed for reproducibility.",
     )
     parser.add_argument(
-        "--align-fraction",
-        type=float,
-        default=0.15,
-        metavar="F",
-        help="Fraction of multi-line align* environments (default: 0.15).",
-    )
-    parser.add_argument(
         "--display-fraction",
         type=float,
         default=0.20,
@@ -88,11 +81,28 @@ def main() -> None:
         metavar="F",
         help="Fraction of bare formulas wrapped in inline $...$ delimiters (default: 0.10).",
     )
+    all_tags = sorted({t for tags in DOMAIN_TAGS.values() for t in tags})
+    parser.add_argument(
+        "--tags",
+        nargs="+",
+        default=None,
+        metavar="TAG",
+        help=(f"Include only domains with any of these tags. Available: {', '.join(all_tags)}."),
+    )
+    parser.add_argument(
+        "--exclude-tags",
+        nargs="+",
+        default=None,
+        metavar="TAG",
+        help="Exclude domains with any of these tags.",
+    )
+    parser.add_argument(
+        "--metadata",
+        action="store_true",
+        default=False,
+        help="Output metadata dicts (formula + domain) instead of bare strings.",
+    )
     args = parser.parse_args()
-
-    if not 0.0 <= args.align_fraction <= 1.0:
-        logger.error("--align-fraction must be in [0, 1]")
-        sys.exit(1)
 
     if not 0.0 <= args.display_fraction <= 1.0:
         logger.error("--display-fraction must be in [0, 1]")
@@ -115,9 +125,11 @@ def main() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=args.seed,
-        align_fraction=args.align_fraction,
         display_fraction=args.display_fraction,
         inline_fraction=args.inline_fraction,
+        tags=args.tags,
+        exclude_tags=args.exclude_tags,
+        include_metadata=args.metadata,
     )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)

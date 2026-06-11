@@ -1471,9 +1471,9 @@ _TRIG_TEMPLATES: list[Template] = [
         latex=r"\operatorname{{csch}}^2({vv}) = \coth^2({vv}) - 1",
         slots={"vv": S(_VARS, idx=0.2)},
     ),
-    # ── Fourier series ────────────────────────────────────────────────────────
+    # ── Fourier series (trig form; exponential form is canonical in fourier domain) ─────
     Template(
-        name="fourier_series",
+        name="fourier_series_trig",
         latex="",
         slots={},
         variants=[

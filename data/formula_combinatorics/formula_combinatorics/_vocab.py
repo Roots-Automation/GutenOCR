@@ -60,6 +60,25 @@ _GEO_N: tuple[str, ...] = _LOOP_N
 _VARS_SCALARS: tuple[str, ...] = tuple(sorted(set(_VARS) | set(_SCALARS)))
 _GREEK_SCALARS: tuple[str, ...] = _SCALARS + _GREEK
 
+# Generic cross-domain pools (import + alias in domain files; keep local only when semantics diverge)
+# Generic function names: simple Latin/Greek, no calligraphic/script variants (those live in _FN_BASE)
+_FUNC_NAMES: tuple[str, ...] = ("f", "g", "h", "F", "G", r"\phi", r"\psi", r"\varphi", r"\chi", r"\xi", r"\eta")
+# Extended index pool: superset of _INDICES, includes iteration indices p/q/r/s/t
+_GENERIC_IDX: tuple[str, ...] = tuple("ijklmnpqrst")
+# Algebraic homomorphism notation (group_theory, ring_field_theory; richer versions keep local)
+_HOMO_POOL: tuple[str, ...] = (
+    r"\phi",
+    r"\varphi",
+    r"\psi",
+    "f",
+    r"\theta",
+    r"\rho",
+    r"\pi",
+    "g",
+    r"\alpha",
+    r"\sigma",
+)
+
 # Abstract-algebra name pools (used across algebra, group_theory, ring_field_theory)
 _GRP_NAMES: tuple[str, ...] = ("G", "H", "K", "N", "Q")
 _RING_NAMES: tuple[str, ...] = ("R", "S", "A", "B")

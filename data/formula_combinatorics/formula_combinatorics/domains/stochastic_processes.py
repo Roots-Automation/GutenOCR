@@ -4,6 +4,7 @@ continuous-time martingales, Markov generators, jump processes, control."""
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _FUNC_NAMES as _FUNC_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -73,16 +74,6 @@ _DIFF_POOL: tuple[str, ...] = (
     r"\delta",
 )  # 6
 
-_FUNC_POOL: tuple[str, ...] = (
-    "f",
-    "g",
-    "h",
-    "F",
-    "G",
-    r"\phi",
-    r"\psi",
-    r"\varphi",
-)  # 8
 
 _FILT_POOL: tuple[str, ...] = (
     r"\mathcal{F}",

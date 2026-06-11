@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import _ELT_POOL, _RING_NAMES
+from .._vocab import _ELT_POOL, _HOMO_POOL, _RING_NAMES
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -33,18 +33,6 @@ _IDEAL_POOL = (
     "Q",
     r"\mathfrak{q}",
     r"\mathfrak{n}",
-)  # 10
-_HOMO_POOL = (
-    r"\phi",
-    r"\varphi",
-    r"\psi",
-    "f",
-    r"\theta",
-    r"\rho",
-    r"\pi",
-    "g",
-    r"\alpha",
-    r"\sigma",
 )  # 10
 _FIELD_POOL = (
     "K",
@@ -86,7 +74,6 @@ _ELEM_POOL = (
 )  # 11
 _POLY_POOL = ("f", "g", "h", "p", "q", r"\phi", r"\psi", r"\chi")  # 8
 _SUBGP_POOL = ("G", "H", "N", "A", "B", r"\Gamma")  # 6
-_IDX_POOL = ("i", "j", "k", "m", "n", "r", "s")  # 7
 
 # ---------------------------------------------------------------------------
 # Part A: Reparameterized originals (21)

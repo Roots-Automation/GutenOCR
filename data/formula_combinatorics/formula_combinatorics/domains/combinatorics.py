@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, P, S, Template, X
+from .._template_dsl import _FN_SLOT, _LIM_MOD, EP, P, S, Template, X
 from .._vocab import (
     _COMB_K as _K_POOL,
 )
@@ -61,18 +61,10 @@ def _lin_rec_a(rng: random.Random, n: str) -> str:
     return rng.choice(pool)
 
 
-def _lin_rec_b(rng: random.Random, na: str) -> str:
-    """Second recurrence coefficient, drawn from _SCALARS excluding n and a (encoded as 'n|a')."""
-    n, a = na.split("|", 1)
-    pool = [s for s in _SCALARS if s != n and s != a]
+def _lin_rec_b(rng: random.Random, _param: str, exclude: frozenset[str]) -> str:
+    """Second recurrence coefficient, drawn from _SCALARS excluding all values in exclude."""
+    pool = [s for s in _SCALARS if s not in exclude]
     return rng.choice(pool)
-
-
-def _lin_rec_na_combo(rng: random.Random, n: str) -> str:
-    """Draw 'a' from _SCALARS excluding n; return 'a_value|n_value' for b to consume."""
-    pool = [s for s in _SCALARS if s != n]
-    a = rng.choice(pool)
-    return f"{a}|{n}"
 
 
 # ---------------------------------------------------------------------------
@@ -147,16 +139,14 @@ _PART_A: list[Template] = [
         },
     ),
     # c=7 — linear recurrence a_n = c1*a_{n-1} + c2*a_{n-2}
-    # a and b must each exclude n; additionally b must exclude a.
-    # _na carries "a_value|n_value" so _lin_rec_b can exclude both.
+    # c1 excludes n; c2 excludes both n and c1.
     Template(
         name="linear_recurrence",
         latex=r"a_{{{n}}} = {c1}\,a_{{{n}-1}} + {c2}\,a_{{{n}-2}}",
         slots={
             "n": S(_N_POOL),
             "c1": P(_lin_rec_a, param="n", n=8),
-            "_na": P(_lin_rec_na_combo, param="n", n=8),
-            "c2": P(_lin_rec_b, param="_na", n=7),
+            "c2": EP(_lin_rec_b, param="n", exclude=("n", "c1"), n=7),
         },
     ),
     # c=7b — named-sequence recurrence (rich function name for the sequence)
@@ -167,8 +157,7 @@ _PART_A: list[Template] = [
             "ff": _FN_SLOT,
             "n": S(_N_POOL),
             "c1": P(_lin_rec_a, param="n", n=8),
-            "_na": P(_lin_rec_na_combo, param="n", n=8),
-            "c2": P(_lin_rec_b, param="_na", n=7),
+            "c2": EP(_lin_rec_b, param="n", exclude=("n", "c1"), n=7),
         },
     ),
     # c=8 — ordinary generating function (gg uses rich function name)

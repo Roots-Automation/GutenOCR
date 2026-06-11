@@ -7,6 +7,9 @@ from .._vocab import (
     _EXP_OP,
 )
 from .._vocab import (
+    _GENERIC_IDX as _IDX_POOL,
+)
+from .._vocab import (
     _LAM_STATS as _LAM_POOL,
 )
 from .._vocab import (
@@ -32,7 +35,6 @@ from ._config import register_domain
 
 _EVENT_POOL = ("A", "B", "C", "D", "E", "F", r"A_1", r"B_1")
 _K_POOL = (r"k", r"\ell", "j", "r")
-_IDX_POOL = ("i", "j", "k", "t")
 _P_POOL = ("p", "q", r"\theta", r"\pi", r"\rho")
 _A_POOL = ("a", "b", "c", r"\varepsilon")
 _AB_POOL = ("a", "b", r"\alpha", r"\beta")

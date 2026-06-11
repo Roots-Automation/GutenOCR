@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _GENERIC_IDX as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -12,7 +13,6 @@ from ._config import register_domain
 _RV_POOL = ("X", "Y", "Z", "U", "V", "W", "S", "T", "A", "B", "N", "M")  # 12
 _DIST_POOL = ("P", "Q", "R", r"\mu", r"\nu", "S", "T", "U", r"\pi", r"\rho")  # 10
 _LOG_POOL = (r"\log_2", r"\ln", r"\log", r"\log_{10}", r"\log_e", r"\log_q", r"\mathrm{ld}", r"\log_p")  # 8
-_IDX_POOL = ("n", "m", "k", "i", "j")  # 5
 _ALPHA_POOL = (
     r"\alpha",
     r"\beta",

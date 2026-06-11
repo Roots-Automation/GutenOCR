@@ -108,9 +108,9 @@ _ANALYSIS_TEMPLATES: list[Template] = [
         },
         distinct=[["a", "b"]],
     ),
-    # --- Triangle inequality (scalar, reverse, sum, Minkowski) ---
+    # --- Triangle inequality in normed spaces (use algebra.triangle_inequality for the general form) ---
     Template(
-        name="triangle_inequality",
+        name="triangle_inequality_normed",
         latex="",
         slots={},
         variants=[

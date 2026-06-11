@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _FUNC_NAMES as _FUNC_POOL
+from .._vocab import _GENERIC_IDX as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -38,8 +40,6 @@ _CARD_POOL = (
 )  # 6
 _VAR_POOL = ("x", "y", "z", "a", "b", "c", "u", "v", "w")  # 9
 _PROP_POOL = ("P", "Q", "R", r"\varphi", r"\psi", "S", "T", "U")  # 8
-_FUNC_POOL = ("f", "g", "h", r"\varphi", r"\psi", r"\phi", r"\xi", r"\eta")  # 8
-_IDX_POOL = ("n", "m", "k", "i", "j", "r", "s", "l")  # 8
 _BBOLD_POOL = (
     r"\mathbb{N}",
     r"\mathbb{Z}",

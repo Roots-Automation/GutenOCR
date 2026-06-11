@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _FUNC_NAMES as _FUNC_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -20,7 +21,6 @@ _SIGALG_POOL = (
     r"\mathcal{E}",
     r"\mathcal{M}",
 )
-_FUNC_POOL = ("f", "g", "h", "F", "G", r"\phi", r"\psi", r"\varphi")
 _VAR_POOL = ("x", "y", "t", "s", "u", "v", r"\omega")
 _EXP_POOL = ("p", "q", "r", "2", "1", r"\infty")
 _SCALAR_POOL = ("a", "b", "c", r"\alpha", r"\beta", r"\lambda", r"\epsilon", r"\delta")

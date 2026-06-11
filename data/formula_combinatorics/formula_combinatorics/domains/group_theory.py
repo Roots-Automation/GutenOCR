@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
 from .._vocab import _ELT_POOL, _GRP_NAMES
+from .._vocab import _HOMO_POOL as _HOMOS
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -25,7 +26,6 @@ _ELEMS: tuple[str, ...] = (
     r"\delta",
     r"\omega",
 )
-_HOMOS: tuple[str, ...] = (r"\phi", r"\varphi", r"\psi", "f", r"\theta", r"\rho", r"\pi")
 _SIMPLE: tuple[str, ...] = ("G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W")
 
 _NV_POOL: tuple[str, ...] = ("n", "m", "4", "5", "6", "7", "8", "p", "q", "r")

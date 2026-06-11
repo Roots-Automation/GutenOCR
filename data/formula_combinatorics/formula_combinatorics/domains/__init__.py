@@ -7,6 +7,7 @@ import random
 from collections.abc import Callable
 
 from .._template_dsl import Template
+from ._config import DOMAIN_CONFIG
 
 _DOMAIN_NAMES: list[str] = [
     "algebra",
@@ -41,6 +42,7 @@ _DOMAIN_NAMES: list[str] = [
     "custom_operators",
     "math_fonts",
     "geometry",
+    "align",
 ]
 
 GENERATORS: dict[str, Callable[[random.Random], str]] = {}
@@ -59,4 +61,7 @@ assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (
     f"missing weights={set(GENERATORS) - set(DEFAULT_WEIGHTS)}"
 )
 
-__all__ = ["GENERATORS", "DEFAULT_WEIGHTS", "TEMPLATES"]
+# Tag index: domain name → list of tag strings (usable for corpus.generate(tags=...) filtering)
+DOMAIN_TAGS: dict[str, list[str]] = {k: list(v.tags) for k, v in DOMAIN_CONFIG.items()}
+
+__all__ = ["GENERATORS", "DEFAULT_WEIGHTS", "TEMPLATES", "DOMAIN_TAGS", "DOMAIN_CONFIG"]

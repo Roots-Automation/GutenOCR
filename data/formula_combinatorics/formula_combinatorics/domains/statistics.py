@@ -35,7 +35,6 @@ from ._config import register_domain
 
 _PARAM_POOL = (r"\theta", r"\mu", r"\sigma", r"\lambda", r"\beta", r"\alpha", r"\eta", r"\phi")  # 8
 _K_POOL = ("k", "p", "q", "r")  # 4
-_IDX_POOL = ("i", "j", "k", "t")  # 4
 _TIME_POOL = ("t", "s", "T", r"t_0", r"t_1")  # 5
 _MM_POOL = ("m", "M", r"\ell", "K")  # 4 — number of tests / hypotheses
 _RESP_POOL = ("y", "z", "w", r"\mathbf{y}", r"\mathbf{z}")  # 5 — response vectors

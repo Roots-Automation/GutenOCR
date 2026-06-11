@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _GENERIC_IDX as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -14,7 +15,6 @@ _SPACE_POOL = ("X", "Y", "M", r"\mathcal{M}", r"\mathcal{X}", "B", "E")
 _OPEN_POOL = ("U", "V", "W", r"\mathcal{U}", r"\mathcal{V}")
 _CLOSED_POOL = ("A", "B", "F", "K", "C")
 _MAP_POOL = ("f", "g", r"\phi", r"\psi", r"\varphi", "h", "p")
-_IDX_POOL = ("n", "m", "k", "p", "q")
 _G_POOL = (
     r"\mathbb{Z}",
     r"\mathbb{Z}/p\mathbb{Z}",
@@ -52,7 +52,7 @@ _TOPOLOGY_TEMPLATES: list[Template] = [
         slots={"aa": S(_CLOSED_POOL), "ff": X(_CLOSED_POOL, ("aa",))},
     ),
     Template(
-        name="triangle_inequality",
+        name="metric_triangle_inequality",
         latex=r"{dd}(x, z) \leq {dd}(x, y) + {dd}(y, z)",
         slots={"dd": S(_DIST_POOL)},
     ),

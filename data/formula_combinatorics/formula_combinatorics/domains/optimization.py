@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
 from .._vocab import _CALLIGRAPHIC
+from .._vocab import _GENERIC_IDX as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
@@ -19,7 +20,6 @@ _G_POOL = ("g", "h", r"\psi", r"\phi", "c")  # 5 — constraint fn styles
 _ETA_POOL = (r"\eta", r"\alpha", r"\gamma", r"\tau", r"\rho")  # 5 — step sizes
 _LAM_POOL = (r"\lambda", r"\mu", r"\nu", r"\rho", r"\sigma")  # 5 — Lagrange multipliers
 _BETA_POOL = (r"\beta", r"\beta_1", r"\beta_2", r"\rho", r"\beta_0", r"\beta_k")  # 6 — momentum params
-_IDX_POOL = ("k", "t", "n", "s", "j", "r", "l", "m")  # 8 — iteration indices
 _MU_POOL = (r"\mu", r"\mu_k", r"\mu_0", r"\nu", r"\rho", r"\kappa")  # 6 — penalty / env params
 _H_POOL = ("h", r"\phi", r"\psi", r"\omega")  # 4 — mirror-map / Bregman fn
 _T_POOL = ("T", "K", "N", r"\tau", r"T_0", r"N_0")  # 6 — horizon / total steps

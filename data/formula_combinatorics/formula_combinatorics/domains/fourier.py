@@ -3,21 +3,21 @@
 from __future__ import annotations
 
 from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from .._vocab import _COEFF_POOL
+from .._vocab import _FUNC_NAMES as _FUNC_POOL
+from .._vocab import _GENERIC_IDX as _IDX_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------
 # Slot pools
 # ---------------------------------------------------------------------------
 
-_FUNC_POOL = ("f", "g", "h", r"\varphi", r"\psi", "F", "G")
 _FREQ_POOL = (r"\xi", r"\omega", r"\nu", "k", r"\zeta", r"\lambda")
 _TIME_POOL = ("t", r"\tau", "s", "u", "x")
 _PERIOD_POOL = ("T", r"2\pi", "L", "P")
-_IDX_POOL = ("n", "m", "k", "p", "q")
 _SIZE_POOL = ("N", "M", "K")
 _SIGNAL_POOL = ("x", "y", "s", "u", "v", "X", "Y")
 _KERNEL_POOL = ("h", "g", r"\phi", r"\psi", "w")
-_COEFF_POOL = ("a", "b", "c", r"\alpha", r"\beta")
 _TVAR_POOL = (r"\tau", "s", "u", "v")
 _S_POOL = ("s", r"s + j\omega", r"\sigma + i\omega", r"\lambda")
 

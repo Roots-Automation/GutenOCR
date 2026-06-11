@@ -6,7 +6,7 @@ import logging
 import random
 from collections.abc import Callable
 
-from .align import _align
+from .domains._config import DOMAIN_CONFIG
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +38,12 @@ def generate(
     generators: dict[str, Callable[[random.Random], str]],
     weights: dict[str, float],
     seed: int | None = None,
-    align_fraction: float = 0.15,
     display_fraction: float = 0.20,
     inline_fraction: float = 0.10,
-) -> dict[str, str]:
+    tags: list[str] | None = None,
+    exclude_tags: list[str] | None = None,
+    include_metadata: bool = False,
+) -> dict[str, str] | dict[str, dict]:
     """Generate a corpus of unique LaTeX formula strings.
 
     Args:
@@ -50,34 +52,45 @@ def generate(
         generators: Mapping of domain name → generator callable.
         weights: Per-domain sampling weights (need not be normalized).
         seed: Random seed for reproducibility.
-        align_fraction: Fraction of output using multi-line align* environments.
         display_fraction: Fraction of bare formulas wrapped in display-math environments.
         inline_fraction: Fraction of bare formulas wrapped in inline $...$ delimiters.
+        tags: If given, include only domains whose tags overlap with this list.
+        exclude_tags: If given, exclude domains whose tags overlap with this list.
+        include_metadata: If True, return ``{"formula": ..., "domain": ...}`` dicts
+            instead of bare strings.
 
     Returns:
-        Dict mapping string index to LaTeX formula string.
+        Dict mapping string index to LaTeX formula string, or to a metadata dict
+        when ``include_metadata=True``.
     """
+    if tags is not None:
+        domains = [d for d in domains if d in DOMAIN_CONFIG and any(t in DOMAIN_CONFIG[d].tags for t in tags)]
+    if exclude_tags is not None:
+        domains = [
+            d for d in domains if d not in DOMAIN_CONFIG or not any(t in DOMAIN_CONFIG[d].tags for t in exclude_tags)
+        ]
+    if not domains:
+        logger.warning("No domains remaining after tag filtering; returning empty corpus.")
+        return {}
+
     rng = random.Random(seed)
     raw_weights = [weights[d] for d in domains]
     total_w = sum(raw_weights)
     norm_weights = [w / total_w for w in raw_weights]
     gens = [generators[d] for d in domains]
 
-    results: dict[str, str] = {}
+    results: dict[str, str | dict] = {}
     seen: set[str] = set()
     attempts = 0
     max_attempts = count * 10
 
     while len(results) < count and attempts < max_attempts:
         attempts += 1
-        domain_name = "<align>"
+        domain_name = "<unknown>"
         try:
-            if rng.random() < align_fraction:
-                formula = _align(rng)
-            else:
-                idx = rng.choices(range(len(gens)), weights=norm_weights, k=1)[0]
-                domain_name = domains[idx]
-                formula = gens[idx](rng)
+            idx = rng.choices(range(len(gens)), weights=norm_weights, k=1)[0]
+            domain_name = domains[idx]
+            formula = gens[idx](rng)
             formula = formula.strip()
             if formula and not _is_wrapped(formula):
                 r = rng.random()
@@ -87,7 +100,11 @@ def generate(
                     formula = _wrap_inline(formula)
             if formula and formula not in seen:
                 seen.add(formula)
-                results[str(len(results))] = formula
+                key = str(len(results))
+                if include_metadata:
+                    results[key] = {"formula": formula, "domain": domain_name}
+                else:
+                    results[key] = formula
         except Exception:
             logger.warning("Generator error in domain '%s' (skipping sample)", domain_name, exc_info=True)
 

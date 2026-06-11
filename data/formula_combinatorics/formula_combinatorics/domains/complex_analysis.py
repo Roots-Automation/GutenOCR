@@ -170,7 +170,7 @@ _TEMPLATES_B1: list[Template] = [
         slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
     ),
     Template(
-        name="triangle_inequality",
+        name="triangle_inequality_complex",
         latex=r"|{zz1} + {zz2}| \leq |{zz1}| + |{zz2}|",
         slots={"zz1": S(_VAR_POOL), "zz2": X(_VAR_POOL, ("zz1",))},
     ),
