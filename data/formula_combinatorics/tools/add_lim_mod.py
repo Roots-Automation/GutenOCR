@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Add \\limits variants to integral/sum/product templates across all domain files.
 
+STATUS: Applied migration — this script has already been run against all domain
+files. The ``_LIM_MOD`` slot (``S(("", r"\\limits"))``) is now present in every
+relevant template. Do NOT re-run without resetting domain files first.
+
 For each template whose latex contains \\int_{{, \\sum_{{, \\prod_{{, or \\oint_{{
 (explicit bounded operators), this script:
   1. Inserts {lim_mod} between the operator and the subscript in the latex string.

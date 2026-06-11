@@ -793,7 +793,7 @@ _TEMPLATES_F: list[Template] = [
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
     Template(
-        name="necessary_condition_Leftarrow",
+        name="necessary_condition_leftarrow",
         latex=r"{pp} \Leftarrow {qq} \iff {qq} \Rightarrow {pp}",
         slots={"pp": S(_PROP_POOL), "qq": X(_PROP_POOL, ("pp",))},
     ),
@@ -1333,7 +1333,7 @@ _TEMPLATES_Q: list[Template] = [
         slots={"pp": S(_PROP_POOL)},
     ),
     Template(
-        name="nvDash_formula",
+        name="nvdash_model_formula",
         latex=r"\mathcal{{M}} \nvDash {pp}",
         slots={"pp": S(_PROP_POOL)},
     ),

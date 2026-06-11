@@ -113,7 +113,7 @@ _PART_A: list[Template] = [
         slots={"psi": S(_STATE_POOL), "op": S(_OP_POOL)},
     ),
     Template(
-        name="ket_norm_lVert",
+        name="ket_norm_lvert",
         latex=r"\lVert |{state}\rangle \rVert = 1",
         slots={"state": S(_STATE_POOL)},
     ),
@@ -271,7 +271,7 @@ _PART_E: list[Template] = [
         slots={"op": S(_OP_POOL)},
     ),
     Template(
-        name="thermal_expectation_T",
+        name="thermal_expectation_t",
         latex=r"\langle {op} \rangle_T",
         slots={"op": S(_OP_POOL)},
     ),

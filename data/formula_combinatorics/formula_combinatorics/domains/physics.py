@@ -857,7 +857,7 @@ _PART_APPROX: list[Template] = [
         slots={"coord": S(_COORD_POOL)},
     ),
     Template(
-        name="classical_partition_high_T",
+        name="classical_partition_high_t",
         latex=r"Z \approx \left(\frac{{k_B T}}{{\hbar\,{om}}}\right)^{{{nn}}} \quad (k_B T \gg \hbar\,{om})",
         slots={"om": S(_OMEGA_POOL), "nn": S(_N_POOL)},
     ),
@@ -877,7 +877,7 @@ _PHYSICS_TEMPLATES += [
         slots={"psi": S(_PSI_POOL)},
     ),
     Template(
-        name="complex_impedance_Re_Im",
+        name="complex_impedance_re_im",
         latex=r"Z = \Re(Z) + i\,\Im(Z)",
         slots={},
     ),

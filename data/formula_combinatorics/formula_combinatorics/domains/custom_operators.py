@@ -222,7 +222,7 @@ _ESS_TEMPLATES: list[Template] = [
         },
     ),
     Template(
-        name="esssup_Linfty",
+        name="esssup_linfty",
         latex=r"\|{ff}\|_\infty = \operatorname{{ess\,sup}}_{{{vv}}}\,|{ff}({vv})|",
         slots={
             "ff": _FN_SLOT,

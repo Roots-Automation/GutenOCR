@@ -23,17 +23,17 @@ _P_NORM_POOL: tuple[str, ...] = ("1", "2", r"\infty", "F")
 
 _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
     Template(
-        name="2x2_pmatrix",
+        name="pmatrix_2x2",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "pmatrix"), n=50)},
     ),
     Template(
-        name="3x3_vmatrix_det",
+        name="vmatrix_det_3x3",
         latex=r"\det {mat}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "vmatrix"), n=200)},
     ),
     Template(
-        name="2x2_determinant_expansion",
+        name="determinant_expansion_2x2",
         latex=(
             r"\begin{{equation*}}\begin{{vmatrix}} {e0} & {e1} \\ {e2} & {e3} \end{{vmatrix}} "
             r"= {e0} {e3} - {e1} {e2}\end{{equation*}}"
@@ -96,7 +96,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
         slots={"m": S(_MATRIX_NAMES)},
     ),
     Template(
-        name="2d_dot_product",
+        name="dot_product_2d",
         latex=(
             r"\begin{{equation*}}\begin{{pmatrix}} {e0} \\ {e1} \end{{pmatrix}} \cdot "
             r"\begin{{pmatrix}} {e2} \\ {e3} \end{{pmatrix}} = "
@@ -110,7 +110,7 @@ _LINEAR_ALGEBRA_TEMPLATES: list[Template] = [
         },
     ),
     Template(
-        name="2x2_bmatrix",
+        name="bmatrix_2x2",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "bmatrix"), n=50)},
     ),
@@ -183,86 +183,86 @@ _LINEAR_ALGEBRA_TEMPLATES += _PART_ARROWS
 _PART_MATRIX_ENVS: list[Template] = [
     # --- Bmatrix (curly braces) ---
     Template(
-        name="2x2_Bmatrix",
+        name="bmatrix_curly_2x2",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "Bmatrix"), n=50)},
     ),
     Template(
-        name="3x3_Bmatrix",
+        name="bmatrix_curly_3x3",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "Bmatrix"), n=200)},
     ),
     # --- Vmatrix (double pipes) ---
     Template(
-        name="2x2_Vmatrix",
+        name="vmatrix_double_2x2",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "Vmatrix"), n=50)},
     ),
     Template(
-        name="3x3_Vmatrix_det",
+        name="vmatrix_double_det_3x3",
         latex=r"\det {mat}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "Vmatrix"), n=200)},
     ),
     # --- Plain matrix env (standalone + mixed delimiters) ---
     Template(
-        name="2x2_matrix_plain",
+        name="matrix_plain_2x2",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
     Template(
-        name="3x3_matrix_plain",
+        name="matrix_plain_3x3",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "matrix"), n=200)},
     ),
     Template(
-        name="2x2_matrix_ceil",
+        name="matrix_ceil_2x2",
         latex=r"\left\lceil {mat} \right\rceil",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
     Template(
-        name="2x2_matrix_angle",
+        name="matrix_angle_2x2",
         latex=r"\left\langle {mat} \right\rangle",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
     Template(
-        name="2x2_matrix_bra_form",
+        name="matrix_bra_form_2x2",
         latex=r"\left\langle {mat} \right\rvert",
         slots={"mat": E(lambda rng: _matrix_env(rng, 2, 2, "matrix"), n=50)},
     ),
     # --- smallmatrix inline ---
     Template(
-        name="2x2_smallmatrix_inline",
+        name="smallmatrix_inline_2x2",
         latex=r"{sm}",
         slots={"sm": E(lambda rng: _smallmatrix_inline(rng, 2, 2), n=200)},
     ),
     Template(
-        name="3x2_smallmatrix_inline",
+        name="smallmatrix_inline_3x2",
         latex=r"{sm}",
         slots={"sm": E(lambda rng: _smallmatrix_inline(rng, 3, 2), n=300)},
     ),
     # --- Larger and rectangular matrices ---
     Template(
-        name="3x3_pmatrix",
+        name="pmatrix_3x3",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "pmatrix"), n=200)},
     ),
     Template(
-        name="3x3_bmatrix",
+        name="bmatrix_3x3",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 3, "bmatrix"), n=200)},
     ),
     Template(
-        name="4x4_pmatrix",
+        name="pmatrix_4x4",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 4, 4, "pmatrix"), n=1000)},
     ),
     Template(
-        name="3x1_bmatrix_col_vector",
+        name="bmatrix_col_vector_3x1",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 3, 1, "bmatrix"), n=15)},
     ),
     Template(
-        name="1x3_bmatrix_row_vector",
+        name="bmatrix_row_vector_1x3",
         latex=r"\begin{{equation*}}{mat}\end{{equation*}}",
         slots={"mat": E(lambda rng: _matrix_env(rng, 1, 3, "bmatrix"), n=15)},
     ),
@@ -303,32 +303,32 @@ _P_LVERT_POOL = ("2", "p", r"\infty", "1")
 
 _PART_LVERT_NORMS: list[Template] = [
     Template(
-        name="lVert_normalization",
+        name="norm_normalization",
         latex=r"\lVert {vv} \rVert = 1",
         slots={"vv": S(_VEC_LVERT_POOL)},
     ),
     Template(
-        name="lVert_operator_norm_def",
+        name="norm_operator_def",
         latex=r"\lVert {AA} \rVert_{{\mathrm{{op}}}} = \sup_{{\lVert {vv} \rVert = 1}} \lVert {AA}\,{vv} \rVert",
         slots={"AA": S(_MAT_LVERT_POOL), "vv": S(_VEC_LVERT_POOL)},
     ),
     Template(
-        name="lVert_lp_norm",
+        name="norm_lp",
         latex=r"\lVert f \rVert_{{L^{{{pp}}}}} = \Bigl(\int \lvert f \rvert^{{{pp}}}\,d\mu\Bigr)^{{1/{pp}}}",
         slots={"pp": S(_P_LVERT_POOL)},
     ),
     Template(
-        name="lVert_triangle_inequality",
+        name="norm_triangle_inequality",
         latex=r"\lVert {uu} + {vv} \rVert \leq \lVert {uu} \rVert + \lVert {vv} \rVert",
         slots={"uu": S(_VEC_LVERT_POOL), "vv": X(_VEC_LVERT_POOL, ("uu",))},
     ),
     Template(
-        name="lVert_submultiplicative",
+        name="norm_submultiplicative",
         latex=r"\lVert {AA}\,{BB} \rVert \leq \lVert {AA} \rVert\,\lVert {BB} \rVert",
         slots={"AA": S(_MAT_LVERT_POOL), "BB": X(_MAT_LVERT_POOL, ("AA",))},
     ),
     Template(
-        name="lVert_spectral_radius_bound",
+        name="norm_spectral_radius_bound",
         latex=r"\rho({AA}) \leq \lVert {AA} \rVert",
         slots={"AA": S(_MAT_LVERT_POOL)},
     ),

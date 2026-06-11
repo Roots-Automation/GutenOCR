@@ -718,7 +718,7 @@ _TEMPLATES_B6: list[Template] = [
         },
     ),  # n_eff = 13×10×9 = 1,170
     Template(
-        name="exactness_at_B",
+        name="exactness_at_b",
         latex=(
             r"\operatorname{{im}}({mor1}) = \ker({mor2})"
             r"\quad \text{{in }}\; {obj1} \to {obj2} \to {obj3}"

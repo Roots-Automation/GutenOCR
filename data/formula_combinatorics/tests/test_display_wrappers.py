@@ -61,13 +61,12 @@ def test_generate_display_fraction_zero() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=1,
-        align_fraction=0.0,
         display_fraction=0.0,
         inline_fraction=0.0,
     )
     for v in results.values():
+        # \[ is only ever added by _wrap_display; \begin{equation} can be domain-native.
         assert not v.startswith(r"\["), f"Unexpected \\[ in: {v}"
-        assert not v.startswith(r"\begin{equation}"), f"Unexpected \\begin{{equation}} in: {v}"
 
 
 def test_generate_display_fraction_one() -> None:
@@ -78,7 +77,6 @@ def test_generate_display_fraction_one() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=2,
-        align_fraction=0.0,
         display_fraction=1.0,
         inline_fraction=0.0,
     )
@@ -94,7 +92,6 @@ def test_generate_inline_fraction_one() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=3,
-        align_fraction=0.0,
         display_fraction=0.0,
         inline_fraction=1.0,
     )
@@ -111,7 +108,6 @@ def test_no_double_wrapping() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=4,
-        align_fraction=0.15,
         display_fraction=1.0,
         inline_fraction=0.0,
     )
@@ -128,7 +124,6 @@ def test_param_plumbing() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=99,
-        align_fraction=0.0,
         inline_fraction=0.0,
     )
     r0 = generate(**kwargs, display_fraction=0.0)

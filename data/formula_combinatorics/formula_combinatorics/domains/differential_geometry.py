@@ -1081,7 +1081,7 @@ _DIFFGEOM_TEMPLATES += [
         slots={},
     ),
     Template(
-        name="gauss_bonnet_boundary",
+        name="gauss_bonnet_boundary_iint",
         latex=(
             r"\iint_{{{mm}}} K \, dA"
             r" + \int{lim_mod}_{{\partial {mm}}} \varkappa_g \, ds"

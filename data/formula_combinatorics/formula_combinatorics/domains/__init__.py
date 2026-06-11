@@ -64,4 +64,7 @@ assert set(DEFAULT_WEIGHTS) == set(GENERATORS), (
 # Tag index: domain name → list of tag strings (usable for corpus.generate(tags=...) filtering)
 DOMAIN_TAGS: dict[str, list[str]] = {k: list(v.tags) for k, v in DOMAIN_CONFIG.items()}
 
-__all__ = ["GENERATORS", "DEFAULT_WEIGHTS", "TEMPLATES", "DOMAIN_TAGS", "DOMAIN_CONFIG"]
+# Difficulty index: domain name → difficulty level string
+DOMAIN_DIFFICULTY: dict[str, str] = {k: v.difficulty for k, v in DOMAIN_CONFIG.items()}
+
+__all__ = ["GENERATORS", "DEFAULT_WEIGHTS", "TEMPLATES", "DOMAIN_TAGS", "DOMAIN_DIFFICULTY", "DOMAIN_CONFIG"]

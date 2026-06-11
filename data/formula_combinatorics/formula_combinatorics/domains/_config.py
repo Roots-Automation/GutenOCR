@@ -27,6 +27,7 @@ class DomainMeta:
     cap: float = 1_000_000
     tags: tuple[str, ...] = field(default_factory=tuple)
     description: str = ""
+    difficulty: str = "undergraduate"  # elementary | undergraduate | graduate | research
 
 
 # ---------------------------------------------------------------------------
@@ -39,43 +40,43 @@ class DomainMeta:
 
 DOMAIN_CONFIG: dict[str, DomainMeta] = {
     # ── foundational ─────────────────────────────────────────────────────────
-    "algebra": DomainMeta(weight=0.09, cap=75_000_000, tags=("foundational",)),
-    "trigonometry": DomainMeta(weight=0.04, cap=75_000_000, tags=("foundational",)),
-    "calculus": DomainMeta(weight=0.10, tags=("foundational",)),
-    "linear_algebra": DomainMeta(weight=0.08, tags=("foundational",)),
-    "geometry": DomainMeta(weight=0.07, tags=("foundational",)),
-    "probability": DomainMeta(weight=0.07, tags=("foundational",)),
+    "algebra": DomainMeta(weight=0.09, cap=75_000_000, tags=("foundational",), difficulty="elementary"),
+    "trigonometry": DomainMeta(weight=0.04, cap=75_000_000, tags=("foundational",), difficulty="elementary"),
+    "calculus": DomainMeta(weight=0.10, tags=("foundational",), difficulty="undergraduate"),
+    "linear_algebra": DomainMeta(weight=0.08, tags=("foundational",), difficulty="undergraduate"),
+    "geometry": DomainMeta(weight=0.07, tags=("foundational",), difficulty="elementary"),
+    "probability": DomainMeta(weight=0.07, tags=("foundational",), difficulty="undergraduate"),
     # ── applied ──────────────────────────────────────────────────────────────
-    "physics": DomainMeta(weight=0.06, tags=("applied",)),
-    "chemistry": DomainMeta(weight=0.05, tags=("applied",)),
-    "optimization": DomainMeta(weight=0.05, tags=("applied",)),
+    "physics": DomainMeta(weight=0.06, tags=("applied",), difficulty="undergraduate"),
+    "chemistry": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
+    "optimization": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
     # ── core mathematics ─────────────────────────────────────────────────────
-    "set_theory": DomainMeta(weight=0.05, tags=("foundational",)),
-    "logic": DomainMeta(weight=0.05, tags=("foundational",)),
-    "group_theory": DomainMeta(weight=0.04, tags=("advanced",)),
-    "analysis": DomainMeta(weight=0.04, tags=("advanced",)),
-    "number_theory": DomainMeta(weight=0.04, tags=("advanced",)),
-    "quantum_notation": DomainMeta(weight=0.04, tags=("applied",)),
-    "statistics": DomainMeta(weight=0.04, tags=("foundational",)),
-    "topology": DomainMeta(weight=0.04, tags=("advanced",)),
-    "complex_analysis": DomainMeta(weight=0.03, tags=("advanced",)),
-    "combinatorics": DomainMeta(weight=0.03, tags=("foundational",)),
-    "custom_operators": DomainMeta(weight=0.03, tags=("structural",)),
-    "differential_equations": DomainMeta(weight=0.03, tags=("foundational",)),
-    "information_theory": DomainMeta(weight=0.03, tags=("applied",)),
-    "math_fonts": DomainMeta(weight=0.03, tags=("structural",)),
+    "set_theory": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
+    "logic": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
+    "group_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "analysis": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "number_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "quantum_notation": DomainMeta(weight=0.04, tags=("applied",), difficulty="graduate"),
+    "statistics": DomainMeta(weight=0.04, tags=("foundational",), difficulty="undergraduate"),
+    "topology": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "complex_analysis": DomainMeta(weight=0.03, tags=("advanced",), difficulty="graduate"),
+    "combinatorics": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
+    "custom_operators": DomainMeta(weight=0.03, tags=("structural",), difficulty="graduate"),
+    "differential_equations": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
+    "information_theory": DomainMeta(weight=0.03, tags=("applied",), difficulty="graduate"),
+    "math_fonts": DomainMeta(weight=0.03, tags=("structural",), difficulty="undergraduate"),
     # ── advanced / specialised ────────────────────────────────────────────────
-    "category_theory": DomainMeta(weight=0.02, tags=("advanced",)),
-    "differential_geometry": DomainMeta(weight=0.02, tags=("advanced",)),
-    "fourier": DomainMeta(weight=0.02, tags=("advanced",)),
-    "graph_theory": DomainMeta(weight=0.02, tags=("advanced",)),
-    "measure_theory": DomainMeta(weight=0.02, tags=("advanced",)),
-    "p_adic": DomainMeta(weight=0.02, tags=("advanced",)),
-    "stochastic_processes": DomainMeta(weight=0.02, tags=("advanced",)),
-    "representation_theory": DomainMeta(weight=0.01, tags=("advanced",)),
-    "ring_field_theory": DomainMeta(weight=0.01, tags=("advanced",)),
+    "category_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
+    "differential_geometry": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
+    "fourier": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
+    "graph_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
+    "measure_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
+    "p_adic": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
+    "stochastic_processes": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
+    "representation_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="research"),
+    "ring_field_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="graduate"),
     # ── structural / formatting ───────────────────────────────────────────────
-    "align": DomainMeta(weight=0.15, cap=5_000_000, tags=("structural",)),
+    "align": DomainMeta(weight=0.15, cap=5_000_000, tags=("structural",), difficulty="undergraduate"),
 }
 
 

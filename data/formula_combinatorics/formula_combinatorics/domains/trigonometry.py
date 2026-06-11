@@ -1028,7 +1028,7 @@ _TRIG_TEMPLATES: list[Template] = [
                 },
             ),
             Template(
-                name="triangle_area_S",
+                name="triangle_area_s",
                 latex=r"S = \tfrac{{1}}{{2}} {s0} \, {s1} \, {sn} {A}",
                 slots={
                     "sn": E(_sin_nm, n=2),
@@ -1056,7 +1056,7 @@ _TRIG_TEMPLATES: list[Template] = [
         },
     ),
     Template(
-        name="law_of_sines_2R_ratio",
+        name="law_of_sines_2r_ratio",
         latex=r"\frac{{{s0}}}{{\sin {A0}}} = 2R",
         slots={
             "s0": S(tuple(_SIDES_POOL), idx=0.35),

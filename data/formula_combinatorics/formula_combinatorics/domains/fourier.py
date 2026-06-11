@@ -308,7 +308,7 @@ _PART_B_HA: list[Template] = [
         slots={"lim_mod": _LIM_MOD, "ff": S(_FUNC_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
-        name="inner_product_L2",
+        name="inner_product_l2",
         latex=r"\langle {ff},\, {gg}\rangle = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt})\,\overline{{{gg}({tt})}}\,d{tt}",
         slots={"lim_mod": _LIM_MOD, "ff": S(_FUNC_POOL), "gg": X(_FUNC_POOL, ("ff",)), "tt": S(_TIME_POOL)},
     ),
@@ -608,7 +608,7 @@ _PART_E: list[Template] = [
         slots={"lim_mod": _LIM_MOD, "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL), "tt": S(_TIME_POOL)},
     ),
     Template(
-        name="power_spectral_density_Re",
+        name="power_spectral_density_re",
         latex=r"S_{{{ff}}}({xi}) = \Re\!\left(\int{lim_mod}_{{-\infty}}^{{\infty}} R_{{{ff}}}(\tau)\,e^{{-2\pi i {xi} \tau}}\,d\tau\right)",
         slots={"lim_mod": _LIM_MOD, "ff": S(_FUNC_POOL), "xi": S(_FREQ_POOL)},
     ),

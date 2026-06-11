@@ -1,12 +1,14 @@
-"""Tests for newly added amsmath environments in align._align()."""
+"""Tests for newly added amsmath environments in the align domain."""
 
 from __future__ import annotations
 
 import random
 
-from formula_combinatorics.align import _LABELS, _align
 from formula_combinatorics.corpus import generate
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
+from formula_combinatorics.domains.align import _LABELS
+
+_align = GENERATORS["align"]
 
 
 def _sample_align(n: int = 5000, seed: int = 0) -> list[str]:
@@ -111,7 +113,6 @@ def test_no_double_wrapping_new_envs() -> None:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=7,
-        align_fraction=0.5,
         display_fraction=1.0,
         inline_fraction=0.0,
     )

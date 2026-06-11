@@ -1067,12 +1067,12 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                 ],
             ),
             Template(
-                name="sum_of_squares",
+                name="sum_of_squares_gauss",
                 latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}",
                 slots={"lim_mod": _LIM_MOD, "n": S(_GEO_N)},
             ),
             Template(
-                name="sum_of_cubes",
+                name="sum_of_cubes_gauss",
                 latex=r"\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2",
                 slots={"lim_mod": _LIM_MOD, "n": S(_GEO_N)},
             ),

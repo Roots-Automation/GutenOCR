@@ -277,7 +277,7 @@ _TEMPLATES: list[Template] = [
                 slots={"e": _EXPR_SLOT},
             ),
             Template(
-                name="align_series_expansion_N",
+                name="align_series_expansion_cap_n",
                 latex=(
                     r"\begin{{align*}}"
                     r"\sum_{{k=1}}^{{N}} a_k &= a_1 + a_2 + \cdots + a_{{N}} \\ "
@@ -317,7 +317,7 @@ _TEMPLATES: list[Template] = [
                 slots={"e1": _EXPR_SLOT, "e2": _EXPR_SLOT},
             ),
             Template(
-                name="align_series_underbrace_N",
+                name="align_series_underbrace_cap_n",
                 latex=(
                     r"\begin{{align*}}"
                     r"S_{{N}} &= \underbrace{{a_1 + a_2 + \cdots + a_{{N}}}}_{{N \text{{ terms}}}} \\ "

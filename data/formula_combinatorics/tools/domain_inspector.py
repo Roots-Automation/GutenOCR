@@ -26,8 +26,9 @@ from pathlib import Path
 # Allow running as a plain script from inside the package directory
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from formula_combinatorics.align import _align
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
+
+_align = GENERATORS["align"]
 
 # ---------------------------------------------------------------------------
 # HTML template

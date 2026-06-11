@@ -684,7 +684,7 @@ _TEMPLATES_E: list[Template] = [
 
 _TEMPLATES_F: list[Template] = [
     Template(
-        name="modulus_Re_Im",
+        name="modulus_re_im",
         latex=r"|{zz}|^2 = \Re({zz})^2 + \Im({zz})^2",
         slots={"zz": S(_VAR_POOL)},
     ),
@@ -694,7 +694,7 @@ _TEMPLATES_F: list[Template] = [
         slots={"zz": S(_VAR_POOL)},
     ),
     Template(
-        name="complex_conjugate_Re_Im",
+        name="complex_conjugate_re_im",
         latex=r"\overline{{{zz}}} = \Re({zz}) - i\,\Im({zz})",
         slots={"zz": S(_VAR_POOL)},
     ),

@@ -510,7 +510,7 @@ _CHEM_TEMPLATES += [
         },
     ),
     Template(
-        name="gibbs_standard_lnK",
+        name="gibbs_standard_lnk",
         latex=r"{DG} = -{R}\,{T}\,\ln {Keq}",
         slots={
             "DG": S(_DG_POOL),
@@ -520,7 +520,7 @@ _CHEM_TEMPLATES += [
         },
     ),
     Template(
-        name="gibbs_from_Q",
+        name="gibbs_from_q",
         latex=r"{DG} = {DG0} + {R}\,{T}\,\ln {QQ}",
         slots={
             "DG": S(_DG_POOL),

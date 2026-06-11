@@ -1069,12 +1069,12 @@ _PART_ARROWS: list[Template] = [
         slots={"dom": S(_DOM_POOL)},
     ),
     Template(
-        name="weak_convergence_Lp",
+        name="weak_convergence_lp",
         latex=r"f_{{{nn}}} \rightharpoonup f \text{{ in }} {sp}",
         slots={"nn": S(_NN_POOL), "sp": S(_SP_POOL)},
     ),
     Template(
-        name="weak_convergence_Hilbert",
+        name="weak_convergence_hilbert",
         latex=r"\langle x_{{{nn}}}, y \rangle \rightarrow \langle x, y \rangle \;\forall\, y \implies x_{{{nn}}} \rightharpoonup x",
         slots={"nn": S(_NN_POOL)},
     ),
