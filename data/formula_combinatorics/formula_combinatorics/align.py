@@ -1,4 +1,10 @@
-"""Multi-line LaTeX align* and cases environment generator."""
+"""Multi-line LaTeX align* and cases environment generator.
+
+DEPRECATED: This module exists for backward compatibility only.
+The _align() function has been replaced by the 'align' domain registered in
+formula_combinatorics/domains/align.py, which is now sampled via the standard
+domain weighting mechanism. corpus.generate() no longer calls _align() directly.
+"""
 
 from __future__ import annotations
 
