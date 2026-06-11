@@ -187,6 +187,12 @@ class ExcludeSlot:
 
     def draw(self, rng: random.Random, exclude: frozenset[str] = frozenset()) -> str:
         pool = [p for p in self.pool if p not in exclude]
+        if not pool:
+            raise ValueError(
+                f"ExcludeSlot pool is empty after applying exclusions {sorted(exclude)!r}. "
+                f"Original pool has {len(self.pool)} entries; check that exclude_from "
+                f"doesn't exhaust the pool."
+            )
         val = rng.choice(pool)
         return _decorate(val, self.idx, rng)
 

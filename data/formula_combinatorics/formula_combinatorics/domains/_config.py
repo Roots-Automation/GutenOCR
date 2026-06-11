@@ -33,7 +33,7 @@ class DomainMeta:
 # ---------------------------------------------------------------------------
 # Per-domain configuration
 # ---------------------------------------------------------------------------
-# weight  — unnormalised sampling probability (registry normalises at load time)
+# weight  — unnormalised sampling probability; corpus.generate() normalises at call time
 # cap     — n_eff cap passed to compute_weights; default 1_000_000
 # tags    — used at runtime for corpus.generate(tags=...) filtering
 # ---------------------------------------------------------------------------
