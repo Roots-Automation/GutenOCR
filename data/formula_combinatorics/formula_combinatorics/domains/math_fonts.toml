@@ -307,7 +307,7 @@ latex = '\pmb{{{v}}}'
 [template.slots.v]
 type = "E"
 gen  = "_atom"
-n    = 5_000_000.0
+n    = 150.0
 
 [[template]]
 name  = "pmb_relation"
@@ -315,11 +315,11 @@ latex = '\pmb{{{v}}} = {w}'
 [template.slots.v]
 type = "E"
 gen  = "_atom"
-n    = 5_000_000.0
+n    = 150.0
 [template.slots.w]
 type = "E"
 gen  = "_expr"
-n    = 5_000_000.0
+n    = 100.0
 
 [[template]]
 name  = "boldsymbol_greek"

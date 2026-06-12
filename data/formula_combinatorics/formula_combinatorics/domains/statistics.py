@@ -569,7 +569,7 @@ _TEMPLATES_B6: list[Template] = [
     Template(
         name="anova_within",
         latex=(
-            r"SS_W = \sum_{{i=1}}^{{{kk}}}\sum_{{j=1}}^{{{nn}}_i}"
+            r"SS_W = \sum_{{i=1}}^{{{kk}}}\sum_{{j=1}}^{{{nn}_i}}"
             r"(X_{{ij}} - \bar{{X}}_{{i\cdot}})^2"
         ),
         slots={"kk": S(_K_POOL), "nn": S(_N_POOL)},

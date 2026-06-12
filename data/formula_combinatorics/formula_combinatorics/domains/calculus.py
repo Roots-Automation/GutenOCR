@@ -1036,8 +1036,8 @@ _CALCULUS_TEMPLATES += [
         name="interval_notation",
         latex=r"{v} \in {ivl}",
         slots={
-            "v": E(lambda rng: rng.choice(["x", "y", "z", "t", "u"]), n=5_000_000),
-            "ivl": E(_interval, n=5_000_000),
+            "v": E(lambda rng: rng.choice(["x", "y", "z", "t", "u"]), n=5),
+            "ivl": E(_interval, n=324),
         },
     ),
     Template(
@@ -1045,8 +1045,8 @@ _CALCULUS_TEMPLATES += [
         latex=r"{f} : {ivl_a} \to {ivl_b}",
         slots={
             "f": E(lambda rng: rng.choice(["f", "g", "h", "F"]), n=4),
-            "ivl_a": E(_interval, n=5_000_000),
-            "ivl_b": E(_interval, n=5_000_000),
+            "ivl_a": E(_interval, n=324),
+            "ivl_b": E(_interval, n=324),
         },
     ),
 ]

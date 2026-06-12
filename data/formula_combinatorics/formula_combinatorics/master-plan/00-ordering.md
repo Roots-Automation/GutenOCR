@@ -11,8 +11,8 @@ Master sequencing doc for the seven units of work that take the synthetic LaTeX 
 | # | Unit | Effort | One-line scope |
 |---|------|--------|----------------|
 | 1 | [Truth-up & hygiene](01-truth-up.md) | S | Fix README/code drift, surface swallowed errors, weight variants, version bump. |
-| 2 | [Render-in-the-loop validity gate](02-render-gate.md) | L | Compile every formula, keep-if-renders, emit images, per-template error rates. |
-| 3 | [Calibration & coverage instrumentation](03-calibration-coverage.md) | M | n_eff vs empirical in CI; declare and assert global symbol coverage. |
+| 2 | [Render-in-the-loop validity gate](02-render-gate.md) | L | ✅ Compile every formula, keep-if-renders, emit images, per-template error rates. |
+| 3 | [Calibration & coverage instrumentation](03-calibration-coverage.md) | M | ✅ n_eff vs empirical in CI; declare and assert global symbol coverage. |
 | 4 | [Engine/content split + content-as-data](04-engine-content-split.md) | L | Separate engine from the 33 domains; move templates toward declarative data. |
 | 5 | [Parameterization expansion](05-parameterization.md) | M | ✅ Difficulty, depth, length, symbol-tier, weight-override, split config knobs. |
 | 6 | [Benchmark-native output + splits + semantic key](06-benchmark-output.md) | M-L | ✅ Rich per-sample records, held-out split manifests, semantic-equivalence key. |

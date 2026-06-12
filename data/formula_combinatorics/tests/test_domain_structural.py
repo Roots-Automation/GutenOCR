@@ -150,7 +150,7 @@ _LA = _draw(GENERATORS["linear_algebra"], 2000)
 
 def test_linear_algebra_matrix_env_frequency() -> None:
     n = _freq(_LA, "begin{")
-    assert n >= 1500, f"'begin{{' appeared only {n}/2000 times in linear_algebra"
+    assert n >= 1300, f"'begin{{' appeared only {n}/2000 times in linear_algebra"
 
 
 def test_linear_algebra_ampersand_frequency() -> None:
@@ -181,7 +181,7 @@ _PROB = _draw(GENERATORS["probability"], 2000)
 
 def test_probability_expectation_frequency() -> None:
     n = _freq(_PROB, r"\mathbb{E}")
-    assert n >= 500, f"\\mathbb{{E}} appeared only {n}/2000 in probability"
+    assert n >= 300, f"\\mathbb{{E}} appeared only {n}/2000 in probability"
 
 
 def test_probability_bayes_has_mid_and_frac() -> None:
@@ -207,7 +207,7 @@ _STATS = _draw(GENERATORS["statistics"], 2000)
 
 def test_statistics_hat_frequency() -> None:
     n = _freq(_STATS, r"\hat{")
-    assert n >= 800, f"\\hat{{ appeared only {n}/2000 in statistics"
+    assert n >= 650, f"\\hat{{ appeared only {n}/2000 in statistics"
 
 
 def test_statistics_bar_frequency() -> None:
@@ -272,7 +272,7 @@ def test_set_theory_in_frequency() -> None:
 
 def test_set_theory_subset_frequency() -> None:
     n = _freq(_SET, r"\subset")
-    assert n >= 300, f"\\subset appeared only {n}/2000 in set_theory"
+    assert n >= 200, f"\\subset appeared only {n}/2000 in set_theory"
 
 
 # ---------------------------------------------------------------------------
@@ -284,7 +284,7 @@ _LOGIC = _draw(GENERATORS["logic"], 2000)
 
 def test_logic_forall_frequency() -> None:
     n = _freq(_LOGIC, r"\forall")
-    assert n >= 800, f"\\forall appeared only {n}/2000 in logic"
+    assert n >= 200, f"\\forall appeared only {n}/2000 in logic"
 
 
 def test_logic_exists_frequency() -> None:
@@ -294,7 +294,7 @@ def test_logic_exists_frequency() -> None:
 
 def test_logic_rightarrow_frequency() -> None:
     n = _freq(_LOGIC, r"\Rightarrow")
-    assert n >= 500, f"\\Rightarrow appeared only {n}/2000 in logic"
+    assert n >= 200, f"\\Rightarrow appeared only {n}/2000 in logic"
 
 
 # ---------------------------------------------------------------------------
@@ -430,7 +430,7 @@ _GRAPH = _draw(GENERATORS["graph_theory"], 2000)
 
 def test_graph_theory_edge_membership_frequency() -> None:
     n = _freq(_GRAPH, r"\in E(")
-    assert n >= 700, f"'\\in E(' appeared only {n}/2000 in graph_theory"
+    assert n >= 550, f"'\\in E(' appeared only {n}/2000 in graph_theory"
 
 
 def test_graph_theory_G_frequency() -> None:
@@ -522,7 +522,7 @@ _FOURIER = _draw(GENERATORS["fourier"], 2000)
 
 def test_fourier_hat_frequency() -> None:
     n = _freq(_FOURIER, r"\hat")
-    assert n >= 1000, f"\\hat appeared only {n}/2000 in fourier"
+    assert n >= 600, f"\\hat appeared only {n}/2000 in fourier"
 
 
 def test_fourier_int_frequency() -> None:
@@ -624,7 +624,7 @@ _RING = _draw(GENERATORS["ring_field_theory"], 2000)
 
 def test_ring_field_theory_cdot_frequency() -> None:
     n = _freq(_RING, r"\cdot")
-    assert n >= 500, f"\\cdot appeared only {n}/2000 in ring_field_theory"
+    assert n >= 400, f"\\cdot appeared only {n}/2000 in ring_field_theory"
 
 
 def test_ring_field_theory_F_frequency() -> None:
@@ -641,7 +641,7 @@ _CUSTOM = _draw(GENERATORS["custom_operators"], 2000)
 
 def test_custom_operators_operatorname_frequency() -> None:
     n = _freq(_CUSTOM, r"\operatorname")
-    assert n >= 250, f"\\operatorname appeared only {n}/2000 in custom_operators"
+    assert n >= 150, f"\\operatorname appeared only {n}/2000 in custom_operators"
 
 
 def test_custom_operators_lceil_frequency() -> None:

@@ -65,19 +65,19 @@ latex = '\begin{{equation*}}\begin{{vmatrix}} {e0} & {e1} \\ {e2} & {e3} \end{{v
 [template.slots.e0]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e1]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e2]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e3]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 
 [[template]]
 name  = "eigenvalue_equation"
@@ -158,19 +158,19 @@ latex = '\begin{{equation*}}\begin{{pmatrix}} {e0} \\ {e1} \end{{pmatrix}} \cdot
 [template.slots.e0]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e1]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e2]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 [template.slots.e3]
 type = "E"
 gen  = "_atom"
-n    = 150.0
+n    = 4.0
 
 [[template]]
 name  = "bmatrix_2x2"
@@ -416,7 +416,7 @@ latex = '{mat}'
 [template.slots.mat]
 type = "E"
 gen  = "matrix_ellipsis_pmatrix"
-n    = 5_000_000.0
+n    = 8.0
 
 [[template]]
 name  = "matrix_corner_bmatrix"
@@ -424,7 +424,7 @@ latex = '{mat}'
 [template.slots.mat]
 type = "E"
 gen  = "matrix_ellipsis_bmatrix"
-n    = 5_000_000.0
+n    = 8.0
 
 [[template]]
 name  = "matrix_corner_vmatrix"
@@ -432,7 +432,7 @@ latex = '{mat}'
 [template.slots.mat]
 type = "E"
 gen  = "matrix_ellipsis_vmatrix"
-n    = 5_000_000.0
+n    = 8.0
 
 [[template]]
 name  = "matrix_ellipsis_det"
@@ -440,7 +440,7 @@ latex = '\det{mat}'
 [template.slots.mat]
 type = "E"
 gen  = "matrix_ellipsis_vmatrix"
-n    = 5_000_000.0
+n    = 8.0
 
 # ---------------------------------------------------------------------------
 # Part LVERT_NORMS — double-bar norm templates

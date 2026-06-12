@@ -16,6 +16,7 @@ from ..engine._vocab import (
     _atom,
     _eps_sub,
     _expr,
+    _fn_rich,
     _idx_atom,
     _tol_sub,
 )
@@ -905,8 +906,8 @@ _ALGEBRA_TEMPLATES: list[Template] = [
                     "v": S(_VARS, 0.35),
                     "lo": _ATOM_SLOT,
                     "hi": _ATOM_SLOT,
-                    "f1": _FN_RICH_SLOT,
-                    "f2": _FN_RICH_SLOT,
+                    "f1": E(_fn_rich, n=30),
+                    "f2": E(_fn_rich, n=30),
                 },
             ),
             Template(
@@ -1829,7 +1830,7 @@ _DIV_TEMPLATES: list[Template] = [
     Template(
         name="div_expr_eq",
         latex=r"{a} \div {b} = {c}",
-        slots={"a": E(_expr, n=1e4), "b": E(_expr, n=1e4), "c": E(_expr, n=1e4)},
+        slots={"a": E(_expr, n=50), "b": E(_expr, n=50), "c": E(_expr, n=50)},
     ),
     Template(
         name="div_remainder",
@@ -1844,7 +1845,7 @@ _DIV_TEMPLATES: list[Template] = [
     Template(
         name="div_paren_expr",
         latex=r"\left({a} + {b}\right) \div {c}",
-        slots={"a": E(_expr, n=1e4), "b": E(_expr, n=1e4), "c": E(_expr, n=1e4)},
+        slots={"a": E(_expr, n=50), "b": E(_expr, n=50), "c": E(_expr, n=50)},
     ),
 ]
 
@@ -1864,7 +1865,7 @@ _SUBSTACK_ALG_TEMPLATES: list[Template] = [
     Template(
         name="substack_sum_eq",
         latex=r"{s} = {v}",
-        slots={"s": E(_substack_sum, n=5_000_000), "v": E(_expr, n=5_000_000)},
+        slots={"s": E(_substack_sum, n=1_800), "v": E(_expr, n=1_800)},
     ),
 ]
 

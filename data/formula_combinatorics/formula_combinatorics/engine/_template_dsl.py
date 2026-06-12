@@ -703,7 +703,7 @@ _INDEX_SLOT: Slot = S(tuple(_INDICES))
 
 # Sub-generator slots — n_eff estimates match the corpus-wide defaults so that
 # weighting is consistent across all domains that adopt these constants.
-_EXPR_SLOT: Sub = E(_expr, n=5_000)
+_EXPR_SLOT: Sub = E(_expr, n=100)
 _ATOM_SLOT: Sub = E(_atom, n=150)
-_FN_SLOT: Sub = E(_fn_rich_nosub, n=100)
+_FN_SLOT: Sub = E(_fn_rich_nosub, n=5)
 _FN_RICH_SLOT: Sub = E(_fn_rich, n=272)

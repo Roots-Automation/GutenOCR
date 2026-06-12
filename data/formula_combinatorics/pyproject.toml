@@ -33,4 +33,5 @@ include = ["formula_combinatorics*"]
 addopts = "-m 'not slow'"
 markers = [
     "slow: marks tests as slow (skipped in normal CI; run with: pytest -m slow)",
+    "render: marks tests that require node + katex npm package",
 ]

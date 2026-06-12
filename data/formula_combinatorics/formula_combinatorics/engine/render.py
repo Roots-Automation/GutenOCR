@@ -529,6 +529,7 @@ def render_corpus(
         formula = val["formula"]
         if formula in success_formulas:
             entry = dict(val)
+            entry["render_ok"] = True
             # Attach image path from the matching RenderResult
             matching = next((r for r in successes if r.formula == formula), None)
             if matching and matching.image_path:
