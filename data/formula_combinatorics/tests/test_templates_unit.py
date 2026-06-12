@@ -6,16 +6,23 @@ import random
 
 from formula_combinatorics._templates import (
     _def_integral,
+    _func_apply,
     _indef_integral,
+    _interval,
     _limit,
     _matrix_env,
     _matrix_with_ellipsis,
     _mixed_partial,
+    _norm,
     _partial_deriv,
     _poly,
+    _poly_mid_factory,
+    _smallmatrix_inline,
     _substack_prod,
     _substack_sum,
+    _sum_indexed,
 )
+from formula_combinatorics._vocab import _FUNCS, _SCALARS
 
 
 def _rng(seed: int = 0) -> random.Random:
@@ -257,3 +264,217 @@ def test_poly_degree_does_not_exceed_max() -> None:
         result = _poly(_rng(seed), "x", max_degree=3)
         for power in ("4", "5", "6", "7", "8", "9"):
             assert f"x^{{{power}}}" not in result, f"Degree {power} exceeds max_degree=3 in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _smallmatrix_inline
+# ---------------------------------------------------------------------------
+
+_SMALLMATRIX_LEFT_DELIMS = (r"\bigl(", r"\bigl[", r"\bigl\{", r"\bigl\langle")
+
+
+def test_smallmatrix_inline_contains_environment() -> None:
+    for seed in range(50):
+        result = _smallmatrix_inline(_rng(seed), 2, 2)
+        assert r"\begin{smallmatrix}" in result
+        assert r"\end{smallmatrix}" in result
+
+
+def test_smallmatrix_inline_2x2_one_row_separator() -> None:
+    for seed in range(20):
+        result = _smallmatrix_inline(_rng(seed), 2, 2)
+        assert result.count(r"\\") == 1, f"2-row matrix should have 1 '\\\\', got: {result!r}"
+
+
+def test_smallmatrix_inline_3x3_two_row_separators() -> None:
+    for seed in range(20):
+        result = _smallmatrix_inline(_rng(seed), 3, 3)
+        assert result.count(r"\\") == 2, f"3-row matrix should have 2 '\\\\', got: {result!r}"
+
+
+def test_smallmatrix_inline_column_separators() -> None:
+    for seed in range(20):
+        result = _smallmatrix_inline(_rng(seed), 2, 3)
+        assert result.count("&") == 4, f"2×3 matrix should have 4 '&', got: {result!r}"
+
+
+def test_smallmatrix_inline_uses_known_delimiter() -> None:
+    for seed in range(50):
+        result = _smallmatrix_inline(_rng(seed), 2, 2)
+        assert any(d in result for d in _SMALLMATRIX_LEFT_DELIMS), f"Unknown delimiter in: {result[:40]!r}"
+
+
+def test_smallmatrix_inline_balanced_braces() -> None:
+    for seed in range(30):
+        result = _smallmatrix_inline(_rng(seed), 3, 3)
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _sum_indexed
+# ---------------------------------------------------------------------------
+
+
+def test_sum_indexed_contains_sum() -> None:
+    for seed in range(50):
+        result = _sum_indexed(_rng(seed), "0", "n")
+        assert r"\sum" in result, f"Missing \\sum in: {result!r}"
+
+
+def test_sum_indexed_contains_lo_and_hi() -> None:
+    for seed in range(50):
+        result = _sum_indexed(_rng(seed), "0", "N")
+        assert "0" in result and "N" in result, f"Missing lo/hi in: {result!r}"
+
+
+def test_sum_indexed_has_sub_and_sup() -> None:
+    for seed in range(50):
+        result = _sum_indexed(_rng(seed), "1", "N")
+        assert "_{" in result and "^{" in result, f"Missing sub/sup in: {result!r}"
+
+
+def test_sum_indexed_limits_approx_50_pct() -> None:
+    results = [_sum_indexed(_rng(i), "0", "n") for i in range(1000)]
+    hits = sum(r"\limits" in r for r in results)
+    assert 350 <= hits <= 650, f"\\limits appeared in {hits}/1000 (expected ~500)"
+
+
+def test_sum_indexed_balanced_braces() -> None:
+    for seed in range(30):
+        result = _sum_indexed(_rng(seed), "a", r"\infty")
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _norm
+# ---------------------------------------------------------------------------
+
+
+def test_norm_contains_two_norm_delimiters() -> None:
+    for seed in range(50):
+        result = _norm(_rng(seed))
+        assert result.count(r"\|") == 2, f"Expected 2 \\| in: {result!r}"
+
+
+def test_norm_subscript_from_pool() -> None:
+    _NORM_SUB_POOL = {"1", "2", r"\infty", "p", "F"}
+    for seed in range(50):
+        result = _norm(_rng(seed))
+        assert any(f"_{{{s}}}" in result for s in _NORM_SUB_POOL), f"Unknown p-subscript in: {result!r}"
+
+
+def test_norm_explicit_p_appears() -> None:
+    result = _norm(_rng(), p="q")
+    assert "_{q}" in result, f"Explicit p='q' not found in subscript of: {result!r}"
+
+
+def test_norm_balanced_braces() -> None:
+    for seed in range(30):
+        result = _norm(_rng(seed))
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _func_apply
+# ---------------------------------------------------------------------------
+
+
+def test_func_apply_contains_left_paren() -> None:
+    for seed in range(50):
+        result = _func_apply(_rng(seed))
+        assert r"\!\left(" in result, f"Missing \\!\\left( in: {result!r}"
+        assert r"\right)" in result, f"Missing \\right) in: {result!r}"
+
+
+def test_func_apply_starts_with_known_func() -> None:
+    for seed in range(50):
+        result = _func_apply(_rng(seed))
+        assert any(result.startswith(fn) for fn in _FUNCS), f"Unknown function in: {result!r}"
+
+
+def test_func_apply_all_funcs_reachable() -> None:
+    results = [_func_apply(_rng(i)) for i in range(500)]
+    for fn in _FUNCS:
+        assert any(r.startswith(fn) for r in results), f"Function {fn!r} never appeared in 500 draws"
+
+
+def test_func_apply_balanced_braces() -> None:
+    for seed in range(30):
+        result = _func_apply(_rng(seed))
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _interval
+# ---------------------------------------------------------------------------
+
+
+def test_interval_contains_comma() -> None:
+    for seed in range(50):
+        result = _interval(_rng(seed))
+        assert "," in result, f"Missing comma in: {result!r}"
+
+
+def test_interval_starts_with_known_left_delimiter() -> None:
+    known_left = (r"\lbrack", "(")
+    for seed in range(50):
+        result = _interval(_rng(seed))
+        assert any(result.startswith(d) for d in known_left), f"Unknown left delimiter in: {result!r}"
+
+
+def test_interval_ends_with_known_right_delimiter() -> None:
+    known_right = (r"\rbrack", ")")
+    for seed in range(50):
+        result = _interval(_rng(seed))
+        assert any(result.endswith(d) for d in known_right), f"Unknown right delimiter in: {result!r}"
+
+
+def test_interval_balanced_braces() -> None:
+    for seed in range(30):
+        result = _interval(_rng(seed))
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _poly_mid_factory
+# ---------------------------------------------------------------------------
+
+
+def test_poly_mid_factory_returns_callable() -> None:
+    fn = _poly_mid_factory(3)
+    assert callable(fn)
+
+
+def test_poly_mid_factory_closure_returns_string() -> None:
+    fn = _poly_mid_factory(3)
+    result = fn(_rng(), "x")
+    assert isinstance(result, str) and len(result) > 0
+
+
+def test_poly_mid_factory_contains_max_exp_power() -> None:
+    fn = _poly_mid_factory(3)
+    for seed in range(20):
+        result = fn(_rng(seed), "x")
+        assert "^{3}" in result, f"Missing ^{{3}} in max_exp=3 closure: {result!r}"
+
+
+def test_poly_mid_factory_max2_contains_only_degree2() -> None:
+    fn = _poly_mid_factory(2)
+    for seed in range(20):
+        result = fn(_rng(seed), "x")
+        assert "^{2}" in result, f"Missing ^{{2}} in max_exp=2 closure: {result!r}"
+        assert "^{3}" not in result, f"Unexpected ^{{3}} in max_exp=2 closure: {result!r}"
+
+
+def test_poly_mid_factory_uses_scalar_coefficients() -> None:
+    fn = _poly_mid_factory(3)
+    for seed in range(50):
+        result = fn(_rng(seed), "x")
+        assert any(f"{s} x" in result for s in _SCALARS), f"No scalar coefficient found in: {result!r}"
+
+
+def test_poly_mid_factory_balanced_braces() -> None:
+    fn = _poly_mid_factory(4)
+    for seed in range(30):
+        result = fn(_rng(seed), "t")
+        assert _balanced(result), f"Unbalanced braces in: {result!r}"

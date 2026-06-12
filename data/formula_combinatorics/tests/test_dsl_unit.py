@@ -7,10 +7,12 @@ import random
 
 import pytest
 from formula_combinatorics._template_dsl import (
+    _DOUBLE_SUB_RE,
     _IDX_POOL,
     _N_IDX,
     EP,
     E,
+    P,
     S,
     Template,
     X,
@@ -18,6 +20,7 @@ from formula_combinatorics._template_dsl import (
     compute_weights,
     make_dispatcher,
     n_eff,
+    register_domain,
     sample,
 )
 
@@ -271,3 +274,126 @@ def test_exclude_param_sub_produces_non_empty_string() -> None:
     for _ in range(50):
         result = sample(t, rng)
         assert isinstance(result, str) and len(result) > 0
+
+
+# ---------------------------------------------------------------------------
+# ParamSub.draw() — direct test via Template.sample
+# ---------------------------------------------------------------------------
+
+
+def test_param_sub_draw_uses_param_slot_value() -> None:
+    """ParamSub must pass the already-drawn param slot's value to its generator."""
+
+    received: list[str] = []
+
+    def _capture_gen(rng: random.Random, v: str) -> str:
+        received.append(v)
+        return f"USED_{v}"
+
+    pool = ("x", "y", "z")
+    t = Template(
+        "param_sub_test",
+        "{var}_{body}",
+        slots={
+            "var": S(pool),
+            "body": P(_capture_gen, param="var", n=10),
+        },
+    )
+    rng = random.Random(0)
+    for _ in range(30):
+        result = sample(t, rng)
+        assert "USED_" in result, f"ParamSub body not invoked; got: {result!r}"
+
+    # Every received param value must have been from the pool
+    for v in received:
+        # Strip any decoration (_{...} subscript) that _decorate may have added
+        base = v.split("_{")[0]
+        assert base in pool, f"ParamSub received {v!r} (base {base!r}) not in pool {pool}"
+
+
+def test_param_sub_result_reflects_param() -> None:
+    """The generator's return value must appear verbatim in the template output."""
+
+    def _identity(rng: random.Random, v: str) -> str:
+        return f"[{v}]"
+
+    pool = ("a", "b")
+    t = Template(
+        "identity_test",
+        "{v}{body}",
+        slots={
+            "v": S(pool),
+            "body": P(_identity, param="v", n=2),
+        },
+    )
+    rng = random.Random(0)
+    for _ in range(20):
+        result = sample(t, rng)
+        # result is like "a[a]" or "b[b]" — the bracketed value matches the first
+        parts = result.split("[", 1)
+        drawn_v = parts[0]
+        inner = parts[1].rstrip("]") if len(parts) > 1 else ""
+        assert inner == drawn_v, f"ParamSub body [{inner}] doesn't match drawn var {drawn_v!r}"
+
+
+# ---------------------------------------------------------------------------
+# register_domain() — direct test
+# ---------------------------------------------------------------------------
+
+
+def test_register_domain_returns_three_dicts() -> None:
+    t1 = Template("t1", "AAA", slots={})
+    t2 = Template("t2", "{v}", slots={"v": S(("x", "y"))})
+    gens, weights, templates = register_domain("test_domain", [t1, t2], weight=0.5)
+    assert isinstance(gens, dict)
+    assert isinstance(weights, dict)
+    assert isinstance(templates, dict)
+
+
+def test_register_domain_keyed_by_name() -> None:
+    t = Template("t", "BBB", slots={})
+    gens, weights, templates = register_domain("my_domain", [t], weight=1.0)
+    assert "my_domain" in gens
+    assert "my_domain" in weights
+    assert "my_domain" in templates
+
+
+def test_register_domain_generator_is_callable() -> None:
+    t = Template("t", "CCC", slots={})
+    gens, _, _ = register_domain("callable_test", [t], weight=1.0)
+    assert callable(gens["callable_test"])
+    assert gens["callable_test"](_rng()) == "CCC"
+
+
+def test_register_domain_weight_stored() -> None:
+    t = Template("t", "DDD", slots={})
+    _, weights, _ = register_domain("weight_test", [t], weight=0.42)
+    assert weights["weight_test"] == pytest.approx(0.42)
+
+
+def test_register_domain_templates_stored() -> None:
+    t1 = Template("t1", "EEE", slots={})
+    t2 = Template("t2", "FFF", slots={})
+    _, _, templates = register_domain("templates_test", [t1, t2], weight=1.0)
+    assert templates["templates_test"] == [t1, t2]
+
+
+# ---------------------------------------------------------------------------
+# _DOUBLE_SUB_RE
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "s",
+    ["p_2_1", "a_i_j", "x_n_k", "M_i_j"],
+)
+def test_double_sub_re_matches_unbraced(s: str) -> None:
+    assert _DOUBLE_SUB_RE.search(s), f"Expected _DOUBLE_SUB_RE to match {s!r}"
+
+
+@pytest.mark.parametrize(
+    "s",
+    ["p_{2}_{1}", "a_{i}", "x_{ij}", "M_{ij}", "p_2", "a_i"],
+)
+def test_double_sub_re_no_match_for_braced_or_single(s: str) -> None:
+    assert not _DOUBLE_SUB_RE.search(s), f"Expected _DOUBLE_SUB_RE NOT to match {s!r}"

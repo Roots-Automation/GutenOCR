@@ -6,7 +6,8 @@ import logging
 import random
 
 import pytest
-from formula_combinatorics.corpus import generate
+from formula_combinatorics.corpus import _TAG_POOL, generate
+from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
 
 # ---------------------------------------------------------------------------
 # max_attempts exhaustion
@@ -186,3 +187,114 @@ def test_metadata_mode_returns_domain_field() -> None:
         assert isinstance(v, dict)
         assert "formula" in v and "domain" in v
         assert v["domain"] in ("algebra", "calculus")
+
+
+# ---------------------------------------------------------------------------
+# tags + exclude_tags simultaneous interaction
+# ---------------------------------------------------------------------------
+
+
+def test_tags_and_exclude_same_tag_returns_empty(caplog: pytest.LogCaptureFixture) -> None:
+    with caplog.at_level(logging.WARNING, logger="formula_combinatorics.corpus"):
+        result = generate(
+            count=10,
+            domains=list(GENERATORS.keys()),
+            generators=GENERATORS,
+            weights=DEFAULT_WEIGHTS,
+            seed=0,
+            tags=["foundational"],
+            exclude_tags=["foundational"],
+        )
+    assert result == {}, "Same tag in both tags and exclude_tags should yield empty corpus"
+
+
+def test_tags_and_exclude_disjoint_leaves_tags_only(caplog: pytest.LogCaptureFixture) -> None:
+    result = generate(
+        count=20,
+        domains=list(GENERATORS.keys()),
+        generators=GENERATORS,
+        weights=DEFAULT_WEIGHTS,
+        seed=0,
+        tags=["foundational"],
+        exclude_tags=["applied"],
+        include_metadata=True,
+    )
+    assert len(result) == 20
+    from formula_combinatorics.domains import DOMAIN_TAGS
+
+    for v in result.values():
+        domain = v["domain"]
+        assert "foundational" in DOMAIN_TAGS.get(domain, []), (
+            f"Domain {domain!r} has tag {DOMAIN_TAGS.get(domain)} but should have 'foundational'"
+        )
+        assert "applied" not in DOMAIN_TAGS.get(domain, []), (
+            f"Domain {domain!r} should have been excluded by 'applied' tag"
+        )
+
+
+def test_tags_and_exclude_overlap_trims_correctly() -> None:
+    result = generate(
+        count=20,
+        domains=list(GENERATORS.keys()),
+        generators=GENERATORS,
+        weights=DEFAULT_WEIGHTS,
+        seed=0,
+        tags=["foundational", "applied"],
+        exclude_tags=["applied"],
+        include_metadata=True,
+    )
+    from formula_combinatorics.domains import DOMAIN_TAGS
+
+    for v in result.values():
+        domain = v["domain"]
+        assert "applied" not in DOMAIN_TAGS.get(domain, []), (
+            f"Domain {domain!r} with 'applied' tag should have been excluded"
+        )
+
+
+def test_nonexistent_tag_with_exclude_still_empty() -> None:
+    result = generate(
+        count=10,
+        domains=list(GENERATORS.keys()),
+        generators=GENERATORS,
+        weights=DEFAULT_WEIGHTS,
+        seed=0,
+        tags=["this_tag_xyz_does_not_exist"],
+        exclude_tags=["foundational"],
+    )
+    assert result == {}
+
+
+# ---------------------------------------------------------------------------
+# _TAG_POOL validation
+# ---------------------------------------------------------------------------
+
+
+def test_tag_pool_all_entries_are_nonempty_strings() -> None:
+    for entry in _TAG_POOL:
+        assert isinstance(entry, str) and len(entry) > 0, f"_TAG_POOL entry is empty or non-string: {entry!r}"
+
+
+def test_tag_pool_no_unescaped_braces() -> None:
+    for entry in _TAG_POOL:
+        assert "{" not in entry and "}" not in entry, (
+            f"_TAG_POOL entry {entry!r} contains literal braces — would break \\tag{{...}}"
+        )
+
+
+def test_tag_pool_embedded_in_tag_command_is_balanced() -> None:
+    def _balanced(s: str) -> bool:
+        stripped = s.replace(r"\{", "").replace(r"\}", "")
+        depth = 0
+        for ch in stripped:
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth < 0:
+                    return False
+        return depth == 0
+
+    for entry in _TAG_POOL:
+        wrapped = rf"\tag{{{entry}}}"
+        assert _balanced(wrapped), f"\\tag{{{entry!r}}} has unbalanced braces"

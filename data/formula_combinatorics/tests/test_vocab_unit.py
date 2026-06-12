@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+import re
 
 import pytest
 from formula_combinatorics._vocab import (
@@ -14,6 +15,7 @@ from formula_combinatorics._vocab import (
     _COEFF_POOL,
     _COMB_K,
     _COMB_N,
+    _DECO_CMDS,
     _ELT_POOL,
     _EXP_OP,
     _FOURIER_N,
@@ -34,6 +36,7 @@ from formula_combinatorics._vocab import (
     _MU_STATS,
     _POS_INTS,
     _PROB_OP_FULL,
+    _PROPS,
     _RELATIONS,
     _RING_NAMES,
     _RV_BASE,
@@ -41,18 +44,35 @@ from formula_combinatorics._vocab import (
     _SETS,
     _SIG_STATS,
     _STATS_N,
+    _TRIG_NAME_POOLS,
     _VARS,
     _VARS_SCALARS,
     _VEC_POOL,
     _atom,
     _bgreek,
     _bvec,
+    _cal,
+    _deco,
+    _eps_sub,
     _expr,
     _fn_rich,
     _fn_rich_nosub,
+    _g,
+    _gu,
+    _i,
+    _idx_atom,
+    _lower,
     _maybe_idx,
     _overbrace,
+    _overset,
+    _prime_deco,
+    _s,
+    _tol_sub,
+    _trig_nm_factory,
+    _two,
     _underbrace,
+    _upper,
+    _v,
 )
 
 # ---------------------------------------------------------------------------
@@ -98,6 +118,7 @@ _ALL_POOLS = [
     ("_EXP_OP", _EXP_OP),
     ("_PROB_OP_FULL", _PROB_OP_FULL),
     ("_FOURIER_N", _FOURIER_N),
+    ("_PROPS", _PROPS),
 ]
 
 
@@ -248,3 +269,317 @@ def test_bgreek_contains_boldsymbol() -> None:
     for _ in range(30):
         result = _bgreek(rng)
         assert r"\boldsymbol{" in result, f"Unexpected _bgreek output: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# Simple pool samplers (_v, _g, _gu, _s, _i, _cal)
+# ---------------------------------------------------------------------------
+
+_SIMPLE_SAMPLERS = [
+    ("_v", _v, _VARS),
+    ("_g", _g, _GREEK),
+    ("_gu", _gu, _GREEK_UPPER),
+    ("_s", _s, _SCALARS),
+    ("_i", _i, _INDICES),
+    ("_cal", _cal, _CALLIGRAPHIC),
+]
+
+
+@pytest.mark.parametrize("name,fn,pool", _SIMPLE_SAMPLERS, ids=[x[0] for x in _SIMPLE_SAMPLERS])
+def test_simple_sampler_always_in_pool(name: str, fn, pool: tuple) -> None:
+    rng = random.Random(0)
+    for _ in range(200):
+        result = fn(rng)
+        assert result in pool, f"{name}: {result!r} not in declared pool"
+
+
+@pytest.mark.parametrize("name,fn,pool", _SIMPLE_SAMPLERS, ids=[x[0] for x in _SIMPLE_SAMPLERS])
+def test_simple_sampler_coverage_floor(name: str, fn, pool: tuple) -> None:
+    rng = random.Random(0)
+    seen = {fn(rng) for _ in range(200)}
+    coverage = len(seen) / len(pool)
+    assert coverage >= 0.5, f"{name}: only {len(seen)}/{len(pool)} pool entries seen in 200 draws"
+
+
+# ---------------------------------------------------------------------------
+# _eps_sub / _tol_sub
+# ---------------------------------------------------------------------------
+
+
+def test_eps_sub_always_in_pool() -> None:
+    pool = {r"\epsilon", r"\varepsilon"}
+    rng = random.Random(0)
+    for _ in range(1000):
+        assert _eps_sub(rng) in pool
+
+
+def test_eps_sub_both_forms_appear() -> None:
+    rng = random.Random(0)
+    results = {_eps_sub(rng) for _ in range(1000)}
+    assert r"\epsilon" in results
+    assert r"\varepsilon" in results
+
+
+def test_tol_sub_always_in_pool() -> None:
+    pool = {r"\epsilon", r"\varepsilon", r"\delta"}
+    rng = random.Random(0)
+    for _ in range(1000):
+        assert _tol_sub(rng) in pool
+
+
+def test_tol_sub_all_three_forms_appear() -> None:
+    rng = random.Random(0)
+    results = {_tol_sub(rng) for _ in range(1000)}
+    assert r"\epsilon" in results
+    assert r"\varepsilon" in results
+    assert r"\delta" in results
+
+
+# ---------------------------------------------------------------------------
+# _deco
+# ---------------------------------------------------------------------------
+
+_DECO_PATTERN = re.compile(r"^\\[a-zA-Z]+\{[a-zA-Z]\}$")
+_DECO_TARGET_POOL = set(_VARS) | set("abcfghpqrs")
+
+
+def test_deco_matches_expected_pattern() -> None:
+    rng = random.Random(0)
+    for _ in range(100):
+        result = _deco(rng)
+        assert _DECO_PATTERN.match(result), f"_deco output {result!r} does not match pattern"
+
+
+def test_deco_hat_most_common() -> None:
+    rng = random.Random(0)
+    results = [_deco(rng) for _ in range(2000)]
+    hat_count = sum(r.startswith(r"\hat{") for r in results)
+    for cmd in _DECO_CMDS:
+        if cmd != r"\hat":
+            other = sum(r.startswith(f"{cmd}{{") for r in results)
+            assert hat_count > other, f"\\hat ({hat_count}) not more common than {cmd!r} ({other})"
+
+
+def test_deco_target_in_expected_pool() -> None:
+    rng = random.Random(0)
+    for _ in range(200):
+        result = _deco(rng)
+        inner = result.rsplit("{", 1)[-1].rstrip("}")
+        assert inner in _DECO_TARGET_POOL, f"_deco target {inner!r} not in expected pool: {result!r}"
+
+
+def test_deco_no_double_decoration() -> None:
+    rng = random.Random(0)
+    for _ in range(200):
+        result = _deco(rng)
+        assert result.count("{") == 1, f"Unexpected nested structure in _deco: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# _prime_deco
+# ---------------------------------------------------------------------------
+
+
+def test_prime_deco_base_always_present() -> None:
+    rng = random.Random(0)
+    for _ in range(100):
+        result = _prime_deco(rng, "f")
+        assert "f" in result, f"Base 'f' missing from: {result!r}"
+
+
+def test_prime_deco_all_four_forms_reachable() -> None:
+    rng = random.Random(0)
+    results = {_prime_deco(rng, "f") for _ in range(200)}
+    assert "f'" in results, "f' form never appeared"
+    assert "f''" in results, "f'' form never appeared"
+    assert r"f^{\prime}" in results, r"f^{\prime} form never appeared"
+    assert r"f^{\prime\prime}" in results, r"f^{\prime\prime} form never appeared"
+
+
+# ---------------------------------------------------------------------------
+# _idx_atom
+# ---------------------------------------------------------------------------
+
+_DOUBLE_SUB_RE = re.compile(r"_\{[^}]+\}_\{")
+
+
+def test_idx_atom_no_double_subscript() -> None:
+    rng = random.Random(0)
+    for _ in range(1000):
+        result = _idx_atom(rng)
+        assert not _DOUBLE_SUB_RE.search(result), f"Double subscript in _idx_atom: {result!r}"
+
+
+def test_idx_atom_prob_one_mostly_subscripts() -> None:
+    rng = random.Random(0)
+    results = [_idx_atom(rng, prob=1.0) for _ in range(200)]
+    subscripted = sum("_{" in r for r in results)
+    assert subscripted > 100, f"Only {subscripted}/200 subscripted with prob=1.0"
+
+
+def test_idx_atom_prob_zero_no_added_subscripts() -> None:
+    rng = random.Random(0)
+    results = [_idx_atom(rng, prob=0.0) for _ in range(200)]
+    for r in results:
+        assert not _DOUBLE_SUB_RE.search(r), f"Unexpected double-subscript with prob=0.0: {r!r}"
+
+
+# ---------------------------------------------------------------------------
+# _two
+# ---------------------------------------------------------------------------
+
+
+def test_two_returns_two_elements() -> None:
+    pool = ("a", "b", "c", "d")
+    rng = random.Random(0)
+    result = _two(rng, pool)
+    assert len(result) == 2
+
+
+def test_two_both_in_pool() -> None:
+    pool = ("a", "b", "c", "d")
+    rng = random.Random(0)
+    for _ in range(50):
+        a, b = _two(rng, pool)
+        assert a in pool and b in pool
+
+
+def test_two_always_distinct() -> None:
+    pool = ("a", "b", "c", "d")
+    rng = random.Random(0)
+    for _ in range(100):
+        a, b = _two(rng, pool)
+        assert a != b, f"_two returned duplicate: {a!r}"
+
+
+def test_two_minimal_pool_exhausts_it() -> None:
+    pool = ("x", "y")
+    rng = random.Random(0)
+    a, b = _two(rng, pool)
+    assert {a, b} == {"x", "y"}
+
+
+# ---------------------------------------------------------------------------
+# _lower / _upper
+# ---------------------------------------------------------------------------
+
+_LOWER_POOL = _BOUNDS + (r"-\infty",)
+_UPPER_POOL = _BOUNDS + (r"\infty", r"+\infty")
+
+
+def test_lower_always_in_pool() -> None:
+    rng = random.Random(0)
+    for _ in range(200):
+        result = _lower(rng)
+        assert result in _LOWER_POOL, f"_lower: {result!r} not in declared pool"
+
+
+def test_upper_always_in_pool() -> None:
+    rng = random.Random(0)
+    for _ in range(200):
+        result = _upper(rng)
+        assert result in _UPPER_POOL, f"_upper: {result!r} not in declared pool"
+
+
+def test_lower_has_neg_infty() -> None:
+    rng = random.Random(0)
+    results = {_lower(rng) for _ in range(200)}
+    assert r"-\infty" in results, "_lower never produced -\\infty"
+
+
+def test_lower_never_produces_pos_infty() -> None:
+    rng = random.Random(0)
+    for _ in range(500):
+        assert _lower(rng) != r"+\infty", "_lower produced +\\infty (belongs only in _upper)"
+
+
+def test_upper_has_infty() -> None:
+    rng = random.Random(0)
+    results = {_upper(rng) for _ in range(200)}
+    assert r"\infty" in results or r"+\infty" in results, "_upper never produced \\infty"
+
+
+def test_upper_never_produces_neg_infty() -> None:
+    rng = random.Random(0)
+    for _ in range(500):
+        assert _upper(rng) != r"-\infty", "_upper produced -\\infty (belongs only in _lower)"
+
+
+# ---------------------------------------------------------------------------
+# _overset
+# ---------------------------------------------------------------------------
+
+
+def test_overset_deterministic_format() -> None:
+    assert _overset("=", r"\phi") == r"\overset{=}{\phi}"
+
+
+def test_overset_balanced_braces() -> None:
+    def _bal(s: str) -> bool:
+        stripped = s.replace(r"\{", "").replace(r"\}", "")
+        depth = 0
+        for ch in stripped:
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth < 0:
+                    return False
+        return depth == 0
+
+    assert _bal(_overset(r"\sim", "A"))
+    assert _bal(_overset(r"\to", r"\phi"))
+    assert _bal(_overset("f", r"\Longrightarrow"))
+
+
+# ---------------------------------------------------------------------------
+# _trig_nm_factory
+# ---------------------------------------------------------------------------
+
+
+def test_trig_nm_factory_returns_callable() -> None:
+    fn = _trig_nm_factory("arcsin")
+    assert callable(fn)
+
+
+def test_trig_nm_factory_output_in_pool() -> None:
+    fn = _trig_nm_factory("arcsin")
+    pool = _TRIG_NAME_POOLS["arcsin"]
+    rng = random.Random(0)
+    for _ in range(200):
+        result = fn(rng)
+        assert result in pool, f"_trig_nm_factory('arcsin'): {result!r} not in pool"
+
+
+def test_trig_nm_factory_all_entries_reachable() -> None:
+    fn = _trig_nm_factory("arcsin")
+    pool = set(_TRIG_NAME_POOLS["arcsin"])
+    rng = random.Random(0)
+    seen = {fn(rng) for _ in range(1000)}
+    assert seen == pool, f"Not all arcsin entries reachable: missing {pool - seen}"
+
+
+def test_trig_nm_factory_sin_distinct_from_arcsin() -> None:
+    sin_pool = set(_TRIG_NAME_POOLS["sin"])
+    arcsin_pool = set(_TRIG_NAME_POOLS["arcsin"])
+    assert sin_pool != arcsin_pool, "sin and arcsin pools are identical — factory is not key-specific"
+
+
+# ---------------------------------------------------------------------------
+# _TRIG_NAME_POOLS integrity
+# ---------------------------------------------------------------------------
+
+_TRIG_POOL_ITEMS = list(_TRIG_NAME_POOLS.items())
+
+
+@pytest.mark.parametrize("key,pool", _TRIG_POOL_ITEMS, ids=[k for k, _ in _TRIG_POOL_ITEMS])
+def test_trig_name_pool_nonempty(key: str, pool: tuple) -> None:
+    assert len(pool) > 0, f"_TRIG_NAME_POOLS[{key!r}] is empty"
+
+
+@pytest.mark.parametrize("key,pool", _TRIG_POOL_ITEMS, ids=[k for k, _ in _TRIG_POOL_ITEMS])
+def test_trig_name_pool_entries_are_nonempty_strings(key: str, pool: tuple) -> None:
+    for entry in pool:
+        assert isinstance(entry, str) and len(entry) > 0, (
+            f"_TRIG_NAME_POOLS[{key!r}]: empty or non-string entry {entry!r}"
+        )
