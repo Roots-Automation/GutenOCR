@@ -7,6 +7,7 @@ import random
 from collections import Counter
 from collections.abc import Callable
 
+from ._template_dsl import _last_template_name
 from .domains._config import DOMAIN_CONFIG
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,7 @@ def generate(
             domain_name = domains[idx]
             domain_attempts[domain_name] += 1
             formula = gens[idx](rng)
+            template_name = _last_template_name.get()
             formula = formula.strip()
             if formula and not _is_wrapped(formula):
                 r = rng.random()
@@ -109,7 +111,7 @@ def generate(
                 seen.add(formula)
                 key = str(len(results))
                 if include_metadata:
-                    results[key] = {"formula": formula, "domain": domain_name}
+                    results[key] = {"formula": formula, "domain": domain_name, "template_name": template_name}
                 else:
                     results[key] = formula
         except Exception:

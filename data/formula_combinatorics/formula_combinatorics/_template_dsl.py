@@ -84,7 +84,13 @@ import math
 import random
 import re
 from collections.abc import Callable
+from contextvars import ContextVar
 from dataclasses import dataclass, field
+
+# Tracks the name of the most-recently sampled leaf Template within the current
+# execution context.  corpus.py reads this after each generator call to populate
+# template_name in metadata without requiring changes to any domain generator.
+_last_template_name: ContextVar[str | None] = ContextVar("_last_template_name", default=None)
 
 # ---------------------------------------------------------------------------
 # Index decoration pool (mirrors _maybe_idx in _vocab.py)
@@ -316,11 +322,14 @@ class Template:
 def sample(t: Template, rng: random.Random) -> str:
     """Draw one formula string from *t*."""
     if t.variants:
+        # Recurse into the chosen variant; the recursive call sets _last_template_name
+        # to the leaf variant's name, which is more informative than the parent name.
         return sample(rng.choices(t.variants, weights=t._variant_weights, k=1)[0], rng)
 
     # Constant templates (no slots, no distinct groups) — return verbatim so that
     # LaTeX brace groups like \frac{a}{b} are never mistaken for format slots.
     if not t.slots and not t.distinct:
+        _last_template_name.set(t.name)
         return t.latex
 
     draws: dict[str, str] = {}
@@ -365,6 +374,7 @@ def sample(t: Template, rng: random.Random) -> str:
 
     result = t.latex.format(**draws)
     _check_no_greek_concat(result, t.name)
+    _last_template_name.set(t.name)
     return result
 
 

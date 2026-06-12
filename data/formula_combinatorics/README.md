@@ -40,7 +40,35 @@ formula-generate --output formulas.json --count 50000 --seed 42
 | `--domains D [D ...]` | all | Restrict to specific domains (see list below) |
 | `--tags TAG [TAG ...]` | `None` | Include only domains with any of these tags (`foundational`, `advanced`, `applied`, `structural`) |
 | `--exclude-tags TAG [TAG ...]` | `None` | Exclude domains with any of these tags |
-| `--metadata` | off | Output `{"formula": ..., "domain": ...}` dicts instead of bare strings |
+| `--metadata` | off | Output `{"formula": ..., "domain": ..., "template_name": ...}` dicts instead of bare strings |
+
+#### Render gate
+
+| Flag | Default | Description |
+|---|---|---|
+| `--render` | off | Run the render gate: compile every formula and keep only those that render cleanly |
+| `--render-engine ENGINE` | `two-stage` | `katex` (fast pre-filter), `tex` (lualatex, authoritative), or `two-stage` (KaTeX → lualatex) |
+| `--render-output DIR` | `<output_stem>_images/` | Directory for rendered PNG images |
+| `--render-reject-log PATH` | `<output_stem>_rejects.jsonl` | JSONL file listing failed formulas with `(domain, template_name, engine, error)` |
+| `--render-workers N` | `4` | Parallel workers for the TeX stage |
+| `--render-dpi N` | `150` | PNG resolution in DPI for the TeX stage |
+| `--katex-node-bin PATH` | `node` | Path to the `node` executable |
+| `--tex-bin PATH` | `lualatex` | Path to `lualatex` or `xelatex` |
+
+**System prerequisites for `--render`:**
+
+- `katex` / `two-stage`: `node` on `PATH`; `katex` npm package installed (`npm install katex` in the package directory)
+- `tex` / `two-stage`: `lualatex` on `PATH` (TeX Live or MiKTeX); `pdftoppm` on `PATH` (poppler-utils)
+
+**OFL-only font allowlist** (Latin Modern Math, TeX Gyre, STIX Two, XITS, Asana Math, Fira Math, Libertinus Math, Neo Euler): the TeX stage sets `OSFONTDIR=""` to prevent system font resolution outside the allowlist.
+
+**Example with render gate:**
+```bash
+formula-generate --output formulas.json --count 10000 --seed 42 \
+  --render --render-engine two-stage --render-output images/ \
+  --metadata
+```
+Output: `formulas.json` (certified formulas), `images/<hash>.png` (one per formula), `formulas_rejects.jsonl` (failures).
 
 ### Examples
 

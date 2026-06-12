@@ -100,7 +100,63 @@ def main() -> None:
         "--metadata",
         action="store_true",
         default=False,
-        help="Output metadata dicts (formula + domain) instead of bare strings.",
+        help="Output metadata dicts (formula + domain + template_name) instead of bare strings.",
+    )
+
+    render_group = parser.add_argument_group("render gate (post-generation)")
+    render_group.add_argument(
+        "--render",
+        action="store_true",
+        default=False,
+        help="Run the render gate: compile every formula and keep only those that render cleanly.",
+    )
+    render_group.add_argument(
+        "--render-engine",
+        choices=["katex", "tex", "two-stage"],
+        default="two-stage",
+        metavar="ENGINE",
+        help="Rendering engine: katex (fast pre-filter), tex (lualatex, authoritative), "
+        "or two-stage (katex→lualatex, default).",
+    )
+    render_group.add_argument(
+        "--render-output",
+        type=Path,
+        default=None,
+        metavar="DIR",
+        help="Directory for rendered PNG images (default: <output_stem>_images/).",
+    )
+    render_group.add_argument(
+        "--render-reject-log",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help="JSONL file for failed formulas (default: <output_stem>_rejects.jsonl).",
+    )
+    render_group.add_argument(
+        "--render-workers",
+        type=int,
+        default=4,
+        metavar="N",
+        help="Parallel workers for the TeX stage (default: 4).",
+    )
+    render_group.add_argument(
+        "--render-dpi",
+        type=int,
+        default=150,
+        metavar="N",
+        help="PNG resolution for the TeX stage in DPI (default: 150).",
+    )
+    render_group.add_argument(
+        "--katex-node-bin",
+        default="node",
+        metavar="PATH",
+        help="Path to the node executable (default: node).",
+    )
+    render_group.add_argument(
+        "--tex-bin",
+        default="lualatex",
+        metavar="PATH",
+        help="Path to lualatex or xelatex (default: lualatex).",
     )
     args = parser.parse_args()
 
@@ -119,6 +175,8 @@ def main() -> None:
         args.seed,
     )
 
+    # The render gate requires metadata (domain + template_name) for the reject log.
+    need_metadata = args.metadata or args.render
     formulas = generate(
         count=args.count,
         domains=args.domains,
@@ -129,8 +187,29 @@ def main() -> None:
         inline_fraction=args.inline_fraction,
         tags=args.tags,
         exclude_tags=args.exclude_tags,
-        include_metadata=args.metadata,
+        include_metadata=need_metadata,
     )
+
+    if args.render:
+        from .render import render_corpus
+
+        render_out = args.render_output or args.output.parent / (args.output.stem + "_images")
+        reject_log = args.render_reject_log or args.output.parent / (args.output.stem + "_rejects.jsonl")
+
+        formulas, _report = render_corpus(
+            formulas=formulas,
+            output_dir=render_out,
+            engine=args.render_engine,
+            reject_log=reject_log,
+            workers=args.render_workers,
+            dpi=args.render_dpi,
+            katex_node_bin=args.katex_node_bin,
+            tex_bin=args.tex_bin,
+        )
+
+        if not args.metadata:
+            # Strip back to bare strings if the user did not request metadata.
+            formulas = {k: v["formula"] for k, v in formulas.items()}
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with open(args.output, "w", encoding="utf-8") as fh:
