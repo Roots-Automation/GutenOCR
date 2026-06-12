@@ -47,7 +47,11 @@ DOMAIN_CONFIG: dict[str, DomainMeta] = {
     "geometry": DomainMeta(weight=0.07, tags=("foundational",), difficulty="elementary"),
     "probability": DomainMeta(weight=0.07, tags=("foundational",), difficulty="undergraduate"),
     # ── applied ──────────────────────────────────────────────────────────────
-    "physics": DomainMeta(weight=0.06, tags=("applied",), difficulty="undergraduate"),
+    "classical_mechanics": DomainMeta(weight=0.030, tags=("applied",), difficulty="undergraduate"),
+    "electromagnetism": DomainMeta(weight=0.020, tags=("applied",), difficulty="undergraduate"),
+    "statistical_mechanics": DomainMeta(weight=0.020, tags=("applied",), difficulty="undergraduate"),
+    "quantum_mechanics": DomainMeta(weight=0.020, tags=("applied",), difficulty="graduate"),
+    "field_theory": DomainMeta(weight=0.010, tags=("advanced",), difficulty="research"),
     "chemistry": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
     "optimization": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
     # ── core mathematics ─────────────────────────────────────────────────────

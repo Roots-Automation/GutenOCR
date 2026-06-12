@@ -12,9 +12,8 @@ _GEN_QN = GENERATORS["quantum_notation"]
 _GEN_LA = GENERATORS["linear_algebra"]
 
 _TMPLS_QN = TEMPLATES["quantum_notation"]
-_TMPLS_PH = TEMPLATES["physics"]
 _TMPL_BY_NAME = {t.name: t for t in _TMPLS_QN}
-_TMPL_PH_BY_NAME = {t.name: t for t in _TMPLS_PH}
+_TMPL_QM_BY_NAME = {t.name: t for t in TEMPLATES["quantum_mechanics"]}
 
 
 def _draw(gen, n: int, seed: int = 0) -> list[str]:
@@ -160,7 +159,7 @@ def test_lVert_rVert_appear_in_linear_algebra():
 )
 def test_anticommutator_template_emits_curly_brace(tmpl_name: str):
     """Each anticommutator template must emit \\{ in every draw."""
-    tmpl = _TMPL_PH_BY_NAME[tmpl_name]
+    tmpl = _TMPL_QM_BY_NAME[tmpl_name]
     rng = random.Random(42)
     for _ in range(200):
         rendered = sample(tmpl, rng)

@@ -1,6 +1,6 @@
 # formula-combinatorics
 
-Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 33 math domains using a declarative template DSL with hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
+Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 37 math domains using a declarative template DSL with hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
 
 Output is a JSON object compatible with `GutenOCR/data/grounded_latex/generate_equations.py`.
 
@@ -162,7 +162,7 @@ formula = GENERATORS["calculus"](rng)
 
 ## Domains
 
-33 domains are available, each in its own file. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
+37 domains are available, each in its own file. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
 
 | Domain | File | Weight | Tags | Difficulty |
 |---|---|---|---|---|
@@ -172,7 +172,11 @@ formula = GENERATORS["calculus"](rng)
 | `linear_algebra` | `domains/linear_algebra.py` | 0.08 | foundational | undergraduate |
 | `geometry` | `domains/geometry.py` | 0.07 | foundational | elementary |
 | `probability` | `domains/probability.py` | 0.07 | foundational | undergraduate |
-| `physics` | `domains/physics.py` | 0.06 | applied | undergraduate |
+| `classical_mechanics` | `domains/classical_mechanics.py` | 0.030 | applied | undergraduate |
+| `electromagnetism` | `domains/electromagnetism.py` | 0.020 | applied | undergraduate |
+| `statistical_mechanics` | `domains/statistical_mechanics.py` | 0.020 | applied | undergraduate |
+| `quantum_mechanics` | `domains/quantum_mechanics.py` | 0.020 | applied | graduate |
+| `field_theory` | `domains/field_theory.py` | 0.010 | advanced | research |
 | `chemistry` | `domains/chemistry.py` | 0.05 | applied | undergraduate |
 | `optimization` | `domains/optimization.py` | 0.05 | applied | undergraduate |
 | `set_theory` | `domains/set_theory.py` | 0.05 | foundational | undergraduate |
@@ -285,7 +289,12 @@ formula_combinatorics/          ← project root
         ├── linear_algebra.py
         ├── geometry.py
         ├── probability.py
-        ├── physics.py
+        ├── classical_mechanics.py
+        ├── electromagnetism.py
+        ├── statistical_mechanics.py
+        ├── quantum_mechanics.py
+        ├── field_theory.py
+        ├── _physics_vocab.py
         ├── chemistry.py
         ├── optimization.py
         ├── set_theory.py

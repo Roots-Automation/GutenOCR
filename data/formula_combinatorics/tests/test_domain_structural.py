@@ -371,20 +371,88 @@ def test_combinatorics_sum_frequency() -> None:
 
 
 # ---------------------------------------------------------------------------
-# physics
+# classical_mechanics
 # ---------------------------------------------------------------------------
 
-_PHYS = _draw(GENERATORS["physics"], 2000)
+_CM = _draw(GENERATORS["classical_mechanics"], 2000)
 
 
-def test_physics_frac_frequency() -> None:
-    n = _freq(_PHYS, r"\frac")
-    assert n >= 450, f"\\frac appeared only {n}/2000 in physics"
+def test_classical_mechanics_frac_frequency() -> None:
+    n = _freq(_CM, r"\frac")
+    assert n >= 800, f"\\frac appeared only {n}/2000 in classical_mechanics"
 
 
-def test_physics_hbar_frequency() -> None:
-    n = _freq(_PHYS, r"\hbar")
-    assert n >= 50, f"\\hbar appeared only {n}/2000 in physics"
+def test_classical_mechanics_dot_frequency() -> None:
+    n = _freq(_CM, r"\dot")
+    assert n >= 400, f"\\dot appeared only {n}/2000 in classical_mechanics"
+
+
+# ---------------------------------------------------------------------------
+# electromagnetism
+# ---------------------------------------------------------------------------
+
+_EM = _draw(GENERATORS["electromagnetism"], 2000)
+
+
+def test_electromagnetism_nabla_frequency() -> None:
+    n = _freq(_EM, r"\nabla")
+    assert n >= 550, f"\\nabla appeared only {n}/2000 in electromagnetism"
+
+
+def test_electromagnetism_Efield_frequency() -> None:
+    n = _freq(_EM, r"\mathbf{E}")
+    assert n >= 150, f"\\mathbf{{E}} appeared only {n}/2000 in electromagnetism"
+
+
+# ---------------------------------------------------------------------------
+# statistical_mechanics
+# ---------------------------------------------------------------------------
+
+_SM = _draw(GENERATORS["statistical_mechanics"], 2000)
+
+
+def test_statistical_mechanics_exp_frequency() -> None:
+    n = _freq(_SM, r"e^{")
+    assert n >= 850, f"e^{{ appeared only {n}/2000 in statistical_mechanics"
+
+
+def test_statistical_mechanics_beta_frequency() -> None:
+    n = _freq(_SM, r"\beta")
+    assert n >= 600, f"\\beta appeared only {n}/2000 in statistical_mechanics"
+
+
+# ---------------------------------------------------------------------------
+# quantum_mechanics
+# ---------------------------------------------------------------------------
+
+_QM = _draw(GENERATORS["quantum_mechanics"], 2000)
+
+
+def test_quantum_mechanics_hat_frequency() -> None:
+    n = _freq(_QM, r"\hat{")
+    assert n >= 700, f"\\hat{{ appeared only {n}/2000 in quantum_mechanics"
+
+
+def test_quantum_mechanics_hbar_frequency() -> None:
+    n = _freq(_QM, r"\hbar")
+    assert n >= 250, f"\\hbar appeared only {n}/2000 in quantum_mechanics"
+
+
+# ---------------------------------------------------------------------------
+# field_theory
+# ---------------------------------------------------------------------------
+
+_FT = _draw(GENERATORS["field_theory"], 2000)
+
+
+def test_field_theory_partial_frequency() -> None:
+    n = _freq(_FT, r"\partial")
+    assert n >= 400, f"\\partial appeared only {n}/2000 in field_theory"
+
+
+def test_field_theory_varepsilon_frequency() -> None:
+    n = _freq(_FT, r"\varepsilon")
+    assert n >= 350, f"\\varepsilon appeared only {n}/2000 in field_theory"
 
 
 # ---------------------------------------------------------------------------
