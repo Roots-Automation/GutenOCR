@@ -194,6 +194,23 @@ def _formula_hash(formula: str) -> str:
     return hashlib.sha256(formula.encode()).hexdigest()[:16]
 
 
+def _make_fc_conf(ofl_font_dir: Path | None) -> str:
+    """Return a minimal fontconfig XML that restricts font search to *ofl_font_dir*.
+
+    On Linux, setting FONTCONFIG_FILE to this config prevents luaotfload from
+    discovering system fonts outside the OFL allowlist.  On macOS, luaotfload
+    uses CoreText and ignores fontconfig entirely; a container is required for
+    full sandbox enforcement there.
+    """
+    if ofl_font_dir:
+        dir_element = f"  <dir>{ofl_font_dir}</dir>\n"
+    else:
+        dir_element = ""
+    return (
+        f'<?xml version="1.0"?>\n<!DOCTYPE fontconfig SYSTEM "fonts.dtd">\n<fontconfig>\n{dir_element}</fontconfig>\n'
+    )
+
+
 def _strip_display_delimiters(formula: str) -> str:
     """Strip outer display-math delimiters for standalone rendering."""
     formula = formula.strip()
@@ -238,10 +255,16 @@ class _TexRenderer:
             tex_file.write_text(tex_src, encoding="utf-8")
 
             env = os.environ.copy()
-            # Font sandbox: restrict OS font discovery to OFL dir only (or empty)
+            # Font sandbox: restrict font discovery to OFL allowlist.
+            # OSFONTDIR + FONTCONFIG_FILE work on Linux (where luaotfload uses fontconfig).
+            # On macOS, luaotfload uses CoreText and ignores these vars; a container
+            # is required for full sandbox enforcement in production.
             env["OSFONTDIR"] = str(self._ofl_font_dir) if self._ofl_font_dir else ""
             env["TEXMFVAR"] = tmpdir
             env["TEXMFCONFIG"] = tmpdir
+            fc_conf = Path(tmpdir) / "fonts.conf"
+            fc_conf.write_text(_make_fc_conf(self._ofl_font_dir), encoding="utf-8")
+            env["FONTCONFIG_FILE"] = str(fc_conf)
 
             proc = subprocess.run(
                 [
