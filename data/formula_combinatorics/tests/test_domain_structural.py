@@ -298,6 +298,23 @@ def test_logic_rightarrow_frequency() -> None:
 
 
 # ---------------------------------------------------------------------------
+# proof_theory
+# ---------------------------------------------------------------------------
+
+_PT = _draw(GENERATORS["proof_theory"], 2000)
+
+
+def test_proof_theory_dfrac_frequency() -> None:
+    n = _freq(_PT, r"\dfrac")
+    assert n >= 670, f"\\dfrac appeared only {n}/2000 in proof_theory"
+
+
+def test_proof_theory_vdash_frequency() -> None:
+    n = _freq(_PT, r"\vdash")
+    assert n >= 680, f"\\vdash appeared only {n}/2000 in proof_theory"
+
+
+# ---------------------------------------------------------------------------
 # align — every sample must start with \begin{...}
 # ---------------------------------------------------------------------------
 

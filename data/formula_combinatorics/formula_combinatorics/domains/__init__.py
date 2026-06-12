@@ -50,6 +50,7 @@ _DOMAIN_NAMES: list[str] = [
     "optimization",
     "set_theory",
     "logic",
+    "proof_theory",
     "statistics",
     "stochastic_processes",
     "custom_operators",

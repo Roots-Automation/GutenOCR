@@ -1,6 +1,6 @@
 # formula-combinatorics
 
-Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 37 math domains using a declarative template DSL with hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
+Synthetic LaTeX mathematical formula generator for OCR training data. Produces mathematically realistic LaTeX strings across 38 math domains using a declarative template DSL with hand-crafted, domain-specific generators. All output is synthetic — no third-party content is used.
 
 Output is a JSON object compatible with `GutenOCR/data/grounded_latex/generate_equations.py`.
 
@@ -162,7 +162,7 @@ formula = GENERATORS["calculus"](rng)
 
 ## Domains
 
-37 domains are available, each in its own file. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
+38 domains are available, each in its own file. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
 
 | Domain | File | Weight | Tags | Difficulty |
 |---|---|---|---|---|
@@ -181,6 +181,7 @@ formula = GENERATORS["calculus"](rng)
 | `optimization` | `domains/optimization.py` | 0.05 | applied | undergraduate |
 | `set_theory` | `domains/set_theory.py` | 0.05 | foundational | undergraduate |
 | `logic` | `domains/logic.py` | 0.05 | foundational | undergraduate |
+| `proof_theory` | `domains/proof_theory.py` | 0.020 | advanced | graduate |
 | `group_theory` | `domains/group_theory.py` | 0.04 | advanced | graduate |
 | `analysis` | `domains/analysis.py` | 0.04 | advanced | graduate |
 | `number_theory` | `domains/number_theory.py` | 0.04 | advanced | graduate |
@@ -299,6 +300,8 @@ formula_combinatorics/          ← project root
         ├── optimization.py
         ├── set_theory.py
         ├── logic.py
+        ├── proof_theory.py
+        ├── _logic_vocab.py
         ├── group_theory.py
         ├── analysis.py
         ├── number_theory.py

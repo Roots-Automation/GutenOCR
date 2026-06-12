@@ -57,6 +57,7 @@ DOMAIN_CONFIG: dict[str, DomainMeta] = {
     # ── core mathematics ─────────────────────────────────────────────────────
     "set_theory": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
     "logic": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
+    "proof_theory": DomainMeta(weight=0.020, tags=("advanced",), difficulty="graduate"),
     "group_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "analysis": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "number_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
