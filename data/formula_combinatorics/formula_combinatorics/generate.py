@@ -24,7 +24,7 @@ except ImportError:
 
 
 from .corpus import generate
-from .domains import DEFAULT_WEIGHTS, DOMAIN_TAGS, GENERATORS
+from .domains import DEFAULT_WEIGHTS, DOMAIN_TAGS, GENERATORS, PACK_HASHES
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +49,9 @@ def main() -> None:
     parser.add_argument(
         "--output",
         type=Path,
-        required=True,
+        required="--content-hash" not in sys.argv,
         metavar="PATH",
-        help="Output JSON file path.",
+        help="Output JSON file path. Not required when --content-hash is used.",
     )
     parser.add_argument(
         "--domains",
@@ -158,7 +158,28 @@ def main() -> None:
         metavar="PATH",
         help="Path to lualatex or xelatex (default: lualatex).",
     )
+    parser.add_argument(
+        "--content-hash",
+        action="store_true",
+        default=False,
+        help=(
+            "Print the aggregate SHA-256 content hash of all loaded TOML template packs "
+            "and exit.  Useful for pinning corpus snapshots in benchmark reproducibility records."
+        ),
+    )
     args = parser.parse_args()
+
+    if args.content_hash:
+        import hashlib
+
+        if not PACK_HASHES:
+            print("(no TOML packs loaded — all domains are Python modules)")
+        else:
+            combined = hashlib.sha256("|".join(f"{k}:{v}" for k, v in sorted(PACK_HASHES.items())).encode()).hexdigest()
+            for domain, sha in sorted(PACK_HASHES.items()):
+                print(f"  {domain}: {sha}")
+            print(f"aggregate: {combined}")
+        sys.exit(0)
 
     if not 0.0 <= args.display_fraction <= 1.0:
         logger.error("--display-fraction must be in [0, 1]")
@@ -188,10 +209,11 @@ def main() -> None:
         tags=args.tags,
         exclude_tags=args.exclude_tags,
         include_metadata=need_metadata,
+        pack_hashes=PACK_HASHES if need_metadata else None,
     )
 
     if args.render:
-        from .render import render_corpus
+        from .engine.render import render_corpus
 
         render_out = args.render_output or args.output.parent / (args.output.stem + "_images")
         reject_log = args.render_reject_log or args.output.parent / (args.output.stem + "_rejects.jsonl")

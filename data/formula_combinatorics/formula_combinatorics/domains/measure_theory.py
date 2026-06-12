@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import _FUNC_NAMES as _FUNC_POOL
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ..engine._vocab import _FUNC_NAMES as _FUNC_POOL
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

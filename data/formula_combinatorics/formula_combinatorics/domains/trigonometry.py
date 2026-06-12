@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
-from .._vocab import (
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
+from ..engine._vocab import (
     _FOURIER_N,
     _GEO_N,
     _SCALARS,

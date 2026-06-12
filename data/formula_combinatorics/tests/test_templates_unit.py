@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 
-from formula_combinatorics._templates import (
+from formula_combinatorics.engine._templates import (
     _def_integral,
     _func_apply,
     _indef_integral,
@@ -22,7 +22,7 @@ from formula_combinatorics._templates import (
     _substack_sum,
     _sum_indexed,
 )
-from formula_combinatorics._vocab import _FUNCS, _SCALARS
+from formula_combinatorics.engine._vocab import _FUNCS, _SCALARS
 
 
 def _rng(seed: int = 0) -> random.Random:

@@ -7,8 +7,8 @@ import random
 from collections import Counter
 from collections.abc import Callable
 
-from ._template_dsl import _last_template_name
 from .domains._config import DOMAIN_CONFIG
+from .engine._template_dsl import _last_template_name
 
 logger = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ def generate(
     exclude_tags: list[str] | None = None,
     include_metadata: bool = False,
     strict: bool = False,
+    pack_hashes: dict[str, str] | None = None,
 ) -> dict[str, str] | dict[str, dict]:
     """Generate a corpus of unique LaTeX formula strings.
 
@@ -63,6 +64,10 @@ def generate(
             instead of bare strings.
         strict: If True, raise ``RuntimeError`` when any domain's error rate exceeds
             the threshold (≥1% errors with ≥10 attempts); otherwise emit a WARNING.
+        pack_hashes: Optional mapping of domain name → SHA-256 of the TOML pack that
+            produced the domain's templates.  When ``include_metadata=True`` and this is
+            provided, each metadata record gains a ``"content_pack_hash"`` field for the
+            domain if a pack hash is available; ``None`` otherwise.
 
     Returns:
         Dict mapping string index to LaTeX formula string, or to a metadata dict
@@ -111,7 +116,10 @@ def generate(
                 seen.add(formula)
                 key = str(len(results))
                 if include_metadata:
-                    results[key] = {"formula": formula, "domain": domain_name, "template_name": template_name}
+                    record: dict = {"formula": formula, "domain": domain_name, "template_name": template_name}
+                    if pack_hashes is not None:
+                        record["content_pack_hash"] = pack_hashes.get(domain_name)
+                    results[key] = record
                 else:
                     results[key] = formula
         except Exception:

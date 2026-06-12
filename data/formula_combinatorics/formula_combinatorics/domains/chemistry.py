@@ -3,7 +3,7 @@ acid/base, and electrochemistry formula templates."""
 
 from __future__ import annotations
 
-from .._template_dsl import _LIM_MOD, S, Template, X
+from ..engine._template_dsl import _LIM_MOD, S, Template, X
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

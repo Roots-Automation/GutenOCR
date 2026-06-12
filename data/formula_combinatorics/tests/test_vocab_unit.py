@@ -6,7 +6,7 @@ import random
 import re
 
 import pytest
-from formula_combinatorics._vocab import (
+from formula_combinatorics.engine._vocab import (
     _BBOLD,
     _BOLD_GREEK,
     _BOLD_VECS,

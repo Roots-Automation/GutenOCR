@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_RICH_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
-from .._templates import _def_integral, _indef_integral, _interval, _substack_prod, _substack_sum
-from .._vocab import _SCALARS, _VARS
+from ..engine._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_RICH_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
+from ..engine._templates import _def_integral, _indef_integral, _interval, _substack_prod, _substack_sum
+from ..engine._vocab import _SCALARS, _VARS
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

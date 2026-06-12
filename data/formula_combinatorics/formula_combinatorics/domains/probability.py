@@ -2,29 +2,29 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import (
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ..engine._vocab import (
     _EXP_OP,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _GENERIC_IDX as _IDX_POOL,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _LAM_STATS as _LAM_POOL,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _MU_STATS as _MU_POOL,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _PROB_OP_FULL as _PROB_OP,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _RV_BASE as _RV_POOL,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _SIG_STATS as _SIG_POOL,
 )
-from .._vocab import (
+from ..engine._vocab import (
     _STATS_N as _N_POOL,
 )
 from ._config import register_domain

@@ -25,9 +25,9 @@ import statistics
 import time
 from dataclasses import dataclass
 
-from ._template_dsl import ExcludeParamSub, ParamSub, Sub, Template
-from ._template_dsl import n_eff as _n_eff
 from .domains import GENERATORS, TEMPLATES
+from .engine._template_dsl import ExcludeParamSub, ParamSub, Sub, Template
+from .engine._template_dsl import n_eff as _n_eff
 
 _DEFAULT_MAX_SAMPLES: int = 50_000
 _DEFAULT_N_TRIALS: int = 5

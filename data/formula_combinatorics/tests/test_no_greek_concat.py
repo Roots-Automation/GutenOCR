@@ -4,7 +4,7 @@ import random
 
 import pytest
 from formula_combinatorics import GENERATORS
-from formula_combinatorics._template_dsl import _check_no_greek_concat
+from formula_combinatorics.engine._template_dsl import _check_no_greek_concat
 
 
 def test_check_fires_on_bad_latex() -> None:

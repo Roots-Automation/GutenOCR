@@ -12,7 +12,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from formula_combinatorics.corpus import generate
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
-from formula_combinatorics.render import RenderReport, RenderResult, _make_fc_conf, render_corpus
+from formula_combinatorics.engine.render import RenderReport, RenderResult, _make_fc_conf, render_corpus
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -131,7 +131,7 @@ class TestRenderCorpusFiltering:
     def test_katex_engine_filters_correctly(self, tmp_path):
         corpus = self._make_corpus(10)
         fail_set = {2, 5, 7}
-        with patch("formula_combinatorics.render._KatexRenderer") as MockKatex:
+        with patch("formula_combinatorics.engine.render._KatexRenderer") as MockKatex:
             instance = MockKatex.return_value
             instance.validate_batch.side_effect = lambda fs: [
                 (i not in fail_set, None if i not in fail_set else "mock error") for i in range(len(fs))
@@ -148,7 +148,7 @@ class TestRenderCorpusFiltering:
     def test_reject_log_written(self, tmp_path):
         corpus = self._make_corpus(5)
         reject_log = tmp_path / "rejects.jsonl"
-        with patch("formula_combinatorics.render._KatexRenderer") as MockKatex:
+        with patch("formula_combinatorics.engine.render._KatexRenderer") as MockKatex:
             instance = MockKatex.return_value
             instance.validate_batch.side_effect = lambda fs: [
                 (i != 1, None if i != 1 else "bad formula") for i in range(len(fs))
@@ -172,7 +172,7 @@ class TestRenderCorpusFiltering:
     def test_reject_log_not_written_when_no_failures(self, tmp_path):
         corpus = self._make_corpus(5)
         reject_log = tmp_path / "rejects.jsonl"
-        with patch("formula_combinatorics.render._KatexRenderer") as MockKatex:
+        with patch("formula_combinatorics.engine.render._KatexRenderer") as MockKatex:
             instance = MockKatex.return_value
             instance.validate_batch.return_value = [(True, None)] * 5
             render_corpus(
@@ -198,7 +198,7 @@ class TestRenderCorpusFiltering:
 
     def test_keys_reindexed_after_filtering(self, tmp_path):
         corpus = self._make_corpus(5)
-        with patch("formula_combinatorics.render._KatexRenderer") as MockKatex:
+        with patch("formula_combinatorics.engine.render._KatexRenderer") as MockKatex:
             instance = MockKatex.return_value
             instance.validate_batch.side_effect = lambda fs: [(i % 2 == 0, None) for i in range(len(fs))]
             filtered, _ = render_corpus(
@@ -212,14 +212,14 @@ class TestRenderCorpusFiltering:
 
 class TestMissingSystemDeps:
     def test_katex_renderer_missing_node(self):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         with patch("shutil.which", return_value=None):
             with pytest.raises(RuntimeError, match="node"):
                 _KatexRenderer(node_bin="node_definitely_not_installed")
 
     def test_tex_renderer_missing_lualatex(self):
-        from formula_combinatorics.render import _TexRenderer
+        from formula_combinatorics.engine.render import _TexRenderer
 
         with patch("shutil.which", return_value=None):
             with pytest.raises(RuntimeError, match="lualatex"):
@@ -285,14 +285,14 @@ class TestTemplateNameInMetadata:
 @pytest.mark.skipif(not (_has_node() and _has_katex()), reason="node + katex npm not installed")
 class TestKatexIntegration:
     def test_valid_formula_passes(self, tmp_path):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         r = _KatexRenderer()
         results = r.validate_batch(["x^2 + y^2"])
         assert results[0] == (True, None)
 
     def test_invalid_formula_fails(self, tmp_path):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         r = _KatexRenderer()
         results = r.validate_batch([r"\invalidmacroXYZ"])
@@ -301,7 +301,7 @@ class TestKatexIntegration:
         assert error
 
     def test_batch_mixed(self, tmp_path):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         r = _KatexRenderer()
         results = r.validate_batch(["x^2", r"\bad{}", r"\frac{a}{b}"])
@@ -310,7 +310,7 @@ class TestKatexIntegration:
         assert results[2][0] is True
 
     def test_empty_batch(self, tmp_path):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         r = _KatexRenderer()
         assert r.validate_batch([]) == []
@@ -319,7 +319,7 @@ class TestKatexIntegration:
 @pytest.mark.skipif(not _has_lualatex(), reason="lualatex not installed")
 class TestTexIntegration:
     def test_valid_formula_renders_to_png(self, tmp_path):
-        from formula_combinatorics.render import _TexRenderer
+        from formula_combinatorics.engine.render import _TexRenderer
 
         r = _TexRenderer(workers=1)
         results = r.render_batch([("x^2 + y^2", "algebra", "power")], tmp_path)
@@ -329,7 +329,7 @@ class TestTexIntegration:
         assert results[0].image_path.exists()
 
     def test_invalid_formula_fails(self, tmp_path):
-        from formula_combinatorics.render import _TexRenderer
+        from formula_combinatorics.engine.render import _TexRenderer
 
         r = _TexRenderer(workers=1)
         results = r.render_batch([(r"\begin{align}\end{align}", "algebra", "bad")], tmp_path)
@@ -370,7 +370,7 @@ _KATEX_FLOOR = 0.70
 )
 class TestPerDomainSuccessRate:
     def test_all_domains_katex_success_rate(self):
-        from formula_combinatorics.render import _KatexRenderer
+        from formula_combinatorics.engine.render import _KatexRenderer
 
         all_domains = list(DEFAULT_WEIGHTS.keys())
         # Generate a fixed-seed corpus large enough to guarantee samples from every domain.
@@ -430,7 +430,7 @@ class TestFontSandbox:
 
     def test_sandbox_env_vars_set(self, tmp_path):
         """Verify _TexRenderer sets OSFONTDIR, FONTCONFIG_FILE, TEXMFVAR in the subprocess env."""
-        from formula_combinatorics.render import _TexRenderer
+        from formula_combinatorics.engine.render import _TexRenderer
 
         captured_envs: list[dict] = []
 
@@ -445,9 +445,9 @@ class TestFontSandbox:
             # Also fake the pdftoppm call
             return _FakeResult()
 
-        with patch("formula_combinatorics.render.subprocess.run", side_effect=_fake_run):
+        with patch("formula_combinatorics.engine.render.subprocess.run", side_effect=_fake_run):
             # _check_lualatex calls shutil.which, _check_pdftoppm calls shutil.which
-            with patch("formula_combinatorics.render.shutil.which", return_value="/usr/bin/lualatex"):
+            with patch("formula_combinatorics.engine.render.shutil.which", return_value="/usr/bin/lualatex"):
                 renderer = _TexRenderer.__new__(_TexRenderer)
                 renderer._tex_bin = "lualatex"
                 renderer._ofl_font_dir = None
@@ -471,7 +471,7 @@ class TestFontSandbox:
     @pytest.mark.skipif(not _has_lualatex(), reason="lualatex not installed")
     def test_proprietary_font_unreachable_in_sandbox(self, tmp_path):
         """On Linux: assert lualatex fails when a proprietary font is requested with sandbox active."""
-        from formula_combinatorics.render import _TexRenderer
+        from formula_combinatorics.engine.render import _TexRenderer
 
         renderer = _TexRenderer(workers=1)
         # Craft a .tex that explicitly requests Times New Roman via fontspec.

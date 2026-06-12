@@ -54,6 +54,7 @@ formula-generate --output formulas.json --count 50000 --seed 42
 | `--render-dpi N` | `150` | PNG resolution in DPI for the TeX stage |
 | `--katex-node-bin PATH` | `node` | Path to the `node` executable |
 | `--tex-bin PATH` | `lualatex` | Path to `lualatex` or `xelatex` |
+| `--content-hash` | `false` | Print the aggregate SHA-256 content hash of all loaded TOML template packs and exit; useful for pinning corpus snapshots |
 
 **System prerequisites for `--render`:**
 

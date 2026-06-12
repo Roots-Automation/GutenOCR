@@ -6,7 +6,7 @@ import math
 import random
 
 import pytest
-from formula_combinatorics._template_dsl import (
+from formula_combinatorics.engine._template_dsl import (
     _DOUBLE_SUB_RE,
     _IDX_POOL,
     _N_IDX,

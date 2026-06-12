@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import random
 
-from .._template_dsl import _EXPR_SLOT, _SCALAR_SLOT, _VAR_SLOT, E, S, Template
-from .._templates import _poly
-from .._vocab import (
+from ..engine._template_dsl import _EXPR_SLOT, _SCALAR_SLOT, _VAR_SLOT, E, S, Template
+from ..engine._templates import _poly
+from ..engine._vocab import (
     _VARS,
     _expr,
     _s,

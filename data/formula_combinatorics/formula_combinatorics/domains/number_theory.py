@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
-from .._templates import _substack_prod, _substack_sum
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, E, S, Template, X
+from ..engine._templates import _substack_prod, _substack_sum
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .._template_dsl import E, S, Template
+from ..engine._template_dsl import E, S, Template
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, S, Template, X
+from ..engine._template_dsl import _FN_SLOT, S, Template, X
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

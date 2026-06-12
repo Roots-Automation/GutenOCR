@@ -5,8 +5,8 @@ from __future__ import annotations
 import random
 
 import pytest
-from formula_combinatorics._template_dsl import sample
 from formula_combinatorics.domains import GENERATORS, TEMPLATES
+from formula_combinatorics.engine._template_dsl import sample
 
 _GEN = GENERATORS["math_fonts"]
 _TMPLS = TEMPLATES["math_fonts"]

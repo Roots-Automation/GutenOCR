@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import _ELT_POOL, _HOMO_POOL, _RING_NAMES
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ..engine._vocab import _ELT_POOL, _HOMO_POOL, _RING_NAMES
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

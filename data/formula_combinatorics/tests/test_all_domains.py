@@ -10,8 +10,8 @@ import random
 import re  # used by _TEMPLATE_VALID_NAME_RE
 
 import pytest
-from formula_combinatorics._template_dsl import Template, n_eff
 from formula_combinatorics.domains import GENERATORS, TEMPLATES
+from formula_combinatorics.engine._template_dsl import Template, n_eff
 
 _DOMAINS = sorted(GENERATORS.keys())
 _TEMPLATE_VALID_NAME_RE = re.compile(r"^[a-z][a-z0-9_]*$")
@@ -124,8 +124,8 @@ def test_balanced_curly_braces(domain: str) -> None:
 def test_exclude_slot_draws_differ_from_excluded(domain: str) -> None:
     """For every leaf template, ExcludeSlot slots must not return the same base
     symbol as the slots they exclude (sampled 200 times per template)."""
-    from formula_combinatorics._template_dsl import ExcludeSlot
-    from formula_combinatorics._template_dsl import sample as _sample
+    from formula_combinatorics.engine._template_dsl import ExcludeSlot
+    from formula_combinatorics.engine._template_dsl import sample as _sample
 
     rng = random.Random(99)
     for t in _iter_leaves(TEMPLATES[domain]):

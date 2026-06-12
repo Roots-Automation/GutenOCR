@@ -7,8 +7,8 @@ and international/regional trig-name variants.
 
 from __future__ import annotations
 
-from .._template_dsl import _EXPR_SLOT, _FN_SLOT, E, S, Template, X
-from .._vocab import (
+from ..engine._template_dsl import _EXPR_SLOT, _FN_SLOT, E, S, Template, X
+from ..engine._vocab import (
     _CALLIGRAPHIC,
     _GEO_N,
     _SCALARS,

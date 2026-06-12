@@ -11,9 +11,9 @@ Run:
 from __future__ import annotations
 
 import pytest
-from formula_combinatorics._coverage import CoverageReport, measure_coverage, measure_coverage_by_domain
 from formula_combinatorics.corpus import generate
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
+from formula_combinatorics.engine._coverage import CoverageReport, measure_coverage, measure_coverage_by_domain
 from formula_combinatorics.symbol_inventory import (
     COVERAGE_N,
     COVERAGE_SEED,
@@ -112,7 +112,7 @@ def test_should_cover_contains_greek() -> None:
     Greek letters are used as Slot pools in virtually every domain.
     This verifies that collect_should_cover() correctly introspects those slots.
     """
-    from formula_combinatorics._vocab import _GREEK
+    from formula_combinatorics.engine._vocab import _GREEK
 
     should_cover = collect_should_cover()
     missing = frozenset(_GREEK) - should_cover

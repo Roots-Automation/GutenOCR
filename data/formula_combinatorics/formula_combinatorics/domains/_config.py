@@ -15,8 +15,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .._template_dsl import Template
-from .._template_dsl import register_domain as _register_domain
+from ..engine._template_dsl import Template
+from ..engine._template_dsl import register_domain as _register_domain
 
 
 @dataclass(frozen=True)

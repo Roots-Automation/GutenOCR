@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
-from .._vocab import _ELT_POOL, _GRP_NAMES
-from .._vocab import _HOMO_POOL as _HOMOS
+from ..engine._template_dsl import _FN_SLOT, _LIM_MOD, S, Template, X
+from ..engine._vocab import _ELT_POOL, _GRP_NAMES
+from ..engine._vocab import _HOMO_POOL as _HOMOS
 from ._config import register_domain
 
 # ---------------------------------------------------------------------------

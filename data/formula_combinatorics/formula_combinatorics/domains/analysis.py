@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from .._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
-from .._vocab import (
+from ..engine._template_dsl import _ATOM_SLOT, _EXPR_SLOT, _FN_SLOT, _LIM_MOD, E, S, Template, X
+from ..engine._vocab import (
     _GEO_N,
     _VARS,
     _eps_sub,
