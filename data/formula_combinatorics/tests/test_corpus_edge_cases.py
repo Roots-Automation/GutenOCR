@@ -212,31 +212,30 @@ def test_extreme_weight_skew_biases_domain() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_impossible_tag_filter_returns_empty() -> None:
+def test_impossible_tag_filter_raises() -> None:
     def gen(rng: random.Random) -> str:
         return "formula"
 
-    result = generate(
-        count=10,
-        domains=["algebra"],
-        generators={"algebra": gen},
-        weights={"algebra": 1.0},
-        seed=0,
-        tags=["this_tag_does_not_exist_xyz"],
-    )
-    assert result == {}
+    with pytest.raises(ValueError, match="No domains remaining"):
+        generate(
+            count=10,
+            domains=["algebra"],
+            generators={"algebra": gen},
+            weights={"algebra": 1.0},
+            seed=0,
+            tags=["this_tag_does_not_exist_xyz"],
+        )
 
 
-def test_empty_domains_list_returns_empty(caplog: pytest.LogCaptureFixture) -> None:
-    with caplog.at_level(logging.WARNING, logger="formula_combinatorics.corpus"):
-        result = generate(
+def test_empty_domains_list_raises() -> None:
+    with pytest.raises(ValueError, match="No domains remaining"):
+        generate(
             count=10,
             domains=[],
             generators={},
             weights={},
             seed=0,
         )
-    assert result == {}
 
 
 # ---------------------------------------------------------------------------
@@ -270,9 +269,9 @@ def test_metadata_mode_returns_domain_field() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_tags_and_exclude_same_tag_returns_empty(caplog: pytest.LogCaptureFixture) -> None:
-    with caplog.at_level(logging.WARNING, logger="formula_combinatorics.corpus"):
-        result = generate(
+def test_tags_and_exclude_same_tag_raises() -> None:
+    with pytest.raises(ValueError, match="No domains remaining"):
+        generate(
             count=10,
             domains=list(GENERATORS.keys()),
             generators=GENERATORS,
@@ -281,7 +280,6 @@ def test_tags_and_exclude_same_tag_returns_empty(caplog: pytest.LogCaptureFixtur
             tags=["foundational"],
             exclude_tags=["foundational"],
         )
-    assert result == {}, "Same tag in both tags and exclude_tags should yield empty corpus"
 
 
 def test_tags_and_exclude_disjoint_leaves_tags_only(caplog: pytest.LogCaptureFixture) -> None:
@@ -328,17 +326,17 @@ def test_tags_and_exclude_overlap_trims_correctly() -> None:
         )
 
 
-def test_nonexistent_tag_with_exclude_still_empty() -> None:
-    result = generate(
-        count=10,
-        domains=list(GENERATORS.keys()),
-        generators=GENERATORS,
-        weights=DEFAULT_WEIGHTS,
-        seed=0,
-        tags=["this_tag_xyz_does_not_exist"],
-        exclude_tags=["foundational"],
-    )
-    assert result == {}
+def test_nonexistent_tag_with_exclude_raises() -> None:
+    with pytest.raises(ValueError, match="No domains remaining"):
+        generate(
+            count=10,
+            domains=list(GENERATORS.keys()),
+            generators=GENERATORS,
+            weights=DEFAULT_WEIGHTS,
+            seed=0,
+            tags=["this_tag_xyz_does_not_exist"],
+            exclude_tags=["foundational"],
+        )
 
 
 # ---------------------------------------------------------------------------

@@ -24,7 +24,8 @@ except ImportError:
 
 
 from .corpus import generate
-from .domains import DEFAULT_WEIGHTS, DOMAIN_TAGS, GENERATORS, PACK_HASHES
+from .domains import DEFAULT_WEIGHTS, DOMAIN_TAGS, GENERATORS, PACK_HASHES, TEMPLATES
+from .engine.symbol_inventory import SYMBOL_STRATA
 
 logger = logging.getLogger(__name__)
 
@@ -95,6 +96,73 @@ def main() -> None:
         default=None,
         metavar="TAG",
         help="Exclude domains with any of these tags.",
+    )
+    parser.add_argument(
+        "--difficulty",
+        nargs="+",
+        default=None,
+        choices=["elementary", "undergraduate", "graduate", "research"],
+        metavar="LEVEL",
+        help=(
+            "Include only domains at the given difficulty level(s). "
+            "Choices: elementary, undergraduate, graduate, research."
+        ),
+    )
+    parser.add_argument(
+        "--max-depth",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Keep only templates whose LaTeX brace-nesting depth is ≤ N.",
+    )
+    parser.add_argument(
+        "--length-range",
+        type=int,
+        nargs=2,
+        default=None,
+        metavar=("MIN", "MAX"),
+        help="Keep only templates whose character-length proxy falls in [MIN, MAX].",
+    )
+    _stratum_choices = sorted(SYMBOL_STRATA.keys())
+    parser.add_argument(
+        "--symbol-tier",
+        nargs="+",
+        default=None,
+        choices=_stratum_choices,
+        metavar="TIER",
+        help=(
+            f"Keep only templates that exercise at least one of the given symbol strata. "
+            f"Choices: {', '.join(_stratum_choices)}."
+        ),
+    )
+    parser.add_argument(
+        "--hold-out-domains",
+        nargs="+",
+        default=None,
+        choices=list(GENERATORS.keys()),
+        metavar="DOMAIN",
+        help="Exclude these domains from generation (domain-level hold-out for split construction).",
+    )
+    parser.add_argument(
+        "--weights",
+        type=Path,
+        default=None,
+        metavar="PATH",
+        help=(
+            "JSON file mapping domain names to sampling weights. "
+            "Values are merged over the defaults; unknown domains are ignored."
+        ),
+    )
+    parser.add_argument(
+        "--weight",
+        nargs="+",
+        default=None,
+        metavar="DOMAIN=VALUE",
+        help=(
+            "Inline per-domain weight override(s) in 'domain=value' format "
+            "(e.g. --weight algebra=10.0 calculus=0.5). "
+            "Applied after --weights; both may be used together."
+        ),
     )
     parser.add_argument(
         "--metadata",
@@ -189,6 +257,43 @@ def main() -> None:
         logger.error("--inline-fraction must be in [0, 1]")
         sys.exit(1)
 
+    if args.length_range is not None and args.length_range[0] > args.length_range[1]:
+        logger.error("--length-range MIN must be ≤ MAX")
+        sys.exit(1)
+
+    # Build merged weight dict from defaults + file overrides + inline overrides.
+    weight_overrides: dict[str, float] = {}
+    if args.weights is not None:
+        try:
+            with open(args.weights, encoding="utf-8") as fh:
+                weight_overrides = json.load(fh)
+        except (json.JSONDecodeError, OSError) as exc:
+            logger.error("Failed to load --weights file %s: %s", args.weights, exc)
+            sys.exit(1)
+        unknown = set(weight_overrides) - set(GENERATORS)
+        if unknown:
+            logger.warning("Unknown domains in --weights file (ignored): %s", sorted(unknown))
+            weight_overrides = {k: v for k, v in weight_overrides.items() if k in GENERATORS}
+    if args.weight is not None:
+        for kv in args.weight:
+            if "=" not in kv:
+                logger.error("--weight entries must be in 'domain=value' format, got: %r", kv)
+                sys.exit(1)
+            k, v = kv.split("=", 1)
+            k = k.strip()
+            if k not in GENERATORS:
+                logger.warning("Unknown domain in --weight (ignored): %r", k)
+                continue
+            try:
+                weight_overrides[k] = float(v)
+            except ValueError:
+                logger.error("--weight value for %r is not a float: %r", k, v)
+                sys.exit(1)
+    merged_weights = {**DEFAULT_WEIGHTS, **weight_overrides}
+
+    # Determine which params require per-template access.
+    need_templates = any(f is not None for f in (args.max_depth, args.length_range, args.symbol_tier))
+
     logger.info(
         "Generating %d formulas | domains: %s | seed: %s",
         args.count,
@@ -198,19 +303,29 @@ def main() -> None:
 
     # The render gate requires metadata (domain + template_name) for the reject log.
     need_metadata = args.metadata or args.render
-    formulas = generate(
-        count=args.count,
-        domains=args.domains,
-        generators=GENERATORS,
-        weights=DEFAULT_WEIGHTS,
-        seed=args.seed,
-        display_fraction=args.display_fraction,
-        inline_fraction=args.inline_fraction,
-        tags=args.tags,
-        exclude_tags=args.exclude_tags,
-        include_metadata=need_metadata,
-        pack_hashes=PACK_HASHES if need_metadata else None,
-    )
+    try:
+        formulas = generate(
+            count=args.count,
+            domains=args.domains,
+            generators=GENERATORS,
+            weights=merged_weights,
+            seed=args.seed,
+            display_fraction=args.display_fraction,
+            inline_fraction=args.inline_fraction,
+            tags=args.tags,
+            exclude_tags=args.exclude_tags,
+            include_metadata=need_metadata,
+            pack_hashes=PACK_HASHES if need_metadata else None,
+            difficulty=args.difficulty,
+            max_depth=args.max_depth,
+            length_range=tuple(args.length_range) if args.length_range else None,
+            symbol_tiers=set(args.symbol_tier) if args.symbol_tier else None,
+            hold_out_domains=args.hold_out_domains,
+            templates=TEMPLATES if need_templates else None,
+        )
+    except ValueError as exc:
+        logger.error("%s", exc)
+        sys.exit(1)
 
     if args.render:
         from .engine.render import render_corpus

@@ -8,7 +8,7 @@ from collections import Counter
 from collections.abc import Callable
 
 from .domains._config import DOMAIN_CONFIG
-from .engine._template_dsl import _last_template_name
+from .engine._template_dsl import Template, _last_template_name, filter_templates, make_generator
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +47,12 @@ def generate(
     include_metadata: bool = False,
     strict: bool = False,
     pack_hashes: dict[str, str] | None = None,
+    difficulty: list[str] | None = None,
+    max_depth: int | None = None,
+    length_range: tuple[int, int] | None = None,
+    symbol_tiers: set[str] | None = None,
+    hold_out_domains: list[str] | None = None,
+    templates: dict[str, list[Template]] | None = None,
 ) -> dict[str, str] | dict[str, dict]:
     """Generate a corpus of unique LaTeX formula strings.
 
@@ -68,6 +74,16 @@ def generate(
             produced the domain's templates.  When ``include_metadata=True`` and this is
             provided, each metadata record gains a ``"content_pack_hash"`` field for the
             domain if a pack hash is available; ``None`` otherwise.
+        difficulty: If given, keep only domains whose difficulty level is in this list.
+            Valid values: ``"elementary"``, ``"undergraduate"``, ``"graduate"``, ``"research"``.
+        max_depth: If given, keep only templates whose brace-nesting depth is ≤ this value.
+        length_range: If given as ``(min, max)``, keep only templates whose char_length falls
+            within the range (inclusive).
+        symbol_tiers: If given, keep only templates that exercise at least one of the named
+            SYMBOL_STRATA tiers.  Valid names: see ``engine.symbol_inventory.SYMBOL_STRATA``.
+        hold_out_domains: Domains to exclude from generation (domain-level hold-out).
+        templates: Per-domain template lists (from ``domains.TEMPLATES``).  Required when any
+            of ``max_depth``, ``length_range``, or ``symbol_tiers`` is specified.
 
     Returns:
         Dict mapping string index to LaTeX formula string, or to a metadata dict
@@ -79,9 +95,56 @@ def generate(
         domains = [
             d for d in domains if d not in DOMAIN_CONFIG or not any(t in DOMAIN_CONFIG[d].tags for t in exclude_tags)
         ]
+    if difficulty is not None:
+        domains = [d for d in domains if d in DOMAIN_CONFIG and DOMAIN_CONFIG[d].difficulty in difficulty]
+    if hold_out_domains is not None:
+        held = set(hold_out_domains)
+        domains = [d for d in domains if d not in held]
     if not domains:
-        logger.warning("No domains remaining after tag filtering; returning empty corpus.")
-        return {}
+        _active_filters = [
+            f
+            for label, f in [
+                ("tags", tags),
+                ("exclude_tags", exclude_tags),
+                ("difficulty", difficulty),
+                ("hold_out_domains", hold_out_domains),
+            ]
+            if f is not None
+        ]
+        raise ValueError(
+            f"No domains remaining after filtering. Active filters: {_active_filters}. "
+            "Check that the combination of --domains, --tags, --difficulty, and --hold-out-domains "
+            "leaves at least one domain active."
+        )
+
+    # Template-level pre-filtering: build per-domain filtered generators.
+    # This avoids rejection-loop starvation when tight structural constraints are applied.
+    generators = dict(generators)  # local copy — do not mutate the caller's dict
+    if templates is not None and any(f is not None for f in (max_depth, length_range, symbol_tiers)):
+        empty_domains: list[str] = []
+        for d in domains:
+            if d not in templates:
+                continue
+            filtered = filter_templates(
+                templates[d],
+                max_depth=max_depth,
+                length_range=length_range,
+                symbol_tiers=symbol_tiers,
+            )
+            if not filtered:
+                empty_domains.append(d)
+            else:
+                generators[d] = make_generator(filtered)
+        if empty_domains:
+            logger.warning("Domains with no templates matching structural filters (removed): %s", empty_domains)
+            domain_set = set(empty_domains)
+            domains = [d for d in domains if d not in domain_set]
+        if not domains:
+            raise ValueError(
+                "No domains remain after template-level filtering "
+                f"(max_depth={max_depth}, length_range={length_range}, symbol_tiers={symbol_tiers}). "
+                "Relax the structural constraints."
+            )
 
     rng = random.Random(seed)
     raw_weights = [weights[d] for d in domains]

@@ -171,16 +171,18 @@ def test_domain_difficulty_index_covers_all_domains() -> None:
         )
 
 
-def test_generate_empty_after_impossible_tag_filter() -> None:
-    result = generate(
-        count=50,
-        domains=_ALL_DOMAINS,
-        generators=GENERATORS,
-        weights=DEFAULT_WEIGHTS,
-        seed=9,
-        tags=["nonexistent_tag_xyz"],
-    )
-    assert result == {}
+def test_generate_raises_after_impossible_tag_filter() -> None:
+    import pytest
+
+    with pytest.raises(ValueError, match="No domains remaining"):
+        generate(
+            count=50,
+            domains=_ALL_DOMAINS,
+            generators=GENERATORS,
+            weights=DEFAULT_WEIGHTS,
+            seed=9,
+            tags=["nonexistent_tag_xyz"],
+        )
 
 
 # ---------------------------------------------------------------------------

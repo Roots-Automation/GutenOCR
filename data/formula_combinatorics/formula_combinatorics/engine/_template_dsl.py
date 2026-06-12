@@ -271,6 +271,75 @@ class ExcludeParamSub:
 
 
 # ---------------------------------------------------------------------------
+# Template structural metric helpers
+# ---------------------------------------------------------------------------
+
+# Matches format-style slot references: {slot_name} but not {{ or }}
+_SLOT_RE = re.compile(r"\{[^{}]+\}")
+_MATRIX_RE = re.compile(r"\\begin\{+[a-z]*matrix")
+
+
+def _structural(latex: str) -> str:
+    """Collapse format slots and escaped braces to produce the structural LaTeX string."""
+    s = _SLOT_RE.sub("x", latex)
+    return s.replace("{{", "{").replace("}}", "}")
+
+
+def _compute_depth(latex: str) -> int:
+    """Return the maximum LaTeX brace-nesting depth of a template string.
+
+    Format slots ({name}) contribute 0 depth; escaped braces ({{ and }})
+    contribute 1 each (they become literal LaTeX brace groups in the output).
+    """
+    depth = max_depth = 0
+    for c in _structural(latex):
+        if c == "{":
+            depth += 1
+            if depth > max_depth:
+                max_depth = depth
+        elif c == "}":
+            depth -= 1
+    return max_depth
+
+
+def _compute_char_length(latex: str) -> int:
+    """Return a character-count proxy for rendered expression length."""
+    return len(_structural(latex))
+
+
+def _compute_strata(slots: dict) -> frozenset[str]:
+    """Return the set of SYMBOL_STRATA names exercised by a template's Slot pools."""
+    result: set[str] = set()
+    for s in slots.values():
+        if isinstance(s, (Slot, ExcludeSlot)):
+            for sym in s.pool:
+                for stratum_name, stratum_syms in SYMBOL_STRATA.items():
+                    if sym in stratum_syms:
+                        result.add(stratum_name)
+                        break
+    return frozenset(result)
+
+
+def _compute_has_fraction(latex: str) -> bool:
+    return r"\frac" in latex
+
+
+def _compute_has_matrix(latex: str) -> bool:
+    # Match \begin{[...]matrix[...]} — doubled braces ({{pmatrix}}) are the format-string
+    # representation of literal LaTeX braces, so match one or more { after \begin.
+    return bool(_MATRIX_RE.search(latex))
+
+
+def _compute_has_integral(latex: str) -> bool:
+    return r"\int" in latex
+
+
+def _compute_has_script_chain(latex: str) -> bool:
+    """True when the latex contains two or more sub/superscript operators."""
+    return latex.count("_") + latex.count("^") >= 2
+
+
+# ---------------------------------------------------------------------------
 # Template
 # ---------------------------------------------------------------------------
 
@@ -309,9 +378,36 @@ class Template:
     variants: list[Template] = field(default_factory=list)
     # Precomputed sqrt(n_eff) weights for variant selection — matches template-level weighting.
     _variant_weights: list[float] = field(default_factory=list, init=False, repr=False)
+    # Structural metrics — computed at registration time for O(1) filtering.
+    depth: int = field(default=0, init=False, repr=False)
+    char_length: int = field(default=0, init=False, repr=False)
+    strata: frozenset[str] = field(default_factory=frozenset, init=False, repr=False)
+    has_fraction: bool = field(default=False, init=False, repr=False)
+    has_matrix: bool = field(default=False, init=False, repr=False)
+    has_integral: bool = field(default=False, init=False, repr=False)
+    has_script_chain: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
         self._variant_weights = [math.sqrt(n_eff(v)) for v in self.variants]
+        if self.variants:
+            self.depth = max((v.depth for v in self.variants), default=0)
+            self.char_length = max((v.char_length for v in self.variants), default=0)
+            merged: set[str] = set()
+            for v in self.variants:
+                merged |= v.strata
+            self.strata = frozenset(merged)
+            self.has_fraction = any(v.has_fraction for v in self.variants)
+            self.has_matrix = any(v.has_matrix for v in self.variants)
+            self.has_integral = any(v.has_integral for v in self.variants)
+            self.has_script_chain = any(v.has_script_chain for v in self.variants)
+        else:
+            self.depth = _compute_depth(self.latex)
+            self.char_length = _compute_char_length(self.latex)
+            self.strata = _compute_strata(self.slots)
+            self.has_fraction = _compute_has_fraction(self.latex)
+            self.has_matrix = _compute_has_matrix(self.latex)
+            self.has_integral = _compute_has_integral(self.latex)
+            self.has_script_chain = _compute_has_script_chain(self.latex)
 
 
 # ---------------------------------------------------------------------------
@@ -525,6 +621,33 @@ def register_domain(
     return {name: make_dispatcher(templates, w)}, {name: weight}, {name: templates}
 
 
+def filter_templates(
+    templates: list[Template],
+    max_depth: int | None = None,
+    length_range: tuple[int, int] | None = None,
+    symbol_tiers: set[str] | None = None,
+) -> list[Template]:
+    """Return templates that satisfy all supplied structural constraints."""
+    result = []
+    for t in templates:
+        if max_depth is not None and t.depth > max_depth:
+            continue
+        if length_range is not None:
+            lo, hi = length_range
+            if not (lo <= t.char_length <= hi):
+                continue
+        if symbol_tiers is not None and not (t.strata & symbol_tiers):
+            continue
+        result.append(t)
+    return result
+
+
+def make_generator(templates: list[Template]) -> Callable[[random.Random], str]:
+    """Build a weighted generator callable from a (filtered) template list."""
+    weights = compute_weights(templates)
+    return make_dispatcher(templates, weights)
+
+
 # ---------------------------------------------------------------------------
 # Reusable slot constants
 # ---------------------------------------------------------------------------
@@ -542,6 +665,7 @@ from ._vocab import (  # noqa: E402
     _fn_rich,
     _fn_rich_nosub,
 )
+from .symbol_inventory import SYMBOL_STRATA  # noqa: E402
 
 # Fixed-pool variable / scalar / index slots
 _VAR_SLOT: Slot = S(tuple(_VARS), idx=0.35)

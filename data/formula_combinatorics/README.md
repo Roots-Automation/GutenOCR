@@ -40,6 +40,13 @@ formula-generate --output formulas.json --count 50000 --seed 42
 | `--domains D [D ...]` | all | Restrict to specific domains (see list below) |
 | `--tags TAG [TAG ...]` | `None` | Include only domains with any of these tags (`foundational`, `advanced`, `applied`, `structural`) |
 | `--exclude-tags TAG [TAG ...]` | `None` | Exclude domains with any of these tags |
+| `--difficulty LEVEL [LEVEL ...]` | `None` | Include only domains at the given difficulty level(s): `elementary`, `undergraduate`, `graduate`, `research` |
+| `--max-depth N` | `None` | Keep only templates whose LaTeX brace-nesting depth is ≤ N |
+| `--length-range MIN MAX` | `None` | Keep only templates whose character-length proxy falls in `[MIN, MAX]` |
+| `--symbol-tier TIER [TIER ...]` | `None` | Keep only templates exercising the named symbol strata: `greek`, `calligraphic`, `blackboard_bold`, `functions`, `bold_vectors`, `bold_greek` |
+| `--hold-out-domains DOMAIN [DOMAIN ...]` | `None` | Exclude these domains from generation (domain-level hold-out for split construction) |
+| `--weights PATH` | `None` | JSON file mapping domain names to sampling weights, merged over defaults |
+| `--weight DOMAIN=VALUE [...]` | `None` | Inline per-domain weight override(s) in `domain=value` format (e.g. `--weight algebra=10.0`) |
 | `--metadata` | off | Output `{"formula": ..., "domain": ..., "template_name": ...}` dicts instead of bare strings |
 
 #### Render gate
