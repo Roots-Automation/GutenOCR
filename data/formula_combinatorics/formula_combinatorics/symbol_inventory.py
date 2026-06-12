@@ -57,6 +57,19 @@ MUST_COVER: frozenset[str] = frozenset(
 )
 
 # ---------------------------------------------------------------------------
+# SYMBOL_STRATA: named partitions of MUST_COVER for stratum-level reporting
+# ---------------------------------------------------------------------------
+
+SYMBOL_STRATA: dict[str, frozenset[str]] = {
+    "greek": frozenset((*_GREEK, *_GREEK_UPPER)),
+    "calligraphic": frozenset(_CALLIGRAPHIC),
+    "blackboard_bold": frozenset(_BBOLD_MUST),
+    "functions": frozenset(_FUNCS),
+    "bold_vectors": frozenset(_BOLD_VECS),
+    "bold_greek": frozenset(_BOLD_GREEK),
+}
+
+# ---------------------------------------------------------------------------
 # SHOULD_COVER: auto-generated from all Slot pools (lazy)
 # ---------------------------------------------------------------------------
 

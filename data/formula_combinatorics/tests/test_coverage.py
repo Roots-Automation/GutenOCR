@@ -11,13 +11,14 @@ Run:
 from __future__ import annotations
 
 import pytest
-from formula_combinatorics._coverage import CoverageReport, measure_coverage
+from formula_combinatorics._coverage import CoverageReport, measure_coverage, measure_coverage_by_domain
 from formula_combinatorics.corpus import generate
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
 from formula_combinatorics.symbol_inventory import (
     COVERAGE_N,
     COVERAGE_SEED,
     MUST_COVER,
+    SYMBOL_STRATA,
     collect_should_cover,
 )
 
@@ -33,6 +34,20 @@ def fixed_corpus() -> list[str]:
         generators=GENERATORS,
         weights=DEFAULT_WEIGHTS,
         seed=COVERAGE_SEED,
+    )
+    return list(corpus_dict.values())
+
+
+@pytest.fixture(scope="module")
+def fixed_corpus_with_meta() -> list[dict]:
+    """Generate a fixed metadata corpus (includes domain labels) once per session."""
+    corpus_dict = generate(
+        count=COVERAGE_N,
+        domains=_DOMAINS,
+        generators=GENERATORS,
+        weights=DEFAULT_WEIGHTS,
+        seed=COVERAGE_SEED,
+        include_metadata=True,
     )
     return list(corpus_dict.values())
 
@@ -63,6 +78,32 @@ def test_should_cover_collection_smoke() -> None:
     assert isinstance(should_cover, frozenset)
     assert len(should_cover) > 0
     assert "" not in should_cover
+
+
+def test_coverage_by_stratum(fixed_corpus: list[str]) -> None:
+    """Every stratum in SYMBOL_STRATA must be 100% covered by the fixed corpus.
+
+    SYMBOL_STRATA partitions MUST_COVER into named groups (greek, calligraphic, …).
+    Since each symbol already passes test_must_cover_symbols, these roll-up assertions
+    verify that the stratum definitions are correct and complete subsets of MUST_COVER.
+    """
+    failures: list[str] = []
+    for stratum_name, symbols in sorted(SYMBOL_STRATA.items()):
+        report = measure_coverage(fixed_corpus, sorted(symbols))
+        if report.coverage_fraction < 1.0:
+            failures.append(f"  {stratum_name}: missing {sorted(report.missing)}")
+    assert not failures, "Stratum coverage failures:\n" + "\n".join(failures)
+
+
+def test_coverage_by_domain_structure(fixed_corpus_with_meta: list[dict]) -> None:
+    """measure_coverage_by_domain() returns a report for every sampled domain."""
+    by_domain = measure_coverage_by_domain(fixed_corpus_with_meta, sorted(MUST_COVER))
+    assert len(by_domain) > 0
+    for domain, report in by_domain.items():
+        assert isinstance(domain, str)
+        assert isinstance(report, CoverageReport)
+        assert report.total_symbols == len(MUST_COVER)
+        assert 0.0 <= report.coverage_fraction <= 1.0
 
 
 def test_should_cover_contains_greek() -> None:

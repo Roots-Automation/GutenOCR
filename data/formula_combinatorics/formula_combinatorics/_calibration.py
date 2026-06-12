@@ -25,6 +25,7 @@ import statistics
 import time
 from dataclasses import dataclass
 
+from ._template_dsl import ExcludeParamSub, ParamSub, Sub, Template
 from ._template_dsl import n_eff as _n_eff
 from .domains import GENERATORS, TEMPLATES
 
@@ -148,6 +149,13 @@ def probe_domain(
     )
 
 
+def _has_sub_slots(t: Template) -> bool:
+    """Return True if t (or any of its variants) has a Sub/ParamSub/ExcludeParamSub slot."""
+    if any(isinstance(s, (Sub, ParamSub, ExcludeParamSub)) for s in t.slots.values()):
+        return True
+    return any(_has_sub_slots(v) for v in t.variants)
+
+
 def tuning_report(
     result: CalibrationResult,
     tolerance: float = CALIBRATION_TOLERANCE,
@@ -155,17 +163,32 @@ def tuning_report(
 ) -> list[str]:
     """Return lines describing templates that may need n_eff_estimate tuning.
 
+    For miscalibrated domains, each template line shows the current analytic n_eff,
+    the suggested n_eff (current * correction_factor, where correction_factor = ratio²),
+    and a [Sub] tag for templates whose n_eff contains adjustable estimates.
+
+    The correction_factor is a domain-level approximation: it scales the whole domain's
+    analytic n_eff to match the empirical birthday horizon.  Per-template corrections
+    require per-template probes; this gives an actionable starting point.
+
     Returns an empty list when the domain is well-calibrated or entirely uncapped.
     """
     if result.n_uncapped == result.n_trials or result.ratio >= tolerance:
         return []
+
+    correction_factor = result.ratio**2
+    domain_templates = {t.name: t for t in TEMPLATES.get(result.domain, [])}
+
     lines = [
         f"[{result.domain}] MISCALIBRATED  "
         f"ratio={result.ratio:.3f} < {tolerance:.2f}  "
+        f"correction_factor={correction_factor:.2e}  "
         f"empirical={result.empirical_horizon:.0f}  "
-        f"analytic_horizon={result.analytic_horizon:.0f}  "
-        f"analytic_n_eff={result.analytic_n_eff:,.0f}",
+        f"analytic_horizon={result.analytic_horizon:.0f}",
     ]
     for name, ne in sorted(result.per_template.items(), key=lambda kv: -kv[1])[:top_n]:
-        lines.append(f"  {name:<44}  n_eff={ne:>14,.0f}")
+        suggested = ne * correction_factor
+        t = domain_templates.get(name)
+        tag = "[Sub]  " if (t and _has_sub_slots(t)) else "[exact]"
+        lines.append(f"  {name:<44}  current={ne:>18,.0f}  →  suggested={suggested:>14,.0f}  {tag}")
     return lines

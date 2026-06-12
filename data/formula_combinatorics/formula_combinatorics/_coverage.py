@@ -35,6 +35,28 @@ class CoverageReport:
         return "\n".join(lines)
 
 
+def measure_coverage_by_domain(
+    corpus_with_meta: list[dict],
+    symbol_set: list[str],
+) -> dict[str, CoverageReport]:
+    """Return per-domain CoverageReports.
+
+    Args:
+        corpus_with_meta: List of metadata dicts as returned by
+            ``corpus.generate(..., include_metadata=True)``.
+            Each dict must have ``"formula"`` and ``"domain"`` keys.
+        symbol_set: Symbols/tokens to check for presence.
+
+    Returns:
+        Mapping of domain name → CoverageReport for that domain's formulas.
+    """
+    by_domain: dict[str, list[str]] = {}
+    for item in corpus_with_meta:
+        domain = item.get("domain", "unknown")
+        by_domain.setdefault(domain, []).append(item["formula"])
+    return {domain: measure_coverage(formulas, symbol_set) for domain, formulas in sorted(by_domain.items())}
+
+
 def measure_coverage(corpus: list[str], symbol_set: list[str]) -> CoverageReport:
     """Check which symbols from symbol_set appear in the corpus.
 
