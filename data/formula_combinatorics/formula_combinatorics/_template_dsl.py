@@ -301,6 +301,11 @@ class Template:
     slots: dict[str, _SlotType]
     distinct: list[list[str]] = field(default_factory=list)
     variants: list[Template] = field(default_factory=list)
+    # Precomputed sqrt(n_eff) weights for variant selection — matches template-level weighting.
+    _variant_weights: list[float] = field(default_factory=list, init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        self._variant_weights = [math.sqrt(n_eff(v)) for v in self.variants]
 
 
 # ---------------------------------------------------------------------------
@@ -311,7 +316,7 @@ class Template:
 def sample(t: Template, rng: random.Random) -> str:
     """Draw one formula string from *t*."""
     if t.variants:
-        return sample(rng.choice(t.variants), rng)
+        return sample(rng.choices(t.variants, weights=t._variant_weights, k=1)[0], rng)
 
     # Constant templates (no slots, no distinct groups) — return verbatim so that
     # LaTeX brace groups like \frac{a}{b} are never mistaken for format slots.

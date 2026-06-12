@@ -84,6 +84,82 @@ def test_always_raising_generator_returns_empty() -> None:
     assert len(result) == 0
 
 
+def test_per_domain_error_tally_warns_on_high_rate(caplog: pytest.LogCaptureFixture) -> None:
+    """A domain with 100% error rate triggers the per-domain WARNING."""
+
+    def always_raises(rng: random.Random) -> str:
+        raise ValueError("always broken")
+
+    def good_gen(rng: random.Random) -> str:
+        return f"good_{rng.randint(0, 99999)}"
+
+    with caplog.at_level(logging.WARNING, logger="formula_combinatorics.corpus"):
+        generate(
+            count=20,
+            domains=["bad", "good"],
+            generators={"bad": always_raises, "good": good_gen},
+            weights={"bad": 0.5, "good": 0.5},
+            seed=0,
+            display_fraction=0.0,
+            inline_fraction=0.0,
+        )
+
+    combined = " ".join(caplog.messages)
+    assert "bad" in combined, "Expected WARNING mentioning the broken domain name"
+    assert "error" in combined.lower(), "Expected WARNING to mention errors"
+
+
+def test_per_domain_error_tally_strict_raises() -> None:
+    """strict=True raises RuntimeError instead of warning when error rate is high."""
+
+    def always_raises(rng: random.Random) -> str:
+        raise ValueError("always broken")
+
+    def good_gen(rng: random.Random) -> str:
+        return f"good_{rng.randint(0, 99999)}"
+
+    with pytest.raises(RuntimeError, match="error rate"):
+        generate(
+            count=20,
+            domains=["bad", "good"],
+            generators={"bad": always_raises, "good": good_gen},
+            weights={"bad": 0.5, "good": 0.5},
+            seed=0,
+            display_fraction=0.0,
+            inline_fraction=0.0,
+            strict=True,
+        )
+
+
+def test_per_domain_error_tally_no_warn_below_threshold(caplog: pytest.LogCaptureFixture) -> None:
+    """Domains with <10 attempts do not trigger the error-rate WARNING."""
+    call_count = {"n": 0}
+
+    def rare_raiser(rng: random.Random) -> str:
+        call_count["n"] += 1
+        if call_count["n"] == 1:
+            raise ValueError("one-off error")
+        return f"formula_{call_count['n']}"
+
+    def dominant_gen(rng: random.Random) -> str:
+        return f"dom_{rng.randint(0, 99999)}"
+
+    with caplog.at_level(logging.WARNING, logger="formula_combinatorics.corpus"):
+        generate(
+            count=5,
+            domains=["rare", "dominant"],
+            generators={"rare": rare_raiser, "dominant": dominant_gen},
+            weights={"rare": 0.001, "dominant": 0.999},
+            seed=0,
+            display_fraction=0.0,
+            inline_fraction=0.0,
+        )
+
+    # "rare" gets very few attempts due to low weight; should not fire the threshold warning.
+    high_rate_warning = any("High generator error rate" in m for m in caplog.messages)
+    assert not high_rate_warning, "Should not warn when domain has <10 attempts"
+
+
 # ---------------------------------------------------------------------------
 # Weight normalization
 # ---------------------------------------------------------------------------

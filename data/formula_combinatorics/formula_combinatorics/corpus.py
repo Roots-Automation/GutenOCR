@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import random
+from collections import Counter
 from collections.abc import Callable
 
 from .domains._config import DOMAIN_CONFIG
@@ -43,6 +44,7 @@ def generate(
     tags: list[str] | None = None,
     exclude_tags: list[str] | None = None,
     include_metadata: bool = False,
+    strict: bool = False,
 ) -> dict[str, str] | dict[str, dict]:
     """Generate a corpus of unique LaTeX formula strings.
 
@@ -58,6 +60,8 @@ def generate(
         exclude_tags: If given, exclude domains whose tags overlap with this list.
         include_metadata: If True, return ``{"formula": ..., "domain": ...}`` dicts
             instead of bare strings.
+        strict: If True, raise ``RuntimeError`` when any domain's error rate exceeds
+            the threshold (≥1% errors with ≥10 attempts); otherwise emit a WARNING.
 
     Returns:
         Dict mapping string index to LaTeX formula string, or to a metadata dict
@@ -83,6 +87,8 @@ def generate(
     seen: set[str] = set()
     attempts = 0
     max_attempts = count * 10
+    domain_attempts: Counter[str] = Counter()
+    domain_errors: Counter[str] = Counter()
 
     while len(results) < count and attempts < max_attempts:
         attempts += 1
@@ -90,6 +96,7 @@ def generate(
         try:
             idx = rng.choices(range(len(gens)), weights=norm_weights, k=1)[0]
             domain_name = domains[idx]
+            domain_attempts[domain_name] += 1
             formula = gens[idx](rng)
             formula = formula.strip()
             if formula and not _is_wrapped(formula):
@@ -106,6 +113,7 @@ def generate(
                 else:
                     results[key] = formula
         except Exception:
+            domain_errors[domain_name] += 1
             logger.warning("Generator error in domain '%s' (skipping sample)", domain_name, exc_info=True)
 
     if len(results) < count:
@@ -115,4 +123,15 @@ def generate(
             count,
             attempts,
         )
+
+    bad_domains = [
+        d for d in domain_attempts if domain_attempts[d] >= 10 and domain_errors[d] / domain_attempts[d] >= 0.01
+    ]
+    if bad_domains:
+        parts = [f"{d}: {domain_errors[d]}/{domain_attempts[d]} errors" for d in sorted(bad_domains)]
+        msg = "High generator error rate — " + ", ".join(parts)
+        if strict:
+            raise RuntimeError(msg)
+        logger.warning(msg)
+
     return results

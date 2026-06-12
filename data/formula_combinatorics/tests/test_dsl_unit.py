@@ -158,6 +158,21 @@ def test_sample_variants_reaches_all_branches() -> None:
     assert "AAA" in results and "BBB" in results
 
 
+def test_sample_variants_weighted_by_n_eff() -> None:
+    """High-n_eff variant should be chosen significantly more often than a low-n_eff one."""
+    small_pool: tuple[str, ...] = ("a",)  # n_eff = 1
+    large_pool: tuple[str, ...] = tuple(f"x{i}" for i in range(10_000))  # n_eff = 10_000
+
+    low = Template("low", "{v}", slots={"v": S(small_pool)})
+    high = Template("high", "{v}", slots={"v": S(large_pool)})
+    parent = Template("parent", "", slots={}, variants=[low, high])
+
+    # sqrt(1) : sqrt(10_000) = 1 : 100 — high should win ~99% of the time
+    rng = random.Random(42)
+    high_count = sum(1 for _ in range(1000) if sample(parent, rng) != "a")
+    assert high_count > 900, f"Expected high-n_eff variant to dominate (>900/1000), got {high_count}"
+
+
 # ---------------------------------------------------------------------------
 # _decorate
 # ---------------------------------------------------------------------------
