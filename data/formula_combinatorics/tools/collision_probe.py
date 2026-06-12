@@ -25,11 +25,11 @@ import argparse
 import math
 import random
 import sys
-import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from formula_combinatorics._calibration import probe_single as _probe_single
 from formula_combinatorics._template_dsl import n_eff as _n_eff
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS, TEMPLATES
 
@@ -85,30 +85,16 @@ def probe_domain(
         first_idx    int    — index of the earlier match (0-based)
         formula      str    — the colliding formula (or last sample if capped)
         elapsed_s    float  — wall time
+
+    Delegates to formula_combinatorics._calibration.probe_single.
     """
-    gen = GENERATORS[domain]
-    rng = random.Random(seed)
-    seen: dict[str, int] = {}  # formula → first-seen index
-
-    t0 = time.perf_counter()
-    for n in range(1, max_samples + 1):
-        formula = gen(rng)
-        if formula in seen:
-            return {
-                "collision": True,
-                "count": n,
-                "first_idx": seen[formula] + 1,  # 1-based for display
-                "formula": formula,
-                "elapsed_s": time.perf_counter() - t0,
-            }
-        seen[formula] = n - 1
-
+    r = _probe_single(domain, seed, max_samples)
     return {
-        "collision": False,
-        "count": max_samples,
-        "first_idx": None,
-        "formula": None,
-        "elapsed_s": time.perf_counter() - t0,
+        "collision": r.collision,
+        "count": r.count,
+        "first_idx": r.first_idx,
+        "formula": r.formula,
+        "elapsed_s": r.elapsed_s,
     }
 
 

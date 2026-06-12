@@ -28,3 +28,9 @@ formula-generate = "formula_combinatorics.generate:main"
 
 [tool.setuptools.packages.find]
 include = ["formula_combinatorics*"]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not slow'"
+markers = [
+    "slow: marks tests as slow (skipped in normal CI; run with: pytest -m slow)",
+]
