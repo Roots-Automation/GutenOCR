@@ -30,6 +30,37 @@ from ._vocab import (
     _GREEK_UPPER,
 )
 
+# ---------------------------------------------------------------------------
+# Frequency-tier helpers (private)
+# ---------------------------------------------------------------------------
+
+# Most universal greek lower — appear in essentially every math domain.
+_GREEK_HEAD: tuple[str, ...] = (
+    r"\alpha",
+    r"\beta",
+    r"\gamma",
+    r"\delta",
+    r"\lambda",
+    r"\mu",
+    r"\sigma",
+    r"\theta",
+    r"\phi",
+    r"\omega",
+)
+_GREEK_BODY: tuple[str, ...] = tuple(s for s in _GREEK if s not in _GREEK_HEAD)
+
+# Most universal greek upper — standard summation/product/set notation.
+_GREEK_UPPER_HEAD: tuple[str, ...] = (r"\Gamma", r"\Delta", r"\Sigma", r"\Pi", r"\Omega")
+_GREEK_UPPER_BODY: tuple[str, ...] = tuple(s for s in _GREEK_UPPER if s not in _GREEK_UPPER_HEAD)
+
+# Core blackboard bold — appear in virtually all analysis/algebra.
+_BBOLD_HEAD: tuple[str, ...] = (r"\mathbb{R}", r"\mathbb{N}", r"\mathbb{C}", r"\mathbb{Z}")
+_BBOLD_BODY: tuple[str, ...] = tuple(s for s in _BBOLD if s not in _BBOLD_HEAD and s != r"\mathbb{H}")
+
+# Most common functions — taught in every calculus course.
+_FUNCS_HEAD: tuple[str, ...] = (r"\sin", r"\cos", r"\tan", r"\exp", r"\ln", r"\log")
+_FUNCS_TAIL: tuple[str, ...] = tuple(s for s in _FUNCS if s not in _FUNCS_HEAD)
+
 # \mathbb{H} (quaternions) appears only in a handful of algebra templates and
 # is absent from typical 5k-sample corpora; exclude it from the hard gate.
 _BBOLD_MUST: tuple[str, ...] = tuple(s for s in _BBOLD if s != r"\mathbb{H}")
@@ -68,6 +99,25 @@ SYMBOL_STRATA: dict[str, frozenset[str]] = {
     "bold_vectors": frozenset(_BOLD_VECS),
     "bold_greek": frozenset(_BOLD_GREEK),
 }
+
+# ---------------------------------------------------------------------------
+# SYMBOL_FREQUENCY_TIERS: principled-proxy frequency partition of MUST_COVER
+# ---------------------------------------------------------------------------
+# Membership reflects structural role and ubiquity in standard math notation:
+#   head  — appear in essentially all math domains (basic greek, core functions, core ℝℕℂℤ)
+#   body  — common but domain-specific (remaining greek, calligraphic, remaining blackboard bold,
+#            bold vectors)
+#   tail  — specialist / rare in general corpora (bold greek, less-common trig/special functions)
+# The three tiers are a disjoint partition of MUST_COVER.
+
+SYMBOL_FREQUENCY_TIERS: dict[str, frozenset[str]] = {
+    "head": frozenset((*_GREEK_HEAD, *_GREEK_UPPER_HEAD, *_BBOLD_HEAD, *_FUNCS_HEAD)),
+    "body": frozenset((*_GREEK_BODY, *_GREEK_UPPER_BODY, *_BBOLD_BODY, *_CALLIGRAPHIC, *_BOLD_VECS)),
+    "tail": frozenset((*_FUNCS_TAIL, *_BOLD_GREEK)),
+}
+
+# Reverse lookup: symbol → tier name (for per-sample labeling)
+SYMBOL_TIER_OF: dict[str, str] = {sym: tier for tier, syms in SYMBOL_FREQUENCY_TIERS.items() for sym in syms}
 
 # ---------------------------------------------------------------------------
 # SHOULD_COVER: auto-generated from all Slot pools (lazy)

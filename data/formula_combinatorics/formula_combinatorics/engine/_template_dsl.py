@@ -91,6 +91,9 @@ from dataclasses import dataclass, field
 # execution context.  corpus.py reads this after each generator call to populate
 # template_name in metadata without requiring changes to any domain generator.
 _last_template_name: ContextVar[str | None] = ContextVar("_last_template_name", default=None)
+# Tracks the slot-name → drawn-value mapping from the most recently sampled leaf Template.
+# Populated in parallel with _last_template_name; corpus.py reads both after each generator call.
+_last_draws: ContextVar[dict[str, str]] = ContextVar("_last_draws", default={})
 
 # ---------------------------------------------------------------------------
 # Index decoration pool (mirrors _maybe_idx in _vocab.py)
@@ -426,6 +429,7 @@ def sample(t: Template, rng: random.Random) -> str:
     # LaTeX brace groups like \frac{a}{b} are never mistaken for format slots.
     if not t.slots and not t.distinct:
         _last_template_name.set(t.name)
+        _last_draws.set({})
         return t.latex
 
     draws: dict[str, str] = {}
@@ -471,6 +475,7 @@ def sample(t: Template, rng: random.Random) -> str:
     result = t.latex.format(**draws)
     _check_no_greek_concat(result, t.name)
     _last_template_name.set(t.name)
+    _last_draws.set(draws)
     return result
 
 
@@ -621,13 +626,34 @@ def register_domain(
     return {name: make_dispatcher(templates, w)}, {name: weight}, {name: templates}
 
 
+def _template_uses_any_symbol(t: Template, symbols: frozenset[str]) -> bool:
+    """Return True if any Slot/ExcludeSlot pool in t (or its variants) contains a symbol from *symbols*."""
+    if t.variants:
+        return any(_template_uses_any_symbol(v, symbols) for v in t.variants)
+    for s in t.slots.values():
+        if isinstance(s, (Slot, ExcludeSlot)):
+            if symbols.intersection(s.pool):
+                return True
+    return False
+
+
 def filter_templates(
     templates: list[Template],
     max_depth: int | None = None,
     length_range: tuple[int, int] | None = None,
     symbol_tiers: set[str] | None = None,
+    exclude_symbols: frozenset[str] | None = None,
 ) -> list[Template]:
-    """Return templates that satisfy all supplied structural constraints."""
+    """Return templates that satisfy all supplied structural constraints.
+
+    Args:
+        templates: Template list to filter.
+        max_depth: Exclude templates with brace-nesting depth > this value.
+        length_range: Exclude templates whose char_length falls outside [lo, hi].
+        symbol_tiers: Keep only templates that exercise at least one named stratum.
+        exclude_symbols: Exclude templates whose Slot/ExcludeSlot pools contain any of
+            these symbols (strict contamination-free hold-out semantics).
+    """
     result = []
     for t in templates:
         if max_depth is not None and t.depth > max_depth:
@@ -637,6 +663,8 @@ def filter_templates(
             if not (lo <= t.char_length <= hi):
                 continue
         if symbol_tiers is not None and not (t.strata & symbol_tiers):
+            continue
+        if exclude_symbols is not None and _template_uses_any_symbol(t, exclude_symbols):
             continue
         result.append(t)
     return result

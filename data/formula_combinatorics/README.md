@@ -32,7 +32,8 @@ formula-generate --output formulas.json --count 50000 --seed 42
 
 | Flag | Default | Description |
 |---|---|---|
-| `--output PATH` | *(required)* | Output JSON file path |
+| `--output PATH` | *(required)* | Output file path (extension determined by `--output-format`) |
+| `--output-format FORMAT` | `json` | Output format: `json` (legacy dict) or `jsonl` (one Sample record per line) |
 | `--count N` | `100000` | Number of unique formulas to generate |
 | `--seed INT` | `None` | Random seed for reproducibility |
 | `--display-fraction F` | `0.20` | Fraction of bare formulas wrapped in display-math environments (`\[...\]`, `equation`) |
@@ -43,11 +44,16 @@ formula-generate --output formulas.json --count 50000 --seed 42
 | `--difficulty LEVEL [LEVEL ...]` | `None` | Include only domains at the given difficulty level(s): `elementary`, `undergraduate`, `graduate`, `research` |
 | `--max-depth N` | `None` | Keep only templates whose LaTeX brace-nesting depth is ≤ N |
 | `--length-range MIN MAX` | `None` | Keep only templates whose character-length proxy falls in `[MIN, MAX]` |
-| `--symbol-tier TIER [TIER ...]` | `None` | Keep only templates exercising the named symbol strata: `greek`, `calligraphic`, `blackboard_bold`, `functions`, `bold_vectors`, `bold_greek` |
+| `--symbol-tier TIER [TIER ...]` | `None` | Keep only templates exercising the named symbol strata (`greek`, `calligraphic`, etc.) or frequency tiers (`head`, `body`, `tail`) |
 | `--hold-out-domains DOMAIN [DOMAIN ...]` | `None` | Exclude these domains from generation (domain-level hold-out for split construction) |
+| `--hold-out-templates FRAC_OR_NAME [...]` | `None` | Hold out a fraction (e.g. `0.10`) or named list of templates; writes a companion `*.held_out_templates.*` file |
+| `--hold-out-symbols FRAC_OR_SYMBOL [...]` | `None` | Hold out a fraction or named list of MUST_COVER symbols; templates exercising any held-out symbol are excluded from train |
+| `--include-draws` | off | Attach slot-name→value `draws` dict to each record (increases output size) |
+| `--coverage-mode [N]` | off | Keep sampling until every MUST_COVER symbol appears ≥ N times (default N=5) |
+| `--manifest PATH` | `<output>.manifest.json` | Path for the split manifest JSON file (written when any hold-out is active) |
 | `--weights PATH` | `None` | JSON file mapping domain names to sampling weights, merged over defaults |
 | `--weight DOMAIN=VALUE [...]` | `None` | Inline per-domain weight override(s) in `domain=value` format (e.g. `--weight algebra=10.0`) |
-| `--metadata` | off | Output `{"formula": ..., "domain": ..., "template_name": ...}` dicts instead of bare strings |
+| `--metadata` | off | Output rich Sample dicts (formula + domain + template_name + provenance + structural metrics) instead of bare strings |
 
 #### Render gate
 

@@ -14,7 +14,7 @@ import random
 from collections.abc import Callable
 from pathlib import Path
 
-from ..engine._pack_loader import load_pack
+from ..engine._pack_loader import PackMeta, load_pack
 from ..engine._template_dsl import Template
 from ._config import DOMAIN_CONFIG, register_domain
 
@@ -62,6 +62,8 @@ TEMPLATES: dict[str, list[Template]] = {}
 
 # Map domain name → pack SHA-256 (populated only for TOML-loaded domains)
 PACK_HASHES: dict[str, str] = {}
+# Map domain name → full PackMeta (populated only for TOML-loaded domains)
+PACK_META: dict[str, PackMeta] = {}
 
 for _name in _DOMAIN_NAMES:
     _toml_path = _DOMAINS_DIR / f"{_name}.toml"
@@ -69,6 +71,7 @@ for _name in _DOMAIN_NAMES:
         _pack = load_pack(_toml_path)
         _gens, _wts, _tmpls = register_domain(_name, _pack.templates)
         PACK_HASHES[_name] = _pack.meta.sha256
+        PACK_META[_name] = _pack.meta
     else:
         _mod = importlib.import_module(f".{_name}", package=__package__)
         _gens, _wts, _tmpls = _mod.GENERATORS, _mod.WEIGHTS, _mod.TEMPLATES
@@ -96,4 +99,5 @@ __all__ = [
     "DOMAIN_DIFFICULTY",
     "DOMAIN_CONFIG",
     "PACK_HASHES",
+    "PACK_META",
 ]

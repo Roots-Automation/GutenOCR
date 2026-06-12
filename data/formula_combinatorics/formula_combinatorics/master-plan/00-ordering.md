@@ -15,7 +15,7 @@ Master sequencing doc for the seven units of work that take the synthetic LaTeX 
 | 3 | [Calibration & coverage instrumentation](03-calibration-coverage.md) | M | n_eff vs empirical in CI; declare and assert global symbol coverage. |
 | 4 | [Engine/content split + content-as-data](04-engine-content-split.md) | L | Separate engine from the 33 domains; move templates toward declarative data. |
 | 5 | [Parameterization expansion](05-parameterization.md) | M | ✅ Difficulty, depth, length, symbol-tier, weight-override, split config knobs. |
-| 6 | [Benchmark-native output + splits + semantic key](06-benchmark-output.md) | M-L | Rich per-sample records, held-out split manifests, semantic-equivalence key. |
+| 6 | [Benchmark-native output + splits + semantic key](06-benchmark-output.md) | M-L | ✅ Rich per-sample records, held-out split manifests, semantic-equivalence key. |
 | 7 | [Domain & coverage expansion](07-domain-expansion.md) | L | Physics sub-split, proof-theory layout, remaining notational gaps. |
 
 Effort legend: S = hours, M = 1-2 days, L = 3-5 days, XL = week+. These are pre-fleshing estimates; each unit doc has a finer breakdown.

@@ -507,7 +507,7 @@ def test_generate_includes_pack_hash_in_metadata():
 
 
 def test_generate_no_pack_hash_when_not_requested():
-    """generate() omits content_pack_hash when pack_hashes=None."""
+    """generate() sets content_pack_hash to None when pack_hashes=None."""
     from formula_combinatorics.corpus import generate
     from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
 
@@ -521,4 +521,4 @@ def test_generate_no_pack_hash_when_not_requested():
         pack_hashes=None,
     )
     for record in result.values():
-        assert "content_pack_hash" not in record
+        assert record.get("content_pack_hash") is None
