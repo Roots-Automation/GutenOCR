@@ -1,0 +1,678 @@
+[meta]
+domain = "custom_operators"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VAR_POOL"
+values = ["x", "y", "z", "t", "u", "v", "r", "s"]
+
+[[pool]]
+name   = "COEFF_POOL"
+values = ["a", "b", "c", "d", "k", "m", "n", "p", "q"]
+
+[[pool]]
+name   = "MAT_POOL"
+values = ["A", "B", "M", "P", "Q", "S"]
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "M", "K", "k", "p", "r"]
+
+[[pool]]
+name   = "CALLIGRAPHIC_POOL"
+values = ['\mathcal{A}', '\mathcal{B}', '\mathcal{C}', '\mathcal{D}', '\mathcal{E}', '\mathcal{F}', '\mathcal{G}', '\mathcal{H}', '\mathcal{K}', '\mathcal{L}', '\mathcal{M}', '\mathcal{N}', '\mathcal{O}', '\mathcal{P}', '\mathcal{S}', '\mathcal{T}', '\mathcal{U}', '\mathcal{V}']
+
+[[pool]]
+name   = "COLIM_IDX_POOL"
+values = ['\mathcal{I}', '\mathcal{J}', '\mathcal{C}', '\mathcal{D}', '\mathbf{I}']
+
+[[pool]]
+name   = "INTL_ARG_POOL"
+values = ['\theta', '\phi', '\varphi', '\alpha', '\beta', '\gamma', "x", "y", "t"]
+
+[[pool]]
+name   = "MATHCLASS_SYMS_POOL"
+values = ['\#', '\dagger', '\ddagger', '\star', '\bullet', '\diamond', '\circ', '\S', '\clubsuit', '\spadesuit']
+
+# ---------------------------------------------------------------------------
+# Section A — \operatorname{sgn}
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sgn_piecewise"
+latex = '\operatorname{{sgn}}({vv}) = \begin{{cases}} 1 & {vv} > 0 \\ 0 & {vv} = 0 \\ -1 & {vv} < 0 \end{{cases}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "sgn_multiplicative"
+latex = '\operatorname{{sgn}}({aa}{bb}) = \operatorname{{sgn}}({aa})\,\operatorname{{sgn}}({bb})'
+
+[template.slots.aa]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "sgn_abs_value"
+latex = '{vv} = \operatorname{{sgn}}({vv})\,|{vv}|'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "sgn_heaviside"
+latex = '\operatorname{{sgn}}({vv}) = 2H({vv}) - 1'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "sgn_distributional_deriv"
+latex = '\frac{{d}}{{d{vv}}}\operatorname{{sgn}}({vv}) = 2\delta({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "sgn_squared"
+latex = '\operatorname{{sgn}}({vv})^2 = 1 \quad ({vv} \neq 0)'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Section B — \operatorname{supp}
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "supp_definition"
+latex = '\operatorname{{supp}}({ff}) = \overline{{\{{{vv} : {ff}({vv}) \neq 0\}}}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "supp_compact"
+latex = '\operatorname{{supp}}({ff}) \subset [{aa}, {bb}]'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "COEFF_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "supp_intersection"
+latex = '\operatorname{{supp}}({ff} \cdot {gg}) \subseteq \operatorname{{supp}}({ff}) \cap \operatorname{{supp}}({gg})'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "supp_measure"
+latex = '\operatorname{{supp}}(\mu) = \{{{vv} : \mu(U) > 0 \;\forall \text{{ open }} U \ni {vv}\}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "supp_union_bound"
+latex = '\operatorname{{supp}}({ff} + {gg}) \subseteq \operatorname{{supp}}({ff}) \cup \operatorname{{supp}}({gg})'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ---------------------------------------------------------------------------
+# Section C — \operatorname{diag}
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "diag_construction"
+latex = '\operatorname{{diag}}({aa}_1, \ldots, {aa}_{{{nn}}}) \in \mathbb{{R}}^{{{nn} \times {nn}}}'
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "diag_eigendecomp"
+latex = '{MM} = {PP}\,\operatorname{{diag}}(\lambda_1, \ldots, \lambda_{{{nn}}})\,{PP}^{{-1}}'
+
+[template.slots.MM]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.PP]
+type         = "X"
+pool         = "MAT_POOL"
+exclude_from = ["MM"]
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "diag_block"
+latex = '\operatorname{{diag}}({AA}, {BB})'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "MAT_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "diag_trace"
+latex = '\operatorname{{tr}}({MM}) = \operatorname{{tr}}\!\left(\operatorname{{diag}}(\lambda_1, \ldots, \lambda_{{{nn}}})\right)'
+
+[template.slots.MM]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "diag_det"
+latex = '\det\!\left(\operatorname{{diag}}({aa}_1, \ldots, {aa}_{{{nn}}})\right) = \prod_{{i=1}}^{{{nn}}} {aa}_i'
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Section D — \operatorname{ess\,sup} / \operatorname{ess\,inf}
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "esssup_definition"
+latex = '\operatorname{{ess\,sup}}_{{{vv} \in {DD}}}\, {ff}({vv}) = \inf\{{M : {ff}({vv}) \leq M \text{{ a.e.}}\}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.DD]
+type = "S"
+pool = "CALLIGRAPHIC_POOL"
+
+# ----
+
+[[template]]
+name  = "esssup_linfty"
+latex = '\|{ff}\|_\infty = \operatorname{{ess\,sup}}_{{{vv}}}\,|{ff}({vv})|'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "essinf_definition"
+latex = '\operatorname{{ess\,inf}}_{{{vv} \in {DD}}}\, {ff}({vv}) = \sup\{{m : {ff}({vv}) \geq m \text{{ a.e.}}\}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.DD]
+type = "S"
+pool = "CALLIGRAPHIC_POOL"
+
+# ----
+
+[[template]]
+name  = "essinf_bound"
+latex = '\operatorname{{ess\,inf}}_{{{vv}}}\, {ff}({vv}) \leq \operatorname{{ess\,sup}}_{{{vv}}}\, {ff}({vv})'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "esssup_set_form"
+latex = '\operatorname{{ess\,sup}}_{{{vv}}}\, {ff}({vv}) = \inf\{{M \geq 0 : \mu(\{{{vv} : {ff}({vv}) > M\}}) = 0\}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Section E — \operatorname*{colim}
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "colim_basic"
+latex = '\operatorname*{{colim}}_{{{ii} \in {II}}} {FF}({ii})'
+
+[template.slots.ii]
+type = "S"
+pool = ["i", "j", "k", '\alpha']
+
+[template.slots.II]
+type = "S"
+pool = "COLIM_IDX_POOL"
+
+[template.slots.FF]
+type = "S"
+pool = ["F", "G", "H", '\mathcal{F}', '\mathcal{G}']
+
+# ----
+
+[[template]]
+name  = "colim_filtered"
+latex = '\operatorname*{{colim}}_{{n \geq 0}}\, {FF}_n'
+
+[template.slots.FF]
+type = "S"
+pool = ["F", "G", "A", '\mathcal{F}', '\mathcal{A}']
+
+# ----
+
+[[template]]
+name  = "colim_vs_lim"
+latex = '\operatorname*{{colim}}_{{n}}\, {FF}_n \quad \text{{is dual to}} \quad \varprojlim_{{n}}\, {FF}_n'
+
+[template.slots.FF]
+type = "S"
+pool = ["F", "G", "A", '\mathcal{F}']
+
+# ----
+
+[[template]]
+name  = "colim_limits_variant"
+latex = '\operatorname*{{colim}}\limits_{{{ii} \in {II}}} {FF}({ii})'
+
+[template.slots.ii]
+type = "S"
+pool = ["i", "j", "k"]
+
+[template.slots.II]
+type = "S"
+pool = "COLIM_IDX_POOL"
+
+[template.slots.FF]
+type = "S"
+pool = ["F", "G", "H", '\mathcal{F}']
+
+# ---------------------------------------------------------------------------
+# Section F — International / regional trig-name variants
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "intl_tg_equals_tan"
+latex = '\operatorname{{tg}}({vv}) = \tan({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "INTL_ARG_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_arctg_equals_arctan"
+latex = '\operatorname{{arctg}}({vv}) = \arctan({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "INTL_ARG_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_sh_equals_sinh"
+latex = '\operatorname{{sh}}({vv}) = \sinh({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_ch_equals_cosh"
+latex = '\operatorname{{ch}}({vv}) = \cosh({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_th_equals_tanh"
+latex = '\operatorname{{th}}({vv}) = \tanh({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_arctg_value"
+latex = '\operatorname{{arctg}}\frac{{\pi}}{{{nn}}} = {vv}'
+
+[template.slots.nn]
+type = "S"
+pool = ["3", "4", "6"]
+
+[template.slots.vv]
+type = "S"
+pool = ['\frac{\sqrt{3}}{3}', "1", '\frac{1}{\sqrt{3}}']
+
+# ----
+
+[[template]]
+name  = "intl_ctg_equals_cot"
+latex = '\operatorname{{ctg}}({vv}) = \cot({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "INTL_ARG_POOL"
+
+# ----
+
+[[template]]
+name  = "intl_tg_formula"
+latex = '\operatorname{{tg}}({aa} + {bb}) = \frac{{\operatorname{{tg}}{aa} + \operatorname{{tg}}{bb}}}{{1 - \operatorname{{tg}}{aa}\,\operatorname{{tg}}{bb}}}'
+
+[template.slots.aa]
+type = "S"
+pool = "INTL_ARG_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "INTL_ARG_POOL"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Section G — \mathbin{} / \mathrel{} spacing-class wrappers
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mathbin_binary_op"
+latex = '{lhs} \mathbin{{{sym}}} {rhs}'
+
+[template.slots.lhs]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+[template.slots.rhs]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ----
+
+[[template]]
+name  = "mathbin_in_equation"
+latex = '{lhs} \mathbin{{{sym}}} {rhs} = {result}'
+
+[template.slots.lhs]
+type = "E"
+gen  = "_atom"
+n    = 200
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+[template.slots.rhs]
+type = "E"
+gen  = "_atom"
+n    = 200
+
+[template.slots.result]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ----
+
+[[template]]
+name  = "mathbin_associativity"
+latex = '({aa} \mathbin{{{sym}}} {bb}) \mathbin{{{sym}}} {cc} = {aa} \mathbin{{{sym}}} ({bb} \mathbin{{{sym}}} {cc})'
+
+[template.slots.aa]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa", "bb"]
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+# ----
+
+[[template]]
+name  = "mathbin_commutativity"
+latex = '{aa} \mathbin{{{sym}}} {bb} = {bb} \mathbin{{{sym}}} {aa}'
+
+[template.slots.aa]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa"]
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+# ----
+
+[[template]]
+name  = "mathrel_relation"
+latex = '{lhs} \mathrel{{{sym}}} {rhs}'
+
+[template.slots.lhs]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+[template.slots.rhs]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ----
+
+[[template]]
+name  = "mathrel_chain"
+latex = '{aa} \mathrel{{{sym}}} {bb} \mathrel{{{sym}}} {cc}'
+
+[template.slots.aa]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa", "bb"]
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+# ----
+
+[[template]]
+name  = "mathbin_vs_mathrel"
+latex = '{aa} \mathbin{{{sym1}}} {bb} \quad \text{{vs}} \quad {aa} \mathrel{{{sym2}}} {bb}'
+
+[template.slots.aa]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["aa"]
+
+[template.slots.sym1]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+[template.slots.sym2]
+type         = "X"
+pool         = "MATHCLASS_SYMS_POOL"
+exclude_from = ["sym1"]
+
+# ----
+
+[[template]]
+name  = "mathbin_subscripted"
+latex = '{aa} \mathbin{{{sym}}}_{{{idx}}} {bb}'
+
+[template.slots.aa]
+type = "E"
+gen  = "_atom"
+n    = 200
+
+[template.slots.sym]
+type = "S"
+pool = "MATHCLASS_SYMS_POOL"
+
+[template.slots.idx]
+type = "S"
+pool = ["n", "k", "1", "2", "i", "j"]
+
+[template.slots.bb]
+type = "E"
+gen  = "_atom"
+n    = 200

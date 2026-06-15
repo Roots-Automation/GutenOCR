@@ -11,6 +11,7 @@ from ._vocab import (
     _INDICES,
     _MATRIX_NAMES,
     _SCALARS,
+    _VARS,
     _atom,
     _expr,
     _i,
@@ -256,3 +257,155 @@ def _poly(rng: random.Random, var: str, *, max_degree: int = 5) -> str:
             parts.append(rng.choice(["+", "-"]) + " " + term)
 
     return " ".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# Align / multiline environment generators (moved from domains/align.py)
+# ---------------------------------------------------------------------------
+
+_ALIGN_DELIM_PAIRS = (("(", ")"), ("[", "]"))
+_ALIGN_LHS_SIMPLE = ("f(x)", "g(t)", "y", "I", "S")
+_ALIGN_LHS_VAR = ("y", "z", "w")
+_ALIGN_LHS_CALC = ("f(x)", "g(t)", "y", "S", "I")
+
+
+def _diff_op(rng: random.Random) -> str:
+    v = rng.choice(_VARS)
+    return rng.choice([rf"\frac{{d}}{{d{v}}}", rf"\frac{{d^2}}{{d{v}^2}}"])
+
+
+def _piecewise_2(rng: random.Random) -> str:
+    v = _v(rng)
+    e1, e2 = _expr(rng, 1), _expr(rng, 1)
+    cond = rng.choice(["0", _s(rng), r"\pi"])
+    body = (
+        rf"\begin{{cases}} "
+        rf"{e1} & \text{{if }} {v} \geq {cond} \\"
+        rf" {e2} & \text{{if }} {v} < {cond} "
+        rf"\end{{cases}}"
+    )
+    return rf"\begin{{align*}}f({v}) &= {body}\end{{align*}}"
+
+
+def _piecewise_3(rng: random.Random) -> str:
+    v = _v(rng)
+    e1, e2, e3 = _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
+    body = (
+        rf"\begin{{cases}} "
+        rf"{e1} & \text{{if }} {v} > 0 \\"
+        rf" {e2} & \text{{if }} {v} = 0 \\"
+        rf" {e3} & \text{{if }} {v} < 0 "
+        rf"\end{{cases}}"
+    )
+    return rf"\begin{{align*}}g({v}) &= {body}\end{{align*}}"
+
+
+def _invis_bracket_split(rng: random.Random) -> str:
+    lhs = rng.choice(("f(x)", "g(t)", "y", "S"))
+    op, cl = rng.choice(_ALIGN_DELIM_PAIRS)
+    e1, e2, e3, e4 = _expr(rng, 2), _expr(rng, 2), _expr(rng, 1), _expr(rng, 1)
+    lines = [
+        rf"{lhs} &= \left{op} {e1} + {e2} + \cdots \right.",
+        rf"&\left. \quad + {e3} + {e4} \right{cl}",
+    ]
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(lines)}\end{{align*}}"
+
+
+def _integral_bounds_split(rng: random.Random) -> str:
+    v = _v(rng)
+    fn = rng.choice([rf"\frac{{d}}{{d{v}}}", rf"\frac{{d^2}}{{d{v}^2}}"])
+    a, b = _s(rng), _s(rng)
+    e1, e2, e3, e4 = _expr(rng, 2), _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
+    lines = [
+        rf"I &= \left[ {fn}\left( {e1} \right) + {e2} \right.",
+        rf"&\left. \quad - {e3} \cdot {e4} \right]_{{{a}}}^{{{b}}}",
+    ]
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(lines)}\end{{align*}}"
+
+
+def _grouped_coeff(rng: random.Random) -> str:
+    lhs = rng.choice(_ALIGN_LHS_VAR)
+    c = _s(rng)
+    e1, e2, e3, e4, e5, e6 = (
+        _expr(rng, 2),
+        _expr(rng, 2),
+        _expr(rng, 1),
+        _expr(rng, 1),
+        _expr(rng, 1),
+        _expr(rng, 1),
+    )
+    lines = [
+        rf"{lhs} &= {c} \left( \frac{{{e1}}}{{{e2}}} + {e3} \right.",
+        rf"&\left. \qquad + \frac{{{e4}}}{{{e5}}} \right) + {e6}",
+    ]
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(lines)}\end{{align*}}"
+
+
+def _multline_poly_body(rng: random.Random, env: str) -> str:
+    v = _v(rng)
+    poly = _poly(rng, v, max_degree=rng.randint(4, 6))
+    terms = poly.split("+")
+    mid = max(1, len(terms) // 2)
+    first = "+".join(terms[:mid]).rstrip()
+    rest = "+".join(terms[mid:]).lstrip()
+    return rf"\begin{{{env}}}{first} \\ \quad + {rest}\end{{{env}}}"
+
+
+def _multline_poly_starred(rng: random.Random) -> str:
+    return _multline_poly_body(rng, "multline*")
+
+
+def _multline_poly_numbered(rng: random.Random) -> str:
+    return _multline_poly_body(rng, "multline")
+
+
+def _gather_body(rng: random.Random, env: str) -> str:
+    n_eqns = rng.randint(2, 3)
+    eqn_lines = []
+    for _ in range(n_eqns):
+        lhs = rng.choice((_v(rng), "f(x)", "g(t)", "y"))
+        eqn_lines.append(rf"{lhs} = {_expr(rng, 2)}")
+    sep = r" \\"
+    return rf"\begin{{{env}}}{sep.join(eqn_lines)}\end{{{env}}}"
+
+
+def _gather_starred(rng: random.Random) -> str:
+    return _gather_body(rng, "gather*")
+
+
+def _gather_numbered(rng: random.Random) -> str:
+    return _gather_body(rng, "gather")
+
+
+def _multicolumn_scalars(rng: random.Random) -> str:
+    rows = []
+    for _ in range(3):
+        v1, v2, v3 = _v(rng), _v(rng), _v(rng)
+        c1, c2, c3 = _s(rng), _s(rng), _s(rng)
+        rows.append(rf"{v1} &= {c1} && {v2} &= {c2} && {v3} &= {c3}")
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(rows)}\end{{align*}}"
+
+
+def _multicolumn_mixed(rng: random.Random) -> str:
+    rows = []
+    for _ in range(2):
+        v1, v2, v3 = _v(rng), _v(rng), _v(rng)
+        e1, e2, e3 = _expr(rng, 1), _expr(rng, 1), _expr(rng, 1)
+        rows.append(rf"{v1} &= {e1} && {v2} &= {e2} && {v3} &= {e3}")
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(rows)}\end{{align*}}"
+
+
+def _multicolumn_inequalities(rng: random.Random) -> str:
+    rel = rng.choice((r"\leq", r"\geq"))
+    rows = []
+    for _ in range(3):
+        v1, v2 = _v(rng), _v(rng)
+        e1, e2 = _expr(rng, 1), _expr(rng, 1)
+        rows.append(rf"{v1} &{rel} {e1} && {v2} &{rel} {e2}")
+    sep = r" \\"
+    return rf"\begin{{align*}}{sep.join(rows)}\end{{align*}}"

@@ -6,7 +6,8 @@ import random
 
 from formula_combinatorics.corpus import generate
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS
-from formula_combinatorics.domains.align import _LABELS
+
+_LABELS = ("eq1", "eq2", "main", "result", "key", "def", "prop")
 
 _align = GENERATORS["align"]
 

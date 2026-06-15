@@ -1,0 +1,711 @@
+[meta]
+domain = "align"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "LHS_SIMPLE_POOL"
+values = ["f(x)", "g(t)", "y", "I", "S"]
+
+[[pool]]
+name   = "LHS_CALC_POOL"
+values = ["f(x)", "g(t)", "y", "S", "I"]
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ["a", "b", "c", "d", "k", "m", "n", "p", "q"]
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x", "y", "z", "t", "u", "v", "r", "s"]
+
+[[pool]]
+name   = "LABELS_POOL"
+values = ["eq1", "eq2", "main", "result", "key", "def", "prop"]
+
+# ---------------------------------------------------------------------------
+# style 0 — chained equalities (variant group: 2 or 3 lines)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_chained_equality"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_chained_2lines"
+  latex = '\begin{{align*}}{lhs} &= {e1} \\ &= {e2}\end{{align*}}'
+
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = "LHS_SIMPLE_POOL"
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_chained_3lines"
+  latex = '\begin{{align*}}{lhs} &= {e1} \\ &= {e2} \\ &= {e3}\end{{align*}}'
+
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = "LHS_SIMPLE_POOL"
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 1 — 2×2 linear system
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_linear_system_2x2"
+latex = '\begin{{align*}}{a} x + {b} y &= {r1} \\ {c} x + {d} y &= {r2}\end{{align*}}'
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.d]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.r1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.r2]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# style 2 — algebraic simplification
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_simplification"
+latex = '\begin{{align*}}{lhs} &= {e1} + {e2} \\ &= {e3}\end{{align*}}'
+
+[template.slots.lhs]
+type = "S"
+pool = ["x", "y", "z", "t", "u", "v", "r", "s", "f(x)"]
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e3]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# style 3 — differential operator applied to expression
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_derivative"
+latex = '\begin{{align*}}{op}\left[{e1}\right] &= {e2} \\ &= {e3}\end{{align*}}'
+
+[template.slots.op]
+type = "E"
+gen  = "_diff_op"
+n    = 10
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e3]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# style 4 — inequality chain (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_inequality_chain"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_leq_chain"
+  latex = '\begin{{align*}}{e1} &\leq {e2} \\ &\leq {e3}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_geq_chain"
+  latex = '\begin{{align*}}{e1} &\geq {e2} \\ &\geq {e3}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 5 — summation expansion (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_series_expansion"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_series_expansion_n"
+  latex = '\begin{{align*}}\sum_{{k=1}}^{{n}} a_k &= a_1 + a_2 + \cdots + a_{{n}} \\ &= {e}\end{{align*}}'
+
+  [template.variants.slots.e]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_series_expansion_cap_n"
+  latex = '\begin{{align*}}\sum_{{k=1}}^{{N}} a_k &= a_1 + a_2 + \cdots + a_{{N}} \\ &= {e}\end{{align*}}'
+
+  [template.variants.slots.e]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 6 — 2-case piecewise
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_piecewise_2case"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_piecewise_2"
+n    = 2000
+
+# ---------------------------------------------------------------------------
+# style 7 — 3-case piecewise
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_piecewise_3case"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_piecewise_3"
+n    = 3000
+
+# ---------------------------------------------------------------------------
+# style 8 — series sum with underbrace (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_series_underbrace"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_series_underbrace_n"
+  latex = '\begin{{align*}}S_{{n}} &= \underbrace{{a_1 + a_2 + \cdots + a_{{n}}}}_{{n \text{{ terms}}}} \\ &= {e1} + {e2}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_series_underbrace_cap_n"
+  latex = '\begin{{align*}}S_{{N}} &= \underbrace{{a_1 + a_2 + \cdots + a_{{N}}}}_{{N \text{{ terms}}}} \\ &= {e1} + {e2}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 9 — 3×3 linear system
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_linear_system_3x3"
+latex = '\begin{{align*}}{a} x + {b} y + {c} z &= {r1} \\ {d} x + {e} y &= {r2} \\ {f} z &= {r3}\end{{align*}}'
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.d]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.e]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.f]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.r1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.r2]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.r3]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# style 10 — binomial expansion with overbrace (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_binomial_overbrace"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_binomial_overbrace_n"
+  latex = '\begin{{align*}}(a+b)^{{n}} &= \overbrace{{a^2 + 2ab + b^2}}^{{(a+b)^2}} \cdot (a+b)^{{n-2}} \\ &= {e}\end{{align*}}'
+
+  [template.variants.slots.e]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_binomial_overbrace_3"
+  latex = '\begin{{align*}}(a+b)^{{3}} &= \overbrace{{a^2 + 2ab + b^2}}^{{(a+b)^2}} \cdot (a+b) \\ &= {e}\end{{align*}}'
+
+  [template.variants.slots.e]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 11 — transitive inequality chain (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_transitive_inequality"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_transitive_leq"
+  latex = '\begin{{align*}}{e1} &\leq {e2} \\ &\leq {e3}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_transitive_geq"
+  latex = '\begin{{align*}}{e1} &\geq {e2} \\ &\geq {e3}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [[template.variants]]
+  name  = "align_transitive_ll"
+  latex = '\begin{{align*}}{e1} &\ll {e2} \\ &\ll {e3}\end{{align*}}'
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 12 — invisible-bracket split
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_invisible_bracket_split"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_invis_bracket_split"
+n    = 3000
+
+# ---------------------------------------------------------------------------
+# style 13 — derivative bracket spanning two rows
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_integral_bounds_split"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_integral_bounds_split"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# style 14 — grouped coefficient spanning two rows
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_grouped_coefficient"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_grouped_coeff"
+n    = 4000
+
+# ---------------------------------------------------------------------------
+# style 15 — multline*: long polynomial split
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "multline_poly_starred"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_multline_poly_starred"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# style 16 — multline*: summation expansion (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "multline_sum_expansion"
+latex = ""
+
+  [[template.variants]]
+  name  = "multline_sum_expansion_n"
+  latex = '\begin{{multline*}}{lhs} = {e1} + {e2} + \cdots \\ \quad + {e3} + {e4}\end{{multline*}}'
+
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = ["f(x)", "S", "T", "I"]
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e3]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e4]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+# ---------------------------------------------------------------------------
+# style 17 — multline (numbered): polynomial split
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "multline_poly_numbered"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_multline_poly_numbered"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# style 18 — gather* (unnumbered)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gather_starred"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_gather_starred"
+n    = 10000
+
+# ---------------------------------------------------------------------------
+# style 19 — gather (numbered)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gather_numbered"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_gather_numbered"
+n    = 10000
+
+# ---------------------------------------------------------------------------
+# style 20 — equation + split (algebraic derivation)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "equation_split_algebraic"
+latex = '\begin{{equation}}\begin{{split}}{lhs} &= {e1} + {e2} \\ &= {e3} \\ &= {e4}\end{{split}}\end{{equation}}'
+
+[template.slots.lhs]
+type = "S"
+pool = "LHS_CALC_POOL"
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e3]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e4]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# style 21 — equation + split (calculus)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "equation_split_calculus"
+latex = '\begin{{equation}}\begin{{split}}\int_{{{a}}}^{{{b}}} {e1} \, d{v} &= \left[ {e2} \right]_{{{a}}}^{{{b}}} \\ &= {e3}\end{{split}}\end{{equation}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.e3]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# style 22 — multi-column: 3 cols × 3 rows of scalar equalities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_multicolumn_scalars"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_multicolumn_scalars"
+n    = 1000
+
+# ---------------------------------------------------------------------------
+# style 23 — multi-column: 3 cols × 2 rows of mixed expressions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_multicolumn_mixed"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_multicolumn_mixed"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# style 24 — multi-column: 2 cols × 3 rows of inequality chains
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_multicolumn_inequalities"
+latex = '{body}'
+
+[template.slots.body]
+type = "E"
+gen  = "_multicolumn_inequalities"
+n    = 3000
+
+# ---------------------------------------------------------------------------
+# style 25 — labeled equation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "equation_labeled"
+latex = '\begin{{equation}}\label{{{lbl}}} {e} \end{{equation}}'
+
+[template.slots.lbl]
+type = "S"
+pool = "LABELS_POOL"
+
+[template.slots.e]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# style 26 — numbered align with label on first row (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "align_labeled_numbered"
+latex = ""
+
+  [[template.variants]]
+  name  = "align_labeled_2lines"
+  latex = '\begin{{align}}\label{{{lbl}}} {lhs} &= {e1} \\ &= {e2}\end{{align}}'
+
+  [template.variants.slots.lbl]
+  type = "S"
+  pool = "LABELS_POOL"
+
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = ["f(x)", "g(t)", "y", "S"]
+
+  [template.variants.slots.e1]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
+
+  [template.variants.slots.e2]
+  type = "E"
+  gen  = "_expr"
+  n    = 100
