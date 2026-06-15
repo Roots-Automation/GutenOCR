@@ -1,0 +1,1618 @@
+[meta]
+domain = "category_theory"
+
+[[pool]]
+name   = "CAT_POOL"
+values = ['\mathcal{A}', '\mathcal{B}', '\mathcal{C}', '\mathcal{D}', '\mathcal{E}', '\mathcal{M}', '\mathcal{N}', '\mathbf{C}', '\mathbf{D}', '\mathbf{E}']
+
+[[pool]]
+name   = "OBJ_POOL"
+values = ["A", "B", "C", "D", "E", "X", "Y", "Z", "P", "Q"]
+
+[[pool]]
+name   = "MOR_POOL"
+values = ["f", "g", "h", "k", "u", "v", "p", "q", '\phi', '\psi', '\alpha', '\beta', '\gamma']
+
+[[pool]]
+name   = "FUN_POOL"
+values = ["F", "G", "H", "K", "L", "R", '\mathcal{F}', '\mathcal{G}', '\mathcal{H}']
+
+[[pool]]
+name   = "NAT_POOL"
+values = ['\alpha', '\beta', '\gamma', '\eta', '\epsilon', '\mu', '\nu', '\tau', '\sigma']
+
+[[pool]]
+name   = "MONAD_POOL"
+values = ["T", "S", "M", '\mathbb{T}', '\mathbb{S}', '\mathbb{M}']
+
+[[pool]]
+name   = "CT_IDX_POOL"
+values = ["n", "m", "k", "i", "j"]
+
+# ── Part A ────────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "composition"
+latex = '{mor1}: {obj1} \to {obj2},\quad {mor2}: {obj2} \to {obj3} \;\Rightarrow\; {mor2} \circ {mor1}: {obj1} \to {obj3}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "identity_morphism"
+latex = '\operatorname{{id}}_{{{obj}}}: {obj} \to {obj}\quad \text{{in }}{cat}'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "associativity_law"
+latex = '{mor3} \circ ({mor2} \circ {mor1}) = ({mor3} \circ {mor2}) \circ {mor1}'
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+[[template]]
+name  = "left_unit_law"
+latex = '\operatorname{{id}}_{{{obj2}}} \circ {mor} = {mor}\quad ({mor}: {obj1} \to {obj2})'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "right_unit_law"
+latex = '{mor} \circ \operatorname{{id}}_{{{obj1}}} = {mor}\quad ({mor}: {obj1} \to {obj2})'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "hom_set"
+latex = '\mathrm{{Hom}}_{{{cat}}}({obj1},\, {obj2})'
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[[template]]
+name  = "isomorphism_def"
+latex = '{mor1}: {obj1} \xrightarrow{{\sim}} {obj2} \;\Leftrightarrow\; \exists\, {mor2}: {obj2} \to {obj1},\; {mor2} \circ {mor1} = \operatorname{{id}}_{{{obj1}}},\; {mor1} \circ {mor2} = \operatorname{{id}}_{{{obj2}}}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "monomorphism_def"
+latex = '{mor1} \circ {mor2} = {mor1} \circ {mor3} \;\Rightarrow\; {mor2} = {mor3}\quad ({mor1}: {obj1} \to {obj2})'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+# ── Part B1 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "functor_def"
+latex = '{fun}: {cat1} \to {cat2}'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[[template]]
+name  = "functor_composition_law"
+latex = '{fun}({mor2} \circ {mor1}) = {fun}({mor2}) \circ {fun}({mor1})'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "functor_identity_law"
+latex = '{fun}(\operatorname{{id}}_{{{obj}}}) = \operatorname{{id}}_{{{fun}({obj})}}'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "contravariant_functor"
+latex = '{fun}: {cat1}^{{op}} \to {cat2}'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[[template]]
+name  = "hom_functor_covariant"
+latex = '\mathrm{{Hom}}({obj}, -): {cat} \to \mathbf{{Set}}'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "hom_functor_contravariant"
+latex = '\mathrm{{Hom}}(-, {obj}): {cat}^{{op}} \to \mathbf{{Set}}'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "faithful_functor_def"
+latex = '{fun}_{{A,B}}: \mathrm{{Hom}}({obj1},\, {obj2}) \hookrightarrow \mathrm{{Hom}}({fun}({obj1}),\, {fun}({obj2}))'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[[template]]
+name  = "full_functor_def"
+latex = '{fun}_{{A,B}}: \mathrm{{Hom}}({obj1},\, {obj2}) \twoheadrightarrow \mathrm{{Hom}}({fun}({obj1}),\, {fun}({obj2}))'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+# ── Part B2 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "natural_transformation_def"
+latex = '{nat}: {fun1} \Rightarrow {fun2}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[[template]]
+name  = "naturality_square"
+latex = '{fun2}({mor}) \circ {nat}_{{{obj1}}} = {nat}_{{{obj2}}} \circ {fun1}({mor})'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "natural_isomorphism"
+latex = '{nat}: {fun1} \xRightarrow{{\sim}} {fun2},\quad {nat}_{{{obj}}}: {fun1}({obj}) \xrightarrow{{\sim}} {fun2}({obj})'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "vertical_composition"
+latex = '{nat1}: {fun1} \Rightarrow {fun2},\; {nat2}: {fun2} \Rightarrow {fun3} \;\Rightarrow\; {nat2} \circ {nat1}: {fun1} \Rightarrow {fun3}'
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.fun3]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1", "fun2"]
+
+[[template]]
+name  = "horizontal_composition"
+latex = '{nat2} * {nat1}: {fun3} \circ {fun1} \Rightarrow {fun4} \circ {fun2}'
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.fun3]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1", "fun2"]
+
+[template.slots.fun4]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1", "fun2", "fun3"]
+
+[[template]]
+name  = "whiskering_left"
+latex = '{fun3} \circ {nat}: {fun3} \circ {fun1} \Rightarrow {fun3} \circ {fun2}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.fun3]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1", "fun2"]
+
+[[template]]
+name  = "whiskering_right"
+latex = '{nat} \circ {fun3}: {fun1} \circ {fun3} \Rightarrow {fun2} \circ {fun3}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.fun3]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1", "fun2"]
+
+# ── Part B3 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "product_universal_property"
+latex = '\exists!\, {mor3}: {obj3} \to {obj1} \times {obj2}\text{{ s.t. }}\pi_1 \circ {mor3} = {mor1},\;\pi_2 \circ {mor3} = {mor2}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+[[template]]
+name  = "coproduct_universal_property"
+latex = '\exists!\, {mor3}: {obj1} \sqcup {obj2} \to {obj3}\text{{ s.t. }}{mor3} \circ \iota_1 = {mor1},\;{mor3} \circ \iota_2 = {mor2}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+[[template]]
+name  = "pullback_def"
+latex = '{obj4} = {obj1} \times_{{{obj3}}} {obj2}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.obj4]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2", "obj3"]
+
+[[template]]
+name  = "pushout_def"
+latex = '{obj4} = {obj1} \sqcup_{{{obj3}}} {obj2}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.obj4]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2", "obj3"]
+
+[[template]]
+name  = "equalizer_def"
+latex = '\operatorname{{eq}}({mor1},{mor2}) \hookrightarrow {obj1} \xrightarrow[{mor2}]{{{mor1}}} {obj2}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "coequalizer_def"
+latex = '{obj1} \xrightarrow[{mor2}]{{{mor1}}} {obj2} \xrightarrow{{{mor3}}} \operatorname{{coeq}}({mor1},{mor2})'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+[[template]]
+name  = "terminal_object"
+latex = '\forall\, {obj} \in {cat},\;\exists!\, {mor}: {obj} \to \mathbf{{1}}'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "initial_object"
+latex = '\forall\, {obj} \in {cat},\;\exists!\, {mor}: \mathbf{{0}} \to {obj}'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+# ── Part B4 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "adjunction_hom_iso"
+latex = '\mathrm{{Hom}}_{{{cat2}}}({fun1}({obj1}),\, {obj2}) \cong \mathrm{{Hom}}_{{{cat1}}}({obj1},\, {fun2}({obj2}))'
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[[template]]
+name  = "unit_natural_transformation"
+latex = '{nat}: \operatorname{{id}}_{{{cat}}} \Rightarrow {fun2} \circ {fun1}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[[template]]
+name  = "counit_natural_transformation"
+latex = '{nat}: {fun1} \circ {fun2} \Rightarrow \operatorname{{id}}_{{{cat}}}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[[template]]
+name  = "triangle_identity_left"
+latex = '{nat2}_{{{fun1}({obj})}} \circ {fun1}({nat1}_{{{obj}}}) = \operatorname{{id}}_{{{fun1}({obj})}}'
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "triangle_identity_right"
+latex = '{fun2}({nat2}_{{{obj}}}) \circ {nat1}_{{{fun2}({obj})}} = \operatorname{{id}}_{{{fun2}({obj})}}'
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.fun2]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "left_adjoint_preserves_colimits"
+latex = '{fun1} \dashv {fun2}: {cat1} \to {cat2} \;\Rightarrow\; {fun1}\text{{ preserves all colimits}}'
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[[template]]
+name  = "right_adjoint_preserves_limits"
+latex = '{fun1} \dashv {fun2}: {cat1} \to {cat2} \;\Rightarrow\; {fun2}\text{{ preserves all limits}}'
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+# ── Part B5 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "monad_triple"
+latex = '({mon}, {nat1}, {nat2})\text{{ monad on }}{cat}'
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "monad_multiplication"
+latex = '{nat}: {mon}^2 \Rightarrow {mon}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[[template]]
+name  = "monad_unit_nat"
+latex = '{nat}: \operatorname{{id}}_{{{cat}}} \Rightarrow {mon}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "monad_associativity"
+latex = '{nat} \circ {mon} {nat} = {nat} \circ {nat} {mon}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[[template]]
+name  = "monad_unit_left"
+latex = '{nat1} \circ {mon}{nat2} = \operatorname{{id}}_{{{mon}}}'
+
+[template.slots.nat1]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.nat2]
+type         = "X"
+pool         = "NAT_POOL"
+exclude_from = ["nat1"]
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[[template]]
+name  = "kleisli_composition"
+latex = '{mor2} \star {mor1} = {nat}_{{{obj}}} \circ {mon}({mor2}) \circ {mor1}'
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "eilenberg_moore_algebra"
+latex = '({mon}({obj}),\; {nat}: {mon}({obj}) \to {obj})\text{{ is a }}{mon}\text{{-algebra}}'
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+# ── Part B6 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "short_exact_sequence"
+latex = '0 \to {obj1} \xrightarrow{{{mor1}}} {obj2} \xrightarrow{{{mor2}}} {obj3} \to 0'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "kernel_def"
+latex = '\ker({mor}) \hookrightarrow {obj1} \xrightarrow{{{mor}}} {obj2}'
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[[template]]
+name  = "cokernel_def"
+latex = '\operatorname{{coker}}({mor}: {obj1} \to {obj2}) = {obj2} / \operatorname{{im}}({mor})'
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[[template]]
+name  = "exactness_at_b"
+latex = '\operatorname{{im}}({mor1}) = \ker({mor2})\quad \text{{in }}\; {obj1} \to {obj2} \to {obj3}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "splitting_lemma"
+latex = '\exists\, {mor2}: {obj3} \to {obj2},\;{mor1} \circ {mor2} = \operatorname{{id}}_{{{obj3}}}'
+
+[template.slots.obj2]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "long_exact_sequence"
+latex = '\cdots \to {obj1} \xrightarrow{{{mor1}}} {obj2} \xrightarrow{{{mor2}}} {obj3} \xrightarrow{{{mor3}}} {obj4} \to \cdots'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.obj4]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2", "obj3"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.mor3]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1", "mor2"]
+
+[[template]]
+name  = "connecting_homomorphism"
+latex = '\delta: \ker({mor2}: {obj2} \to {obj3}) \to \operatorname{{coker}}({mor1}: {obj1} \to {obj2})'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+# ── Part B7 ───────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "yoneda_lemma"
+latex = '\operatorname{{Nat}}(\mathrm{{Hom}}({obj}, -),\, {fun}) \cong {fun}({obj})'
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[[template]]
+name  = "yoneda_embedding"
+latex = '{cat} \hookrightarrow [{cat}^{{op}}, \mathbf{{Set}}]'
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "representable_functor_def"
+latex = '{fun} \cong \mathrm{{Hom}}_{{{cat}}}({obj}, -)'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "yoneda_fully_faithful"
+latex = 'h^{{{obj1}}} \cong h^{{{obj2}}} \;\Rightarrow\; {obj1} \cong {obj2}\quad \text{{in }}{cat}'
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "presheaf_category"
+latex = '\widehat{{{cat}}} = [{cat}^{{op}}, \mathbf{{Set}}],\quad {fun} \in \widehat{{{cat}}}'
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[[template]]
+name  = "coend_formula"
+latex = '{fun}({obj1}) \cong \int^{{{obj2}}} {fun}({obj2}) \times \mathrm{{Hom}}({obj2},\, {obj1})'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+# ── Part C ────────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "fn_naturality_square"
+latex = '{fn1}({fun2}({mor}) \circ {nat}_{{{obj1}}}) = {fn2}({nat}_{{{obj2}}} \circ {fun1}({mor}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.mor]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "fn_adjunction_unit"
+latex = '{fn1}({nat}_{{{obj}}}) = {fn2}({fun2}({fun1}({obj})))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "fn_kleisli_bind"
+latex = '{fn1}({mor2} \star {mor1}) = {fn2}({nat}_{{{obj}}} \circ {mon}({mor2}) \circ {mor1})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.nat]
+type = "S"
+pool = "NAT_POOL"
+
+[template.slots.mon]
+type = "S"
+pool = "MONAD_POOL"
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "fn_exact_image"
+latex = '{fn1}(\ker({mor2}: {obj2} \to {obj3})) = {fn2}(\operatorname{{im}}({mor1}: {obj1} \to {obj2}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.obj1]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.obj2]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1"]
+
+[template.slots.obj3]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["obj1", "obj2"]
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "fn_functor_composition"
+latex = '{fn1}({fun}({mor2} \circ {mor1})) = {fn2}({fun}({mor2}) \circ {fun}({mor1}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.mor1]
+type = "S"
+pool = "MOR_POOL"
+
+[template.slots.mor2]
+type         = "X"
+pool         = "MOR_POOL"
+exclude_from = ["mor1"]
+
+[[template]]
+name  = "fn_yoneda_natural_iso"
+latex = '{fn1}(\operatorname{{Nat}}(\mathrm{{Hom}}({obj}, -),\, {fun})) = {fn2}({fun}({obj}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.obj]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+# ── Part D ────────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "coprod_indexed"
+latex = '\coprod_{{{ii}}} {AA}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "CT_IDX_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "amalg_binary"
+latex = '{aa} \amalg {bb}'
+
+[template.slots.aa]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name  = "coprod_universal"
+latex = '\exists!\, {uu} : \coprod_{{{ii}}} {AA}_{{{ii}}} \to {BB}'
+
+[template.slots.ii]
+type = "S"
+pool = "CT_IDX_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA"]
+
+[template.slots.uu]
+type = "S"
+pool = "MOR_POOL"
+
+[[template]]
+name  = "bigotimes_indexed"
+latex = '\bigotimes_{{{ii}=1}}^{{n}} {VV}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "CT_IDX_POOL"
+
+[template.slots.VV]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "bigotimes_cat_indexed"
+latex = '\bigotimes_{{i \in {II}}} {VV}_i'
+
+[template.slots.II]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.VV]
+type = "S"
+pool = "OBJ_POOL"
+
+[[template]]
+name  = "bigodot_indexed"
+latex = '\bigodot_{{{ii}}} {FF}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "CT_IDX_POOL"
+
+[template.slots.FF]
+type = "S"
+pool = "FUN_POOL"
+
+[[template]]
+name  = "rightsquigarrow_obj"
+latex = '{AA} \rightsquigarrow {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name  = "rightsquigarrow_fun"
+latex = '{FF} \rightsquigarrow {GG}'
+
+[template.slots.FF]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.GG]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["FF"]
+
+[[template]]
+name  = "multimap_internal_hom"
+latex = '{AA} \multimap {BB} \cong \hom({AA}, {BB})'
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name  = "multimap_currying"
+latex = '\hom({AA} \otimes {BB}, {CC}) \cong \hom({AA}, {BB} \multimap {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA", "BB"]
+
+# ── Part E ────────────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "weak_equivalence"
+latex = '{fun}: {cat1} \xrightarrow{{\;\sim\;}} {cat2},\quad {cat1} \simeq {cat2}'
+
+[template.slots.fun]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[[template]]
+name  = "external_product_functor"
+latex = '{fun1} \boxtimes {fun2}: {cat1} \times {cat2} \to {cat3}'
+
+[template.slots.fun1]
+type = "S"
+pool = "FUN_POOL"
+
+[template.slots.fun2]
+type         = "X"
+pool         = "FUN_POOL"
+exclude_from = ["fun1"]
+
+[template.slots.cat1]
+type = "S"
+pool = "CAT_POOL"
+
+[template.slots.cat2]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1"]
+
+[template.slots.cat3]
+type         = "X"
+pool         = "CAT_POOL"
+exclude_from = ["cat1", "cat2"]
+
+[[template]]
+name  = "boxtimes_symmetry"
+latex = '{AA} \boxtimes {BB} \simeq {BB} \boxtimes {AA} \quad \text{{in }} {cat}'
+
+[template.slots.AA]
+type = "S"
+pool = "OBJ_POOL"
+
+[template.slots.BB]
+type         = "X"
+pool         = "OBJ_POOL"
+exclude_from = ["AA"]
+
+[template.slots.cat]
+type = "S"
+pool = "CAT_POOL"

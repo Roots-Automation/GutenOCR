@@ -17,6 +17,9 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from ._templates import (
+    _def_integral,
+    _indef_integral,
+    _interval,
     _matrix_env,
     _matrix_with_ellipsis,
     _poly,
@@ -47,6 +50,10 @@ SUB_GENERATORS: dict[str, Callable] = {
     "_poly_mid_3": _poly_mid_factory(3),
     "_poly_mid_4": _poly_mid_factory(4),
     "_poly_mid_5": _poly_mid_factory(5),
+    # Integral generators (signature: gen(rng) -> str)
+    "_indef_integral": _indef_integral,
+    "_def_integral": _def_integral,
+    "_interval": _interval,
     # Substack sum/product generators (signature: gen(rng) -> str)
     "_substack_sum": _substack_sum,
     "_substack_prod": _substack_prod,
