@@ -24,6 +24,7 @@ _DOMAIN_NAMES: list[str] = [
     "calculus",
     "category_theory",
     "analysis",
+    "asymptotics",
     "differential_equations",
     "linear_algebra",
     "probability",

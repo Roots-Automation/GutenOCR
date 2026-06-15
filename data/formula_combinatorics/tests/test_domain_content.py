@@ -36,6 +36,7 @@ _DOMAIN_KEYWORDS: dict[str, str] = {
     "combinatorics": r"\binom",
     "set_theory": r"\in",
     "logic": r"\forall",
+    "asymptotics": r"O\!",
     "proof_theory": r"\dfrac",
     "topology": r"\mathcal",
     "analysis": "psilon",  # matches both \epsilon and \varepsilon

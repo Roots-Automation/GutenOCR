@@ -60,6 +60,7 @@ DOMAIN_CONFIG: dict[str, DomainMeta] = {
     "proof_theory": DomainMeta(weight=0.020, tags=("advanced",), difficulty="graduate"),
     "group_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "analysis": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "asymptotics": DomainMeta(weight=0.030, tags=("applied",), difficulty="graduate"),
     "number_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "quantum_notation": DomainMeta(weight=0.04, tags=("applied",), difficulty="graduate"),
     "statistics": DomainMeta(weight=0.04, tags=("foundational",), difficulty="undergraduate"),

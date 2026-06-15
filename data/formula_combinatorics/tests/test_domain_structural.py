@@ -553,6 +553,23 @@ def test_analysis_epsilon_frequency() -> None:
 
 
 # ---------------------------------------------------------------------------
+# asymptotics
+# ---------------------------------------------------------------------------
+
+_ASYM = _draw(GENERATORS["asymptotics"], 2000)
+
+
+def test_asymptotics_landau_frequency() -> None:
+    n = _freq(_ASYM, r"O\!")
+    assert n >= 435, f"O\\! appeared only {n}/2000 in asymptotics"
+
+
+def test_asymptotics_sim_frequency() -> None:
+    n = _freq(_ASYM, r"\sim")
+    assert n >= 196, f"\\sim appeared only {n}/2000 in asymptotics"
+
+
+# ---------------------------------------------------------------------------
 # geometry
 # ---------------------------------------------------------------------------
 
