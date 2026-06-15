@@ -16,8 +16,16 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from ._templates import _matrix_env, _matrix_with_ellipsis, _poly, _poly_mid_factory, _smallmatrix_inline
-from ._vocab import _atom, _expr, _fn_rich, _fn_rich_nosub
+from ._templates import (
+    _matrix_env,
+    _matrix_with_ellipsis,
+    _poly,
+    _poly_mid_factory,
+    _smallmatrix_inline,
+    _substack_prod,
+    _substack_sum,
+)
+from ._vocab import _atom, _eps_sub, _expr, _fn_rich, _fn_rich_nosub, _idx_atom, _tol_sub
 
 SUB_GENERATORS: dict[str, Callable] = {
     # -----------------------------------------------------------------------
@@ -27,6 +35,10 @@ SUB_GENERATORS: dict[str, Callable] = {
     "_expr": _expr,
     "_fn_rich": _fn_rich,
     "_fn_rich_nosub": _fn_rich_nosub,
+    # Atomic helpers (signature: gen(rng) -> str)
+    "_eps_sub": _eps_sub,
+    "_tol_sub": _tol_sub,
+    "_idx_atom": _idx_atom,
     # -----------------------------------------------------------------------
     # Polynomial generators (signature: gen(rng, var) -> str)
     # -----------------------------------------------------------------------
@@ -35,6 +47,9 @@ SUB_GENERATORS: dict[str, Callable] = {
     "_poly_mid_3": _poly_mid_factory(3),
     "_poly_mid_4": _poly_mid_factory(4),
     "_poly_mid_5": _poly_mid_factory(5),
+    # Substack sum/product generators (signature: gen(rng) -> str)
+    "_substack_sum": _substack_sum,
+    "_substack_prod": _substack_prod,
     # -----------------------------------------------------------------------
     # Matrix environment generators — pmatrix (parentheses)
     # -----------------------------------------------------------------------
