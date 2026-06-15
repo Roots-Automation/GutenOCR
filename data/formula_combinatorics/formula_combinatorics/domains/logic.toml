@@ -1,0 +1,1286 @@
+[meta]
+name        = "logic"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Classical and mathematical logic — propositional, first-order, modal, lambda calculus, boolean algebra, program and temporal logic"
+
+# ---------------------------------------------------------------------------
+# Slot pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "PROP_POOL"
+values = ['P', 'Q', 'R', 'S', 'A', 'B', '\phi', '\psi', '\chi', '\varphi', '\alpha', '\beta']
+
+[[pool]]
+name   = "PRED_POOL"
+values = ['P', 'Q', 'R', 'F', 'G', '\phi', '\psi', '\chi', '\Phi']
+
+[[pool]]
+name   = "VAR_POOL"
+values = ['x', 'y', 'z', 'a', 'b', 'c', 'u', 'v', 'w', 'n', 'm']
+
+[[pool]]
+name   = "BBOLD_POOL"
+values = ['\mathbb{C}', '\mathbb{F}', '\mathbb{H}', '\mathbb{N}', '\mathbb{P}', '\mathbb{Q}', '\mathbb{R}', '\mathbb{T}', '\mathbb{Z}']
+
+[[pool]]
+name   = "WORLD_POOL"
+values = ['w', 'u', 'v', 's', 't', '\mathcal{W}', '\mathcal{M}']
+
+[[pool]]
+name   = "TERM_POOL"
+values = ['t', 's', 'r', 'u', 'v', 'a', 'b', 'c']
+
+[[pool]]
+name   = "CMD_POOL"
+values = ['C', 'S', 'T', 'P', 'Q']
+
+[[pool]]
+name   = "NUM_POOL"
+values = ['0', '1', '2', '3', 'n', 'm']
+
+# ---------------------------------------------------------------------------
+# Part A: Reparameterized original templates (15)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "de_morgan_and"
+latex = '\neg({pp} \land {qq}) \equiv \neg {pp} \lor \neg {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "de_morgan_or"
+latex = '\neg({pp} \lor {qq}) \equiv \neg {pp} \land \neg {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "implication_disjunction"
+latex = '{pp} \Rightarrow {qq} \equiv \neg {pp} \lor {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "biconditional"
+latex = '{pp} \Leftrightarrow {qq} \equiv ({pp} \Rightarrow {qq}) \land ({qq} \Rightarrow {pp})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "xor"
+latex = '{pp} \oplus {qq} \equiv ({pp} \lor {qq}) \land \neg({pp} \land {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "universal_quantifier"
+latex = '\forall {vv} \in {bb},\; {pp}({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "BBOLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "existential_quantifier"
+latex = '\exists {vv} \in {bb} : {pp}({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "BBOLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "associativity_and"
+latex = '({pp} \land {qq}) \land {rr} \equiv {pp} \land ({qq} \land {rr})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "distributive_and_or"
+latex = '{pp} \land ({qq} \lor {rr}) \equiv ({pp} \land {qq}) \lor ({pp} \land {rr})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "excluded_middle"
+latex = '{pp} \lor \neg {pp} \equiv \top'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "contradiction"
+latex = '{pp} \land \neg {pp} \equiv \bot'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "double_negation"
+latex = '\neg\neg {pp} \equiv {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "hypothetical_syllogism"
+latex = '({pp} \Rightarrow {qq}) \land ({qq} \Rightarrow {rr}) \Rightarrow ({pp} \Rightarrow {rr})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "quantifier_negation"
+latex = '\neg \forall {vv}\, {pp}({vv}) \equiv \exists {vv}\, \neg {pp}({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "unique_existence"
+latex = '\exists! {vv} \in {bb} : {pp}({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "BBOLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B1: Propositional Logic Extended (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "contrapositive"
+latex = '({pp} \Rightarrow {qq}) \equiv (\neg {qq} \Rightarrow \neg {pp})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "modus_ponens"
+latex = '{pp},\; {pp} \Rightarrow {qq} \vdash {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "modus_tollens"
+latex = '\neg {qq},\; {pp} \Rightarrow {qq} \vdash \neg {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "disjunctive_syllogism"
+latex = '{pp} \lor {qq},\; \neg {pp} \vdash {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "absorption"
+latex = '{pp} \lor ({pp} \land {qq}) \equiv {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "resolution_rule"
+latex = '({pp} \lor {qq}) \land (\neg {pp} \lor {rr}) \vdash {qq} \lor {rr}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "exportation"
+latex = '({pp} \land {qq} \Rightarrow {rr}) \equiv ({pp} \Rightarrow ({qq} \Rightarrow {rr}))'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "pierce_law"
+latex = '(({pp} \Rightarrow {qq}) \Rightarrow {pp}) \Rightarrow {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part B2: First-Order Logic (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "universal_instantiation"
+latex = '\forall {vv}\, {pp}({vv}) \vdash {pp}({tt})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.tt]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name  = "existential_generalization"
+latex = '{pp}({tt}) \vdash \exists {vv}\, {pp}({vv})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "prenex_universal"
+latex = '(\forall {vv}\, {pp}({vv})) \land {qq} \equiv \forall {vv}\, ({pp}({vv}) \land {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "prenex_existential"
+latex = '(\exists {vv}\, {pp}({vv})) \lor {qq} \equiv \exists {vv}\, ({pp}({vv}) \lor {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "equality_substitution"
+latex = '{xx} = {yy} \Rightarrow ({pp}({xx}) \Rightarrow {pp}({yy}))'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "uniqueness_expansion"
+latex = '\exists!{vv}\, {pp}({vv}) \equiv \exists {vv}\, ({pp}({vv}) \land \forall {uu}\, ({pp}({uu}) \Rightarrow {uu} = {vv}))'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.uu]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name  = "composition_relation"
+latex = '({RR} \circ {SS})({xx},{yy}) \equiv \exists {zz}\, ({RR}({xx},{zz}) \land {SS}({zz},{yy}))'
+
+[template.slots.RR]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "PRED_POOL"
+exclude_from = ["RR"]
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx", "yy"]
+
+[[template]]
+name  = "compactness_instance"
+latex = '\Gamma \models {pp} \iff \exists \Gamma_0 \subseteq \Gamma,\; |\Gamma_0| < \infty,\; \Gamma_0 \models {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B4: Modal Logic (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "k_axiom"
+latex = '\Box({pp} \Rightarrow {qq}) \Rightarrow (\Box {pp} \Rightarrow \Box {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "t_axiom"
+latex = '\Box {pp} \Rightarrow {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "b_axiom"
+latex = '{pp} \Rightarrow \Box\Diamond {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "s4_axiom"
+latex = '\Box {pp} \Rightarrow \Box\Box {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "s5_axiom"
+latex = '\Diamond {pp} \Rightarrow \Box\Diamond {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "dual_modal"
+latex = '\Diamond {pp} \equiv \neg\Box\neg {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "kripke_satisfaction"
+latex = '\mathcal{{M}},{ww} \models \Box {pp} \iff \forall {vv}\,({ww}\,R\,{vv} \Rightarrow \mathcal{{M}},{vv} \models {pp})'
+
+[template.slots.ww]
+type = "S"
+pool = "WORLD_POOL"
+
+[template.slots.vv]
+type = "X"
+pool = "WORLD_POOL"
+exclude_from = ["ww"]
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "necessitation"
+latex = '\vdash {pp} \implies \vdash \Box {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5: Lambda Calculus (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "beta_reduction"
+latex = '(\lambda {vv}.\,{ee1})\,{ee2} \to_\beta [{ee2}/{vv}]\,{ee1}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ee1]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.ee2]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ee1"]
+
+[[template]]
+name  = "alpha_equivalence"
+latex = '\lambda {xx}.\,{ee} =_\alpha \lambda {yy}.\,[{yy}/{xx}]\,{ee}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name  = "eta_conversion"
+latex = '\lambda {xx}.\,{ff}\,{xx} =_\eta {ff} \quad ({xx} \notin \mathrm{{FV}}({ff}))'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name  = "church_numeral_def"
+latex = '\overline{{{nn}}} \equiv \lambda {ff}.\,\lambda {xx}.\,{ff}^{{{nn}}}\,{xx}'
+
+[template.slots.nn]
+type = "S"
+pool = "NUM_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xx]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["ff"]
+
+[[template]]
+name  = "church_succ"
+latex = '\mathbf{{S}} \equiv \lambda {nn}.\,\lambda {ff}.\,\lambda {xx}.\,{ff}\,({nn}\,{ff}\,{xx})'
+
+[template.slots.nn]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["nn"]
+
+[template.slots.xx]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["nn", "ff"]
+
+[[template]]
+name  = "application_assoc"
+latex = '{ee1}\,{ee2}\,{ee3} \equiv ({ee1}\,{ee2})\,{ee3}'
+
+[template.slots.ee1]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.ee2]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ee1"]
+
+[template.slots.ee3]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ee1", "ee2"]
+
+# ---------------------------------------------------------------------------
+# Part B7: Boolean Algebra (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "idempotent_meet"
+latex = '{pp} \land {pp} = {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "idempotent_join"
+latex = '{pp} \lor {pp} = {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "absorption_meet"
+latex = '{pp} \land ({pp} \lor {qq}) = {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "absorption_join"
+latex = '{pp} \lor ({pp} \land {qq}) = {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "complement_meet"
+latex = '{pp} \land \neg {pp} = 0'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "shannons_expansion"
+latex = '{ff}({pp}) = ({pp} \land {ff}(\top)) \lor (\neg {pp} \land {ff}(\bot))'
+
+[template.slots.ff]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B8: Program Logic / Temporal Logic (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "hoare_triple"
+latex = '\{{{pp}\}}\;{CC}\;\{{{qq}\}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.CC]
+type = "S"
+pool = "CMD_POOL"
+
+[[template]]
+name  = "hoare_sequence"
+latex = '\dfrac{{\{{{pp}\}}\,{CC1}\,\{{{rr}\}} \quad \{{{rr}\}}\,{CC2}\,\{{{qq}\}}}}{{\{{{pp}\}}\,{CC1};\,{CC2}\,\{{{qq}\}}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[template.slots.CC1]
+type = "S"
+pool = "CMD_POOL"
+
+[template.slots.CC2]
+type = "X"
+pool = "CMD_POOL"
+exclude_from = ["CC1"]
+
+[[template]]
+name  = "weakest_precondition"
+latex = '\mathrm{{wp}}({CC}, {qq}) = \text{{weakest}}\;{pp}\;\text{{s.t.}}\;\{{{pp}\}}\,{CC}\,\{{{qq}\}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.CC]
+type = "S"
+pool = "CMD_POOL"
+
+[[template]]
+name  = "ltl_always"
+latex = '\square {pp} \equiv \bigwedge_{{t \geq 0}} {pp}(t)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "ltl_eventually"
+latex = '\lozenge {pp} \equiv \bigvee_{{t \geq 0}} {pp}(t)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "ltl_until"
+latex = '{pp}\;\mathcal{{U}}\;{qq} \equiv \exists t,\;{qq}(t) \land \forall s < t,\;{pp}(s)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff predicate-pair templates (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "predicate_implication_pair"
+latex = '\forall {vv}\,({fn1}({vv}) \Rightarrow {fn2}({vv}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "predicate_equivalence_pair"
+latex = '\forall {vv}\,({fn1}({vv}) \Leftrightarrow {fn2}({vv}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "predicate_conjunction_pair"
+latex = '\forall {vv}\,({fn1}({vv}) \land {fn2}({vv}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "forall_exists_pair"
+latex = '\forall {vv}\,\exists {uu}\,({fn1}({vv}) \land {fn2}({uu}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.uu]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name  = "binary_predicate_pair"
+latex = '\forall {vv}\,\forall {uu}\,({fn1}({vv},{uu}) \Rightarrow {fn2}({vv},{uu}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.uu]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name  = "predicate_chain"
+latex = '\forall {vv}\,({fn1}({vv}) \Rightarrow {fn2}({vv}) \Rightarrow {fn3}({vv}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn3]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part D: New symbols — \vDash, \Vdash, \therefore, \because, \barwedge, \veebar (11)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "semantic_entailment_world"
+latex = '{MM} \vDash {pp}'
+
+[template.slots.MM]
+type = "S"
+pool = "WORLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "semantic_entailment_conjunction"
+latex = '{MM} \vDash {pp} \land {qq}'
+
+[template.slots.MM]
+type = "S"
+pool = "WORLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "semantic_entailment_gamma"
+latex = '\Gamma \vDash {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "forcing_world"
+latex = '{ww} \Vdash {pp}'
+
+[template.slots.ww]
+type = "S"
+pool = "WORLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "forcing_implication"
+latex = '{ww} \Vdash {pp} \Rightarrow {qq}'
+
+[template.slots.ww]
+type = "S"
+pool = "WORLD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "therefore_modus_ponens"
+latex = '{pp} \land ({pp} \Rightarrow {qq}) \therefore {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "because_disjunctive_syllogism"
+latex = '{pp} \because {pp} \lor {qq},\; \neg {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "barwedge_nand_equiv"
+latex = '{pp} \barwedge {qq} \equiv \neg({pp} \land {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "barwedge_nand_identity"
+latex = '({pp} \barwedge {pp}) \barwedge ({qq} \barwedge {qq}) \equiv {pp} \lor {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "veebar_xor_via_or_and"
+latex = '{pp} \veebar {qq} \equiv ({pp} \lor {qq}) \land \neg({pp} \land {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "veebar_xor_via_asymmetric_and"
+latex = '{pp} \veebar {qq} \equiv ({pp} \land \neg {qq}) \lor (\neg {pp} \land {qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part E: Lattice Operators (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lattice_join_def"
+latex = '{pp} \vee {qq} = \sup\{{{pp},\,{qq}\}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "lattice_meet_def"
+latex = '{pp} \wedge {qq} = \inf\{{{pp},\,{qq}\}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "boolean_complement_laws"
+latex = '{pp} \vee \neg {pp} = \mathbf{{1}},\quad {pp} \wedge \neg {pp} = \mathbf{{0}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name  = "distributive_lattice_law"
+latex = '{pp} \vee ({qq} \wedge {rr}) = ({pp} \vee {qq}) \wedge ({pp} \vee {rr})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name  = "de_morgan_lattice"
+latex = '\neg({pp} \vee {qq}) = \neg {pp} \wedge \neg {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part F: Arrow Variations (3)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "biconditional_leftrightarrow"
+latex = '{pp} \leftrightarrow {qq} \equiv ({pp} \rightarrow {qq}) \wedge ({qq} \rightarrow {pp})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "converse_leftarrow"
+latex = '({pp} \leftarrow {qq}) \equiv ({qq} \rightarrow {pp})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "necessary_condition_leftarrow"
+latex = '{pp} \Leftarrow {qq} \iff {qq} \Rightarrow {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part G: Negated Quantifiers and Proof End (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "nexists_predicate"
+latex = '\nexists\, {xx}:\; {pp}({xx})'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "nexists_as_negation"
+latex = '\nexists\, {xx}:\; {pp}({xx}) \equiv \forall {xx}\;\neg {pp}({xx})'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[[template]]
+name  = "proof_end_blacksquare"
+latex = '\therefore {pp} \Rightarrow {qq} \qquad \blacksquare'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "contradiction_blacksquare"
+latex = '\neg({pp} \land \neg {pp}) \qquad \blacksquare'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
