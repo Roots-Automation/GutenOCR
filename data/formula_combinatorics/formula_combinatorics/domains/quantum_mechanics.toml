@@ -1,0 +1,559 @@
+[meta]
+domain = "quantum_mechanics"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "HAM_POOL"
+values = ["H", '\hat{H}', '\mathcal{H}', '\hat{\mathcal{H}}', "H_0", '\tilde{H}']
+
+[[pool]]
+name   = "PSI_POOL"
+values = ['\psi', '\phi', '\Psi', '\varphi', '\tilde{\psi}', '\hat{\psi}']
+
+[[pool]]
+name   = "HBAR_POOL"
+values = ['\hbar', 'h/(2\pi)', "h", '\hslash']
+
+[[pool]]
+name   = "MASS_POOL"
+values = ["m", "M", '\mu', "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
+
+[[pool]]
+name   = "COORD_POOL"
+values = ["x", "y", "z", "r", '\theta', '\phi']
+
+[[pool]]
+name   = "P_POOL"
+values = ["p", "p_i", "p_k", '\pi']
+
+[[pool]]
+name   = "ENERGY_POOL"
+values = ["E", "E_0", '\mathcal{E}', "U"]
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "n_0"]
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\omega_0', '\Omega', '\nu']
+
+[[pool]]
+name   = "Q_POOL"
+values = ["q", "q_i", "q_k", "q_j"]
+
+[[pool]]
+name   = "DAG_OP_POOL"
+values = ["A", "B", "H", '\hat{H}', "U", "O", '\hat{O}']
+
+[[pool]]
+name   = "DAG_STATE_POOL"
+values = ["n", "m", "k", '\psi', '\phi', '\alpha']
+
+[[pool]]
+name   = "FERM_IDX_POOL"
+values = ["i", "j", "k", "l", "m"]
+
+# ---------------------------------------------------------------------------
+# Part A: Schrödinger equations / uncertainty
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "schrodinger_time_dependent"
+latex = 'i\,{hb}\,\frac{{\partial {psi}}}{{\partial t}} = {ham}\,{psi}'
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+# ----
+
+[[template]]
+name  = "schrodinger_time_independent"
+latex = '-\frac{{{hb}^2}}{{2\,{mm}}}\,\nabla^2 {psi} + V\,{psi} = E\,{psi}'
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+# ----
+
+[[template]]
+name  = "heisenberg_uncertainty"
+latex = '\Delta {cc}\,\Delta {pp} \geq \frac{{{hb}}}{{2}}'
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ----
+
+[[template]]
+name  = "energy_momentum_relation"
+latex = '{ee}^2 = (pc)^2 + ({mm}\,c^2)^2'
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Quantum mechanics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "position_momentum_commutator"
+latex = '[{cc},\,{pp}] = i\,{hb}'
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ----
+
+[[template]]
+name  = "angular_momentum_commutator"
+latex = '[L_i,\,L_j] = i\,{hb}\,\varepsilon_{{ijk}}\,L_k'
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ----
+
+[[template]]
+name  = "eigenvalue_equation"
+latex = '{ham}\,{psi} = {ee}\,{psi}'
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+# ----
+
+[[template]]
+name  = "expectation_value_qm"
+latex = '\langle {psi} | \hat{{A}} | {psi} \rangle = \int{lim_mod}_{{-\infty}}^{{\infty}} {psi}^*\!(x)\,{fn}(x)\,{psi}(x)\,dx'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "time_evolution_state"
+latex = '|{psi}(t)\rangle = e^{{-i\,{ham}\,t/{hb}}}\,|{psi}(0)\rangle'
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ----
+
+[[template]]
+name  = "harmonic_oscillator_energy"
+latex = 'E_{{{nn}}} = \Bigl({nn} + \tfrac{{1}}{{2}}\Bigr)\,{hb}\,{om}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "hydrogen_energy_levels"
+latex = 'E_{{{nn}}} = -\frac{{13.6\,\mathrm{{eV}}}}{{{nn}^2}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "ladder_op_lowering"
+latex = '\hat{{a}}\,|{nn}\rangle = \sqrt{{{nn}}}\,|{nn}-1\rangle'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "ladder_op_raising"
+latex = '\hat{{a}}^\dagger\,|{nn}\rangle = \sqrt{{{nn}+1}}\,|{nn}+1\rangle'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "born_rule"
+latex = 'P(a) = |\langle a \mid {psi}\rangle|^2'
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+# ----
+
+[[template]]
+name  = "probability_density_qm"
+latex = '\rho({cc},t) = |{psi}({cc},t)|^2'
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+# ----
+
+# path_integral_propagator has x' — triple-quoted
+[[template]]
+name  = "path_integral_propagator"
+latex = '''\langle x'|e^{{-i\,{ham}\,t/{hb}}}|x\rangle = \int \mathcal{{D}}[q]\,e^{{i\,S[q]/{hb}}}'''
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Anticommutators (fermionic operators)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "anticommutator_def"
+latex = '\{{{A},\,{B}\}} = {A}{B} + {B}{A}'
+
+[template.slots.A]
+type = "S"
+pool = "DAG_OP_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "DAG_OP_POOL"
+exclude_from = ["A"]
+
+# ----
+
+[[template]]
+name  = "canonical_anticommutation_relation"
+latex = '\{{a_{{{ii}}},\,a_{{{jj}}}^\dagger\}} = \delta_{{{ii}{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "FERM_IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "FERM_IDX_POOL"
+exclude_from = ["ii"]
+
+# ----
+
+[[template]]
+name  = "anticommutation_annihilators"
+latex = '\{{a_{{{ii}}},\,a_{{{jj}}}\}} = 0'
+
+[template.slots.ii]
+type = "S"
+pool = "FERM_IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "FERM_IDX_POOL"
+exclude_from = ["ii"]
+
+# ----
+
+[[template]]
+name  = "fermionic_number_operator"
+latex = '\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}},\quad \hat{{n}}_{{{ii}}}^2 = \hat{{n}}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "FERM_IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dirac_bracket"
+latex = '\{f,\,g\}_D = \{f,\,g\} - \{f,\,\phi_a\}\,C^{ab}\,\{\phi_b,\,g\}'
+
+# ----
+
+[[template]]
+name  = "moyal_bracket"
+latex = '\{{f,\,g\}}_\star = \tfrac{{1}}{{i{hb}}}(f \star g - g \star f)'
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: Function-pair (QM context)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "generalized_uncertainty_principle"
+latex = '\Delta {fn1}\,\Delta {fn2} \geq \tfrac{{1}}{{2}}\bigl|\bigl\langle [{fn1},\,{fn2}]\bigr\rangle\bigr|'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "operator_commutator_def"
+latex = '\bigl[{fn1},\,{fn2}\bigr] = {fn1}\,{fn2} - {fn2}\,{fn1}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "propagator_bra_ket"
+latex = '\bigl\langle {fn1} \bigr| e^{{-i\,{ham}\,t/{hb}}} \bigl| {fn2} \bigr\rangle'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_quantum_evolution"
+latex = '{fn1}(|{psi}(t)\rangle) = {fn2}\!\left(e^{{-i\,{ham}\,t/{hb}}}\,|{psi}(0)\rangle\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Adjoint operators
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "adjoint_bra_rule"
+latex = '\langle {aa} | {op}^{{\dagger}} = (\langle {aa} | {op})^*'
+
+[template.slots.aa]
+type = "S"
+pool = "DAG_STATE_POOL"
+
+[template.slots.op]
+type = "S"
+pool = "DAG_OP_POOL"
+
+# ----
+
+[[template]]
+name  = "adjoint_anti_multiplicativity"
+latex = '({op1}\,{op2})^{{\dagger}} = {op2}^{{\dagger}}\,{op1}^{{\dagger}}'
+
+[template.slots.op1]
+type = "S"
+pool = "DAG_OP_POOL"
+
+[template.slots.op2]
+type         = "X"
+pool         = "DAG_OP_POOL"
+exclude_from = ["op1"]
+
+# ----
+
+[[template]]
+name  = "adjoint_matrix_element"
+latex = '\langle {aa} | {op}^{{\dagger}} | {bb} \rangle = \langle {bb} | {op} | {aa} \rangle^*'
+
+[template.slots.aa]
+type = "S"
+pool = "DAG_STATE_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "DAG_STATE_POOL"
+exclude_from = ["aa"]
+
+[template.slots.op]
+type = "S"
+pool = "DAG_OP_POOL"
+
+# ---------------------------------------------------------------------------
+# Approximation methods
+# ---------------------------------------------------------------------------
+
+# wkb_wavefunction has q' — triple-quoted
+[[template]]
+name  = "wkb_wavefunction"
+latex = '''{psi}({qq}) \approx \frac{{C}}{{\sqrt{{p({qq})}}}}\exp\!\left(\frac{{i}}{{\hbar}}\int^{{{qq}}} p(q')\,dq'\right)'''
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+# perturbation_energy_first_order has {ham}' — triple-quoted
+[[template]]
+name  = "perturbation_energy_first_order"
+latex = '''E_n \approx E_n^{{(0)}} + \langle n^{{(0)}} | {ham}' | n^{{(0)}} \rangle'''
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+# ---------------------------------------------------------------------------
+# Wavefunction notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "wavefunction_real_part"
+latex = '\Re({psi}(\mathbf{{r}},t)) = A\cos(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+# ----
+
+[[template]]
+name  = "wavefunction_imaginary_part"
+latex = '\Im({psi}(\mathbf{{r}},t)) = A\sin(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"

@@ -1,0 +1,345 @@
+[meta]
+domain = "electromagnetism"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "E_FIELD_POOL"
+values = ['\mathbf{E}', '\vec{E}', "E", '\hat{E}', '\mathcal{E}', '\tilde{E}']
+
+[[pool]]
+name   = "B_FIELD_POOL"
+values = ['\mathbf{B}', '\vec{B}', "B", '\hat{B}', '\mathcal{B}', '\tilde{B}']
+
+[[pool]]
+name   = "VEC_F_POOL"
+values = ['\mathbf{F}', '\vec{F}', "F", '\hat{F}', '\tilde{F}', '\mathcal{F}']
+
+[[pool]]
+name   = "CHARGE_POOL"
+values = ["q", "e", "Q", "q_1", "q_2"]
+
+[[pool]]
+name   = "EPS_POOL"
+values = ['\varepsilon_0', '\epsilon_0', '\varepsilon', '\epsilon_r\varepsilon_0', '\varepsilon_{\mathrm{eff}}']
+
+[[pool]]
+name   = "MU0_POOL"
+values = ['\mu_0', '\mu_{\mathrm{vac}}', '\mu', '\mu_r\mu_0', '\mu_{\mathrm{eff}}']
+
+[[pool]]
+name   = "SIGMA_POOL"
+values = ['\sigma', '\Sigma', '\sigma_0']
+
+[[pool]]
+name   = "K_POOL"
+values = ["k", "k_0", '\kappa', "k_n"]
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\omega_0', '\Omega', '\nu']
+
+[[pool]]
+name   = "RHO_POOL"
+values = ['\rho', '\rho_0', '\varrho']
+
+[[pool]]
+name   = "SPACETIME_IDX_POOL"
+values = ['\mu', '\nu', '\rho', '\sigma', '\lambda', '\kappa']
+
+# ---------------------------------------------------------------------------
+# Part A: Gauss / Ampère-Maxwell
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gauss_law"
+latex = '\nabla \cdot {ef} = \frac{{{rho}}}{{{eps}}}'
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.rho]
+type = "S"
+pool = "RHO_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "ampere_maxwell"
+latex = '\nabla \times {bf} = {mu0}\,\mathbf{{J}} + {mu0}\,{eps}\,\frac{{\partial {ef}}}{{\partial t}}'
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+[template.slots.mu0]
+type = "S"
+pool = "MU0_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Maxwell equations and EM fields
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gauss_law_magnetic"
+latex = '\nabla \cdot {bf} = 0'
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "faraday_law"
+latex = '\nabla \times {ef} = -\frac{{\partial {bf}}}{{\partial t}}'
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "coulombs_law"
+latex = '{ff} = \frac{{{q1}\,{q2}}}{{4\pi\,{eps}\,r^2}}\,\hat{{r}}'
+
+[template.slots.ff]
+type = "S"
+pool = "VEC_F_POOL"
+
+[template.slots.q1]
+type = "S"
+pool = "CHARGE_POOL"
+
+[template.slots.q2]
+type         = "X"
+pool         = "CHARGE_POOL"
+exclude_from = ["q1"]
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "electric_field_point_charge"
+latex = '{ef} = \frac{{{qq}}}{{4\pi\,{eps}\,r^2}}\,\hat{{r}}'
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "CHARGE_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "ohms_law_microscopic"
+latex = '\mathbf{{J}} = {sg}\,{ef}'
+
+[template.slots.sg]
+type = "S"
+pool = "SIGMA_POOL"
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "poynting_vector_def"
+latex = '\mathbf{{S}} = \frac{{1}}{{{mu0}}}\,{ef} \times {bf}'
+
+[template.slots.mu0]
+type = "S"
+pool = "MU0_POOL"
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "em_wave_equation"
+latex = '\nabla^2 {ef} - \frac{{1}}{{c^2}}\frac{{\partial^2 {ef}}}{{\partial t^2}} = 0'
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "plane_wave_solution"
+latex = '{ef} = E_0\cos\!\bigl({kk}\,x - {om}\,t\bigr)'
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "em_energy_density"
+latex = 'u = \tfrac{{1}}{{2}}\,{eps}\,{ef}^2 + \frac{{{bf}^2}}{{2\,{mu0}}}'
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+[template.slots.mu0]
+type = "S"
+pool = "MU0_POOL"
+
+# ----
+
+[[template]]
+name  = "continuity_equation_charge"
+latex = '\frac{{\partial {rho}}}{{\partial t}} + \nabla \cdot \mathbf{{J}} = 0'
+
+[template.slots.rho]
+type = "S"
+pool = "RHO_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: EM field tensor (covariant notation)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "em_field_tensor_def"
+latex = 'F_{{{mu}{nu}}} = \partial_{{{mu}}} A_{{{nu}}} - \partial_{{{nu}}} A_{{{mu}}}'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+# ----
+
+[[template]]
+name  = "em_maxwell_covariant"
+latex = '\partial_{{{mu}}} F^{{{mu}{nu}}} = {mu0}\,j^{{{nu}}}'
+
+[template.slots.mu0]
+type = "S"
+pool = "MU0_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+# ----
+
+[[template]]
+name  = "em_bianchi_covariant"
+latex = '\partial_{{{mu}}} F_{{{nu}{rho}}} + \partial_{{{nu}}} F_{{{rho}{mu}}} + \partial_{{{rho}}} F_{{{mu}{nu}}} = 0'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+[template.slots.rho]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu", "nu"]
+
+# ---------------------------------------------------------------------------
+# Appendix: Circuit and wave notation (slot-free)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "conductance_unit_mho"
+latex = 'G = \frac{{1}}{{R}},\quad [G] = \mho'
+
+[[template]]
+name  = "conductance_ohms_law_mho"
+latex = 'G = \frac{{I}}{{U}},\quad G \in \mho'
+
+[[template]]
+name  = "complex_impedance_re_im"
+latex = 'Z = \Re(Z) + i\,\Im(Z)'
+
+# ---------------------------------------------------------------------------
+# Part C: Function-pair (EM context)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_em_wave_pair"
+latex = '{fn1}\!\left(\frac{{\partial^2 {ef}}}{{\partial t^2}}\right) = {fn2}\!\left(c^2\,\nabla^2 {ef}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
