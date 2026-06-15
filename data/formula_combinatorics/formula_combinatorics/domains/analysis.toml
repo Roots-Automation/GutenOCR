@@ -60,7 +60,7 @@ latex = '\forall {eps} > 0 \; \exists {tol} > 0 : |{x} - {a}| < {tol} \Rightarro
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -94,7 +94,7 @@ latex = '\forall {eps} > 0 \; \exists {tol} > 0 : |{x} - {c}| < {tol} \Rightarro
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -123,7 +123,7 @@ latex = '\forall {eps} > 0 \; \exists {tol} > 0 \; \forall {x}, {y} : |{x} - {y}
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -156,7 +156,7 @@ latex = '\|{f}\|_{{{p}}} = \left(\int \left|{f}({t})\right|^{{{p}}} d{t}\right)^
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.p]
 type = "S"
@@ -229,12 +229,12 @@ latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
 [template.variants.slots.u]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.v]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "triangle_reverse"
@@ -243,12 +243,12 @@ latex = '\left| \left\|{u}\right\| - \left\|{v}\right\| \right| \leq \left\|{u} 
 [template.variants.slots.u]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.v]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "triangle_sum_n"
@@ -261,7 +261,7 @@ pool = ["", '\limits']
 [template.variants.slots.u]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.n]
 type = "S"
@@ -274,12 +274,12 @@ latex = '\left(\int \left|{f}({t}) + {g}({t})\right|^{{{p}}} d{t}\right)^{{1/{p}
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.t]
 type = "S"
@@ -317,12 +317,12 @@ latex = '\int |{f}({t}) \cdot {g}({t})| \, d{t} \leq \left(\int |{f}({t})|^{{{p}
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.t]
 type = "S"
@@ -371,7 +371,7 @@ latex = '\sup_{{{x} \in {D}}} |{f}({x})| < \infty'
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -460,7 +460,7 @@ latex = '\lim_{{{x} \to {a}}} {f}({x}) = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -484,7 +484,7 @@ latex = '\lim_{{{x} \to {a}^+}} {f}({x}) = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -508,7 +508,7 @@ latex = '\lim_{{{x} \to {a}^-}} {f}({x}) = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -532,7 +532,7 @@ latex = '\lim_{{{x} \to +\infty}} {f}({x}) = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -551,7 +551,7 @@ latex = '\lim_{{{x} \to -\infty}} {f}({x}) = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -588,7 +588,7 @@ latex = '\lim_{{{x} \to {a}}} \frac{{{f}({x}) - {f}({a})}}{{{x} - {a}}} = {L}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -612,12 +612,12 @@ latex = '\lim_{{{x} \to {a}}} \bigl({f}({x}) + {g}({x})\bigr) = \lim_{{{x} \to {
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -636,12 +636,12 @@ latex = '\lim_{{{x} \to {a}}} {f}({x}) {g}({x}) = \lim_{{{x} \to {a}}} {f}({x}) 
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -660,7 +660,7 @@ latex = '\lim_{{{x} \to {a}}} {f}({x}) = {inf_sym}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -691,7 +691,7 @@ pool = ["", '\limits']
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -713,7 +713,7 @@ latex = '\left\{{{f}_n({x})\right\}} \text{{ equicontinuous and uniformly bounde
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -731,7 +731,7 @@ latex = '\exists!\, x^* : {T}(x^*) = x^*, \quad x_{{n+1}} = {T}(x_n) \to x^*'
 [template.slots.T]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 # ---------------------------------------------------------------------------
 # Series convergence tests (variant group)
@@ -765,7 +765,7 @@ pool = ["", '\limits']
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.t]
 type = "S"
@@ -875,7 +875,7 @@ latex = '{f}_n({x}) \to {f}({x}) \quad \text{{for all }} {x} \in D'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -889,7 +889,7 @@ latex = '\sup_{{{x} \in D}} \left|{f}_n({x}) - {f}({x})\right| \to 0'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.x]
 type = "S"
@@ -903,7 +903,7 @@ latex = '{f}_n \rightrightarrows {f} \text{{ on }} {D}, \; {f}_n \text{{ continu
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.D]
 type = "S"
@@ -920,7 +920,7 @@ pool = ["", '\limits']
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.a]
 type = "E"
@@ -947,7 +947,7 @@ latex = '{f} \in C([{a}, {b}]), \; {f}({a}) {f}({b}) < 0 \implies \exists\, c \i
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.a]
 type = "E"
@@ -966,7 +966,7 @@ latex = '''\exists\, c \in ({a}, {b}) : {f}'(c) = \dfrac{{{f}({b}) - {f}({a})}}{
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.a]
 type = "E"
@@ -985,7 +985,7 @@ latex = '{f} \in C([{a}, {b}]) \implies {f} \text{{ attains its maximum and mini
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.a]
 type = "E"
@@ -1028,7 +1028,7 @@ pool = ["", '\limits']
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "E"
@@ -1080,12 +1080,12 @@ latex = '{fn1}\!\left(\lim_{{{x} \to {a}}} {fn2}({x})\right) = \lim_{{{x} \to {a
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1104,12 +1104,12 @@ latex = '|{fn1}({x}) - {fn1}({y})| \leq {fn2}(|{x} - {y}|)'
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1128,12 +1128,12 @@ latex = '\sup_{{{x} \in D}} |{fn1}_n({x}) - {fn2}({x})| \to 0 \text{{ as }} n \t
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1147,12 +1147,12 @@ latex = '\left|\int {fn1}({x})\,d{x}\right| \leq \int |{fn2}({x})|\,d{x}'
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1166,12 +1166,12 @@ latex = '''({fn1} \circ {fn2})'({x}) = {fn1}'({fn2}({x})) \cdot {fn2}'({x})'''
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1185,12 +1185,12 @@ latex = '|{fn1}(a_n) - {fn1}(L)| \leq {fn2}(|a_n - L|) \to 0'
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template]]
 name  = "fn_series_tail"
@@ -1203,12 +1203,12 @@ pool = ["", '\limits']
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.v]
 type = "S"
@@ -1221,12 +1221,12 @@ latex = '{fn1}(d({x},{y})) \leq {fn2}(d({x},z) + d(z,{y}))'
 [template.slots.fn1]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.fn2]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.x]
 type = "S"
@@ -1381,7 +1381,7 @@ latex = '\left.{f}({v})\right|_{{{v}={a}}} = \lim_{{{v} \to {a}}} {f}({v})'
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.v]
 type = "S"
@@ -1399,12 +1399,12 @@ latex = '\biggl\| \frac{{{f}({v})}}{{{g}({v})}} \biggr\|'
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.v]
 type = "S"
@@ -1427,7 +1427,7 @@ n    = 3000
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template]]
 name  = "abs_frac_biggl"
@@ -1454,7 +1454,7 @@ latex = '{ff}({vv}) = {expr}, \ \forall {vv} \in {dom}'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.vv]
 type = "S"
@@ -1476,7 +1476,7 @@ latex = '{ff}({vv}) \leq {cc}, \ \exists {vv} \in {dom}'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.vv]
 type = "S"
@@ -1516,12 +1516,12 @@ latex = '\|{ff}({vv})\| \leq {c}_1, \ \|{gg}({vv})\| \leq {c}_2'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.gg]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.vv]
 type = "S"
@@ -1557,7 +1557,7 @@ latex = '\|{ff}\|_{{{pp}}} \leq {cc}, \ \forall {ff} \in {space}'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.pp]
 type = "S"
@@ -1579,7 +1579,7 @@ latex = '{ff}({vv}) = 0, \ {vv} \in {dom}'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.vv]
 type = "S"

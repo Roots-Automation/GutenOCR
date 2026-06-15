@@ -765,7 +765,7 @@ idx  = 0.35
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.pt]
 type = "E"
@@ -811,12 +811,12 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "composition_three"
@@ -830,17 +830,17 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.h]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "inverse_cancel_right"
@@ -854,7 +854,7 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "inverse_cancel_left"
@@ -868,7 +868,7 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "inverse_composition"
@@ -877,12 +877,12 @@ latex = '\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}'
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 # ---------------------------------------------------------------------------
 # General algebra
@@ -1742,22 +1742,22 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.q]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.r]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "polynomial_division_remainder_form"
@@ -1771,22 +1771,22 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.q]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.r]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "polynomial_division_linear_divisor"
@@ -1805,12 +1805,12 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.q]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template.variants]]
 name  = "polynomial_division_uniqueness"
@@ -1824,22 +1824,22 @@ idx  = 0.35
 [template.variants.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.g]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.q]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.r]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [[template]]
 name  = "triangle_inequality"
@@ -2088,7 +2088,7 @@ pool = ["", '\limits']
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.n]
 type = "S"
@@ -2586,7 +2586,7 @@ idx  = 0.35
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.lc]
 type = "S"
@@ -2621,7 +2621,7 @@ idx  = 0.35
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.r1]
 type = "S"
@@ -2651,7 +2651,7 @@ idx  = 0.35
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.lc]
 type = "S"
@@ -2681,7 +2681,7 @@ idx  = 0.35
 [template.variants.slots.fn]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.variants.slots.lc]
 type = "S"
@@ -2780,7 +2780,7 @@ latex = '\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}'
 [template.slots.ff]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.xx]
 type = "S"
@@ -2929,7 +2929,7 @@ pool = ['\mathbb{R}', '\mathbb{Z}', '\mathbb{N}']
 [template.slots.f]
 type = "E"
 gen  = "_fn_rich_nosub"
-n    = 100
+n    = 5
 
 [template.slots.c]
 type = "E"
@@ -3239,22 +3239,22 @@ latex = '{a} \div {b} = {q} \cdots {r}'
 [template.slots.a]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.b]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.q]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.r]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [[template]]
 name  = "div_fraction_identity"
@@ -3263,22 +3263,22 @@ latex = '{a} \div {b} = \frac{{{a2}}}{{{b2}}}'
 [template.slots.a]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.b]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.a2]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [template.slots.b2]
 type = "E"
 gen  = "_atom"
-n    = 100
+n    = 150
 
 [[template]]
 name  = "div_paren_expr"
