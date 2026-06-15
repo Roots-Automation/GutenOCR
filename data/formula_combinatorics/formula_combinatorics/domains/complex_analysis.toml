@@ -1,0 +1,1171 @@
+[meta]
+domain = "complex_analysis"
+
+# ---------------------------------------------------------------------------
+# Named Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VAR_POOL"
+values = ["z", "w", "s", "t", "u", "v", '\zeta', '\xi', '\eta', '\omega']
+
+[[pool]]
+name   = "REAL_POOL"
+values = ["x", "y", "u", "v", "s", "t", "r"]
+
+[[pool]]
+name   = "SCALAR_POOL"
+values = ["a", "b", "c", '\alpha', '\beta', '\lambda', '\mu', '\rho', '\kappa']
+
+[[pool]]
+name   = "ANGLE_POOL"
+values = ['\theta', '\phi', '\varphi', '\psi', '\alpha', '\beta']
+
+[[pool]]
+name   = "CENTER_POOL"
+values = ["a", "z_0", '\alpha', '\beta', "0"]
+
+[[pool]]
+name   = "CURVE_POOL"
+values = ['\Gamma', "C", "C_r", '\partial D', '\gamma']
+
+[[pool]]
+name   = "FUNC_POOL"
+values = ["f", "g", "h", "F", "G", '\phi', '\psi', '\Phi']
+
+[[pool]]
+name   = "INT_POOL"
+values = ["m", "n", "k", "p", "q"]
+
+[[pool]]
+name   = "COMP_POOL"
+values = ["u", "v", '\varphi', '\psi', "a", "b"]
+
+[[pool]]
+name   = "MOBIUS_POOL"
+values = ["a", "b", "c", "d", '\alpha', '\beta', '\gamma', '\delta']
+
+[[pool]]
+name   = "NOME_POOL"
+values = ["q", "q_0", "r"]
+
+# ---------------------------------------------------------------------------
+# Part A — 14 templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "complex_cartesian"
+latex = 'z = {xx} + i{yy}'
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "complex_polar"
+latex = 'z = {rr} e^{{i{th}}}'
+
+[template.slots.rr]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.th]
+type = "S"
+pool = "ANGLE_POOL"
+
+[[template]]
+name  = "modulus_squared"
+latex = '|z|^2 = {xx}^2 + {yy}^2'
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "cauchy_riemann"
+latex = '\frac{{\partial {uu}}}{{\partial {xx}}} = \frac{{\partial {vv}}}{{\partial {yy}}},\quad \frac{{\partial {uu}}}{{\partial {yy}}} = -\frac{{\partial {vv}}}{{\partial {xx}}}'
+
+[template.slots.uu]
+type = "S"
+pool = "COMP_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "COMP_POOL"
+exclude_from = ["uu"]
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "cauchy_integral_formula"
+latex = '{ff}({aa}) = \frac{{1}}{{2\pi i}}\oint{lim_mod}_{{{CC}}} \frac{{{ff}(z)}}{{z - {aa}}} \, dz'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template]]
+name  = "residue_theorem"
+latex = '\oint{lim_mod}_{{{CC}}} {ff}(z) \, dz = 2\pi i \sum_k \operatorname{{Res}}({ff}, z_k)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template]]
+name  = "laurent_series"
+latex = '{ff}(z) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n (z - {aa})^n'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[[template]]
+name  = "mobius_transformation"
+latex = 'w = \frac{{{aa} z + {bb}}}{{{cc} z + {dd}}},\quad {aa} {dd} - {bb} {cc} \neq 0'
+
+[template.slots.aa]
+type = "S"
+pool = "MOBIUS_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "MOBIUS_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type         = "X"
+pool         = "MOBIUS_POOL"
+exclude_from = ["aa", "bb"]
+
+[template.slots.dd]
+type         = "X"
+pool         = "MOBIUS_POOL"
+exclude_from = ["aa", "bb", "cc"]
+
+[[template]]
+name  = "eulers_formula"
+latex = 'e^{{i{th}}} = \cos {th} + i \sin {th}'
+
+[template.slots.th]
+type = "S"
+pool = "ANGLE_POOL"
+
+[[template]]
+name  = "complex_conjugate"
+latex = '\bar{{{zz}}} = {xx} - i{yy}, \quad {zz}\bar{{{zz}}} = |{zz}|^2'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "real_imag_parts"
+latex = '\operatorname{{Re}}({zz}) = \frac{{{zz} + \bar{{{zz}}}}}{{2}},\quad \operatorname{{Im}}({zz}) = \frac{{{zz} - \bar{{{zz}}}}}{{2i}}'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "argument_principle"
+latex = '''\frac{{1}}{{2\pi i}} \oint{lim_mod}_{{{CC}}} \frac{{{ff}'(z)}}{{{ff}(z)}} \, dz = N - P'''
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template]]
+name  = "rouche_theorem"
+latex = '|{ff}(z) - {gg}(z)| < |{gg}(z)|\text{{ on }}{CC} \implies Z_{{{ff}}} = Z_{{{gg}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type         = "X"
+pool         = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template]]
+name  = "maximum_modulus"
+latex = '|{ff}(z)| \leq \max_{{|\zeta|={rr}}} |{ff}(\zeta)|\text{{ for }} |z| \leq {rr}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B1 — Complex Arithmetic (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "de_moivre"
+latex = '(\cos {th} + i\sin {th})^{{{nn}}} = \cos({nn}{th}) + i\sin({nn}{th})'
+
+[template.slots.th]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[[template]]
+name  = "complex_logarithm"
+latex = '\log {zz} = \ln|{zz}| + i\arg {zz}'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "argument_sum"
+latex = '\arg({zz1} {zz2}) = \arg {zz1} + \arg {zz2} \pmod{{2\pi}}'
+
+[template.slots.zz1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz2]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["zz1"]
+
+[[template]]
+name  = "complex_product_polar"
+latex = '|{zz1} {zz2}| = |{zz1}|\,|{zz2}|'
+
+[template.slots.zz1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz2]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["zz1"]
+
+[[template]]
+name  = "triangle_inequality_complex"
+latex = '|{zz1} + {zz2}| \leq |{zz1}| + |{zz2}|'
+
+[template.slots.zz1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz2]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["zz1"]
+
+[[template]]
+name  = "inverse_euler"
+latex = '\cos {th} = \frac{{e^{{i{th}}} + e^{{-i{th}}}}}{{2}}'
+
+[template.slots.th]
+type = "S"
+pool = "ANGLE_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B2 — Analytic Functions (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "complex_derivative_def"
+latex = '''{ff}'({zz}) = \lim_{{\Delta {zz}\to 0}}\frac{{{ff}({zz}+\Delta {zz})-{ff}({zz})}}{{\Delta {zz}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "harmonic_laplacian"
+latex = '\nabla^2 {uu} = \frac{{\partial^2 {uu}}}{{\partial {xx}^2}} + \frac{{\partial^2 {uu}}}{{\partial {yy}^2}} = 0'
+
+[template.slots.uu]
+type = "S"
+pool = "COMP_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "liouville_bound"
+latex = '|{ff}(z)| \leq M \;\forall\,z \in \mathbb{{C}} \implies {ff} \equiv \text{{const}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name  = "analytic_implies_cr"
+latex = '{ff} = {uu} + i{vv}\text{{ analytic}}\Rightarrow \frac{{\partial {uu}}}{{\partial {xx}}} = \frac{{\partial {vv}}}{{\partial {yy}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "COMP_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "COMP_POOL"
+exclude_from = ["uu"]
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "power_function"
+latex = '{ff}({zz}) = {zz}^{{{nn}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[[template]]
+name  = "exp_function"
+latex = '{ff}({zz}) = e^{{{zz}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B3 — Contour Integration (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_nth_derivative"
+latex = '{ff}^{{({nn})}}({aa}) = \frac{{{nn}!}}{{2\pi i}}\oint{lim_mod}_{{{CC}}} \frac{{{ff}({zz})}}{{({zz}-{aa})^{{{nn}+1}}}} \, d{zz}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "residue_simple_pole"
+latex = '\operatorname{{Res}}({ff}, {aa}) = \lim_{{{zz} \to {aa}}} ({zz} - {aa}) {ff}({zz})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "residue_higher_pole"
+latex = '\operatorname{{Res}}({ff}, {aa}) = \frac{{1}}{{({nn}-1)!}}\lim_{{{zz} \to {aa}}} \frac{{d^{{{nn}-1}}}}{{d{zz}^{{{nn}-1}}}}[({zz}-{aa})^{{{nn}}} {ff}({zz})]'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "winding_number"
+latex = 'n(\gamma, {aa}) = \frac{{1}}{{2\pi i}} \oint_\gamma \frac{{d{zz}}}{{{zz} - {aa}}}'
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "ml_inequality"
+latex = '\left| \oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} \right| \leq M \cdot L'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "cauchy_goursat"
+latex = '\oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} = 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "residue_sum_formula"
+latex = '\oint{lim_mod}_{{{CC}}} {ff}({zz}) \, d{zz} = 2\pi i \sum_k \operatorname{{Res}}({ff}, a_k)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "jordan_estimate"
+latex = '\left| \int{lim_mod}_{{C_R}} {ff}({zz}) e^{{i{aa} {zz}}} \, d{zz} \right| \to 0\text{{ as }} R \to \infty'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B4 — Series & Convergence (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "taylor_complex"
+latex = '{ff}({zz}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{ff}^{{(n)}}({aa})}}{{n!}} ({zz} - {aa})^n'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[[template]]
+name  = "power_series_domain"
+latex = '{ff}({zz}) = \sum{lim_mod}_{{n=0}}^{{\infty}} c_n ({zz} - {aa})^n,\quad |{zz} - {aa}| < R'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[[template]]
+name  = "laurent_annulus"
+latex = '{ff}({zz}) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n ({zz} - {aa})^n,\quad r < |{zz} - {aa}| < R'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[[template]]
+name  = "radius_limsup"
+latex = 'R = \frac{{1}}{{\limsup_{{n \to \infty}} |c_n|^{{1/n}}}}'
+
+[[template]]
+name  = "radius_ratio"
+latex = 'R = \lim_{{n \to \infty}} \left| \frac{{c_n}}{{c_{{n+1}}}} \right|'
+
+[[template]]
+name  = "weierstrass_product"
+latex = '{ff}({zz}) = {zz}^m e^{{{gg}({zz})}} \prod_n \!\left(1 - \tfrac{{{zz}}}{{a_n}}\right) e^{{{zz}/a_n}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type         = "X"
+pool         = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5 — Conformal Mapping (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "joukowski_map"
+latex = '{ww} = {zz} + \frac{{{rr}^2}}{{{zz}}}'
+
+[template.slots.ww]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ww"]
+
+[template.slots.rr]
+type = "S"
+pool = "SCALAR_POOL"
+
+[[template]]
+name  = "schwarz_lemma"
+latex = '|{ff}({zz})| \leq |{zz}|, \quad {ff} : \mathbb{{D}} \to \mathbb{{D}},\; {ff}(0) = 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "conformal_composition"
+latex = '({gg} \circ {ff})({zz}) = {gg}({ff}({zz}))\text{{ conformal}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type         = "X"
+pool         = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "log_map"
+latex = '{ww} = \log {zz} = \ln|{zz}| + i\arg {zz}'
+
+[template.slots.ww]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ww"]
+
+[[template]]
+name  = "cayley_map"
+latex = '{ww} = \frac{{{zz} - i}}{{{zz} + i}},\quad \mathbb{{H}} \to \mathbb{{D}}'
+
+[template.slots.ww]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ww"]
+
+[[template]]
+name  = "exp_map"
+latex = '{ww} = e^{{{zz}}}, \quad e^{{{xx} + i{yy}}} = e^{{{xx}}}(\cos {yy} + i\sin {yy})'
+
+[template.slots.ww]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.zz]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ww"]
+
+[template.slots.xx]
+type = "S"
+pool = "REAL_POOL"
+
+[template.slots.yy]
+type         = "X"
+pool         = "REAL_POOL"
+exclude_from = ["xx"]
+
+# ---------------------------------------------------------------------------
+# Part B6 — Special Theorems (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "open_mapping"
+latex = '{ff} \not\equiv \text{{const}},\;{ff}\text{{ analytic}} \Rightarrow {ff}(\Omega)\text{{ open}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name  = "identity_theorem"
+latex = '''{ff}\big|_E = {gg}\big|_E,\;E' \cap \Omega \neq \emptyset\Rightarrow {ff} \equiv {gg}'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type         = "X"
+pool         = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[[template]]
+name  = "schwarz_reflection"
+latex = '{ff}(\bar{{{zz}}}) = \overline{{{ff}({zz})}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "casorati_weierstrass"
+latex = '\overline{{{ff}(D^*({aa}))}} = \mathbb{{C}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[[template]]
+name  = "montel_theorem"
+latex = '\sup_n |{ff}_n({zz})| \leq M\Rightarrow ({ff}_n)\text{{ normal family}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "picards_little"
+latex = '{ff}\text{{ entire nonconstant}}\Rightarrow \mathbb{{C}} \setminus {ff}(\mathbb{{C}})\text{{ finite}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B7 — Special Functions (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gamma_functional"
+latex = '\Gamma({ss} + 1) = {ss}\,\Gamma({ss})'
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "gamma_reflection"
+latex = '\Gamma({ss})\,\Gamma(1 - {ss}) = \frac{{\pi}}{{\sin(\pi {ss})}}'
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "riemann_zeta_def"
+latex = '\zeta({ss}) = \sum{lim_mod}_{{n=1}}^{{\infty}} \frac{{1}}{{n^{{{ss}}}}},\quad \operatorname{{Re}}({ss}) > 1'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "zeta_functional_eq"
+latex = '\zeta({ss}) = 2^{{{ss}}} \pi^{{{ss}-1}}\sin\!\tfrac{{\pi {ss}}}{{2}}\,\Gamma(1-{ss})\,\zeta(1-{ss})'
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "mellin_transform"
+latex = '\mathcal{{M}}\{{{ff}\}}({ss}) = \int_0^\infty {xx}^{{{ss}-1}} {ff}({xx})\,d{xx}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xx]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ss"]
+
+[[template]]
+name  = "hurwitz_zeta"
+latex = '\zeta({ss}, {aa}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{1}}{{(n + {aa})^{{{ss}}}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type         = "X"
+pool         = "VAR_POOL"
+exclude_from = ["ss"]
+
+# ---------------------------------------------------------------------------
+# Part C — High-n_eff function-pair templates (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "holomorphic_sum"
+latex = '({fn1} + {fn2})({zz}) = {fn1}({zz}) + {fn2}({zz})\text{{ holomorphic}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "composition_analytic"
+latex = '({fn1} \circ {fn2})({zz}) = {fn1}({fn2}({zz}))\text{{ analytic}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "product_rule_complex"
+latex = '''({fn1} {fn2})'({zz}) = {fn1}'({zz}){fn2}({zz}) + {fn1}({zz}){fn2}'({zz})'''
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "cauchy_inequality_fn"
+latex = '\left|{fn1}^{{(n)}}({aa})\right| \leq \frac{{n!\,M}}{{r^n}}\text{{ on }} |{zz}-{aa}|=r'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.aa]
+type = "S"
+pool = "CENTER_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "contour_fn_pair"
+latex = '\oint{lim_mod}_{{{CC}}} {fn1}({zz}) {fn2}({zz}) \, d{zz}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.CC]
+type = "S"
+pool = "CURVE_POOL"
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "fn_triple_composition"
+latex = '{fn1}({fn2}({fn3}({zz})))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn3]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part D — Jacobi theta functions (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "jacobi_theta_series"
+latex = '\vartheta_3({zz}, {qq}) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} {qq}^{{n^2}} e^{{2\pi i n {zz}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "NOME_POOL"
+
+[[template]]
+name  = "jacobi_theta_product"
+latex = '\vartheta_3(0, {qq}) = \prod{lim_mod}_{{n=1}}^{{\infty}} (1-{qq}^{{2n}})(1+{qq}^{{2n-1}})^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.qq]
+type = "S"
+pool = "NOME_POOL"
+
+[[template]]
+name  = "jacobi_theta_identity"
+latex = '\vartheta_3(0,{qq})^4 = \vartheta_2(0,{qq})^4 + \vartheta_4(0,{qq})^4'
+
+[template.slots.qq]
+type = "S"
+pool = "NOME_POOL"
+
+[[template]]
+name  = "jacobi_theta_symmetry"
+latex = '\vartheta_3({zz}, {qq}) = \vartheta_3(-{zz}, {qq})'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "NOME_POOL"
+
+[[template]]
+name  = "jacobi_theta_modular"
+latex = '\vartheta_3\!\left(0,\, e^{{-\pi {tt}}}\right) = \frac{{1}}{{\sqrt{{{tt}}}}}\; \vartheta_3\!\left(0,\, e^{{-\pi/{tt}}}\right)'
+
+[template.slots.tt]
+type = "S"
+pool = "REAL_POOL"
+
+# ---------------------------------------------------------------------------
+# Part E — Weierstrass elliptic + misc (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "weierstrass_p_definition"
+latex = '\wp(z;\, g_2, g_3) = \frac{{1}}{{z^2}} + \sum{lim_mod}_{{(m,n)\neq(0,0)}} \left(\frac{{1}}{{(z - \omega_{{mn}})^2}} - \frac{{1}}{{\omega_{{mn}}^2}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[[template]]
+name  = "weierstrass_p_ode"
+latex = '''(\wp')^2 = 4\wp^3 - g_2 \wp - g_3'''
+
+[[template]]
+name  = "weierstrass_p_periodicity"
+latex = '\wp(z + \omega_1) = \wp(z + \omega_2) = \wp(z)'
+
+[[template]]
+name  = "weierstrass_p_even"
+latex = '\wp(-z) = \wp(z)'
+
+[[template]]
+name  = "complex_cartesian_imath"
+latex = 'z = x + \imath\, y,\quad \bar{{z}} = x - \imath\, y'
+
+# ---------------------------------------------------------------------------
+# Part F — Modulus identities (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "modulus_re_im"
+latex = '|{zz}|^2 = \Re({zz})^2 + \Im({zz})^2'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "real_part_inequality"
+latex = '\Re({zz}) \leq |{zz}|'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "complex_conjugate_re_im"
+latex = '\overline{{{zz}}} = \Re({zz}) - i\,\Im({zz})'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name  = "imaginary_part_bound"
+latex = '|\Im({zz})| \leq |{zz}|'
+
+[template.slots.zz]
+type = "S"
+pool = "VAR_POOL"
