@@ -1,0 +1,3336 @@
+[meta]
+name        = "algebra"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Algebra domain"
+
+# ---------------------------------------------------------------------------
+# Slot pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q']
+
+[[pool]]
+name   = "VARS_SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z']
+
+[[pool]]
+name   = "GEO_N_POOL"
+values = ['n', 'm', 'N', 'M', 'K', 'k', 'p', 'r']
+
+[[pool]]
+name   = "LOG_BASES_POOL"
+values = ['2', '10', 'e', 'a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', '\alpha', '\beta', '\lambda', '\mu']
+
+[[pool]]
+name   = "COEFF_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', '\alpha', '\beta', '\gamma', '\lambda', '\mu', '\rho', '\kappa', '\theta']
+
+[[pool]]
+name   = "GREEK_POOL"
+values = ['\alpha', '\beta', '\gamma', '\delta', '\epsilon', '\zeta', '\eta', '\theta', '\kappa', '\lambda', '\mu', '\nu', '\xi', '\rho', '\sigma', '\tau', '\phi', '\chi', '\psi', '\omega', '\varepsilon', '\varphi', '\vartheta']
+
+[[pool]]
+name   = "VEC_POOL"
+values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+[[pool]]
+name   = "EXP_POOL"
+values = ['2', '3', '4', 'm', 'n', 'p', 'q']
+
+[[pool]]
+name   = "MAT_POOL"
+values = ['A', 'B', 'C', 'M', 'T', 'U']
+
+[[pool]]
+name   = "STYLE_CMDS_POOL"
+values = ['\displaystyle', '\textstyle', '\scriptstyle', '\scriptscriptstyle']
+
+[[pool]]
+name   = "GENFRAC_LEFT_POOL"
+values = ['', '\langle', '\lfloor', '\lceil', '\|', '(', '[', '\{']
+
+[[pool]]
+name   = "GENFRAC_RIGHT_POOL"
+values = ['', '\rangle', '\rfloor', '\rceil', '\|', ')', ']', '\}']
+
+[[pool]]
+name   = "GENFRAC_THICK_POOL"
+values = ['', '0pt', '0.4pt', '0.8pt']
+
+[[pool]]
+name   = "GENFRAC_STYLE_POOL"
+values = ['', '0', '1', '2', '3']
+
+[[pool]]
+name   = "TEXT_NUMER_POOL"
+values = ['\text{rise}', '\text{distance}', '\text{rate}', '\text{observed}', '\text{output}', '\text{signal}', '\text{profit}', '\text{numerator}', '''\text{change in } y''', '\text{work}', '\text{input}', '\text{cost}']
+
+[[pool]]
+name   = "TEXT_DENOM_POOL"
+values = ['\text{run}', '\text{time}', '\text{rate}', '\text{expected}', '\text{input}', '\text{noise}', '\text{cost}', '\text{denominator}', '''\text{change in } x''', '\text{work}', '\text{output}', '\text{profit}']
+
+[[pool]]
+name   = "DEG_POLY_POOL"
+values = ['p', 'q', 'f', 'g', 'h', 'r', 's']
+
+[[pool]]
+name   = "DEG_N_POOL"
+values = ['n', 'm', 'd', 'k', 'r', 'N']
+
+# ---------------------------------------------------------------------------
+# Quadratic family
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "quadratic_formula_pm"
+latex    = '{v0} = \frac{{-{q} \pm \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "quadratic_formula_pos"
+latex    = '{v0} = \frac{{-{q} + \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "quadratic_formula_neg"
+latex    = '{v0} = \frac{{-{q} - \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "discriminant_def"
+latex    = '\Delta = {q}^2 - 4 {p} {r}'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "discriminant_condition"
+latex    = '{q}^2 - 4 {p} {r} {rel} 0'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.rel]
+type = "S"
+pool = ['>', '=', '<', '\geq', '\leq', '\neq']
+
+[[template]]
+name     = "quadratic_factored"
+latex    = '{p}\left({v0} - {q}\right)\left({v0} - {r}\right) = 0'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "quadratic_completed_square"
+latex    = '{p}\left({v0} + \frac{{{q}}}{{2{p}}}\right)^2 = \frac{{{q}^2 - 4 {p} {r}}}{{4{p}}}'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[[template]]
+name     = "quadratic_monic"
+latex    = '{v0}^2 + \frac{{{q}}}{{{p}}}{v0} + \frac{{{r}}}{{{p}}} = 0'
+distinct = [["v0", "p", "q", "r"]]
+
+[template.slots.v0]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.q]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Absolute value equations / inequalities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "abs_value_equations"
+latex = ""
+
+[[template.variants]]
+name     = "abs_val_eq"
+latex    = '\left|{a} {v} + {b}\right| = {c}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "abs_val_lt"
+latex    = '\left|{a} {v} + {b}\right| < {c}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "abs_val_gt"
+latex    = '\left|{a} {v} + {b}\right| > {c}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "abs_val_leq"
+latex    = '\left|{a} {v} + {b}\right| \leq {c}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "abs_val_two_sided"
+latex = '{c1} \leq \left|{v} - {pt}\right| \leq {c2}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.c1]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c2]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["c1"]
+idx  = 0.35
+
+[[template.variants]]
+name  = "abs_val_expr"
+latex = '\left|{expr}\right| = {c}'
+
+[template.variants.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.c]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Polynomial family
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "expanded_polynomial"
+latex = ""
+
+[[template.variants]]
+name  = "expanded_polynomial_deg3"
+latex = '{a} {v}^{{3}} + {mid} + {s_lin} {v} + {b}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.mid]
+type  = "P"
+gen   = "_poly_mid_2"
+param = "v"
+n     = 9
+
+[template.variants.slots.s_lin]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template.variants]]
+name  = "expanded_polynomial_deg4"
+latex = '{a} {v}^{{4}} + {mid} + {s_lin} {v} + {b}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.mid]
+type  = "P"
+gen   = "_poly_mid_3"
+param = "v"
+n     = 81
+
+[template.variants.slots.s_lin]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template.variants]]
+name  = "expanded_polynomial_deg5"
+latex = '{a} {v}^{{5}} + {mid} + {s_lin} {v} + {b}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.mid]
+type  = "P"
+gen   = "_poly_mid_4"
+param = "v"
+n     = 729
+
+[template.variants.slots.s_lin]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template]]
+name  = "rational_fraction"
+latex = '\frac{{{num}}}{{{den}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.num]
+type  = "P"
+gen   = "_poly"
+param = "v"
+n     = 500
+
+[template.slots.den]
+type  = "P"
+gen   = "_poly"
+param = "v"
+n     = 500
+
+[[template]]
+name  = "difference_of_squares"
+latex = '\left({v} - {u}\right)\left({v} + {u}\right) = {v}^2 - \left({u}\right)^2'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "polynomial_nth_root"
+latex = '\sqrt[{n}]{{{poly}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.n]
+type = "S"
+pool = ["2", "3", "4", "5", "6", "n", "m", "k", "p"]
+
+[template.slots.poly]
+type  = "P"
+gen   = "_poly"
+param = "v"
+n     = 5000
+
+[[template]]
+name  = "sum_of_cubes"
+latex = '\left({u}\right)^3 + \left({w}\right)^3 = \left({u}+{w}\right)\left(\left({u}\right)^2 - {u} {w} + \left({w}\right)^2\right)'
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "difference_of_cubes"
+latex = '\left({u}\right)^3 - \left({w}\right)^3 = \left({u}-{w}\right)\left(\left({u}\right)^2 + {u} {w} + \left({w}\right)^2\right)'
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "perfect_square"
+latex = ""
+
+[[template.variants]]
+name  = "perfect_square_plus"
+latex = '\left({u} + {w}\right)^2 = \left({u}\right)^2 + 2 {u} {w} + \left({w}\right)^2'
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template.variants]]
+name  = "perfect_square_minus"
+latex = '\left({u} - {w}\right)^2 = \left({u}\right)^2 - 2 {u} {w} + \left({w}\right)^2'
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "general_factored"
+latex = ""
+
+[[template.variants]]
+name  = "general_factored_2roots"
+latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right) = 0'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.r0]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.r1]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0"]
+idx  = 0.35
+
+[[template.variants]]
+name  = "general_factored_3roots"
+latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right) = 0'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.r0]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.r1]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0"]
+idx  = 0.35
+
+[template.variants.slots.r2]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0", "r1"]
+idx  = 0.35
+
+[[template.variants]]
+name  = "general_factored_4roots"
+latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right)\left({v} - {r3}\right) = 0'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.r0]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.r1]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0"]
+idx  = 0.35
+
+[template.variants.slots.r2]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0", "r1"]
+idx  = 0.35
+
+[template.variants.slots.r3]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "r0", "r1", "r2"]
+idx  = 0.35
+
+[[template]]
+name  = "remainder_factor_theorem"
+latex = ""
+
+[[template.variants]]
+name  = "remainder_theorem"
+latex = '{fn}({v}) = ({v} - {pt}) \cdot {fn}_1({v}) + {fn}({pt})'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template.variants]]
+name  = "factor_theorem"
+latex = '{fn}({pt}) = 0 \implies ({v} - {pt}) \mid {fn}({v})'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# Function composition and inverse identities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "function_composition"
+latex = ""
+
+[[template.variants]]
+name  = "composition_two"
+latex = '\left({f} \circ {g}\right)({v}) = {f}\!\left({g}({v})\right)'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "composition_three"
+latex = '\left({f} \circ {g} \circ {h}\right)({v}) = {f}\!\left({g}\!\left({h}({v})\right)\right)'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.h]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "inverse_cancel_right"
+latex = '{f}\!\left({f}^{{-1}}({v})\right) = {v}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "inverse_cancel_left"
+latex = '{f}^{{-1}}\!\left({f}({v})\right) = {v}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "inverse_composition"
+latex = '\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+# ---------------------------------------------------------------------------
+# General algebra
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "binomial_theorem"
+latex = '\left({u} + {w}\right)^{{{exp}}} = \sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.exp]
+type = "S"
+pool = ['n', 'm', 'k', 'p', 'r', '2', '3', '4', '5', '6']
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "log_identities"
+latex = ""
+
+[[template.variants]]
+name  = "log_quotient_rule"
+latex = '\log_{{{base}}}\!\left(\frac{{{a} {v}}}{{{b}}}\right) = \log_{{{base}}} {a} + \log_{{{base}}} {v} - \log_{{{base}}} {b}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[[template.variants]]
+name  = "log_power_rule"
+latex = '\log_{{{base}}}\!\left(\left({arg}\right)^{{{n}}}\right) = {n} \log_{{{base}}} {arg}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = ['2', '3', 'n', 'k', 'a', 'b', 'c', 'd', 'm', 'p', 'q']
+
+[template.variants.slots.arg]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template.variants]]
+name  = "log_change_of_base"
+latex = '\log_{{{base}}} {arg} = \frac{{\log_{{{base2}}} {arg}}}{{\log_{{{base2}}} {base}}}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+
+[template.variants.slots.base2]
+type = "X"
+pool = "LOG_BASES_POOL"
+exclude_from = ["base"]
+
+[template.variants.slots.arg]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template.variants]]
+name  = "log_product_rule"
+latex = '\log_{{{base}}}\!\left({u} \cdot {w}\right) = \log_{{{base}}} {u} + \log_{{{base}}} {w}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template.variants]]
+name  = "log_base_one"
+latex = '\log_{{{base}}} 1 = 0'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "log_base_self"
+latex = '\log_{{{base}}} {base} = 1'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "log_exp_cancel"
+latex = '\log_{{{base}}} {base}^{{{n}}} = {n}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = ['2', '3', 'n', 'k', 'm', 'p']
+
+[[template.variants]]
+name  = "log_base_power_cancel"
+latex = '{base}^{{\log_{{{base}}} {arg}}} = {arg}'
+
+[template.variants.slots.base]
+type = "S"
+pool = "LOG_BASES_POOL"
+idx  = 0.35
+
+[template.variants.slots.arg]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "epsilon_delta"
+latex = ""
+
+[[template.variants]]
+name  = "epsilon_delta_nearness"
+latex = '\left|{v} - {pt}\right| < {tol}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+[[template.variants]]
+name  = "epsilon_delta_full"
+latex = '0 < \left|{v} - {pt}\right| < \delta \implies \left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_fn_nearness"
+latex = '\left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_interval"
+latex = '{pt} - {eps} < {v} < {pt} + {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template]]
+name  = "completing_the_square"
+latex = ""
+
+[[template.variants]]
+name  = "completing_square_monic"
+latex = '{v}^2 + {a} {v} + {c_const} = \left({v} + \frac{{{a}}}{{2}}\right)^2 + {c_const} - \frac{{{a}^2}}{{4}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c_const]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[[template.variants]]
+name  = "completing_square_nonmonic"
+latex = '{p} {v}^2 + {a} {v} + {b} = {p}\!\left({v} + \frac{{{a}}}{{2{p}}}\right)^2 + {b} - \frac{{{a}^2}}{{4{p}}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.p]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b"]
+
+[[template.variants]]
+name  = "completing_square_partial"
+latex = '{v}^2 + {coeff} {v} = \left({v} + \frac{{{coeff}}}{{2}}\right)^2 - \frac{{{coeff}^2}}{{4}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.coeff]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[[template.variants]]
+name  = "completing_square_vertex"
+latex = 'f({v}) = {a}\!\left({v} - {b}\right)^2 + {c3}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.c3]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b"]
+
+[[template]]
+name  = "floor_ceil"
+latex = ""
+
+[[template.variants]]
+name  = "floor_fraction"
+latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
+
+[template.variants.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.den]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "ceil_fraction"
+latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
+
+[template.variants.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.den]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "floor_add_int"
+latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
+
+[template.variants.slots.v]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.n]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template.variants]]
+name  = "ceil_neg_floor"
+latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
+
+[template.variants.slots.v]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "floor_sum_bound"
+latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.variants.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "exponential_growth"
+latex = ""
+
+[[template.variants]]
+name  = "exponential_growth_pos"
+latex = '{v} = {a} e^{{{g} t}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.g]
+type = "S"
+pool = "GREEK_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "exponential_decay"
+latex = '{v} = {a} e^{{-{g} t}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.g]
+type = "S"
+pool = "GREEK_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "exponential_general_base"
+latex = '{v} = {a} \cdot {b}^t'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[[template.variants]]
+name  = "logistic_growth"
+latex = '{v}(t) = \frac{{{a}}}{{1 + {b} e^{{-{g} t}}}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.g]
+type = "S"
+pool = "GREEK_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "product_formula"
+latex = '\prod{lim_mod}_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'm', 'N', 'M', 'r']
+idx  = 0.35
+
+[template.slots.a11]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'm', 'n', 'p', 'q']
+idx  = 0.35
+
+[template.slots.start]
+type = "S"
+pool = ['1', '0', '2']
+
+[[template]]
+name  = "proportion_identity"
+latex = '\frac{{{e1}}}{{{e2}}} = \frac{{{e3}}}{{{e4}}}'
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.e3]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.e4]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "sum_of_squares"
+latex = '\left({e1}\right)^2 + \left({e2}\right)^2 = {at}^2'
+
+[template.slots.e1]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.e2]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.at]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template]]
+name  = "partial_fraction"
+latex = '\frac{{{a}}}{{{v}({v} - {b})}} = \frac{{{s1}}}{{{v}}} + \frac{{{s2}}}{{{v} - {b}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.slots.s1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.s2]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template]]
+name  = "vieta_formulas"
+latex = ""
+
+[[template.variants]]
+name  = "vieta_quadratic"
+latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
+
+[template.variants.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.c_coef]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b"]
+
+[[template.variants]]
+name  = "vieta_cubic"
+latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
+
+[template.variants.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.variants.slots.c_coef]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b"]
+
+[template.variants.slots.d_coef]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b", "c_coef"]
+
+[[template]]
+name  = "am_gm"
+latex = ""
+
+[[template.variants]]
+name     = "am_gm_two"
+latex    = '\frac{{{u} + {w}}}{{2}} \geq \sqrt{{{u} \, {w}}}'
+distinct = [["u", "w"]]
+
+[template.variants.slots.u]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.w]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "am_gm_three"
+latex    = '\frac{{{u} + {w} + {x}}}{{3}} \geq \sqrt[3]{{{u} \, {w} \, {x}}}'
+distinct = [["u", "w", "x"]]
+
+[template.variants.slots.u]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.w]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.x]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "am_gm_power_mean"
+latex    = '\frac{{{u}^{{1/{v}}} + {w}^{{1/{v}}}}}{{2}} \geq \left(\frac{{{u} + {w}}}{{2}}\right)^{{1/{v}}}'
+distinct = [["u", "w"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.u]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.w]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "am_gm_nvar"
+latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name     = "hm_gm_two"
+latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}}'
+distinct = [["u", "w"]]
+
+[template.variants.slots.u]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.w]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "hm_gm_am_chain"
+latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}} \leq \frac{{{u}+{w}}}{{2}}'
+distinct = [["u", "w"]]
+
+[template.variants.slots.u]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.w]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "hm_def"
+latex = 'H_{{{n}}} = \frac{{{n}}}{{\frac{{1}}{{{a}_1}} + \frac{{1}}{{{a}_2}} + \cdots + \frac{{1}}{{{a}_{{{n}}}}}}}'
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "am_gm_hm_inequality"
+latex = '\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} \leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} \leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template]]
+name  = "cauchy_schwarz"
+latex = ""
+
+[[template.variants]]
+name  = "cauchy_schwarz_sum"
+latex = '\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 \leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 \cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.idx]
+type = "S"
+pool = ['i', 'j', 'k', 'l', 'm', 'r']
+
+[template.variants.slots.ub]
+type = "S"
+pool = ['n', 'm', 'N', 'M', 'K', 'L', 'P']
+
+[template.variants.slots.p1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.variants.slots.p2]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["p1"]
+
+[[template.variants]]
+name  = "cauchy_schwarz_integral"
+latex = '\left(\int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 \leq \int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} \cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.lo]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.hi]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.f1]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
+
+[template.variants.slots.f2]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
+
+[[template.variants]]
+name  = "cauchy_schwarz_vector"
+latex = '\left|\langle \mathbf{{{u1}}}, \, \mathbf{{{u2}}} \rangle\right|^2 \leq \left\|\mathbf{{{u1}}}\right\|^2 \left\|\mathbf{{{u2}}}\right\|^2'
+
+[template.variants.slots.u1]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.variants.slots.u2]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u1"]
+idx  = 0.35
+
+[[template]]
+name  = "polynomial_division"
+latex = ""
+
+[[template.variants]]
+name  = "polynomial_division_abstract"
+latex = '{f}({v}) = {q}({v}) \cdot {g}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.r]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "polynomial_division_remainder_form"
+latex = '{f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v})'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.r]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "polynomial_division_linear_divisor"
+latex = '{f}({v}) = ({v} - {a}) \cdot {q}({v}) + {f}({a})'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template.variants]]
+name  = "polynomial_division_uniqueness"
+latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.r]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[[template]]
+name  = "triangle_inequality"
+latex = ""
+
+[[template.variants]]
+name     = "triangle_inequality_basic"
+latex    = '\left|{a} + {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "triangle_inequality_difference"
+latex    = '\left|{a} - {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "triangle_inequality_reverse"
+latex    = '\left|\left|{a}\right| - \left|{b}\right|\right| \leq \left|{a} - {b}\right|'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "triangle_inequality_norm"
+latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
+
+[template.variants.slots.u]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.variants.slots.v]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u"]
+idx  = 0.35
+
+[[template.variants]]
+name  = "triangle_inequality_nterms"
+latex = '\left|{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}\right| \leq \left|{a}_1\right| + \left|{a}_2\right| + \cdots + \left|{a}_{{{n}}}\right|'
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Power sums (3-level nesting)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "power_sums"
+latex = ""
+
+[[template.variants]]
+name  = "sum_of_integers"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "sum_of_integers_ellipsis"
+latex = ""
+
+[[template.variants.variants]]
+name  = "sum_of_integers_ellipsis_2"
+latex = '1 + 2 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants.variants]]
+name  = "sum_of_integers_ellipsis_3"
+latex = '1 + 2 + 3 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants.variants]]
+name  = "sum_of_integers_ellipsis_4"
+latex = '1 + 2 + 3 + 4 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "sum_of_squares_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "sum_of_cubes_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name     = "arithmetic_progression_sum"
+latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} \left({a} + k{d}\right) = \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}'
+distinct = [["a", "d"]]
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.d]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "arithmetic_progression_ellipsis"
+latex = ""
+
+[[template.variants.variants]]
+name     = "arithmetic_progression_ellipsis_2"
+latex    = '{a} + ({a}+{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+distinct = [["a", "d"]]
+
+[template.variants.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.variants.slots.d]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants.variants]]
+name     = "arithmetic_progression_ellipsis_3"
+latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+distinct = [["a", "d"]]
+
+[template.variants.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.variants.slots.d]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants.variants]]
+name     = "arithmetic_progression_ellipsis_4"
+latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + ({a}+3{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+distinct = [["a", "d"]]
+
+[template.variants.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.variants.slots.d]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "telescoping_sum"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) = {fn}({n}+1) - {fn}(1)'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Geometric series
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "geometric_series"
+latex = ""
+
+[[template.variants]]
+name     = "geometric_series_finite"
+latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
+distinct = [["a", "r"]]
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "geometric_series_finite_unit"
+latex = '\sum{lim_mod}_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.r]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name     = "geometric_series_infinite"
+latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
+distinct = [["a", "r"]]
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[[template.variants]]
+name     = "geometric_series_closed_form"
+latex    = '{a} + {a} {r} + {a} {r}^2 + \cdots + {a} {r}^{{{n}}} = {a} \, \frac{{{r}^{{{n}+1}} - 1}}{{{r} - 1}}'
+distinct = [["a", "r"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Sophie Germain identity
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sophie_germain"
+latex = ""
+
+[[template.variants]]
+name     = "sophie_germain_standard"
+latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "sophie_germain_sum_of_squares"
+latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "sophie_germain_lhs_only"
+latex    = '{a}^4 + 4{b}^4'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Difference / sum of nth powers
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "nth_power_factoring"
+latex = ""
+
+[[template.variants]]
+name     = "difference_nth_powers_ellipsis2"
+latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + \cdots + {b}^{{{n}-1}}\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name     = "difference_nth_powers_ellipsis3"
+latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + {a}^{{{n}-3}}{b}^2 + \cdots + {b}^{{{n}-1}}\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name     = "sum_odd_powers_ellipsis2"
+latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + \cdots + {b}^{{2{k}}}\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.k]
+type = "S"
+pool = ['n', 'm', 'p', 'r', 'j', 'l']
+
+[[template.variants]]
+name     = "sum_odd_powers_ellipsis3"
+latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + {a}^{{2{k}-2}}{b}^2 - \cdots + {b}^{{2{k}}}\right)'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.k]
+type = "S"
+pool = ['n', 'm', 'p', 'r', 'j', 'l']
+
+# ---------------------------------------------------------------------------
+# Conjugate radical pairs
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "conjugate_pairs"
+latex = ""
+
+[[template.variants]]
+name     = "conjugate_radical_basic"
+latex    = '({a} + \sqrt{{{b}}})({a} - \sqrt{{{b}}}) = {a}^2 - {b}'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template.variants]]
+name     = "conjugate_radical_both"
+latex    = '(\sqrt{{{a}}} + \sqrt{{{b}}})(\sqrt{{{a}}} - \sqrt{{{b}}}) = {a} - {b}'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "conjugate_radical_coeff"
+latex    = '({a} + {c}\sqrt{{{b}}})({a} - {c}\sqrt{{{b}}}) = {a}^2 - {c}^2 {b}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.c]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "conjugate_complex"
+latex    = '({a} + {b}\,i)({a} - {b}\,i) = {a}^2 + {b}^2'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "conjugate_rationalise"
+latex    = '\frac{{1}}{{{a} + \sqrt{{{b}}}}} = \frac{{{a} - \sqrt{{{b}}}}}{{{a}^2 - {b}}}'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template.variants]]
+name     = "rationalize_scalar_plus_radical"
+latex    = '\frac{{{a}}}{{{b} + \sqrt{{{c}}}}} = \frac{{{a}({b} - \sqrt{{{c}}})}}{{ {b}^2 - {c} }}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template.variants]]
+name     = "rationalize_two_radicals"
+latex    = '\frac{{{a}}}{{\sqrt{{{b}}} + \sqrt{{{c}}}}} = \frac{{{a}(\sqrt{{{b}}} - \sqrt{{{c}}})}}{{ {b} - {c} }}'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.b]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Rational exponent rules
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "rational_exponent_rules"
+latex = ""
+
+[[template.variants]]
+name  = "rational_exp_radical"
+latex = '{x}^{{{m}/{n}}} = \sqrt[{{{n}}}]{{{x}^{{{m}}}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.m]
+type = "S"
+pool = "EXP_POOL"
+
+[template.variants.slots.n]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["m"]
+
+[[template.variants]]
+name  = "negative_exp"
+latex = '{x}^{{-{n}}} = \frac{{1}}{{{x}^{{{n}}}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "EXP_POOL"
+
+[[template.variants]]
+name  = "product_of_powers"
+latex = '{x}^{{{m}}} \cdot {x}^{{{n}}} = {x}^{{{m}+{n}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.m]
+type = "S"
+pool = "EXP_POOL"
+
+[template.variants.slots.n]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["m"]
+
+[[template.variants]]
+name  = "power_of_power"
+latex = '\left({x}^{{{m}}}\right)^{{{n}}} = {x}^{{{m} \cdot {n}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.m]
+type = "S"
+pool = "EXP_POOL"
+
+[template.variants.slots.n]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["m"]
+
+[[template.variants]]
+name  = "power_of_product"
+latex = '({x}{y})^{{{n}}} = {x}^{{{n}}} {y}^{{{n}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.y]
+type = "X"
+pool = "VARS_POOL"
+exclude_from = ["x"]
+idx  = 0.35
+
+[template.variants.slots.n]
+type = "S"
+pool = "EXP_POOL"
+
+[[template.variants]]
+name  = "quotient_of_powers"
+latex = '\frac{{{x}^{{{m}}}}}{{{x}^{{{n}}}}} = {x}^{{{m}-{n}}}'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.m]
+type = "S"
+pool = "EXP_POOL"
+
+[template.variants.slots.n]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["m"]
+
+[[template.variants]]
+name  = "zero_exponent"
+latex = '{x}^0 = 1 \quad ({x} \neq 0)'
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Polynomial root factoring form
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "polynomial_root_form"
+latex = ""
+
+[[template.variants]]
+name     = "polynomial_root_form_general"
+latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
+distinct = [["lc", "r1", "r2", "rn"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.lc]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r1]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r2]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.rn]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "polynomial_root_form_monic"
+latex    = '{fn}({v}) = ({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
+distinct = [["r1", "r2", "rn"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.r1]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r2]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.rn]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "polynomial_root_form_quadratic"
+latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2})'
+distinct = [["lc", "r1", "r2"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.lc]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r1]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r2]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "polynomial_root_form_subscript"
+latex    = '{fn}({v}) = {lc}({v} - {r}_1)({v} - {r}_2) \cdots ({v} - {r}_{{{n}}})'
+distinct = [["lc", "r"]]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.variants.slots.lc]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.variants.slots.r]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# leqslant / geqslant / lll / ggg / lesssim / gtrsim
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "leqslant_chain"
+latex    = '{aa} \leqslant {bb} \leqslant {cc}'
+distinct = [["aa", "bb", "cc"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "norm_leqslant_bound"
+latex    = '\|{vv}\| \leqslant {aa} \|{ww}\|'
+distinct = [["vv", "ww"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ww]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "SCALARS_POOL"
+
+[[template]]
+name  = "abs_geqslant_eps"
+latex = '|{xx}| \geqslant {eps}'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template]]
+name     = "much_less_than"
+latex    = '{aa} \lll {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "much_greater_than"
+latex    = '{aa} \ggg {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name  = "norm_lesssim_power"
+latex = '\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "EXP_POOL"
+
+[[template]]
+name     = "gtrsim_scalars"
+latex    = '{aa} \gtrsim {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Adjoint / dagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "adjoint_involutive"
+latex = '({AA}^{{\dagger}})^{{\dagger}} = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_anti_multiplicative"
+latex    = '({AA} {BB})^{{\dagger}} = {BB}^{{\dagger}} {AA}^{{\dagger}}'
+distinct = [["AA", "BB"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.BB]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_inner_product"
+latex    = '\langle {AA} {uu}, {vv} \rangle = \langle {uu}, {AA}^{{\dagger}} {vv} \rangle'
+distinct = [["uu", "vv"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Bidual / ddagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bidual_notation"
+latex = '{AA}^{{\ddagger}} = ({AA}^{{\dagger}})^{{\dagger}}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "bidual_canonical_embedding"
+latex    = '\iota : V \hookrightarrow V^{{\ddagger}},\quad \iota({vv})({ff}) = {ff}({vv})'
+distinct = [["vv", "ff"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = ['f', 'g', 'h', 'F', 'G']
+
+# ---------------------------------------------------------------------------
+# Large manual bracket-size templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "prod_of_sums_biggl"
+latex = '\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k \biggr)\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k \biggr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+
+[template.slots.b]
+type = "S"
+pool = ['h', 'i', 'j', 'k', 'l', 'm', 'n']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm']
+
+[[template]]
+name  = "cauchy_schwarz_biggl"
+latex = '\Biggl| \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k {b}_k \Biggr|^2 \leq \Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k^2 \Biggr)\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'e']
+
+[template.slots.b]
+type = "S"
+pool = ['f', 'g', 'h', 'i', 'j']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm']
+
+[[template]]
+name  = "set_comprehension_biggl"
+latex = '\Biggl\{{ {v} \in {sp} \;\Bigg|\; {f}({v}) \leq {c} \Biggr\}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = ['\mathbb{R}', '\mathbb{Z}', '\mathbb{N}']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 100
+
+[template.slots.c]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Math style modifier overrides
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "style_frac"
+latex = '{style} \frac{{{num}}}{{{den}}}'
+
+[template.slots.style]
+type = "S"
+pool = "STYLE_CMDS_POOL"
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "style_binom"
+latex = '{style} \binom{{{top}}}{{{bot}}}'
+
+[template.slots.style]
+type = "S"
+pool = "STYLE_CMDS_POOL"
+
+[template.slots.top]
+type = "S"
+pool = "GEO_N_POOL"
+
+[template.slots.bot]
+type = "X"
+pool = "GEO_N_POOL"
+exclude_from = ["top"]
+
+[[template]]
+name  = "style_sum_frac"
+latex = '{style} \sum_{{{lo}=0}}^{{{hi}}} \frac{{{num}}}{{{den}}}'
+
+[template.slots.style]
+type = "S"
+pool = "STYLE_CMDS_POOL"
+
+[template.slots.lo]
+type = "S"
+pool = ['k', 'j', 'i', 'm']
+
+[template.slots.hi]
+type = "S"
+pool = ['n', 'N', 'M', 'p']
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "style_expr"
+latex = '{style} {expr}'
+
+[template.slots.style]
+type = "S"
+pool = "STYLE_CMDS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# \genfrac as general-purpose fraction builder
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "genfrac_general"
+latex = '\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}'
+
+[template.slots.lft]
+type = "S"
+pool = "GENFRAC_LEFT_POOL"
+
+[template.slots.rgt]
+type = "S"
+pool = "GENFRAC_RIGHT_POOL"
+
+[template.slots.thk]
+type = "S"
+pool = "GENFRAC_THICK_POOL"
+
+[template.slots.sty]
+type = "S"
+pool = "GENFRAC_STYLE_POOL"
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "genfrac_no_rule"
+latex = '\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "genfrac_angle"
+latex = '\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# Text-in-fraction patterns
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "text_over_text_frac"
+latex = '\frac{{{num}}}{{{den}}}'
+
+[template.slots.num]
+type = "S"
+pool = "TEXT_NUMER_POOL"
+
+[template.slots.den]
+type = "X"
+pool = "TEXT_DENOM_POOL"
+exclude_from = ["num"]
+
+[[template]]
+name  = "text_over_expr_frac"
+latex = '\frac{{{num}}}{{{den}}}'
+
+[template.slots.num]
+type = "S"
+pool = "TEXT_NUMER_POOL"
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "expr_over_text_frac"
+latex = '\frac{{{num}}}{{{den}}}'
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.den]
+type = "S"
+pool = "TEXT_DENOM_POOL"
+
+[[template]]
+name  = "text_frac_equality"
+latex = '{lhs} = \frac{{{num}}}{{{den}}}'
+
+[template.slots.lhs]
+type = "S"
+pool = "TEXT_NUMER_POOL"
+
+[template.slots.num]
+type = "S"
+pool = "TEXT_NUMER_POOL"
+
+[template.slots.den]
+type = "X"
+pool = "TEXT_DENOM_POOL"
+exclude_from = ["num"]
+
+# ---------------------------------------------------------------------------
+# Polynomial degree templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "deg_definition"
+latex    = '\deg({pp}) = {nn}'
+distinct = [["pp", "nn"]]
+
+[template.slots.pp]
+type = "S"
+pool = "DEG_POLY_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "DEG_N_POOL"
+
+[[template]]
+name  = "deg_product"
+latex = '\deg({pp} \cdot {qq}) = \deg({pp}) + \deg({qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "DEG_POLY_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DEG_POLY_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "deg_sum_ineq"
+latex = '\deg({pp} + {qq}) \leq \max(\deg({pp}),\, \deg({qq}))'
+
+[template.slots.pp]
+type = "S"
+pool = "DEG_POLY_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DEG_POLY_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name  = "deg_composition"
+latex = '\deg({pp} \circ {qq}) = \deg({pp}) \cdot \deg({qq})'
+
+[template.slots.pp]
+type = "S"
+pool = "DEG_POLY_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DEG_POLY_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name     = "deg_monomial"
+latex    = '\deg({aa} {vv}^{{{nn}}}) = {nn}'
+distinct = [["aa", "nn"]]
+
+[template.slots.aa]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "DEG_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Division operator templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "div_expr_eq"
+latex = '{a} \div {b} = {c}'
+
+[template.slots.a]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+[template.slots.b]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+[template.slots.c]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+[[template]]
+name  = "div_remainder"
+latex = '{a} \div {b} = {q} \cdots {r}'
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.q]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.r]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[[template]]
+name  = "div_fraction_identity"
+latex = '{a} \div {b} = \frac{{{a2}}}{{{b2}}}'
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.a2]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[template.slots.b2]
+type = "E"
+gen  = "_atom"
+n    = 100
+
+[[template]]
+name  = "div_paren_expr"
+latex = '\left({a} + {b}\right) \div {c}'
+
+[template.slots.a]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+[template.slots.b]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+[template.slots.c]
+type = "E"
+gen  = "_expr"
+n    = 50
+
+# ---------------------------------------------------------------------------
+# Substack templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "substack_sum_alg"
+latex = '{s}'
+
+[template.slots.s]
+type = "E"
+gen  = "_substack_sum"
+n    = 5000000
+
+[[template]]
+name  = "substack_prod_alg"
+latex = '{s}'
+
+[template.slots.s]
+type = "E"
+gen  = "_substack_prod"
+n    = 5000000
+
+[[template]]
+name  = "substack_sum_eq"
+latex = '{s} = {v}'
+
+[template.slots.s]
+type = "E"
+gen  = "_substack_sum"
+n    = 1800
+
+[template.slots.v]
+type = "E"
+gen  = "_expr"
+n    = 1800
