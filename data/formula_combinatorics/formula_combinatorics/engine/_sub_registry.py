@@ -22,8 +22,10 @@ from ._templates import (
     _interval,
     _matrix_env,
     _matrix_with_ellipsis,
+    _multinomial_full,
     _poly,
     _poly_mid_factory,
+    _recurrence_rhs,
     _smallmatrix_inline,
     _substack_prod,
     _substack_sum,
@@ -54,6 +56,9 @@ SUB_GENERATORS: dict[str, Callable] = {
     "_indef_integral": _indef_integral,
     "_def_integral": _def_integral,
     "_interval": _interval,
+    # Combinatorics generators (signature: gen(rng, param) -> str)
+    "_multinomial_full": _multinomial_full,
+    "_recurrence_rhs": _recurrence_rhs,
     # Substack sum/product generators (signature: gen(rng) -> str)
     "_substack_sum": _substack_sum,
     "_substack_prod": _substack_prod,

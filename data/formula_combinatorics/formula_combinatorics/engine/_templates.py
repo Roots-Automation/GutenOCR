@@ -10,6 +10,7 @@ from ._vocab import (
     _FUNCS,
     _INDICES,
     _MATRIX_NAMES,
+    _SCALARS,
     _atom,
     _expr,
     _i,
@@ -202,6 +203,21 @@ def _poly_mid_factory(max_exp: int) -> Callable[[random.Random, str], str]:
         return " + ".join(rf"{_s(rng)} {v}^{{{i}}}" for i in range(max_exp, 1, -1))
 
     return _poly_mid
+
+
+def _multinomial_full(rng: random.Random, n: str) -> str:
+    """Return a full multinomial coefficient formula with two distinct scalars drawn from _SCALARS excluding n."""
+    pool = [s for s in _SCALARS if s != n]
+    a, b = rng.sample(pool, 2)
+    return (
+        rf"\binom{{{n}}}{{{a},\,{b},\,{n}-{a}-{b}}} "
+        rf"= \frac{{{n}!}}{{{a}!\,{b}!\,({n}-{a}-{b})!}}"
+    )
+
+
+def _recurrence_rhs(rng: random.Random, n: str) -> str:
+    """Return a master-theorem RHS string using the drawn n variable name."""
+    return rng.choice([f"O({n})", "O(1)", f"O({n}^2)", rf"O(\log {n})", rf"O({n} \log {n})"])
 
 
 def _poly(rng: random.Random, var: str, *, max_degree: int = 5) -> str:
