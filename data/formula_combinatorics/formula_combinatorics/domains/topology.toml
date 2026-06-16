@@ -1,0 +1,1350 @@
+[meta]
+domain = "topology"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["i", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t"]
+
+[[pool]]
+name   = "SPACE_POOL"
+values = ["X", "Y", "M", '\mathcal{M}', '\mathcal{X}', "B", "E"]
+
+[[pool]]
+name   = "OPEN_POOL"
+values = ["U", "V", "W", '\mathcal{U}', '\mathcal{V}']
+
+[[pool]]
+name   = "CLOSED_POOL"
+values = ["A", "B", "F", "K", "C"]
+
+[[pool]]
+name   = "MAP_POOL"
+values = ["f", "g", '\phi', '\psi', '\varphi', "h", "p"]
+
+[[pool]]
+name   = "G_POOL"
+values = ['\mathbb{Z}', '\mathbb{Z}/p\mathbb{Z}', '\mathbb{Q}', '\mathbb{R}', '\mathbb{Z}/2\mathbb{Z}']
+
+[[pool]]
+name   = "DIST_POOL"
+values = ["d", "d_X", "d_Y", '\rho', '\sigma']
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\Omega', '\eta', '\theta']
+
+[[pool]]
+name   = "FIBER_POOL"
+values = ["F", '\mathcal{F}', '\mathcal{E}', "E"]
+
+[[pool]]
+name   = "CC_POOL"
+values = ["c", "L", '\kappa']
+
+[[pool]]
+name   = "EPS_POOL"
+values = ['\varepsilon', '\epsilon', '\delta']
+
+[[pool]]
+name   = "PT_POOL"
+values = ["y", "z", "w", "u", "v"]
+
+[[pool]]
+name   = "DM_POOL"
+values = ["n", "m", "d", "N"]
+
+# ---------------------------------------------------------------------------
+# Part A: reparameterized originals (16)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fundamental_group"
+latex = '\pi_{{{nn}}}({sp}, x_0)'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "closure"
+latex = '\overline{{{aa}}} = \bigcap\!\left\{{{ff} \supseteq {aa} : {ff} \text{{ closed}}\right\}}'
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.ff]
+type = "X"
+pool = "CLOSED_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "metric_triangle_inequality"
+latex = '{dd}(x, z) \leq {dd}(x, y) + {dd}(y, z)'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+# ----
+
+[[template]]
+name  = "quotient_space"
+latex = '{sp} / {{\sim}} \overset{{{mp}}}{{\longrightarrow}} {tp}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.mp]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "hausdorff"
+latex = '\forall\, x \neq y \in {sp},\;\exists\, {uu} \ni x,\; {vv} \ni y :\; {uu} \cap {vv} = \emptyset'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+[template.slots.vv]
+type = "X"
+pool = "OPEN_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "interior_closure"
+latex = '\operatorname{{int}}({aa}) \subseteq {aa} \subseteq \overline{{{aa}}}'
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+# ----
+
+[[template]]
+name  = "homotopy_group_sphere"
+latex = '\pi_{{{nn}}}(S^{{{nn}}}) \cong \mathbb{{Z}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_characteristic"
+latex = '\chi({sp}) = \sum{lim_mod}_{{{nn} \geq 0}} (-1)^{{{nn}}} b_{{{nn}}}({sp})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "boundary_squared"
+latex = '\partial_{{{nn}}} \circ \partial_{{{nn}+1}} = 0'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "induced_map_fundamental_group"
+latex = '{ff}_* : \pi_1({sp}, x_0) \to \pi_1({tp}, {ff}(x_0))'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "stokes_topology"
+latex = '\int{lim_mod}_{{\partial {mm}}} {om} = \int{lim_mod}_{{{mm}}} d{om}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mm]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "homology_disjoint_union"
+latex = 'H_{{{nn}}}({sp} \sqcup {tp}) \cong H_{{{nn}}}({sp}) \oplus H_{{{nn}}}({tp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "long_exact_sequence"
+latex = '\cdots \to H_{{{nn}}}({aa}) \to H_{{{nn}}}({sp}) \to H_{{{nn}}}({sp}, {aa}) \to H_{{{nn}-1}}({aa}) \to \cdots'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "covering_space"
+latex = '{ff}_* : \pi_1(\tilde{{{sp}}}, \tilde{{x}}_0) \hookrightarrow \pi_1({sp}, x_0)'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "homotopy_equivalence_homology"
+latex = '{sp} \simeq {tp} \implies H_{{{nn}}}({sp}) \cong H_{{{nn}}}({tp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "brouwer_fixed_point"
+latex = '{ff} : D^{{{nn}}} \to D^{{{nn}}} \text{{ continuous}} \implies \exists\, x : {ff}(x) = x'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: point-set topology (10)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "open_set_union"
+latex = '\bigcup_{{\alpha}} {uu}_\alpha \in \tau \quad \text{{for any family of open sets}}'
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+# ----
+
+[[template]]
+name  = "open_set_finite_intersection"
+latex = '{uu} \cap {vv} \in \tau \quad ({uu},\, {vv} \text{{ open}})'
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+[template.slots.vv]
+type = "X"
+pool = "OPEN_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "continuous_preimage"
+latex = '{ff} \text{{ continuous}} \iff {ff}^{{-1}}({uu}) \text{{ open}} \;\forall\, {uu} \in \tau'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+# ----
+
+[[template]]
+name  = "compactness_finite_subcover"
+latex = '\forall \{{{uu}_\alpha\}} \text{{ open cover of }} {sp}, \;\exists \text{{ finite subcover}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+# ----
+
+[[template]]
+name  = "connected_def"
+latex = '{sp} = {uu} \cup {vv},\;{uu} \cap {vv} = \emptyset,\;{uu},{vv} \text{{ open}} \implies {uu} = \emptyset \text{{ or }} {vv} = \emptyset'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+[template.slots.vv]
+type = "X"
+pool = "OPEN_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "path_connected_def"
+latex = '\forall\, x,y \in {sp},\;\exists\, {gg} : [0,1] \to {sp} \text{{ cts}},\; {gg}(0)=x,\; {gg}(1)=y'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "urysohn_lemma"
+latex = '{aa}, {bb} \text{{ disjoint closed in }} {sp} \implies \exists\, {ff} : {sp} \to [0,1],\; {ff}|_{{{aa}}} = 0,\; {ff}|_{{{bb}}} = 1'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "CLOSED_POOL"
+exclude_from = ["aa"]
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "product_topology_subbasis"
+latex = '\pi_{{{nn}}}^{{-1}}({uu}) \text{{ form a sub-basis for }} \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "tychonoff_theorem"
+latex = '\Bigl(\forall\, {nn} : {sp}_{{{nn}}} \text{{ compact}}\Bigr) \implies \prod{lim_mod}_{{{nn}}} {sp}_{{{nn}}} \text{{ compact}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "baire_category_theorem"
+latex = '{sp} \text{{ complete metric}} \implies \bigcap_{{k=1}}^\infty {uu}_k \text{{ dense (dense open }} {uu}_k\text{{)}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: metric spaces (8)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "open_ball_def"
+latex = 'B_{{{eps}}}(x) = \{{{yy} \in {sp} : {dd}(x, {yy}) < {eps}\}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+[template.slots.yy]
+type = "S"
+pool = "PT_POOL"
+
+# ----
+
+[[template]]
+name  = "cauchy_sequence"
+latex = '\forall\, {eps} > 0\;\exists\, N :\; n, m \geq N \implies {dd}(x_n, x_m) < {eps}'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "completeness_def"
+latex = '{sp} \text{{ complete}} \iff \text{{every Cauchy sequence in }} {sp} \text{{ converges}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "isometry_def"
+latex = '{dd}({ff}(x), {ff}(y)) = {dd}(x, y) \;\forall\, x, y'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "lipschitz_map"
+latex = '{dd}({ff}(x), {ff}(y)) \leq K\, {dd}(x, y)'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "contraction_mapping"
+latex = '{dd}({ff}(x), {ff}(y)) \leq {cc}\, {dd}(x, y),\;{cc} < 1 \implies \exists!\, x^* : {ff}(x^*) = x^*'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "CC_POOL"
+
+# ----
+
+[[template]]
+name  = "total_boundedness"
+latex = '\forall\, {eps} > 0,\;{sp} \subseteq \bigcup_{{i=1}}^n B_{{{eps}}}(x_i)'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "metric_equivalence_norms"
+latex = '{cc}_1 \|x\| \leq {dd}(x, 0) \leq {cc}_2 \|x\|'
+
+[template.slots.dd]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "CC_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: fundamental group and homotopy (8)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "seifert_van_kampen"
+latex = '\pi_1({sp}) \cong \pi_1({aa}) *_{{\pi_1({aa} \cap {bb})}} \pi_1({bb})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "CLOSED_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "fundamental_group_product"
+latex = '\pi_1({sp} \times {tp}) \cong \pi_1({sp}) \times \pi_1({tp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "fundamental_group_circle"
+latex = '\pi_1(S^1) \cong \mathbb{Z}'
+
+# ----
+
+[[template]]
+name  = "homotopy_relative"
+latex = '{ff} \simeq {gg} \;\mathrm{{rel}}\; A'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "MAP_POOL"
+exclude_from = ["ff"]
+
+# ----
+
+[[template]]
+name  = "homotopy_class_composition"
+latex = '[{ff}] \cdot [{gg}] \in \pi_1({sp}, x_0)'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "MAP_POOL"
+exclude_from = ["ff"]
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "deck_transformation"
+latex = '\mathrm{{Deck}}(\tilde{{{sp}}}/{sp}) \cong \pi_1({sp}) / p_* \pi_1(\tilde{{{sp}}})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "van_kampen_free_product"
+latex = '\pi_1({sp} \vee {tp}) \cong \pi_1({sp}) * \pi_1({tp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "homotopy_type_invariance"
+latex = '{sp} \simeq {tp} \implies \pi_{{{nn}}}({sp}) \cong \pi_{{{nn}}}({tp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: homology (10)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "singular_homology_def"
+latex = 'H_{{{nn}}}({sp}) = \ker \partial_{{{nn}}} / \mathrm{{im}}\, \partial_{{{nn}+1}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "homology_with_coeffs"
+latex = 'H_{{{nn}}}({sp};\, {gc}) = H_{{{nn}}}(C_*({sp}) \otimes {gc})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.gc]
+type = "S"
+pool = "G_POOL"
+
+# ----
+
+[[template]]
+name  = "excision_theorem"
+latex = 'H_{{{nn}}}({sp} \setminus {uu},\,{aa} \setminus {uu}) \cong H_{{{nn}}}({sp}, {aa})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "OPEN_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "mayer_vietoris"
+latex = '\cdots \to H_{{{nn}}}({aa} \cap {bb}) \to H_{{{nn}}}({aa}) \oplus H_{{{nn}}}({bb}) \to H_{{{nn}}}({sp}) \to H_{{{nn}-1}}({aa} \cap {bb}) \to \cdots'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "CLOSED_POOL"
+exclude_from = ["aa"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "kunneth_formula"
+latex = 'H_{{{nn}}}({sp} \times {tp};\, {gc}) \cong \bigoplus_{{p+q={nn}}} H_p({sp};\, {gc}) \otimes H_q({tp};\, {gc})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.gc]
+type = "S"
+pool = "G_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "universal_coefficients_thm"
+latex = 'H^{{{nn}}}({sp};\, {gc}) \cong \mathrm{{Hom}}(H_{{{nn}}}({sp}), {gc}) \oplus \mathrm{{Ext}}(H_{{{nn}-1}}({sp}), {gc})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.gc]
+type = "S"
+pool = "G_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "betti_number_def"
+latex = 'b_{{{nn}}}({sp}) = \mathrm{{rank}}\, H_{{{nn}}}({sp};\, \mathbb{{Z}})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "poincare_duality"
+latex = 'H^{{{nn}}}({sp};\, {gc}) \cong H_{{{dm}-{nn}}}({sp};\, {gc})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.gc]
+type = "S"
+pool = "G_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.dm]
+type = "X"
+pool = "DM_POOL"
+exclude_from = ["nn"]
+
+# ----
+
+[[template]]
+name  = "relative_long_exact_sequence"
+latex = '\cdots \to H_{{{nn}}}({aa}) \xrightarrow{{i_*}} H_{{{nn}}}({sp}) \xrightarrow{{j_*}} H_{{{nn}}}({sp}, {aa}) \xrightarrow{{\partial}} H_{{{nn}-1}}({aa}) \to \cdots'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "reduced_homology_suspension"
+latex = '\tilde{{H}}_{{{nn}}}(\Sigma {sp}) \cong \tilde{{H}}_{{{nn}-1}}({sp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: cohomology and de Rham (6)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "de_rham_cohomology"
+latex = 'H^{{{nn}}}_{{dR}}({sp}) = \ker d^{{{nn}}} / \mathrm{{im}}\, d^{{{nn}-1}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "de_rham_isomorphism"
+latex = 'H^{{{nn}}}_{{dR}}({sp}) \cong H^{{{nn}}}({sp};\, \mathbb{{R}})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "cup_product_cohomology"
+latex = '\smile : H^{{{pp}}}({sp}) \otimes H^{{{qq}}}({sp}) \to H^{{{pp}+{qq}}}({sp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["pp"]
+
+# ----
+
+[[template]]
+name  = "cap_product_cohomology"
+latex = '\frown : H^{{{pp}}}({sp}) \otimes H_{{{nn}}}({sp}) \to H_{{{nn}-{pp}}}({sp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.nn]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["pp"]
+
+# ----
+
+[[template]]
+name  = "chern_class_first"
+latex = 'c_1({fb}) \in H^2({sp};\, \mathbb{{Z}})'
+
+[template.slots.fb]
+type = "S"
+pool = "FIBER_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_class"
+latex = 'e({fb}) \in H^{{{nn}}}({sp};\, \mathbb{{Z}})'
+
+[template.slots.fb]
+type = "S"
+pool = "FIBER_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: manifolds and smooth topology (7)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "tangent_bundle_dim"
+latex = '\dim T{sp} = 2\, \dim {sp}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "differential_map"
+latex = 'd{ff}_x : T_x {sp} \to T_{{{ff}(x)}} {tp}'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "regular_value_theorem"
+latex = '{ff}^{{-1}}(y) \text{{ is a submanifold}} \text{{ if }} y \text{{ is a regular value of }} {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "degree_of_map"
+latex = '\deg({ff}) = \sum{lim_mod}_{{x \in {ff}^{{-1}}(y)}} \operatorname{{sign}}\, d{ff}_x'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ----
+
+[[template]]
+name  = "morse_inequality"
+latex = 'b_{{{nn}}}({sp}) \leq c_{{{nn}}}({sp})'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "lefschetz_number"
+latex = 'L({ff}) = \sum{lim_mod}_{{k=0}}^{{{nn}}} (-1)^k \mathrm{{Tr}}\bigl({ff}_* : H_k \to H_k\bigr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "lefschetz_fixed_point"
+latex = 'L({ff}) \neq 0 \implies {ff} \text{{ has a fixed point}}'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: covering spaces and fibrations (3)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "lifting_criterion"
+latex = '{ff}_*(\pi_1({sp}, x_0)) \subseteq p_*(\pi_1(\tilde{{{tp}}}, \tilde{{x}}_0))'
+
+[template.slots.ff]
+type = "S"
+pool = "MAP_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "fibration_long_exact"
+latex = '\cdots \to \pi_{{{nn}}}({fb}) \to \pi_{{{nn}}}({sp}) \to \pi_{{{nn}}}({tp}) \to \pi_{{{nn}-1}}({fb}) \to \cdots'
+
+[template.slots.fb]
+type = "S"
+pool = "FIBER_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "hurewicz_homomorphism"
+latex = 'h : \pi_{{{nn}}}({sp}) \to H_{{{nn}}}({sp}) \text{{ iso if }} \pi_k({sp})=0 \text{{ for }} k < {nn}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: high-n_eff function-pair templates (8)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "homotopy_def"
+latex = 'H : {sp} \times [0,1] \to {tp} \text{{ with }} H(\cdot,0) = {fn1},\; H(\cdot,1) = {fn2}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "chain_map_homology"
+latex = '{fn1}_* : H_{{{nn}}}(C_*) \to H_{{{nn}}}(D_*) \text{{ induced by chain map }} {fn1}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "cohomology_functoriality"
+latex = '{fn1}^* \circ {fn2}^* = ({fn2} \circ {fn1})^* : H^*({sp}) \to H^*({tp})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+# ----
+
+[[template]]
+name  = "degree_composition"
+latex = '\deg({fn1} \circ {fn2}) = \deg({fn1}) \cdot \deg({fn2})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "homology_functoriality"
+latex = '({fn1} \circ {fn2})_* = {fn1}_* \circ {fn2}_*'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "natural_transformation_square"
+latex = '{fn2}_* \circ i_* = j_* \circ {fn1}_*'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "induced_iso_homotopy_equiv"
+latex = '{fn1} \simeq {fn2} \implies {fn1}_* = {fn2}_* : H_{{{nn}}}({sp}) \to H_{{{nn}}}({tp})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "relative_map_induced"
+latex = '{fn1}_* : H_{{{nn}}}({sp}, {aa}) \to H_{{{nn}}}({tp}, {bb}) \text{{ for }} {fn1} : ({sp},{aa}) \to ({tp},{bb})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.tp]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["sp"]
+
+[template.slots.aa]
+type = "S"
+pool = "CLOSED_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "CLOSED_POOL"
+exclude_from = ["aa"]
