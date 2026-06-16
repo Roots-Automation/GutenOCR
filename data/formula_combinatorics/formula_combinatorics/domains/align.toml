@@ -492,7 +492,7 @@ latex = ""
 
   [[template.variants]]
   name  = "multline_sum_expansion_n"
-  latex = '\begin{{multline*}}{lhs} = {e1} + {e2} + \cdots \\ \quad + {e3} + {e4}\end{{multline*}}'
+  latex = '\begin{{multline}}{lhs} = {e1} + {e2} + \cdots \\ \quad + {e3} + {e4}\end{{multline}}'
 
   [template.variants.slots.lhs]
   type = "S"

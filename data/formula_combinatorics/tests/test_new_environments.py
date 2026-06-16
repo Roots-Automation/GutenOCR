@@ -20,14 +20,9 @@ def _sample_align(n: int = 5000, seed: int = 0) -> list[str]:
 # --- presence tests ---
 
 
-def test_multline_star_present() -> None:
+def test_multline_present() -> None:
     samples = _sample_align()
-    assert any(r"\begin{multline*}" in s for s in samples)
-
-
-def test_multline_numbered_present() -> None:
-    samples = _sample_align()
-    assert any(s.startswith(r"\begin{multline}") and not s.startswith(r"\begin{multline*}") for s in samples)
+    assert any(r"\begin{multline}" in s for s in samples)
 
 
 def test_gather_star_present() -> None:
@@ -86,13 +81,13 @@ def test_label_values_from_pool() -> None:
         assert lbl in _LABELS, f"Unexpected label value: {lbl!r}"
 
 
-def test_multline_star_structure() -> None:
+def test_multline_structure() -> None:
     samples = _sample_align(n=8000)
-    ml = [s for s in samples if s.startswith(r"\begin{multline*}")]
+    ml = [s for s in samples if s.startswith(r"\begin{multline}")]
     assert ml
     for s in ml:
-        assert s.endswith(r"\end{multline*}"), f"Bad multline* closing: {s}"
-        assert r"\\" in s, f"multline* has no line break: {s}"
+        assert s.endswith(r"\end{multline}"), f"Bad multline closing: {s}"
+        assert r"\\" in s, f"multline has no line break: {s}"
 
 
 def test_gather_structure() -> None:

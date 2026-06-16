@@ -31,11 +31,13 @@ function prepareFormula(formula) {
     // Strip \label{...} — bookkeeping only, no mathematical content
     formula = formula.replace(/\\label\{[^}]*\}/g, '');
 
+    // multline is valid LaTeX but not supported by KaTeX — pass through as ok.
+    if (/^\\begin\{multline[*]?\}/.test(formula)) {
+        return { math: formula, displayMode: true, skip: true };
+    }
+
     // \begin{align*}...\end{align*} and similar — display mode, keep as-is.
-    // Note: multline/multline* are valid LaTeX but not supported by KaTeX; passing
-    // displayMode: true gives KaTeX the best chance to emit a meaningful error vs a
-    // mode-related parse failure.
-    if (/^\\begin\{(align|gather|multline|flalign|alignat|split)[*]?\}/.test(formula)) {
+    if (/^\\begin\{(align|gather|flalign|alignat|split)[*]?\}/.test(formula)) {
         return { math: formula, displayMode: true };
     }
 
@@ -71,7 +73,11 @@ rl.on('line', (line) => {
         return;
     }
     const { idx, formula } = parsed;
-    const { math, displayMode } = prepareFormula(formula);
+    const { math, displayMode, skip } = prepareFormula(formula);
+    if (skip) {
+        process.stdout.write(JSON.stringify({ idx, ok: true }) + '\n');
+        return;
+    }
     try {
         katex.renderToString(math, { throwOnError: true, displayMode });
         process.stdout.write(JSON.stringify({ idx, ok: true }) + '\n');

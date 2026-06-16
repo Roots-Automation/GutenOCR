@@ -355,7 +355,7 @@ def _multline_poly_body(rng: random.Random, env: str) -> str:
 
 
 def _multline_poly_starred(rng: random.Random) -> str:
-    return _multline_poly_body(rng, "multline*")
+    return _multline_poly_body(rng, "multline")
 
 
 def _multline_poly_numbered(rng: random.Random) -> str:

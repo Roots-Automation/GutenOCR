@@ -291,8 +291,6 @@ def _prime_deco(rng: random.Random, base: str) -> str:
         (
             f"{base}'",
             f"{base}''",
-            rf"{base}^{{\prime}}",
-            rf"{base}^{{\prime\prime}}",
         )
     )
 

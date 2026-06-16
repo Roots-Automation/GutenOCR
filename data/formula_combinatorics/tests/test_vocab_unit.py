@@ -387,13 +387,12 @@ def test_prime_deco_base_always_present() -> None:
         assert "f" in result, f"Base 'f' missing from: {result!r}"
 
 
-def test_prime_deco_all_four_forms_reachable() -> None:
+def test_prime_deco_forms_reachable() -> None:
     rng = random.Random(0)
     results = {_prime_deco(rng, "f") for _ in range(200)}
     assert "f'" in results, "f' form never appeared"
     assert "f''" in results, "f'' form never appeared"
-    assert r"f^{\prime}" in results, r"f^{\prime} form never appeared"
-    assert r"f^{\prime\prime}" in results, r"f^{\prime\prime} form never appeared"
+    assert r"f^{\prime}" not in results, "^{\\prime} form reintroduced (causes double superscript)"
 
 
 # ---------------------------------------------------------------------------
