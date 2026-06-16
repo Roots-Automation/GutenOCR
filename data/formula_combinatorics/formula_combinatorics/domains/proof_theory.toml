@@ -1,0 +1,1097 @@
+domain = "proof_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name = "PROP_POOL"
+values = ["P","Q","R","S","A","B",'\phi','\psi','\chi','\varphi','\alpha','\beta']
+
+[[pool]]
+name = "PRED_POOL"
+values = ["P","Q","R","F","G",'\phi','\psi','\chi','\Phi']
+
+[[pool]]
+name = "VAR_POOL"
+values = ["x","y","z","a","b","c","u","v","w","n","m"]
+
+[[pool]]
+name = "TYPE_POOL"
+values = ['\sigma','\tau','\alpha','\beta','\gamma',"A","B","C"]
+
+[[pool]]
+name = "TERM_POOL"
+values = ["t","s","r","u","v","a","b","c"]
+
+[[pool]]
+name = "LL_POOL"
+values = ['\alpha','\beta','\gamma','\delta',"A","B","C","D"]
+
+[[pool]]
+name = "UNIV_POOL"
+values = ["0","1","2",'\omega',"i","j"]
+
+[[pool]]
+name = "PAIR_POOL"
+values = ["p","q","r","s","e","d"]
+
+# ---------------------------------------------------------------------------
+# Part B3: Natural Deduction / Sequent Calculus (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "weakening_left"
+latex = '\dfrac{{\Gamma \vdash {qq}}}{{{pp},\,\Gamma \vdash {qq}}} (\mathrm{{W}}_L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "cut_rule"
+latex = '\dfrac{{\Gamma \vdash {pp} \quad {pp},\,\Delta \vdash {qq}}}{{\Gamma,\,\Delta \vdash {qq}}} (\text{{Cut}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "conjunction_intro"
+latex = '\dfrac{{\Gamma \vdash {pp} \quad \Gamma \vdash {qq}}}{{\Gamma \vdash {pp} \land {qq}}} (\land I)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "implication_intro"
+latex = '\dfrac{{\Gamma,\,{pp} \vdash {qq}}}{{\Gamma \vdash {pp} \Rightarrow {qq}}} (\Rightarrow I)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "disjunction_elim"
+latex = '\dfrac{{\Gamma \vdash {pp} \lor {qq} \quad {pp} \vdash {rr} \quad {qq} \vdash {rr}}}{{\Gamma \vdash {rr}}} (\lor E)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp", "qq"]
+
+[[template]]
+name = "negation_intro"
+latex = '\dfrac{{\Gamma,\,{pp} \vdash \bot}}{{\Gamma \vdash \neg {pp}}} (\neg I)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B6: Type Theory (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "function_type_intro"
+latex = '\dfrac{{\Gamma,\,{xx}:{sa} \vdash {ee}:{ta}}}{{\Gamma \vdash \lambda {xx}.\,{ee}:{sa}\to {ta}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[[template]]
+name = "application_type"
+latex = '\dfrac{{\Gamma \vdash {ff}:{sa}\to {ta} \quad \Gamma \vdash {aa}:{sa}}}{{\Gamma \vdash {ff}\,{aa}:{ta}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.aa]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ff"]
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[[template]]
+name = "product_type"
+latex = '{sa} \times {ta} \ni ({aa},{bb}),\quad {aa}:{sa},\;{bb}:{ta}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "sum_type"
+latex = '{sa} + {ta} \ni \mathrm{{inl}}\,{aa} \mid \mathrm{{inr}}\,{bb},\quad {aa}:{sa},\;{bb}:{ta}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "curry_howard"
+latex = '{pp} \Rightarrow {qq} \cong {sa} \to {ta}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[[template]]
+name = "dependent_product"
+latex = '\prod{lim_mod}_{{{xx}:{sa}}} {ta}({xx})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+# ---------------------------------------------------------------------------
+# Part H: Zero-Premise Axiom Rules (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "identity_axiom"
+latex = '\dfrac{{}}{{{pp},\,\Gamma \vdash {pp}}} (\mathrm{{Ax}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "bottom_left"
+latex = '\dfrac{{}}{{ \bot,\,\Gamma \vdash {pp}}} (\bot_L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "top_right"
+latex = '\dfrac{{}}{{ \Gamma \vdash \top}} (\top_R)'
+
+[[template]]
+name = "reflexivity_axiom"
+latex = '\dfrac{{}}{{\Gamma \vdash {tt} = {tt}}} (\mathrm{{refl}})'
+
+[template.slots.tt]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name = "lem_classical"
+latex = '\dfrac{{}}{{\Gamma \vdash {pp} \lor \neg {pp}}} (\mathrm{{LEM}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part I: Structural Rules (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "weakening_right"
+latex = '\dfrac{{\Gamma \vdash \Delta}}{{\Gamma \vdash \Delta,\,{pp}}} (\mathrm{{W}}_R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "contraction_left"
+latex = '\dfrac{{{pp},\,{pp},\,\Gamma \vdash \Delta}}{{{pp},\,\Gamma \vdash \Delta}} (\mathrm{{C}}_L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "contraction_right"
+latex = '\dfrac{{\Gamma \vdash \Delta,\,{pp},\,{pp}}}{{\Gamma \vdash \Delta,\,{pp}}} (\mathrm{{C}}_R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "exchange_left"
+latex = '\dfrac{{\Gamma,\,{pp},\,{qq},\,\Delta \vdash \Theta}}{{\Gamma,\,{qq},\,{pp},\,\Delta \vdash \Theta}} (\mathrm{{E}}_L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part J: LK Connective Rules (12)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "conjunction_left"
+latex = '\dfrac{{{pp},\,\Gamma \vdash \Delta}}{{{pp} \land {qq},\,\Gamma \vdash \Delta}} (\land L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "conjunction_right_lk"
+latex = '\dfrac{{\Gamma \vdash {pp},\,\Delta \quad \Gamma \vdash {qq},\,\Delta}}{{\Gamma \vdash {pp} \land {qq},\,\Delta}} (\land R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "disjunction_left_lk"
+latex = '\dfrac{{{pp},\,\Gamma \vdash \Delta \quad {qq},\,\Gamma \vdash \Delta}}{{{pp} \lor {qq},\,\Gamma \vdash \Delta}} (\lor L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "disjunction_right_lk"
+latex = '\dfrac{{\Gamma \vdash {pp},\,\Delta}}{{\Gamma \vdash {pp} \lor {qq},\,\Delta}} (\lor R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "implication_left_lk"
+latex = '\dfrac{{\Gamma \vdash {pp},\,\Delta \quad {qq},\,\Gamma \vdash \Delta}}{{{pp} \Rightarrow {qq},\,\Gamma \vdash \Delta}} (\Rightarrow L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "implication_right_lk"
+latex = '\dfrac{{\Gamma,\,{pp} \vdash {qq},\,\Delta}}{{\Gamma \vdash {pp} \Rightarrow {qq},\,\Delta}} (\Rightarrow R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "negation_left_lk"
+latex = '\dfrac{{\Gamma \vdash {pp},\,\Delta}}{{\neg {pp},\,\Gamma \vdash \Delta}} (\neg L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "negation_right_lk"
+latex = '\dfrac{{{pp},\,\Gamma \vdash \Delta}}{{\Gamma \vdash \neg {pp},\,\Delta}} (\neg R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "forall_left_lk"
+latex = '\dfrac{{{pp}({tt}),\,\Gamma \vdash \Delta}}{{\forall {xx}\,{pp}({xx}),\,\Gamma \vdash \Delta}} (\forall L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "forall_right_lk"
+latex = '\dfrac{{\Gamma \vdash {pp}({yy}),\,\Delta}}{{\Gamma \vdash \forall {xx}\,{pp}({xx}),\,\Delta}} (\forall R,\;{yy}\text{{ fresh}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "exists_left_lk"
+latex = '\dfrac{{{pp}({yy}),\,\Gamma \vdash \Delta}}{{\exists {xx}\,{pp}({xx}),\,\Gamma \vdash \Delta}} (\exists L,\;{yy}\text{{ fresh}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "exists_right_lk"
+latex = '\dfrac{{\Gamma \vdash {pp}({tt}),\,\Delta}}{{\Gamma \vdash \exists {xx}\,{pp}({xx}),\,\Delta}} (\exists R)'
+
+[template.slots.pp]
+type = "S"
+pool = "PRED_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part K: Nested / Multi-Level Proof Trees (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "derivation_ellipsis"
+latex = '\dfrac{{\vdots}}{{\Gamma \vdash {pp}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "nested_axiom_weakening"
+latex = '\dfrac{{\dfrac{{}}{{{pp} \vdash {pp}}}}}{{{pp},\,{qq} \vdash {pp}}} (\mathrm{{W}}_L)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "nested_conjunction_proof"
+latex = '\dfrac{{\dfrac{{}}{{{pp} \vdash {pp}}} \quad \dfrac{{}}{{{qq} \vdash {qq}}}}}{{{pp},\,{qq} \vdash {pp} \land {qq}}} (\land I)'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "nested_cut_derivation"
+latex = '\dfrac{{\dfrac{{\vdots}}{{\Gamma \vdash {pp}}} \quad \dfrac{{\vdots}}{{{pp},\,\Delta \vdash {qq}}}}}{{\Gamma,\,\Delta \vdash {qq}}} (\text{{Cut}})'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part L: Dependent Sum Type Σ (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "dependent_sum_formation"
+latex = '\dfrac{{\Gamma \vdash {sa}\ \mathsf{{type}} \quad \Gamma,\,{xx}:{sa} \vdash {ta}\ \mathsf{{type}}}}{{\Gamma \vdash \textstyle\sum_{{{xx}:{sa}}} {ta}\ \mathsf{{type}}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[[template]]
+name = "dependent_sum_intro"
+latex = '({aa},{bb}) : \textstyle\sum_{{{xx}:{sa}}} {ta}({xx}),\quad {aa}:{sa},\;{bb}:{ta}({aa})'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.aa]
+type = "S"
+pool = "PAIR_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "PAIR_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "dependent_sum_elim_fst"
+latex = '\dfrac{{\Gamma \vdash {pp}:\textstyle\sum_{{{xx}:{sa}}}{ta}({xx})}}{{\Gamma \vdash \pi_1\,{pp}:{sa}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PAIR_POOL"
+
+[[template]]
+name = "dependent_sum_elim_snd"
+latex = '\dfrac{{\Gamma \vdash {pp}:\textstyle\sum_{{{xx}:{sa}}}{ta}({xx})}}{{\Gamma \vdash \pi_2\,{pp}:{ta}(\pi_1\,{pp})}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PAIR_POOL"
+
+[[template]]
+name = "sigma_curry_howard"
+latex = '\textstyle\sum_{{{xx}:{sa}}} {ta}({xx}) \cong \exists {xx}:{sa}.\;{ta}({xx})'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+# ---------------------------------------------------------------------------
+# Part M: Identity Types / Propositional Equality (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "id_type_def"
+latex = '{aa} =_{{{sa}}} {bb}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "id_type_refl"
+latex = '\dfrac{{\Gamma \vdash {aa}:{sa}}}{{\Gamma \vdash \mathsf{{refl}}_{{{aa}}}:{aa}=_{{{sa}}}{aa}}}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name = "path_induction_j"
+latex = '\dfrac{{\Gamma \vdash {pp}:{aa}=_{{{sa}}}{aa}}}{{\Gamma \vdash \mathsf{{J}}({pp}):C({aa},\mathsf{{refl}}_{{{aa}}})}}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.pp]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "transport"
+latex = '\mathsf{{transport}}^{{P}}_{{{pp}}} : P({aa}) \to P({bb}),\quad {pp}:{aa}=_{{{sa}}}{bb}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa", "bb"]
+
+[[template]]
+name = "function_ap"
+latex = '\mathsf{{ap}}_{{{ff}}}({pp}) : {ff}({aa}) =_{{{ta}}} {ff}({bb}),\quad {pp}:{aa}=_{{{sa}}}{bb}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.aa]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.ff]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa", "bb"]
+
+[template.slots.pp]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["aa", "bb", "ff"]
+
+# ---------------------------------------------------------------------------
+# Part N: Universe Levels and Type Judgment Forms (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "universe_typing"
+latex = '{sa} : \mathcal{{U}}_{{{ii}}}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "UNIV_POOL"
+
+[[template]]
+name = "universe_cumulative"
+latex = '\mathcal{{U}}_{{{ii}}} : \mathcal{{U}}_{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "UNIV_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "UNIV_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name = "type_judgment_form"
+latex = '\Gamma \vdash {sa}\ \mathsf{{type}}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[[template]]
+name = "context_formation"
+latex = '\dfrac{{\Gamma\ \mathsf{{ctx}} \quad \Gamma \vdash {sa}\ \mathsf{{type}}}}{{(\Gamma,\,{xx}:{sa})\ \mathsf{{ctx}}}}'
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part O: System F Polymorphism (5)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "systemf_type_abs"
+latex = '\Lambda\alpha.\,{ee}'
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name = "systemf_type_app"
+latex = '{ee}\,[{sa}]'
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[[template]]
+name = "systemf_forall_intro"
+latex = '\dfrac{{\Gamma,\,\alpha\ \mathsf{{type}} \vdash {ee}:{ta}}}{{\Gamma \vdash \Lambda\alpha.\,{ee}:\forall\alpha.\,{ta}}} (\forall I)'
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.ta]
+type = "S"
+pool = "TYPE_POOL"
+
+[[template]]
+name = "systemf_forall_elim"
+latex = '\dfrac{{\Gamma \vdash {ee}:\forall\alpha.\,{ta}}}{{\Gamma \vdash {ee}\,[{sa}]:[{sa}/\alpha]{ta}}} (\forall E)'
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[[template]]
+name = "systemf_polymorphic_id"
+latex = '\mathbf{{id}} \equiv \Lambda\alpha.\,\lambda {xx}:\alpha.\,{xx} : \forall\alpha.\,\alpha\to\alpha'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part P: Linear Logic (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "linear_impl_def"
+latex = '{aa} \multimap {bb}'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "tensor_right"
+latex = '\dfrac{{\Gamma \vdash {aa} \quad \Delta \vdash {bb}}}{{\Gamma,\Delta \vdash {aa} \otimes {bb}}} (\otimes R)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "tensor_left"
+latex = '\dfrac{{\Gamma,{aa},{bb} \vdash \Delta}}{{\Gamma,{aa} \otimes {bb} \vdash \Delta}} (\otimes L)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "linear_impl_right"
+latex = '\dfrac{{\Gamma,{aa} \vdash {bb}}}{{\Gamma \vdash {aa} \multimap {bb}}} (\multimap R)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "linear_impl_left"
+latex = '\dfrac{{\Gamma \vdash {aa} \quad {bb},\Delta \vdash \Theta}}{{\Gamma,{aa} \multimap {bb},\Delta \vdash \Theta}} (\multimap L)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "bang_promotion"
+latex = '\dfrac{{!\Gamma \vdash {aa}}}{{!\Gamma \vdash !{aa}}} (!)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[[template]]
+name = "bang_dereliction"
+latex = '\dfrac{{\Gamma,{aa} \vdash \Delta}}{{\Gamma,!{aa} \vdash \Delta}} (\mathsf{{d}})'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[[template]]
+name = "additive_with_right"
+latex = '\dfrac{{\Gamma \vdash {aa} \quad \Gamma \vdash {bb}}}{{\Gamma \vdash {aa} \mathbin{{\&}} {bb}}} (\mathbin{{\&}} R)'
+
+[template.slots.aa]
+type = "S"
+pool = "LL_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "LL_POOL"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Part Q: Non-Provability + Left-Turnstile Symbols (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "nvdash_formula"
+latex = '\Gamma \nvdash {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "nvdash_model_formula"
+latex = '\mathcal{{M}} \nvDash {pp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "dashv_biderivability"
+latex = '{pp} \dashv\vdash {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "PROP_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "quantifier_adjunction"
+latex = '\exists \dashv \Delta \dashv \forall'
+
+# ---------------------------------------------------------------------------
+# Part R: Typed Lambda Binders (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "typed_beta_reduction"
+latex = '(\lambda {xx}:{sa}.\,{ee1})\,{ee2} \to_\beta [{ee2}/{xx}]\,{ee1}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ee1]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.ee2]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ee1"]
+
+[[template]]
+name = "typed_lambda_annotation"
+latex = '\lambda ({xx}:{sa}).\,{ee} : {sa} \to {ta}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name = "typed_abstraction_rule"
+latex = '\dfrac{{\Gamma,\,{xx}:{sa} \vdash {ee}:{ta}}}{{\Gamma \vdash (\lambda {xx}:{sa}.\,{ee}):{sa}\to {ta}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.ee]
+type = "S"
+pool = "TERM_POOL"
+
+[[template]]
+name = "let_binding"
+latex = '\mathsf{{let}}\;{xx}:{sa} = {ee1}\;\mathsf{{in}}\;{ee2} : {ta}'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sa]
+type = "S"
+pool = "TYPE_POOL"
+
+[template.slots.ta]
+type = "X"
+pool = "TYPE_POOL"
+exclude_from = ["sa"]
+
+[template.slots.ee1]
+type = "S"
+pool = "TERM_POOL"
+
+[template.slots.ee2]
+type = "X"
+pool = "TERM_POOL"
+exclude_from = ["ee1"]
