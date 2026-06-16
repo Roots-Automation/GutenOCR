@@ -1,15 +1,11 @@
-"""Domain registry: merges GENERATORS, WEIGHTS, and TEMPLATES from all domain modules.
+"""Domain registry: loads GENERATORS, WEIGHTS, and TEMPLATES from TOML packs.
 
-Loading order for each domain:
-1. If a ``<domain>.toml`` pack file exists alongside this module, load it via
-   ``engine._pack_loader.load_pack()``.  The pack is the authoritative source
-   for migrated domains.
-2. Otherwise, fall back to the Python ``.<domain>`` sub-module (legacy path).
+Every domain must have a ``<domain>.toml`` pack file alongside this module.
+The Python sub-module fallback has been removed; all domains are TOML-only.
 """
 
 from __future__ import annotations
 
-import importlib
 import random
 from collections.abc import Callable
 from pathlib import Path
@@ -73,14 +69,14 @@ PACK_META: dict[str, PackMeta] = {}
 
 for _name in _DOMAIN_NAMES:
     _toml_path = _DOMAINS_DIR / f"{_name}.toml"
-    if _toml_path.exists():
-        _pack = load_pack(_toml_path)
-        _gens, _wts, _tmpls = register_domain(_name, _pack.templates)
-        PACK_HASHES[_name] = _pack.meta.sha256
-        PACK_META[_name] = _pack.meta
-    else:
-        _mod = importlib.import_module(f".{_name}", package=__package__)
-        _gens, _wts, _tmpls = _mod.GENERATORS, _mod.WEIGHTS, _mod.TEMPLATES
+    if not _toml_path.exists():
+        raise FileNotFoundError(
+            f"Domain '{_name}' has no TOML pack at {_toml_path}. All domains must be migrated to TOML."
+        )
+    _pack = load_pack(_toml_path)
+    _gens, _wts, _tmpls = register_domain(_name, _pack.templates)
+    PACK_HASHES[_name] = _pack.meta.sha256
+    PACK_META[_name] = _pack.meta
     GENERATORS.update(_gens)
     DEFAULT_WEIGHTS.update(_wts)
     TEMPLATES.update(_tmpls)
