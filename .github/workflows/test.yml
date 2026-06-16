@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         run: uv python install 3.10
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --extra dev
         working-directory: data/formula_combinatorics
       - name: Run fast tests
         run: uv run pytest tests/ -m 'not slow and not render' -q
@@ -37,7 +37,7 @@ jobs:
       - name: Set up Python
         run: uv python install 3.10
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --extra dev
         working-directory: data/formula_combinatorics
       - uses: actions/setup-node@v4
         with:
@@ -59,7 +59,7 @@ jobs:
       - name: Set up Python
         run: uv python install 3.10
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --extra dev
         working-directory: data/formula_combinatorics
       - name: Run calibration tests
         run: uv run pytest tests/test_calibration.py -m slow -v
