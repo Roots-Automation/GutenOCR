@@ -1,0 +1,1626 @@
+[meta]
+domain = "set_theory"
+
+[[pool]]
+name = "SET_POOL"
+values = ["A","B","C","D","E","S","T","U","V","W"]
+
+[[pool]]
+name = "SCRIPT_POOL"
+values = ['\mathcal{A}','\mathcal{B}','\mathcal{C}','\mathcal{F}','\mathcal{G}','\mathcal{U}']
+
+[[pool]]
+name = "ORD_POOL"
+values = ['\alpha','\beta','\gamma','\delta','\lambda','\mu','\nu','\omega']
+
+[[pool]]
+name = "CARD_POOL"
+values = ['\aleph_0','\aleph_1','\aleph_2','\kappa','\lambda','\mu']
+
+[[pool]]
+name = "VAR_POOL"
+values = ["x","y","z","a","b","c","u","v","w"]
+
+[[pool]]
+name = "PROP_POOL"
+values = ["P","Q","R",'\varphi','\psi',"S","T","U"]
+
+[[pool]]
+name = "BBOLD_POOL"
+values = ['\mathbb{N}','\mathbb{Z}','\mathbb{Q}','\mathbb{R}','\mathbb{C}','\mathbb{P}','\mathbb{F}','\mathbb{H}','\mathbb{T}']
+
+[[pool]]
+name = "REL_POOL"
+values = ['\leq','\prec','\sqsubseteq','\preceq','\unlhd']
+
+[[pool]]
+name = "FUNC_POOL"
+values = ["f","g","h","F","G",'\phi','\psi','\varphi','\chi','\xi','\eta']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["i","j","k","l","m","n","p","q","r","s","t"]
+
+# --- Part A (16) ---
+
+[[template]]
+name = "commutativity"
+latex = '{AA} \cup {BB} = {BB} \cup {AA},\quad {AA} \cap {CC} = {CC} \cap {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "subset_intersection"
+latex = '{AA} \subseteq {BB} \iff {AA} \cap {BB} = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "inclusion_exclusion_two"
+latex = '|{AA} \cup {BB}| = |{AA}| + |{BB}| - |{AA} \cap {BB}|'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "power_set_size"
+latex = '|\mathcal{{P}}({AA})| = 2^{{|{AA}|}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "set_difference"
+latex = '{AA} \setminus {BB} = \{{{vv} \in {AA} \mid {PP}({vv})\}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.PP]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "de_morgan_union"
+latex = '({AA} \cup {BB})^c = {AA}^c \cap {BB}^c'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "de_morgan_intersection"
+latex = '({AA} \cap {BB})^c = {AA}^c \cup {BB}^c'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "distributive_law"
+latex = '{AA} \cap ({BB} \cup {CC}) = ({AA} \cap {BB}) \cup ({AA} \cap {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "cartesian_product"
+latex = '{AA} \times {BB} = \{{({vv},\,{ww}) \mid {vv} \in {AA},\; {ww} \in {BB}\}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "power_of_set"
+latex = '|{AA}^{{{nn}}}| = |{AA}|^{{{nn}}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "symmetric_difference"
+latex = '{AA} \triangle {BB} = ({AA} \setminus {BB}) \cup ({BB} \setminus {AA})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "set_builder"
+latex = '\{{{vv} \in {bb} \mid {PP}({vv})\}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "BBOLD_POOL"
+
+[template.slots.PP]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "inclusion_exclusion_general"
+latex = '\left|\bigcup_{{{ii}=1}}^{{{nn}}} {AA}_{{{ii}}}\right| = \sum{lim_mod}_{{{ii}}} |{AA}_{{{ii}}}| - \sum{lim_mod}_{{{ii} < {jj}}} |{AA}_{{{ii}}} \cap {AA}_{{{jj}}}| + \cdots'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name = "set_equality"
+latex = '{AA} = {BB} \iff {AA} \subseteq {BB} \land {BB} \subseteq {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "cantor_theorem"
+latex = '|{AA}| < |\mathcal{{P}}({AA})|'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "continuum_hypothesis"
+latex = '\aleph_0 < {kk},\quad |\mathbb{{R}}| = 2^{{\aleph_0}}'
+
+[template.slots.kk]
+type = "S"
+pool = "CARD_POOL"
+
+# --- Part B1: set algebra identities (10) ---
+
+[[template]]
+name = "absorption_union"
+latex = '{AA} \cup ({AA} \cap {BB}) = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "absorption_intersection"
+latex = '{AA} \cap ({AA} \cup {BB}) = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "identity_laws"
+latex = '{AA} \cup \emptyset = {AA},\quad {AA} \cap {UU} = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "complement_laws"
+latex = '{AA} \cup {AA}^c = {UU},\quad {AA} \cap {AA}^c = \emptyset'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "double_complement"
+latex = '({AA}^c)^c = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "distributive_union"
+latex = '{AA} \cup ({BB} \cap {CC}) = ({AA} \cup {BB}) \cap ({AA} \cup {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "associativity_union"
+latex = '({AA} \cup {BB}) \cup {CC} = {AA} \cup ({BB} \cup {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "associativity_intersection"
+latex = '({AA} \cap {BB}) \cap {CC} = {AA} \cap ({BB} \cap {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "subset_union"
+latex = '{AA} \subseteq {BB} \iff {AA} \cup {BB} = {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "subset_transitivity"
+latex = '{AA} \subseteq {BB} \land {BB} \subseteq {CC} \implies {AA} \subseteq {CC}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+# --- Part B2: set comprehension (6) ---
+
+[[template]]
+name = "set_builder_restriction"
+latex = '\{{{vv} \in {AA} \mid {PP}({vv})\}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.PP]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "set_builder_image"
+latex = '\{{{ff}({vv}) \mid {vv} \in {AA}\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "set_builder_product"
+latex = '\{{({vv},\,{ww}) \mid {vv} \in {AA},\; {ww} \in {BB}\}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "axiom_extensionality"
+latex = '{AA} = {BB} \iff \forall {vv}\,({vv} \in {AA} \iff {vv} \in {BB})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "axiom_separation"
+latex = '\{{{vv} \in {AA} \mid {PP}({vv})\}} \subseteq {AA}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.PP]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "axiom_pairing"
+latex = '\forall {vv}\,\forall {ww}\,\exists {CC},\; {vv} \in {CC} \land {ww} \in {CC}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.CC]
+type = "S"
+pool = "SET_POOL"
+
+# --- Part B3: relations (8) ---
+
+[[template]]
+name = "relation_def"
+latex = '{RR} \subseteq {AA} \times {BB}'
+
+[template.slots.RR]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "reflexive_relation"
+latex = '\forall {vv} \in {AA},\quad {vv}\,{rr}\,{vv}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "symmetric_relation"
+latex = '{vv}\,{rr}\,{ww} \implies {ww}\,{rr}\,{vv}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.rr]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "transitive_relation"
+latex = '{vv}\,{rr}\,{ww} \land {ww}\,{rr}\,{zz} \implies {vv}\,{rr}\,{zz}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.zz]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv","ww"]
+
+[template.slots.rr]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "equivalence_class"
+latex = '[{vv}]_{{{rr}}} = \{{{ww} \in {AA} \mid {vv}\,{rr}\,{ww}\}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "PROP_POOL"
+
+[[template]]
+name = "quotient_set"
+latex = '{AA}/{rr} = \{{[{vv}]_{{{rr}}} \mid {vv} \in {AA}\}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "partial_order_antisymmetry"
+latex = '{vv}\,{rl}\,{ww} \land {ww}\,{rl}\,{vv} \implies {vv} = {ww}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.rl]
+type = "S"
+pool = "REL_POOL"
+
+[[template]]
+name = "well_order"
+latex = '\forall {SS} \subseteq {AA},\; {SS} \neq \emptyset \implies \exists {vv} \in {SS},\; \forall {ww} \in {SS},\; {vv}\,{rl}\,{ww}'
+
+[template.slots.SS]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.AA]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["SS"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.rl]
+type = "S"
+pool = "REL_POOL"
+
+# --- Part B4: functions / maps (8) ---
+
+[[template]]
+name = "function_type"
+latex = '{ff}: {AA} \to {BB}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "injection_def"
+latex = '{ff}({vv}) = {ff}({ww}) \implies {vv} = {ww}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "surjection_def"
+latex = '\forall {yy} \in {BB},\; \exists {xx} \in {AA},\; {ff}({xx}) = {yy}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "function_composition"
+latex = '({gg} \circ {ff})({vv}) = {gg}({ff}({vv}))'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "function_image"
+latex = '{ff}({AA}) = \{{{ff}({vv}) \mid {vv} \in {AA}\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "function_preimage"
+latex = '{ff}^{{-1}}({BB}) = \{{{vv} \in {AA} \mid {ff}({vv}) \in {BB}\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "bijection_cardinality"
+latex = '|{AA}| = |{BB}| \iff \exists\; {ff}: {AA} \xrightarrow{{\sim}} {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name = "function_inverse"
+latex = '{ff} \circ {ff}^{{-1}} = \mathrm{{id}}_{{{BB}}},\quad {ff}^{{-1}} \circ {ff} = \mathrm{{id}}_{{{AA}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# --- Part B5: cardinality (8) ---
+
+[[template]]
+name = "cardinality_leq"
+latex = '|{AA}| \leq |{BB}| \iff \exists\; {ff}: {AA} \hookrightarrow {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name = "schroder_bernstein"
+latex = '|{AA}| \leq |{BB}| \land |{BB}| \leq |{AA}| \implies |{AA}| = |{BB}|'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "countable_def"
+latex = '|{AA}| = \aleph_0 \iff \exists\; {ff}: \mathbb{{N}} \xrightarrow{{\sim}} {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name = "cardinal_addition"
+latex = '{kk} + {ll} = |{AA} \sqcup {BB}|'
+
+[template.slots.kk]
+type = "S"
+pool = "CARD_POOL"
+
+[template.slots.ll]
+type = "X"
+pool = "CARD_POOL"
+exclude_from = ["kk"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "cardinal_multiplication"
+latex = '{kk} \cdot {ll} = |{AA} \times {BB}|'
+
+[template.slots.kk]
+type = "S"
+pool = "CARD_POOL"
+
+[template.slots.ll]
+type = "X"
+pool = "CARD_POOL"
+exclude_from = ["kk"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "cardinal_exponentiation"
+latex = '{kk}^{{{ll}}} = |\{{{ff}: {BB} \to {AA}\}}|'
+
+[template.slots.kk]
+type = "S"
+pool = "CARD_POOL"
+
+[template.slots.ll]
+type = "X"
+pool = "CARD_POOL"
+exclude_from = ["kk"]
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "aleph_ordering"
+latex = '\aleph_{{{nn}}} < \aleph_{{{mm}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name = "beth_recursion"
+latex = '\beth_{{0}} = \aleph_0,\quad \beth_{{{nn}+1}} = 2^{{\beth_{{{nn}}}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B6: ordinals (6) ---
+
+[[template]]
+name = "ordinal_successor"
+latex = 'S({aa}) = {aa} \cup \{{{aa}\}}'
+
+[template.slots.aa]
+type = "S"
+pool = "ORD_POOL"
+
+[[template]]
+name = "ordinal_addition_noncommutative"
+latex = '{aa} + {bb} \neq {bb} + {aa}\text{{ (in general)}}'
+
+[template.slots.aa]
+type = "S"
+pool = "ORD_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ORD_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "ordinal_distributive"
+latex = '{aa} \cdot ({bb} + {cc}) = {aa} \cdot {bb} + {aa} \cdot {cc}'
+
+[template.slots.aa]
+type = "S"
+pool = "ORD_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ORD_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type = "X"
+pool = "ORD_POOL"
+exclude_from = ["aa","bb"]
+
+[[template]]
+name = "transfinite_induction"
+latex = '{PP}(0) \land \forall {aa}\,({PP}({aa}) \to {PP}(S({aa}))) \implies \forall {aa},\; {PP}({aa})'
+
+[template.slots.PP]
+type = "S"
+pool = "PROP_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ORD_POOL"
+
+[[template]]
+name = "limit_ordinal"
+latex = '{ll} = \sup\{{{aa} \mid {aa} < {ll}\}}'
+
+[template.slots.ll]
+type = "S"
+pool = "ORD_POOL"
+
+[template.slots.aa]
+type = "X"
+pool = "ORD_POOL"
+exclude_from = ["ll"]
+
+[[template]]
+name = "ordinal_well_order"
+latex = '\forall {SS} \subseteq \mathrm{{Ord}},\; {SS} \neq \emptyset \implies \exists {aa} \in {SS},\; \forall {bb} \in {SS},\; {aa} \leq {bb}'
+
+[template.slots.SS]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ORD_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ORD_POOL"
+exclude_from = ["aa"]
+
+# --- Part B7: indexed families (4) ---
+
+[[template]]
+name = "indexed_union"
+latex = '\bigcup_{{{ii} \in {II}}} {AA}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.AA]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["II"]
+
+[[template]]
+name = "indexed_intersection"
+latex = '\bigcap_{{{ii} \in {II}}} {AA}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.AA]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["II"]
+
+[[template]]
+name = "general_cartesian_product"
+latex = '\prod{lim_mod}_{{{ii} \in {II}}} {AA}_{{{ii}}} = \{{{ff} \mid \forall {ii} \in {II},\;{ff}({ii}) \in {AA}_{{{ii}}}\}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.AA]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["II"]
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name = "axiom_of_choice"
+latex = '\forall \{{{AA}_{{{ii}}}\}}_{{{ii} \in {II}}},\quad \prod{lim_mod}_{{{ii} \in {II}}} {AA}_{{{ii}}} \neq \emptyset'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.II]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# --- Part B8: ZFC axioms (4) ---
+
+[[template]]
+name = "axiom_union_set"
+latex = '\forall {AA}\;\exists {BB},\; \forall {vv}\,({vv} \in {BB} \iff \exists {CC} \in {AA},\; {vv} \in {CC})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "axiom_power_set"
+latex = '\forall {AA}\;\exists {BB},\; \forall {CC}\,({CC} \subseteq {AA} \iff {CC} \in {BB})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "axiom_infinity"
+latex = '\exists {SS},\; \emptyset \in {SS} \land \forall {vv} \in {SS},\; {vv} \cup \{{{vv}\}} \in {SS}'
+
+[template.slots.SS]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "axiom_foundation"
+latex = '\forall {AA} \neq \emptyset,\; \exists {vv} \in {AA},\; {vv} \cap {AA} = \emptyset'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# --- Part B9: filters and ultrafilters (4) ---
+
+[[template]]
+name = "filter_closed_intersection"
+latex = '{AA} \in \mathcal{{F}} \land {BB} \in \mathcal{{F}} \implies {AA} \cap {BB} \in \mathcal{{F}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "filter_upward_closed"
+latex = '{AA} \in \mathcal{{F}} \land {AA} \subseteq {BB} \implies {BB} \in \mathcal{{F}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "ultrafilter_property"
+latex = '\forall {BB} \subseteq {XX},\quad {BB} \in \mathcal{{F}} \lor {XX} \setminus {BB} \in \mathcal{{F}}'
+
+[template.slots.BB]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.XX]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["BB"]
+
+[[template]]
+name = "principal_filter"
+latex = '\uparrow\!{AA} = \{{{BB} \in \mathcal{{P}}({XX}) \mid {AA} \subseteq {BB}\}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.XX]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+# --- Part B10: Boolean algebra / lattice (4) ---
+
+[[template]]
+name = "power_set_boolean"
+latex = '(\mathcal{{P}}({AA}),\,\cup,\,\cap,\,{{}}^c,\,\emptyset,\,{AA})\text{{ is a Boolean algebra}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "symmetric_diff_group"
+latex = '(\mathcal{{P}}({AA}),\,\triangle)\text{{ is an abelian group with identity }}\emptyset'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "lattice_complement"
+latex = '{AA} \vee {AA}^c = \mathbf{{1}},\quad {AA} \wedge {AA}^c = \mathbf{{0}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "lattice_join_meet"
+latex = '{AA} \vee {BB} = {AA} \cup {BB},\quad {AA} \wedge {BB} = {AA} \cap {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# --- Part C: function-pair templates (8) ---
+
+[[template]]
+name = "bijection_pair"
+latex = '{fn1}: {AA} \xrightarrow{{\sim}} {BB}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "injection_pair"
+latex = '{fn1} \circ {fn2}: {AA} \hookrightarrow {CC}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "composition_pair"
+latex = '({fn1} \circ {fn2})({vv}) = {fn1}({fn2}({vv}))'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "image_pair"
+latex = '{fn1}({fn2}({AA})) \subseteq {fn1}({BB})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "preimage_pair"
+latex = '({fn1} \circ {fn2})^{{-1}}({AA}) = {fn2}^{{-1}}({fn1}^{{-1}}({AA}))'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "cardinality_pair"
+latex = '|{fn1}({AA})| \leq |{AA}|'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "product_pair"
+latex = '|{fn1} \times {fn2}| = |{fn1}| \cdot |{fn2}|'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "fixed_point_pair"
+latex = '\exists {vv} \in {AA},\; {fn1}({vv}) = {vv}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+# --- Part C additions (2) ---
+
+[[template]]
+name = "fn_powerset_pair"
+latex = '{fn1}(\mathcal{{P}}({ss})) = {fn2}\!\left(\{{T : T \subseteq {ss}\}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ss]
+type = "S"
+pool = "SET_POOL"
+
+[[template]]
+name = "fn_cardinal_pair"
+latex = '{fn1}(|{ss1} \times {ss2}|) = {fn2}(|{ss1}| \cdot |{ss2}|)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ss1]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.ss2]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["ss1"]
+
+# --- Complement / cardinal additions (7) ---
+
+[[template]]
+name = "complement_superscript_eq"
+latex = '{AA}^c = \complement_{{{UU}}} {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "complement_de_morgan_union"
+latex = '\complement_{{{UU}}} ({AA} \cup {BB}) = \complement_{{{UU}}} {AA} \cap \complement_{{{UU}}} {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "complement_de_morgan_intersection"
+latex = '\complement_{{{UU}}} ({AA} \cap {BB}) = \complement_{{{UU}}} {AA} \cup \complement_{{{UU}}} {BB}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA","BB"]
+
+[[template]]
+name = "gimel_beth_power"
+latex = '\gimel(\aleph_{{{nn}}}) = 2^{{\aleph_{{{nn}}}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "gimel_cofinality"
+latex = '\gimel(\kappa) = \kappa^{{\mathrm{{cf}}(\kappa)}}'
+
+[[template]]
+name = "daleth_recursion"
+latex = '\daleth_0 = \aleph_0,\quad \daleth_{{n+1}} = 2^{{\daleth_n}}'
+
+[[template]]
+name = "daleth_gimel_leq"
+latex = '\daleth_{{{nn}}} \leq \gimel(\aleph_{{{nn}}})'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part arrows (2) ---
+
+[[template]]
+name = "set_equality_biconditional"
+latex = '{AA} = {BB} \leftrightarrow ({AA} \subseteq {BB}) \wedge ({BB} \subseteq {AA})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "directed_family_uparrow"
+latex = '{AA}_\alpha \uparrow {AA}: \quad {AA}_1 \subseteq {AA}_2 \subseteq \cdots,\;\bigcup_\alpha {AA}_\alpha = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# --- Part misc (3) ---
+
+[[template]]
+name = "nexists_element"
+latex = '\nexists\, {xx} \in {AA}:\; {ff}({xx}) = 0'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name = "varnothing_disjoint"
+latex = '{AA} \cap {BB} = \varnothing \iff {AA} \text{{ and }} {BB} \text{{ are disjoint}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name = "varnothing_membership"
+latex = '\forall\, {xx}:\; {xx} \notin \varnothing'
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
