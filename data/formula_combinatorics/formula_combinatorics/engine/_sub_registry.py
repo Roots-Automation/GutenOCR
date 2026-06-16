@@ -43,7 +43,21 @@ from ._templates import (
     _substack_prod,
     _substack_sum,
 )
-from ._vocab import _atom, _eps_sub, _expr, _fn_rich, _fn_rich_nosub, _idx_atom, _tol_sub
+from ._vocab import (
+    _atom,
+    _cos_dbl_coeff_sub,
+    _eps_sub,
+    _euler_arg_sub,
+    _expr,
+    _fn_rich,
+    _fn_rich_nosub,
+    _hyp_arg_sub,
+    _idx_atom,
+    _sin_dbl_coeff_sub,
+    _taylor_arg_sub,
+    _tol_sub,
+    _trig_pyth_arg_sub,
+)
 
 SUB_GENERATORS: dict[str, Callable] = {
     # -----------------------------------------------------------------------
@@ -89,6 +103,13 @@ SUB_GENERATORS: dict[str, Callable] = {
     # Substack sum/product generators (signature: gen(rng) -> str)
     "_substack_sum": _substack_sum,
     "_substack_prod": _substack_prod,
+    # Trig sub-generators (signature: gen(rng) -> str)
+    "_sin_dbl_coeff_sub": _sin_dbl_coeff_sub,
+    "_cos_dbl_coeff_sub": _cos_dbl_coeff_sub,
+    "_trig_pyth_arg_sub": _trig_pyth_arg_sub,
+    "_euler_arg_sub": _euler_arg_sub,
+    "_hyp_arg_sub": _hyp_arg_sub,
+    "_taylor_arg_sub": _taylor_arg_sub,
     # -----------------------------------------------------------------------
     # Matrix environment generators — pmatrix (parentheses)
     # -----------------------------------------------------------------------

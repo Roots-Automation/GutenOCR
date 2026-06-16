@@ -562,3 +562,55 @@ _arccsc_nm = _trig_nm_factory("arccsc")
 _arctanh_nm = _trig_nm_factory("arctanh")
 _arcsinh_nm = _trig_nm_factory("arcsinh")
 _arccosh_nm = _trig_nm_factory("arccosh")
+
+# ---------------------------------------------------------------------------
+# Trig argument pool and dynamic sub-generators (for trigonometry TOML pack)
+# ---------------------------------------------------------------------------
+
+_TRIG_ARG_POOL: tuple[str, ...] = _SCALARS + (
+    r"\theta",
+    r"\phi",
+    r"\varphi",
+    r"\psi",
+    r"\omega",
+    r"\alpha",
+    r"\beta",
+    r"\gamma",
+    r"\delta",
+)
+
+
+def _sin_dbl_coeff_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    return rng.choice([f"2{a}", f"3{a}", a, f"{a}^2"])
+
+
+def _cos_dbl_coeff_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    return rng.choice(["2", "3", a, f"2{a}"])
+
+
+def _trig_pyth_arg_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    x = rng.choice(_VARS)
+    return rng.choice([x, f"{a} {x}", f"{a}^2 {x}"])
+
+
+def _euler_arg_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    b = rng.choice([s for s in _TRIG_ARG_POOL if s != a])
+    x = rng.choice(_VARS)
+    return rng.choice([x, f"{a} {x}", f"{a}+{b}", a])
+
+
+def _hyp_arg_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    b = rng.choice([s for s in _TRIG_ARG_POOL if s != a])
+    x = rng.choice(_VARS)
+    return rng.choice([f"{a} {x}", f"{a}+{b}", f"{b} {x}+{a}"])
+
+
+def _taylor_arg_sub(rng: random.Random) -> str:
+    a = rng.choice(_TRIG_ARG_POOL)
+    x = rng.choice(_VARS)
+    return rng.choice([x, f"{a} {x}"])
