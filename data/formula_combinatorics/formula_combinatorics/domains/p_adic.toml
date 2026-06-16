@@ -1,0 +1,1237 @@
+[meta]
+domain = "p_adic"
+
+[[pool]]
+name = "PRIME_POOL"
+values = ["p","q",'\ell',"\\ell'","r","2","3","5","7",'\ell_0']
+
+[[pool]]
+name = "ELEM_POOL"
+values = ["x","y","z","a","b","c",'\alpha','\beta','\gamma','\xi','\eta']
+
+[[pool]]
+name = "FIELD_POOL"
+values = ["K","L","F","E",'\mathbf{k}','\mathcal{K}','\mathcal{L}','\hat{K}','\hat{F}']
+
+[[pool]]
+name = "RING_POOL"
+values = ['\mathcal{O}','\mathcal{O}_K','\mathcal{O}_L','\mathcal{O}_F',"A","B","R",'\mathcal{A}']
+
+[[pool]]
+name = "IDEAL_POOL"
+values = ['\mathfrak{m}','\mathfrak{p}','\mathfrak{q}','\mathfrak{a}','\mathfrak{b}',"I","P"]
+
+[[pool]]
+name = "UNIF_POOL"
+values = ['\pi','\varpi','\Pi',"u","t",'\pi_0','\varpi_0']
+
+[[pool]]
+name = "UNIF_BASE_POOL"
+values = ['\pi','\varpi','\Pi',"u","t"]
+
+[[pool]]
+name = "POLY_POOL"
+values = ["f","g","h","F","G",'\phi','\psi','\chi']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["n","m","k","r","s","N","M"]
+
+# --- Part A (14) ---
+
+[[template]]
+name = "padic_valuation"
+latex = '|{xx}|_{{{pp}}} = {pp}^{{-v_{{{pp}}}({xx})}}'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_integers"
+latex = '\mathbb{{Z}}_{{{pp}}} = \left\{{{xx} \in \mathbb{{Q}}_{{{pp}}} : |{xx}|_{{{pp}}} \leq 1\right\}}'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_expansion"
+latex = '{xx} = \sum{lim_mod}_{{k=0}}^{{\infty}} a_k {pp}^k,\quad 0 \leq a_k < {pp}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "ultrametric_inequality"
+latex = '|{xx} + {yy}|_{{{pp}}} \leq \max\!\left(|{xx}|_{{{pp}}}, |{yy}|_{{{pp}}}\right)'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_multiplicativity"
+latex = '|{xx} {yy}|_{{{pp}}} = |{xx}|_{{{pp}}} |{yy}|_{{{pp}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "valuation_subadditivity"
+latex = 'v_{{{pp}}}({xx} + {yy}) \geq \min\!\left(v_{{{pp}}}({xx}),\, v_{{{pp}}}({yy})\right)'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_norm_prime"
+latex = '|{pp}|_{{{pp}}} = {pp}^{{-1}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "product_formula"
+latex = '|{xx}|_\infty \cdot \prod{lim_mod}_{{{pp}}} |{xx}|_{{{pp}}} = 1'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "hensels_lemma"
+latex = '''{ff}({aa}) \equiv 0 \pmod{{{pp}}},\; {ff}'({aa}) \not\equiv 0 \pmod{{{pp}}} \implies \exists!\, {bb} \in \mathbb{{Z}}_{{{pp}}} : {ff}({bb}) = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "legendre_factorial_valuation"
+latex = 'v_{{{pp}}}({nn}!) = \sum{lim_mod}_{{k=1}}^{{\infty}} \left\lfloor \frac{{{nn}}}{{{pp}^k}} \right\rfloor'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "qp_completion"
+latex = '\mathbb{{Q}}_{{{pp}}} = \widehat{{\mathbb{{Q}}}}_{{|\cdot|_{{{pp}}}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_unique_absolute_value"
+latex = '\|\cdot\|_{{{pp}}} \text{{ is the unique }} {pp}\text{{-adic absolute value on }} \mathbb{{Q}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "padic_exponential"
+latex = '\exp_{{{pp}}}({xx}) = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{xx}^k}}{{k!}},\quad |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "padic_binomial_valuation"
+latex = 'v_{{{pp}}}\!\left(\binom{{{pp}^{{{nn}}}}}{{{pp}^{{{jj}}}}}\right) = {nn} - {jj}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+# --- Part B1: Discrete valuation theory (8) ---
+
+[[template]]
+name = "valuation_product"
+latex = 'v_{{{pp}}}({xx} \cdot {yy}) = v_{{{pp}}}({xx}) + v_{{{pp}}}({yy})'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "valuation_min_property"
+latex = 'v_{{{pp}}}({xx} + {yy}) \geq \min\bigl(v_{{{pp}}}({xx}),\, v_{{{pp}}}({yy})\bigr)'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "valuation_ring_def"
+latex = '{RR} = \{{ {xx} \in {KK} : v_{{{pp}}}({xx}) \geq 0 \}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[[template]]
+name = "maximal_ideal_def"
+latex = '{II} = \{{ {xx} \in {RR} : v_{{{pp}}}({xx}) \geq 1 \}}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "residue_field_iso"
+latex = '{RR} / {II} \cong \mathbb{{F}}_{{{pp}^f}}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "uniformizer_generates"
+latex = '{II} = {uu} \cdot {RR}'
+
+[template.slots.uu]
+type = "S"
+pool = "UNIF_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[[template]]
+name = "valuation_zero_unit"
+latex = 'v_{{{pp}}}({xx}) = 0 \iff {xx} \in {RR}^*'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[[template]]
+name = "discrete_valuation_surjective"
+latex = 'v_{{{pp}}}({KK}^*) = \mathbb{{Z}},\quad {xx} \in {KK}^*'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+# --- Part B2: Completions & expansions (8) ---
+
+[[template]]
+name = "padic_fraction_form"
+latex = '{xx} = {pp}^{{{nn}}} \cdot {yy},\quad v_{{{pp}}}({xx}) = {nn},\quad {yy} \in \mathbb{{Z}}_{{{pp}}}^*'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_log_series"
+latex = '\log_{{{pp}}}(1 + {xx}) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{(-1)^{{{nn}+1}} {xx}^{{{nn}}}}}{{{nn}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_exp_series"
+latex = '\exp_{{{pp}}}({xx}) = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} \frac{{{xx}^{{{nn}}}}}{{{nn}!}},\quad |{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_power_series_conv"
+latex = '\sum{lim_mod}_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {xx}^{{{nn}}} \text{{ converges in }} \mathbb{{Q}}_{{{pp}}} \iff a_{{{nn}}} \to 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "teichmuller_decomp"
+latex = '{xx} = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} [{xx}_{{{nn}}}]\, {pp}^{{{nn}}},\quad [{xx}_{{{nn}}}] \text{{ Teichm\"{{u}}ller lift}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_complete_metric"
+latex = '\mathbb{{Q}}_{{{pp}}} \text{{ is complete w.r.t. }} |\cdot|_{{{pp}}},\quad {xx} \in \mathbb{{Q}}_{{{pp}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "padic_series_cauchy"
+latex = '\{{a_{{{nn}}}\}} \text{{ Cauchy in }} \mathbb{{Q}}_{{{pp}}} \iff |a_{{{nn}+1}} - a_{{{nn}}}|_{{{pp}}} \to 0'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_radius_convergence"
+latex = '\sum a_{{{nn}}} {xx}^{{{nn}}} \text{{ conv. on }} |{xx}|_{{{pp}}} < r,\quad r = \liminf_{{{{{nn}}}\to\infty}} |a_{{{nn}}}|_{{{pp}}}^{{-1/{nn}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B3: Local fields (7) ---
+
+[[template]]
+name = "ramification_degree"
+latex = 'e({KK}/\mathbb{{Q}}_{{{pp}}}) \cdot f({KK}/\mathbb{{Q}}_{{{pp}}}) = [{KK}:\mathbb{{Q}}_{{{pp}}}]'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "ramification_composition"
+latex = 'e({LL}/{KK}) = e({LL}/{FF}) \cdot e({FF}/{KK}) \text{{ for }} {LL} \supset {FF} \supset {KK}'
+
+[template.slots.LL]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["LL"]
+
+[template.slots.KK]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["LL","FF"]
+
+[[template]]
+name = "residue_field_tower"
+latex = '[k_{{{LL}}} : k_{{{KK}}}] = f({LL}/{KK})'
+
+[template.slots.LL]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.KK]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["LL"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "totally_ramified_iff"
+latex = '{KK}/\mathbb{{Q}}_{{{pp}}} \text{{ tot. ramified}} \iff f({KK}/\mathbb{{Q}}_{{{pp}}}) = 1 \iff \text{{ min poly of }} {uu} \text{{ is Eisenstein}}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "UNIF_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "unramified_extension_unique"
+latex = '\exists!\text{{ unramified ext. of }} {KK} \text{{ of degree }} {nn} \text{{ over }} \mathbb{{Q}}_{{{pp}}}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "local_field_finite_ext"
+latex = '[{KK}:\mathbb{{Q}}_{{{pp}}}] = {nn} < \infty,\quad e \cdot f = {nn}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "norm_map_local"
+latex = 'N_{{{LL}/{KK}}}: {LL}^* \to {KK}^*,\quad N_{{{LL}/{KK}}}({uu}_{{{LL}}})^{{f({LL}/{KK})}} = (-1)^{{e}} a_0'
+
+[template.slots.LL]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.KK]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["LL"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "UNIF_BASE_POOL"
+
+# --- Part B4: Hensel's lemma variants (7) ---
+
+[[template]]
+name = "hensel_strong"
+latex = '''|{ff}({aa})|_{{{pp}}} < |{ff}'({aa})|_{{{pp}}}^2 \Rightarrow \exists!\, {bb} \in \mathbb{{Q}}_{{{pp}}} : {ff}({bb}) = 0,\; |{bb} - {aa}|_{{{pp}}} < |{ff}'({aa})|_{{{pp}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "hensel_factorization"
+latex = '{ff} \equiv {gg} \cdot {hh} \pmod{{{pp}}},\; \gcd(\bar{{{gg}}}, \bar{{{hh}}}) = 1 \Rightarrow {ff} = \tilde{{{gg}}} \cdot \tilde{{{hh}}} \text{{ over }} \mathbb{{Z}}_{{{pp}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "POLY_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "POLY_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "hensel_system"
+latex = '\det J_{{{ff}}}({aa}) \not\equiv 0 \pmod{{{pp}}} \Rightarrow \exists\, {bb} \in \mathbb{{Z}}_{{{pp}}}^{{{nn}}} : {ff}({bb}) = 0'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "hensel_newton_polygon"
+latex = '\text{{Newton polygon of }} {ff} \text{{ has horiz. segment of length }} {nn} \Rightarrow {ff} \text{{ has }} {nn} \text{{ roots in }} \mathbb{{Q}}_{{{pp}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name = "hensel_iterative"
+latex = '''{aa}_{{{nn}+1}} = {aa}_{{{nn}}} - \frac{{{ff}({aa}_{{{nn}}})}}{{{ff}'({aa}_{{{nn}}})}} \xrightarrow{{{pp}\text{{-adic}}}} \text{{root of }} {ff}'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "hensel_criterion_mod"
+latex = '''{ff}({aa}) \equiv 0 \pmod{{{pp}^{{{nn}}}}},\; v_{{{pp}}}({ff}'({aa})) = 0 \Rightarrow \exists\, {bb} : {ff}({bb}) \equiv 0 \pmod{{{pp}^{{2{nn}}}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "hensel_general_ring"
+latex = '''{ff}({aa}) \in {pp} \cdot {RR},\; {ff}'({aa}) \notin {pp} \cdot {RR} \Rightarrow \exists!\, {bb} \in {RR} : {ff}({bb}) = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+# --- Part B5: p-adic analysis (7) ---
+
+[[template]]
+name = "strassmann_zeros"
+latex = '{ff} \in \mathbb{{Z}}_{{{pp}}}[[{xx}]] \text{{ with last non-zero coeff in degree }} {nn} \Rightarrow {ff} \text{{ has }} \leq {nn} \text{{ zeros in }} \mathbb{{Z}}_{{{pp}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "weierstrass_preparation"
+latex = '{ff} = {pp}^{{{mm}}} \cdot U({xx}) \cdot W({xx}),\quad \deg W = {nn},\quad U \in \mathbb{{Z}}_{{{pp}}}[[{xx}]]^*'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name = "mahler_expansion"
+latex = '{ff}({xx}) = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} c_{{{nn}}} \binom{{{xx}}}{{{nn}}},\quad c_{{{nn}}} = \Delta^{{{nn}}} {ff}(0)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_newton_iterate"
+latex = '''|{ff}'({aa})|_{{{pp}}} > |{ff}({aa})|_{{{pp}}} \Rightarrow \text{{Newton iterates starting at }} {aa} \text{{ converge to a root of }} {ff}'''
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "locally_analytic"
+latex = '{ff} : {KK} \to {KK} \text{{ locally analytic}},\quad \forall {xx} \in {KK}:\; {ff}({xx}) = \sum{lim_mod}_{{n \geq 0}} a_n ({xx} - c)^n \text{{ on some ball}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "overconvergent_series"
+latex = '\sum a_{{{nn}}} {xx}^{{{nn}}} \text{{ overconvergent: conv. on }} |{xx}|_{{{pp}}} < r \text{{ for some }} r > 1'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "padic_integration"
+latex = '\int{lim_mod}_{{\mathbb{{Z}}_{{{pp}}}}} {ff}({xx})\, d\mu = \lim_{{{nn}\to\infty}} \sum{lim_mod}_{{a=0}}^{{{pp}^{{{nn}}}-1}} {ff}(a)\, \mu\!\left(a + {pp}^{{{nn}}} \mathbb{{Z}}_{{{pp}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B6: Number theory applications (7) ---
+
+[[template]]
+name = "kummer_carries"
+latex = 'v_{{{pp}}}\!\binom{{{nn}+{mm}}}{{{nn}}} = \text{{number of carries in base-}}{pp} \text{{ addition of }} {nn} \text{{ and }} {mm}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name = "product_formula_global"
+latex = '\prod_v |{xx}|_v = 1 \quad \forall\, {xx} \in {KK}^*'
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[[template]]
+name = "teichmuller_character"
+latex = '\omega : (\mathbb{{Z}}/{pp}\mathbb{{Z}})^* \to \mu_{{{pp}-1}} \subset \mathbb{{Z}}_{{{pp}}}^*,\quad \omega({xx}) \equiv {xx} \pmod{{{pp}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "iwasawa_algebra"
+latex = '\Lambda_{{{KK}}} = \mathbb{{Z}}_{{{pp}}}[[\Gamma]] \cong \mathbb{{Z}}_{{{pp}}}[[T]],\quad \Gamma \cong \mathbb{{Z}}_{{{pp}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[[template]]
+name = "norm_residue_symbol"
+latex = '\left({aa},\, {KK}/{FF}\right)_{{{pp}}} = \mathrm{{Frob}} \text{{ when }} {aa} \in N_{{{KK}/{FF}}}({KK}^*)'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name = "lubin_tate_formal"
+latex = '\mathcal{{F}}_{{{uu}}}({xx}, {yy}) \text{{ Lubin-Tate formal {KK}-module for uniformizer }} {uu},\quad [{pp}]_{{F}}({xx}) = {pp} {xx} + {xx}^{{{pp}}}'
+
+[template.slots.uu]
+type = "S"
+pool = "UNIF_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "witt_vectors"
+latex = 'W({RR}) = \text{{ring of Witt vectors over }} {RR} \text{{ w.r.t. prime }} {pp},\quad W_{{n}}({RR}) = {RR}^{{{nn}}}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part C: function-pair templates (6) ---
+
+[[template]]
+name = "fn_padic_norm"
+latex = '{fn1}(|{xx}|_{{{pp}}}) = {fn2}({xx})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "fn_valuation_pair"
+latex = '{fn1}\!\left(v_{{{pp}}}({xx}) + v_{{{pp}}}({yy})\right) = {fn2}\!\left(v_{{{pp}}}({xx} \cdot {yy})\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "fn_padic_exp"
+latex = '{fn1}\!\left(\exp_{{{pp}}}({xx})\right) = {fn2}({xx}) \quad \bigl(|{xx}|_{{{pp}}} < {pp}^{{-1/({pp}-1)}}\bigr)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "fn_local_norm"
+latex = '{fn1}\!\left(N_{{{KK}/{FF}}}({xx})\right) = {fn2}({xx}) \quad ({xx} \in {KK})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "fn_triple_padic"
+latex = '{fn1}({xx} \cdot {yy}) = {fn2}({xx}) \cdot {fn3}({yy}) \quad \text{{in }} \mathbb{{Q}}_{{{pp}}}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name = "fn_frobenius_local"
+latex = '{fn1}(\mathrm{{Frob}}_{{{KK}}}({xx})) = {fn2}({xx}) \quad ({xx} \in {KK})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
