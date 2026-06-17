@@ -25,7 +25,7 @@ def _domain_table() -> None:
     print("|---|---|---|---|---|")
     for name, meta in DOMAIN_CONFIG.items():
         tags = ", ".join(meta.tags) if meta.tags else "—"
-        file_guess = f"domains/{name}.py"
+        file_guess = f"domains/{name}.toml"
         print(f"| `{name}` | `{file_guess}` | {meta.weight} | {tags} | {meta.difficulty} |")
     print(f"\nTotal domains: {len(DOMAIN_CONFIG)}")
     total_w = sum(m.weight for m in DOMAIN_CONFIG.values())
