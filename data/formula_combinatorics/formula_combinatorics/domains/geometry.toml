@@ -27,7 +27,7 @@ values = ["a", "b", "c", "d", "k", "m", "n", "r"]
 
 [[pool]]
 name   = "CIRCLE_POOL"
-values = ["1", "2", "3", "4", "5", "6"]
+values = ["①", "②", "③", "④", "⑤", "⑥"]
 
 # ---------------------------------------------------------------------------
 # Angles
@@ -1091,7 +1091,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_eq"
-latex = '\textcircled{{{n}}} \quad {A}{B} = {a}'
+latex = '{n} \quad {A}{B} = {a}'
 
 [template.slots.n]
 type = "S"
@@ -1113,7 +1113,7 @@ pool = "SCALAR_POOL"
 
 [[template]]
 name  = "circled_num_angle"
-latex = '\textcircled{{{n}}} \quad \angle {A} = {d}^{{\circ}}'
+latex = '{n} \quad\angle {A} = {d}^{{\circ}}'
 
 [template.slots.n]
 type = "S"
@@ -1131,7 +1131,7 @@ pool = "DEG_POOL"
 
 [[template]]
 name  = "circled_num_parallel"
-latex = '\textcircled{{{n}}} \quad {A}{B} \parallel {C}{D}'
+latex = '{n} \quad {A}{B} \parallel {C}{D}'
 
 [template.slots.n]
 type = "S"
@@ -1157,7 +1157,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_congruent"
-latex = '\textcircled{{{n}}} \quad \triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+latex = '{n} \quad\triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
 
 [template.slots.n]
 type = "S"
@@ -1193,7 +1193,7 @@ pool = "TRI_VERTS_POOL"
 
 [[template]]
 name  = "circled_num_similar"
-latex = '\textcircled{{{n}}} \quad \triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
+latex = '{n} \quad\triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
 
 [template.slots.n]
 type = "S"
@@ -1227,7 +1227,7 @@ pool = "TRI_VERTS_POOL"
 
 [[template]]
 name  = "circled_num_perp"
-latex = '\textcircled{{{n}}} \quad {A}{B} \perp {C}{D}'
+latex = '{n} \quad {A}{B} \perp {C}{D}'
 
 [template.slots.n]
 type = "S"
@@ -1253,7 +1253,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_because"
-latex = '\textcircled{{{n}}} \quad \because \angle {A} = \angle {B}'
+latex = '{n} \quad\because \angle {A} = \angle {B}'
 
 [template.slots.n]
 type = "S"
@@ -1271,7 +1271,7 @@ pool = "ANGLE_POOL"
 
 [[template]]
 name  = "circled_num_parallel_rich"
-latex = '\textcircled{{{n}}} \quad \overline{{{P1}{P2}}} \parallel \overline{{{P3}{P4}}}'
+latex = '{n} \quad\overline{{{P1}{P2}}} \parallel \overline{{{P3}{P4}}}'
 
 [template.slots.n]
 type = "S"
@@ -1297,7 +1297,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_vec_rich"
-latex = '\textcircled{{{n}}} \quad \overrightarrow{{{P1}{P2}}} = \overrightarrow{{{P3}{P4}}}'
+latex = '{n} \quad\overrightarrow{{{P1}{P2}}} = \overrightarrow{{{P3}{P4}}}'
 
 [template.slots.n]
 type = "S"
@@ -1323,7 +1323,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_angle_rich"
-latex = '\textcircled{{{n}}} \quad \angle {P1}{P2}{P3} = {a}^\circ'
+latex = '{n} \quad\angle {P1}{P2}{P3} = {a}^\circ'
 
 [template.slots.n]
 type = "S"
