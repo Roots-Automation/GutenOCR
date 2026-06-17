@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import html
 import random
+import re
 import sys
 import webbrowser
 from pathlib import Path
@@ -42,12 +43,7 @@ _HTML_HEAD = """\
 <title>Formula Domain Inspector</title>
 <script>
 MathJax = {
-  tex: {
-    inlineMath: [['$','$']], displayMath: [['$$','$$']],
-    macros: {
-      textcircled: ["\\mathord{\\bigcirc\\!\\!\\!\\!\\raise{0.05em}{\\scriptstyle\\text{#1}}}", 1]
-    }
-  },
+  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
   options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
 };
 </script>
@@ -185,14 +181,24 @@ _HTML_TAIL = """\
 # ---------------------------------------------------------------------------
 
 
+_CIRCLED_DIGITS = {"0": "⓪", "1": "①", "2": "②", "3": "③", "4": "④", "5": "⑤", "6": "⑥", "7": "⑦", "8": "⑧", "9": "⑨"}
+
+
+def _display_latex(latex: str) -> str:
+    """Preprocess latex for MathJax display only (not the raw source shown below)."""
+    return re.sub(r"\\textcircled\{(\d)\}", lambda m: _CIRCLED_DIGITS.get(m.group(1), m.group(0)), latex)
+
+
 def _card(idx: int, latex: str) -> str:
     """Render one formula card (rendered MathJax + raw source)."""
     escaped = html.escape(latex)
+    display_latex = _display_latex(latex)
+    display_escaped = html.escape(display_latex)
     # \begin{...} environments are already display-math; others need $$ wrapping
-    if latex.startswith(r"\begin"):
-        display = escaped
+    if display_latex.startswith(r"\begin"):
+        display = display_escaped
     else:
-        display = f"$${escaped}$$"
+        display = f"$${display_escaped}$$"
     return (
         f'<div class="formula-card">'
         f'<div class="index">#{idx}</div>'
