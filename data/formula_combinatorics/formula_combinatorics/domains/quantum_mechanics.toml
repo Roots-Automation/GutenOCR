@@ -427,11 +427,39 @@ exclude_from = ["ii"]
 
 [[template]]
 name  = "fermionic_number_operator"
-latex = '\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}},\quad \hat{{n}}_{{{ii}}}^2 = \hat{{n}}_{{{ii}}}'
+latex = ""
 
-[template.slots.ii]
-type = "S"
-pool = "FERM_IDX_POOL"
+  [[template.variants]]
+  name  = "fermionic_number_operator_both"
+  latex = '\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}},\quad \hat{{n}}_{{{ii}}}^2 = \hat{{n}}_{{{ii}}}'
+  [template.variants.slots.ii]
+  type = "S"
+  pool = "FERM_IDX_POOL"
+
+  [[template.variants]]
+  name  = "fermionic_number_operator_def"
+  latex = '\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}}'
+  [template.variants.slots.ii]
+  type = "S"
+  pool = "FERM_IDX_POOL"
+
+  [[template.variants]]
+  name  = "fermionic_number_operator_idempotent"
+  latex = '\hat{{n}}_{{{ii}}}^2 = \hat{{n}}_{{{ii}}}'
+  [template.variants.slots.ii]
+  type = "S"
+  pool = "FERM_IDX_POOL"
+
+  [[template.variants]]
+  name  = "fermionic_number_operator_two_modes"
+  latex = '\hat{{n}}_{{{ii}}} = a_{{{ii}}}^\dagger a_{{{ii}}},\quad \hat{{n}}_{{{jj}}} = a_{{{jj}}}^\dagger a_{{{jj}}}'
+  [template.variants.slots.ii]
+  type = "S"
+  pool = "FERM_IDX_POOL"
+  [template.variants.slots.jj]
+  type         = "X"
+  pool         = "FERM_IDX_POOL"
+  exclude_from = ["ii"]
 
 # ----
 
