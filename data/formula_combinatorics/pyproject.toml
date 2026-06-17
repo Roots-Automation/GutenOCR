@@ -35,3 +35,21 @@ markers = [
     "slow: marks tests as slow (skipped in normal CI; run with: pytest -m slow)",
     "render: marks tests that require node + katex npm package",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]
+
+[tool.coverage.run]
+source = ["formula_combinatorics"]
+omit = ["*/tests/*", "*/tools/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",
+]

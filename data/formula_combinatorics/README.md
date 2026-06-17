@@ -162,49 +162,49 @@ formula = GENERATORS["calculus"](rng)
 
 ## Domains
 
-39 domains are available, each in its own file. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
+39 domains are available, each as a declarative TOML pack. Default sampling weights are unnormalized; `generate()` renormalizes at call time. Weights reflect approximate prevalence in mathematical OCR corpora.
 
 | Domain | File | Weight | Tags | Difficulty |
 |---|---|---|---|---|
-| `algebra` | `domains/algebra.py` | 0.09 | foundational | elementary |
-| `trigonometry` | `domains/trigonometry.py` | 0.04 | foundational | elementary |
-| `calculus` | `domains/calculus.py` | 0.10 | foundational | undergraduate |
-| `linear_algebra` | `domains/linear_algebra.py` | 0.08 | foundational | undergraduate |
-| `geometry` | `domains/geometry.py` | 0.07 | foundational | elementary |
-| `probability` | `domains/probability.py` | 0.07 | foundational | undergraduate |
-| `classical_mechanics` | `domains/classical_mechanics.py` | 0.030 | applied | undergraduate |
-| `electromagnetism` | `domains/electromagnetism.py` | 0.020 | applied | undergraduate |
-| `statistical_mechanics` | `domains/statistical_mechanics.py` | 0.020 | applied | undergraduate |
-| `quantum_mechanics` | `domains/quantum_mechanics.py` | 0.020 | applied | graduate |
-| `field_theory` | `domains/field_theory.py` | 0.010 | advanced | research |
-| `chemistry` | `domains/chemistry.py` | 0.05 | applied | undergraduate |
-| `optimization` | `domains/optimization.py` | 0.05 | applied | undergraduate |
-| `set_theory` | `domains/set_theory.py` | 0.05 | foundational | undergraduate |
-| `logic` | `domains/logic.py` | 0.05 | foundational | undergraduate |
-| `proof_theory` | `domains/proof_theory.py` | 0.020 | advanced | graduate |
-| `asymptotics` | `domains/asymptotics.py` | 0.030 | applied | graduate |
-| `group_theory` | `domains/group_theory.py` | 0.04 | advanced | graduate |
-| `analysis` | `domains/analysis.py` | 0.04 | advanced | graduate |
-| `number_theory` | `domains/number_theory.py` | 0.04 | advanced | graduate |
-| `quantum_notation` | `domains/quantum_notation.py` | 0.04 | applied | graduate |
-| `statistics` | `domains/statistics.py` | 0.04 | foundational | undergraduate |
-| `topology` | `domains/topology.py` | 0.04 | advanced | graduate |
-| `complex_analysis` | `domains/complex_analysis.py` | 0.03 | advanced | graduate |
-| `combinatorics` | `domains/combinatorics.py` | 0.03 | foundational | undergraduate |
-| `custom_operators` | `domains/custom_operators.py` | 0.03 | structural | graduate |
-| `differential_equations` | `domains/differential_equations.py` | 0.03 | foundational | undergraduate |
-| `information_theory` | `domains/information_theory.py` | 0.03 | applied | graduate |
-| `math_fonts` | `domains/math_fonts.py` | 0.03 | structural | undergraduate |
-| `category_theory` | `domains/category_theory.py` | 0.02 | advanced | research |
-| `differential_geometry` | `domains/differential_geometry.py` | 0.02 | advanced | graduate |
-| `fourier` | `domains/fourier.py` | 0.02 | advanced | graduate |
-| `graph_theory` | `domains/graph_theory.py` | 0.02 | advanced | graduate |
-| `measure_theory` | `domains/measure_theory.py` | 0.02 | advanced | graduate |
-| `p_adic` | `domains/p_adic.py` | 0.02 | advanced | research |
-| `stochastic_processes` | `domains/stochastic_processes.py` | 0.02 | advanced | graduate |
-| `representation_theory` | `domains/representation_theory.py` | 0.01 | advanced | research |
-| `ring_field_theory` | `domains/ring_field_theory.py` | 0.01 | advanced | graduate |
-| `align` | `domains/align.py` | 0.15 | structural | undergraduate |
+| `algebra` | `domains/algebra.toml` | 0.09 | foundational | elementary |
+| `trigonometry` | `domains/trigonometry.toml` | 0.04 | foundational | elementary |
+| `calculus` | `domains/calculus.toml` | 0.10 | foundational | undergraduate |
+| `linear_algebra` | `domains/linear_algebra.toml` | 0.08 | foundational | undergraduate |
+| `geometry` | `domains/geometry.toml` | 0.07 | foundational | elementary |
+| `probability` | `domains/probability.toml` | 0.07 | foundational | undergraduate |
+| `classical_mechanics` | `domains/classical_mechanics.toml` | 0.030 | applied | undergraduate |
+| `electromagnetism` | `domains/electromagnetism.toml` | 0.020 | applied | undergraduate |
+| `statistical_mechanics` | `domains/statistical_mechanics.toml` | 0.020 | applied | undergraduate |
+| `quantum_mechanics` | `domains/quantum_mechanics.toml` | 0.020 | applied | graduate |
+| `field_theory` | `domains/field_theory.toml` | 0.010 | advanced | research |
+| `chemistry` | `domains/chemistry.toml` | 0.05 | applied | undergraduate |
+| `optimization` | `domains/optimization.toml` | 0.05 | applied | undergraduate |
+| `set_theory` | `domains/set_theory.toml` | 0.05 | foundational | undergraduate |
+| `logic` | `domains/logic.toml` | 0.05 | foundational | undergraduate |
+| `proof_theory` | `domains/proof_theory.toml` | 0.020 | advanced | graduate |
+| `asymptotics` | `domains/asymptotics.toml` | 0.030 | applied | graduate |
+| `group_theory` | `domains/group_theory.toml` | 0.04 | advanced | graduate |
+| `analysis` | `domains/analysis.toml` | 0.04 | advanced | graduate |
+| `number_theory` | `domains/number_theory.toml` | 0.04 | advanced | graduate |
+| `quantum_notation` | `domains/quantum_notation.toml` | 0.04 | applied | graduate |
+| `statistics` | `domains/statistics.toml` | 0.04 | foundational | undergraduate |
+| `topology` | `domains/topology.toml` | 0.04 | advanced | graduate |
+| `complex_analysis` | `domains/complex_analysis.toml` | 0.03 | advanced | graduate |
+| `combinatorics` | `domains/combinatorics.toml` | 0.03 | foundational | undergraduate |
+| `custom_operators` | `domains/custom_operators.toml` | 0.03 | structural | graduate |
+| `differential_equations` | `domains/differential_equations.toml` | 0.03 | foundational | undergraduate |
+| `information_theory` | `domains/information_theory.toml` | 0.03 | applied | graduate |
+| `math_fonts` | `domains/math_fonts.toml` | 0.03 | structural | undergraduate |
+| `category_theory` | `domains/category_theory.toml` | 0.02 | advanced | research |
+| `differential_geometry` | `domains/differential_geometry.toml` | 0.02 | advanced | graduate |
+| `fourier` | `domains/fourier.toml` | 0.02 | advanced | graduate |
+| `graph_theory` | `domains/graph_theory.toml` | 0.02 | advanced | graduate |
+| `measure_theory` | `domains/measure_theory.toml` | 0.02 | advanced | graduate |
+| `p_adic` | `domains/p_adic.toml` | 0.02 | advanced | research |
+| `stochastic_processes` | `domains/stochastic_processes.toml` | 0.02 | advanced | graduate |
+| `representation_theory` | `domains/representation_theory.toml` | 0.01 | advanced | research |
+| `ring_field_theory` | `domains/ring_field_theory.toml` | 0.01 | advanced | graduate |
+| `align` | `domains/align.toml` | 0.15 | structural | undergraduate |
 
 Sampling weights are renormalized automatically when `--domains` restricts the active set, so partial runs produce the correct relative distribution.
 
@@ -214,52 +214,49 @@ The `align` domain (weight 0.15) generates multi-line `align*` and `cases` envir
 
 ## Adding a New Domain
 
-1. Create a new file in `formula_combinatorics/domains/`, e.g. `domains/my_domain.py`, following the standard module structure:
+The canonical path is TOML-first. A domain pack is a single `.toml` file; the engine's pack loader wires it to `GENERATORS`, `DEFAULT_WEIGHTS`, and `TEMPLATES` automatically.
 
-```python
-# domains/my_domain.py
-from __future__ import annotations
+### 1. Create a TOML pack
 
-import random
-from collections.abc import Callable
+Create `formula_combinatorics/domains/my_domain.toml`:
 
-from .._template_dsl import S, Template
-from ._config import register_domain
+```toml
+[[templates]]
+name = "example"
+latex = "\\pi_1(S^1) \\cong \\mathbb{Z}"
 
-_MY_TEMPLATES: list[Template] = [
-    Template(
-        name="example",
-        latex=r"\pi_1(S^1) \cong \mathbb{{Z}}",
-        slots={},
-    ),
-    Template(
-        name="example_with_slot",
-        latex=r"H^n({X}; \mathbb{{Z}}) \cong H_n({X}; \mathbb{{Z}})",
-        slots={"X": S(["M", "S", "X"])},
-    ),
-]
+[[templates]]
+name = "example_with_slot"
+latex = "H^n({X}; \\mathbb{Z}) \\cong H_n({X}; \\mathbb{Z})"
 
-GENERATORS, WEIGHTS, TEMPLATES = register_domain("my_domain", _MY_TEMPLATES)
+[[templates.slots]]
+name = "X"
+choices = ["M", "S", "X"]
 ```
 
-2. Add an entry in `domains/_config.py` under `DOMAIN_CONFIG`:
+See `engine/_pack_loader.py` for the full TOML schema (slots, sub-templates, weights, strata tags).
+
+### 2. Register in `_config.py`
+
+Add an entry under `DOMAIN_CONFIG` in `formula_combinatorics/domains/_config.py`:
 
 ```python
 "my_domain": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
 ```
 
-3. Add `"my_domain"` to `_DOMAIN_NAMES` in `domains/__init__.py`.
+No `__init__.py` edit required — the pack loader discovers the `.toml` file by matching the domain name.
+
+### 3. Verify
+
+```bash
+uv run formula-generate --domains my_domain --count 10 --metadata
+```
 
 The import-time assertion `assert set(DEFAULT_WEIGHTS) == set(GENERATORS)` will catch any mismatch immediately.
 
-### Using shared vocabulary helpers
+### Python domain authoring (legacy)
 
-Pull from `_vocab.py` and `_templates.py` to avoid reinventing common patterns:
-
-```python
-from .._vocab import _VARS, _SCALARS, _atom, _expr, _s, _v
-from .._templates import _def_integral, _indef_integral, _mixed_partial
-```
+The Python-module path still works for domains that need imperative logic beyond the TOML DSL. See `engine/_template_dsl.py` for the `Template`, `Slot`, `Sub`, and `ParamSub` primitives. New domains should prefer TOML.
 
 ---
 
@@ -272,58 +269,26 @@ formula_combinatorics/          ← project root
 ├── README.md
 ├── CHANGELOG.md
 ├── tools/                      ← dev utilities (not part of the package)
-│   ├── domain_inspector.py     # renders sample formulas to HTML via MathJax
-│   ├── collision_probe.py      # birthday-problem diversity analysis
-│   └── gen_readme_tables.py    # prints domain table + CLI flags from live registry
+│   ├── domain_inspector.py     # renders sample formulas to self-contained MathJax HTML
+│   ├── coverage_report.py      # symbol coverage analysis (by-symbol, by-stratum, by-domain)
+│   ├── collision_probe.py      # birthday-problem diversity analysis and n_eff inspection
+│   └── gen_readme_tables.py    # regenerates domain table from live registry
 └── formula_combinatorics/      ← installable package
     ├── __init__.py             # public API: generate, GENERATORS, DEFAULT_WEIGHTS
     ├── generate.py             # CLI entry point (formula-generate)
-    ├── corpus.py               # generation engine: dedup loop
-    ├── _vocab.py               # shared constants and atomic sampling helpers
-    ├── _templates.py           # shared LaTeX fragment builders
-    ├── _template_dsl.py        # Template DSL: Slot, Sub, compute_weights, make_dispatcher
+    ├── corpus.py               # generation engine: dedup loop, split helpers, JSONL writer
+    ├── engine/                 # core DSL, coverage, render, and sample infrastructure
+    │   ├── _template_dsl.py    # Template DSL: Slot, Sub, ParamSub, n_eff, make_dispatcher
+    │   ├── _coverage.py        # CoverageReport, measure_coverage, measure_coverage_by_domain
+    │   ├── _sample.py          # Sample TypedDict (22 fields), make_semantic_key
+    │   ├── _pack_loader.py     # TOML pack loader: PackMeta, load_pack
+    │   ├── _calibration.py     # n_eff calibration probes
+    │   ├── _vocab.py           # shared constants and atomic sampling helpers
+    │   ├── _templates.py       # shared LaTeX fragment builders
+    │   ├── render.py           # KaTeX + lualatex render gate
+    │   └── symbol_inventory.py # MUST_COVER, SYMBOL_STRATA, SYMBOL_FREQUENCY_TIERS
     └── domains/
         ├── __init__.py         # merged GENERATORS, DEFAULT_WEIGHTS, TEMPLATES registry
-        ├── _config.py          # per-domain weight, cap, tags, difficulty configuration
-        ├── algebra.py
-        ├── trigonometry.py
-        ├── calculus.py
-        ├── linear_algebra.py
-        ├── geometry.py
-        ├── probability.py
-        ├── classical_mechanics.py
-        ├── electromagnetism.py
-        ├── statistical_mechanics.py
-        ├── quantum_mechanics.py
-        ├── field_theory.py
-        ├── _physics_vocab.py
-        ├── chemistry.py
-        ├── optimization.py
-        ├── set_theory.py
-        ├── logic.py
-        ├── proof_theory.py
-        ├── _logic_vocab.py
-        ├── group_theory.py
-        ├── analysis.py
-        ├── asymptotics.py
-        ├── number_theory.py
-        ├── quantum_notation.py
-        ├── statistics.py
-        ├── topology.py
-        ├── complex_analysis.py
-        ├── combinatorics.py
-        ├── custom_operators.py
-        ├── differential_equations.py
-        ├── information_theory.py
-        ├── math_fonts.py
-        ├── category_theory.py
-        ├── differential_geometry.py
-        ├── fourier.py
-        ├── graph_theory.py
-        ├── measure_theory.py
-        ├── p_adic.py
-        ├── stochastic_processes.py
-        ├── representation_theory.py
-        ├── ring_field_theory.py
-        └── align.py
+        ├── _config.py          # per-domain weight, tags, difficulty configuration
+        └── *.toml              # 39 domain packs (one per domain, all declarative TOML)
 ```
