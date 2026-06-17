@@ -44,6 +44,7 @@ _TEX_TEMPLATE = r"""\documentclass{{article}}
 \usepackage{{amsmath}}
 \usepackage{{amssymb}}
 \usepackage{{mathtools}}
+\usepackage{{textcomp}}
 \pagestyle{{empty}}
 \begin{{document}}
 $\displaystyle {formula}$
