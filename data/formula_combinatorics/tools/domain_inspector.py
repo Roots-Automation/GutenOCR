@@ -3,7 +3,7 @@
 Formula Domain Inspector
 
 Samples N formulas from each domain and renders them into a self-contained HTML
-file using MathJax for visual inspection. Use this to spot diversity gaps,
+file using KaTeX for visual inspection. Use this to spot diversity gaps,
 rendering issues, and notation problems across domains.
 
 Usage:
@@ -41,13 +41,13 @@ _HTML_HEAD = """\
 <head>
 <meta charset="utf-8">
 <title>Formula Domain Inspector</title>
-<script>
-MathJax = {
-  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
-  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
-};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {
+    delimiters: [{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],
+    throwOnError: false
+  });"></script>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -185,20 +185,16 @@ _CIRCLED_DIGITS = {"0": "⓪", "1": "①", "2": "②", "3": "③", "4": "④", "
 
 
 def _display_latex(latex: str) -> str:
-    """Preprocess latex for MathJax display only (not the raw source shown below)."""
+    """Preprocess latex for KaTeX display only (not the raw source shown below)."""
     return re.sub(r"\\textcircled\{(\d)\}", lambda m: _CIRCLED_DIGITS.get(m.group(1), m.group(0)), latex)
 
 
 def _card(idx: int, latex: str) -> str:
-    """Render one formula card (rendered MathJax + raw source)."""
+    """Render one formula card (rendered KaTeX + raw source)."""
     escaped = html.escape(latex)
     display_latex = _display_latex(latex)
     display_escaped = html.escape(display_latex)
-    # \begin{...} environments are already display-math; others need $$ wrapping
-    if display_latex.startswith(r"\begin"):
-        display = display_escaped
-    else:
-        display = f"$${display_escaped}$$"
+    display = f"$${display_escaped}$$"
     return (
         f'<div class="formula-card">'
         f'<div class="index">#{idx}</div>'
