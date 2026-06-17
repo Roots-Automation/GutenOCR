@@ -537,8 +537,9 @@ type = "S"
 pool = "COEFF_POOL"
 
 [template.slots.B]
-type = "S"
-pool = "CE_SPECIES_POOL"
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
 
 # ---------------------------------------------------------------------------
 # Section B — Equilibrium and Kinetics (16)
@@ -1296,16 +1297,18 @@ type = "S"
 pool = "COEFF_POOL"
 
 [template.slots.B]
-type = "S"
-pool = "CE_SPECIES_POOL"
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
 
 [template.slots.cc]
 type = "S"
 pool = "COEFF_POOL"
 
 [template.slots.C]
-type = "S"
-pool = "CE_SPECIES_POOL"
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A", "B"]
 
 [[template]]
 name  = "ce_equilibrium_arrow"
@@ -1316,8 +1319,9 @@ type = "S"
 pool = "CE_SPECIES_POOL"
 
 [template.slots.B]
-type = "S"
-pool = "CE_SPECIES_POOL"
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
 
 [[template]]
 name  = "concentration_bracket"
