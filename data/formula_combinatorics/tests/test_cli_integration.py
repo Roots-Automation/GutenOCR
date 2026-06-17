@@ -293,3 +293,447 @@ def test_output_parent_dirs_autocreated(tmp_path: Path) -> None:
     assert not nested.parent.exists()
     _run(["formula-generate", "--output", str(nested), "--count", "5", "--seed", "0"])
     assert nested.exists(), f"Output file not created at {nested}"
+
+
+# ---------------------------------------------------------------------------
+# --output-format jsonl
+# ---------------------------------------------------------------------------
+
+
+def test_output_format_jsonl_creates_jsonl_file(tmp_path: Path) -> None:
+    out = tmp_path / "out.jsonl"
+    _run(["formula-generate", "--output", str(out), "--count", "15", "--seed", "0", "--output-format", "jsonl"])
+    assert out.exists()
+    lines = out.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 15
+    for line in lines:
+        obj = json.loads(line)
+        assert "index" in obj and "formula" in obj
+        assert isinstance(obj["formula"], str) and len(obj["formula"]) > 0
+
+
+def test_output_format_jsonl_extension_inferred(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(["formula-generate", "--output", str(out), "--count", "5", "--seed", "0", "--output-format", "jsonl"])
+    # When format is jsonl, the writer uses write_jsonl regardless of the provided extension
+    assert out.exists()
+    lines = out.read_text(encoding="utf-8").splitlines()
+    assert len(lines) == 5
+    for line in lines:
+        json.loads(line)  # must not raise
+
+
+# ---------------------------------------------------------------------------
+# --include-draws
+# ---------------------------------------------------------------------------
+
+
+def test_include_draws_attaches_draw_dict(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "10",
+            "--seed",
+            "0",
+            "--metadata",
+            "--include-draws",
+        ]
+    )
+    data = json.load(open(out))
+    for record in data.values():
+        assert "draws" in record, "Expected 'draws' key in record"
+        assert isinstance(record["draws"], dict)
+
+
+def test_metadata_without_include_draws_omits_draws(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(["formula-generate", "--output", str(out), "--count", "10", "--seed", "0", "--metadata"])
+    data = json.load(open(out))
+    for record in data.values():
+        assert "draws" not in record or record["draws"] is None
+
+
+# ---------------------------------------------------------------------------
+# --weight / --weights
+# ---------------------------------------------------------------------------
+
+
+def test_weight_inline_skews_domain_distribution(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "200",
+            "--seed",
+            "0",
+            "--metadata",
+            "--weight",
+            "algebra=100.0",
+            "--weight",
+            "calculus=0.01",
+        ]
+    )
+    data = json.load(open(out))
+    domains = [v["domain"] for v in data.values()]
+    assert domains.count("algebra") > domains.count("calculus") * 5
+
+
+def test_weights_file_skews_domain_distribution(tmp_path: Path) -> None:
+    weights_file = tmp_path / "weights.json"
+    weights_file.write_text(json.dumps({"algebra": 100.0, "calculus": 0.01}))
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "200",
+            "--seed",
+            "0",
+            "--metadata",
+            "--weights",
+            str(weights_file),
+        ]
+    )
+    data = json.load(open(out))
+    domains = [v["domain"] for v in data.values()]
+    assert domains.count("algebra") > domains.count("calculus") * 5
+
+
+def test_weight_inline_overrides_file_weight(tmp_path: Path) -> None:
+    weights_file = tmp_path / "weights.json"
+    weights_file.write_text(json.dumps({"algebra": 100.0}))
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "100",
+            "--seed",
+            "0",
+            "--domains",
+            "algebra",
+            "calculus",
+            "--metadata",
+            "--weights",
+            str(weights_file),
+            "--weight",
+            "algebra=0.01",
+            "calculus=100.0",  # nargs="+": both in one invocation
+        ]
+    )
+    data = json.load(open(out))
+    domains = [v["domain"] for v in data.values()]
+    # Inline --weight algebra=0.01 overrides the file's algebra=100.0; calculus should dominate
+    assert domains.count("calculus") > domains.count("algebra") * 5
+
+
+def test_weight_missing_equals_exits_nonzero(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    with pytest.raises(SystemExit) as exc_info:
+        _run(["formula-generate", "--output", str(out), "--count", "5", "--weight", "badformat"])
+    assert exc_info.value.code != 0
+
+
+# ---------------------------------------------------------------------------
+# --hold-out-templates
+# ---------------------------------------------------------------------------
+
+
+def test_hold_out_templates_fraction_creates_both_files(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "60",
+            "--seed",
+            "0",
+            "--hold-out-templates",
+            "0.2",
+        ]
+    )
+    assert out.exists()
+    held = tmp_path / "out.held_out_templates.json"
+    assert held.exists(), "Expected held_out_templates output file"
+    manifest = tmp_path / "out.manifest.json"
+    assert manifest.exists(), "Expected manifest file"
+    manifest_data = json.load(open(manifest))
+    assert "held_out_template_names" in manifest_data
+
+
+def test_hold_out_templates_fraction_out_of_range_exits(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    with pytest.raises(SystemExit) as exc_info:
+        _run(
+            [
+                "formula-generate",
+                "--output",
+                str(out),
+                "--count",
+                "10",
+                "--hold-out-templates",
+                "1.5",
+            ]
+        )
+    assert exc_info.value.code != 0
+
+
+@pytest.mark.slow
+def test_hold_out_templates_template_names_disjoint(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "200",
+            "--seed",
+            "42",
+            "--hold-out-templates",
+            "0.2",
+            "--metadata",
+        ]
+    )
+    train_data = json.load(open(out))
+    held_data = json.load(open(tmp_path / "out.held_out_templates.json"))
+    train_names = {v["template_name"] for v in train_data.values() if v.get("template_name")}
+    held_names = {v["template_name"] for v in held_data.values() if v.get("template_name")}
+    overlap = train_names & held_names
+    assert not overlap, f"Template name contamination: {len(overlap)} names in both partitions"
+
+
+# ---------------------------------------------------------------------------
+# --hold-out-symbols
+# ---------------------------------------------------------------------------
+
+
+def test_hold_out_symbols_fraction_creates_both_files(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "60",
+            "--seed",
+            "0",
+            "--hold-out-symbols",
+            "0.15",
+        ]
+    )
+    assert out.exists()
+    held = tmp_path / "out.held_out_symbols.json"
+    assert held.exists(), "Expected held_out_symbols output file"
+    manifest = tmp_path / "out.manifest.json"
+    assert manifest.exists(), "Expected manifest file"
+    manifest_data = json.load(open(manifest))
+    assert "held_out_symbols" in manifest_data
+    assert isinstance(manifest_data["held_out_symbols"], list)
+
+
+# ---------------------------------------------------------------------------
+# --manifest (custom path)
+# ---------------------------------------------------------------------------
+
+
+def test_manifest_custom_path_used(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    custom_manifest = tmp_path / "my_manifest.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "30",
+            "--seed",
+            "0",
+            "--hold-out-templates",
+            "0.1",
+            "--manifest",
+            str(custom_manifest),
+        ]
+    )
+    assert custom_manifest.exists(), "Expected custom manifest path to be used"
+    default_manifest = tmp_path / "out.manifest.json"
+    assert not default_manifest.exists(), "Default manifest path should not be created"
+    manifest_data = json.load(open(custom_manifest))
+    assert "seed" in manifest_data
+
+
+# ---------------------------------------------------------------------------
+# --hold-out-domains (manifest)
+# ---------------------------------------------------------------------------
+
+
+def test_hold_out_domains_excludes_domain_and_writes_manifest(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "50",
+            "--seed",
+            "0",
+            "--hold-out-domains",
+            "algebra",
+            "--metadata",
+        ]
+    )
+    data = json.load(open(out))
+    assert all(v["domain"] != "algebra" for v in data.values()), "algebra should be excluded from train"
+    manifest = tmp_path / "out.manifest.json"
+    assert manifest.exists()
+    manifest_data = json.load(open(manifest))
+    assert "algebra" in manifest_data.get("held_out_domains", [])
+
+
+# ---------------------------------------------------------------------------
+# Parameterization flags (CLI smoke tests)
+# ---------------------------------------------------------------------------
+
+
+def test_difficulty_flag_runs_without_error(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "20",
+            "--seed",
+            "0",
+            "--difficulty",
+            "elementary",
+            "--metadata",
+        ]
+    )
+    data = json.load(open(out))
+    assert len(data) > 0
+
+
+def test_max_depth_flag_runs_without_error(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "20",
+            "--seed",
+            "0",
+            "--max-depth",
+            "3",
+            "--metadata",
+        ]
+    )
+    data = json.load(open(out))
+    assert len(data) > 0
+
+
+def test_length_range_flag_runs_without_error(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "20",
+            "--seed",
+            "0",
+            "--length-range",
+            "5",
+            "100",
+            "--metadata",
+        ]
+    )
+    data = json.load(open(out))
+    assert len(data) > 0
+
+
+def test_length_range_min_gt_max_exits_nonzero(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    with pytest.raises(SystemExit) as exc_info:
+        _run(["formula-generate", "--output", str(out), "--count", "5", "--length-range", "100", "5"])
+    assert exc_info.value.code != 0
+
+
+def test_symbol_tier_head_runs_without_error(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "20",
+            "--seed",
+            "0",
+            "--symbol-tier",
+            "head",
+            "--metadata",
+        ]
+    )
+    data = json.load(open(out))
+    assert len(data) > 0
+
+
+# ---------------------------------------------------------------------------
+# --content-hash (early exit)
+# ---------------------------------------------------------------------------
+
+
+def test_content_hash_exits_zero_and_prints_aggregate(capsys: pytest.CaptureFixture) -> None:
+    with pytest.raises(SystemExit) as exc_info:
+        _run(["formula-generate", "--content-hash"])
+    assert exc_info.value.code == 0
+    captured = capsys.readouterr()
+    assert "aggregate:" in captured.out
+
+
+# ---------------------------------------------------------------------------
+# --coverage-mode (slow)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.slow
+def test_coverage_mode_cli_runs_without_error(tmp_path: Path) -> None:
+    out = tmp_path / "out.json"
+    _run(
+        [
+            "formula-generate",
+            "--output",
+            str(out),
+            "--count",
+            "100",
+            "--seed",
+            "0",
+            "--coverage-mode",
+            "2",
+            "--domains",
+            "algebra",
+            "calculus",
+        ]
+    )
+    data = json.load(open(out))
+    assert len(data) > 0
