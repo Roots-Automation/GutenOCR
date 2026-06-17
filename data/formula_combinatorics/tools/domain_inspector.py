@@ -42,7 +42,11 @@ _HTML_HEAD = """\
 <title>Formula Domain Inspector</title>
 <script>
 MathJax = {
-  tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] },
+  tex: {
+    inlineMath: [['$','$']], displayMath: [['$$','$$']],
+    packages: {'[+]': ['textmacros']}
+  },
+  loader: { load: ['[tex]/textmacros'] },
   options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
 };
 </script>
