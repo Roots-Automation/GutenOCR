@@ -1,7 +1,26 @@
 # WU7: Domain & coverage expansion
 
-**Status:** proposed | **Effort:** L (3-5 days, ongoing) | **Depends on:** WU3 (verify new strata), WU4 (cheap authoring) | **Unblocks:** the agenda's coverage-completeness claim
+**Status:** complete (2026-06-17) | **Effort:** L (3-5 days, ongoing) | **Depends on:** WU3 (verify new strata), WU4 (cheap authoring) | **Unblocks:** the agenda's coverage-completeness claim
 **Repo:** `Roots-Automation/GutenOCR`, `data/formula_combinatorics/` (PR #24).
+
+## Completion summary (2026-06-17)
+
+Delivered on branch `feat/domain-splits`, commits `abafe8b` through `ad5f153`.
+
+**Delivered:**
+- TOML migration: all 40 domains migrated; zero Python domain files remain
+- Physics sub-split: `classical_mechanics`, `electromagnetism`, `statistical_mechanics`, `quantum_mechanics`, `field_theory` as separate registered domains; old `physics.py` (1075L) deleted
+- New domains: `proof_theory`, `asymptotics`, `topology`, `ring_field_theory`, `measure_theory`, `representation_theory`, `stochastic_processes`, `p_adic` and others
+- Per-sample metadata carries sub-domain name directly (physics sub-strata addressable via domain field)
+
+**Gap table:**
+- Physics sub-regimes: ✅ Addressed via separate domains
+- Proof-theory inference-rule layout: ✅ `proof_theory.toml` domain with `\dfrac`/`\vdash` patterns; structural test added
+- Asymptotics / numerical analysis: ✅ `asymptotics.toml` domain
+- Order / lattice theory: ✗ Consciously deferred — insufficient distinct notation to earn a stratum under the design principle
+- Game theory / mathematical finance: ✗ Consciously deferred — notation reuse; no new stratum
+
+**Deferred (separate installable packages):** Two-`pyproject.toml` split (formula-engine / formula-content) remains unstarted. Tracked as a standalone future item.
 
 ## Intent
 

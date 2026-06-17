@@ -314,6 +314,12 @@ def test_proof_theory_vdash_frequency() -> None:
     assert n >= 680, f"\\vdash appeared only {n}/2000 in proof_theory"
 
 
+def test_proof_theory_inference_rule_layout() -> None:
+    r"""Inference-rule layout: \dfrac used as premises-over-conclusion divider."""
+    n = sum(1 for f in _PT if r"\dfrac" in f and r"\vdash" in f)
+    assert n >= 200, f"\\dfrac+\\vdash co-occurrence (inference-rule layout) only {n}/2000 in proof_theory"
+
+
 # ---------------------------------------------------------------------------
 # align — every sample must start with \begin{...}
 # ---------------------------------------------------------------------------

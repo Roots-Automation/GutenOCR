@@ -1,7 +1,23 @@
 # WU6: Benchmark-native output + held-out splits + semantic key
 
-**Status:** proposed | **Effort:** M-L (3-5 days) | **Depends on:** WU2 (render status), WU4 (stable template ids), WU5 (stratification features) | **Unblocks:** the agenda's entire benchmark layer (held-out strata, CDM eval, the C0-C5 ladder)
+**Status:** complete (2026-06-17) | **Effort:** M-L (3-5 days) | **Depends on:** WU2 (render status), WU4 (stable template ids), WU5 (stratification features) | **Unblocks:** the agenda's entire benchmark layer (held-out strata, CDM eval, the C0-C5 ladder)
 **Repo:** `Roots-Automation/GutenOCR`, `data/formula_combinatorics/` (PR #24).
+
+## Completion summary (2026-06-17)
+
+Delivered on branch `feat/domain-splits`.
+
+**Delivered:**
+- `engine/_sample.py` — `Sample` TypedDict (22 fields) and `make_semantic_key()`
+- `corpus.py` — `_build_record()`, `partition_templates()`, `partition_symbols()`, `write_jsonl()`, `write_manifest()`; `generate()` extended with `include_draws`, `split_tag`, `coverage_mode`, `coverage_n`
+- `generate.py` — `--hold-out-templates`, `--hold-out-symbols`, `--coverage-mode [N]`, `--output-format jsonl`, `--weights`, `--weight`, `--include-draws`, `--manifest` flags
+- Full pack provenance (`PackMeta.name/version/author/license`) surfaced in per-sample records
+- `SYMBOL_FREQUENCY_TIERS` (head/body/tail) in `engine/symbol_inventory.py`; `--symbol-tier head/body/tail` wired through `generate.py`
+- Tests: `test_benchmark_output.py`, `test_splits.py`, `test_semantic_key.py`, `test_coverage_mode.py`
+
+**Not delivered (parquet format):** WU6 spec mentioned JSONL or parquet; only JSONL was implemented. Parquet has no downstream requester; deferred indefinitely.
+
+**Deferred (separate installable packages):** Two-`pyproject.toml` split (formula-engine / formula-content) remains unstarted. Tracked as a standalone future item.
 
 ## Intent
 
