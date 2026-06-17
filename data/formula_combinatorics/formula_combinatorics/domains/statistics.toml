@@ -3,7 +3,7 @@ domain = "statistics"
 
 [[pool]]
 name = "EXP_OP"
-values = ["E",'\mathbb{E}','\mathrm{E}','\mathbf{E}','\hat{E}','\mathbb{E}_\theta']
+values = ["E",'\mathbb{E}','\mathrm{E}','\mathbf{E}','\hat{E}','\tilde{E}']
 
 [[pool]]
 name = "LAM_POOL"
