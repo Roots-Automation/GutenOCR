@@ -292,3 +292,60 @@ formula_combinatorics/          ← project root
         ├── _config.py          # per-domain weight, tags, difficulty configuration
         └── *.toml              # 39 domain packs (one per domain, all declarative TOML)
 ```
+
+---
+
+## Dev Tools
+
+All tools live in `tools/` and are run directly with `uv run python tools/<name>.py`.
+They are not part of the installable package.
+
+### domain_inspector.py — visual formula browser
+
+Samples N formulas per domain and renders them to a self-contained MathJax HTML file.
+Use this to spot diversity gaps, rendering issues, and notation problems.
+
+```bash
+uv run python tools/domain_inspector.py                        # 8 samples/domain, opens browser
+uv run python tools/domain_inspector.py --samples 20           # more samples
+uv run python tools/domain_inspector.py --domains geometry calculus
+uv run python tools/domain_inspector.py --seed 42 --no-open   # reproducible, don't open browser
+uv run python tools/domain_inspector.py --output report.html
+```
+
+### collision_probe.py — diversity / birthday-horizon analysis
+
+Samples from a domain until a repeated formula is found. The sample count at first
+collision is the "birthday horizon" — a proxy for output diversity. High counts (or no
+collision within the cap) indicate a rich combinatorial space.
+
+```bash
+uv run python tools/collision_probe.py                         # all domains, cap=50k
+uv run python tools/collision_probe.py --domains algebra --max-samples 200000
+uv run python tools/collision_probe.py --trials 20             # distribution over 20 seeds
+uv run python tools/collision_probe.py --show-collision        # print the duplicate pair
+uv run python tools/collision_probe.py --batch 10000           # % unique in a fixed batch
+uv run python tools/collision_probe.py --n-eff                 # analytical n_eff per template (no sampling)
+```
+
+### coverage_report.py — symbol coverage analysis
+
+Generates a corpus and reports which `MUST_COVER` symbols appear, at what frequency,
+optionally broken down by stratum or domain.
+
+```bash
+uv run python tools/coverage_report.py                         # n=5000, flat symbol table
+uv run python tools/coverage_report.py --n 20000 --seed 42
+uv run python tools/coverage_report.py --by-stratum            # greek / calligraphic / … breakdown
+uv run python tools/coverage_report.py --by-domain             # per-domain coverage fraction
+uv run python tools/coverage_report.py --by-stratum --by-domain
+```
+
+### gen_readme_tables.py — domain table + CLI flag reference
+
+Prints the domain table (from the live registry) and `formula-generate --help` output.
+Run this after adding a domain or changing weights/tags to get copy-pasteable README content.
+
+```bash
+uv run python tools/gen_readme_tables.py
+```
