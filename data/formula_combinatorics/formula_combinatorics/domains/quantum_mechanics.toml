@@ -11,7 +11,7 @@ values = ["H", '\hat{H}', '\mathcal{H}', '\hat{\mathcal{H}}', "H_0", '\tilde{H}'
 
 [[pool]]
 name   = "PSI_POOL"
-values = ['\psi', '\phi', '\Psi', '\varphi', '\tilde{\psi}', '\hat{\psi}']
+values = ['\psi', '\phi', '\Psi', '\Phi', '\varphi', '\chi', '\tilde{\psi}', '\hat{\psi}']
 
 [[pool]]
 name   = "HBAR_POOL"
@@ -19,51 +19,51 @@ values = ['\hbar', 'h/(2\pi)', "h", '\hslash']
 
 [[pool]]
 name   = "MASS_POOL"
-values = ["m", "M", '\mu', "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
+values = ["m", "M", '\mu', "m_e", "m_p", "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
 
 [[pool]]
 name   = "COORD_POOL"
-values = ["x", "y", "z", "r", '\theta', '\phi']
+values = ["x", "y", "z", "r", "s", '\theta', '\phi', '\rho', '\varphi', '\xi']
 
 [[pool]]
 name   = "P_POOL"
-values = ["p", "p_i", "p_k", '\pi']
+values = ["p", "p_x", "p_y", "p_z", "p_i", '\hat{p}', '\mathbf{p}']
 
 [[pool]]
 name   = "ENERGY_POOL"
-values = ["E", "E_0", '\mathcal{E}', "U"]
+values = ["E", "E_0", "E_n", "E_k", '\varepsilon', '\epsilon', '\mathcal{E}', "U", "W"]
 
 [[pool]]
 name   = "N_POOL"
-values = ["n", "m", "N", "n_0"]
+values = ["n", "m", "N", "k", "l", '\ell', "j", "n_0", "N_0", "n_1"]
 
 [[pool]]
 name   = "OMEGA_POOL"
-values = ['\omega', '\omega_0', '\Omega', '\nu']
+values = ['\omega', '\omega_0', '\omega_n', '\omega_k', '\Omega', '\Omega_0', '\nu', '\nu_0']
 
 [[pool]]
 name   = "Q_POOL"
-values = ["q", "q_i", "q_k", "q_j"]
+values = ["q", "Q", "q_1", "q_2", "q_i", "q_j", '\xi']
 
 [[pool]]
 name   = "DAG_OP_POOL"
-values = ["A", "B", "H", '\hat{H}', "U", "O", '\hat{O}']
+values = ["A", "B", "C", "H", '\hat{H}', "U", "V", "O", '\hat{O}']
 
 [[pool]]
 name   = "DAG_STATE_POOL"
-values = ["n", "m", "k", '\psi', '\phi', '\alpha']
+values = ["n", "m", "k", "l", '\psi', '\phi', '\alpha', '\beta']
 
 [[pool]]
 name   = "FERM_IDX_POOL"
-values = ["i", "j", "k", "l", "m"]
+values = ["i", "j", "k", "l", "m", "n", "p", "q"]
 
 [[pool]]
 name   = "FUNC_PAIR_F_POOL"
-values = ["f", "u", "A", "F", "h"]
+values = ["f", "u", "A", "F", "h", "p", "s", "r"]
 
 [[pool]]
 name   = "FUNC_PAIR_G_POOL"
-values = ["g", "v", "B", "G", "k"]
+values = ["g", "v", "B", "G", "k", "q", "w", "t"]
 
 [[pool]]
 name   = "DIRAC_STYLE_POOL"
@@ -71,31 +71,31 @@ values = ["D", "DB", '{\\star}', '{\\ast}']
 
 [[pool]]
 name   = "CONSTRAINT_POOL"
-values = ['\phi', '\chi', '\Omega', '\sigma']
+values = ['\phi', '\chi', '\xi', '\Omega', '\sigma', '\theta']
 
 [[pool]]
 name   = "ANG_MOM_POOL"
-values = ["L", "J", "S", '\mathbf{L}', '\mathbf{J}']
+values = ["L", "J", "S", "F", '\mathbf{L}', '\mathbf{J}', '\mathbf{S}']
 
 [[pool]]
 name   = "IDX_TRIPLE_POOL"
-values = ["ijk", "xyz", "123"]
+values = ["ijk", "xyz", "123", "lmn", "abc", "uvw"]
 
 [[pool]]
 name   = "OUTCOME_POOL"
-values = ["a", "x", '\lambda', "m", "b", "k"]
+values = ["a", "b", "c", "x", "r", '\lambda', '\mu', "m"]
 
 [[pool]]
 name   = "LADDER_OP_POOL"
-values = ['\hat{a}', '\hat{b}', '\hat{c}', '\hat{f}']
+values = ['\hat{a}', '\hat{b}', '\hat{c}', '\hat{d}', '\hat{f}', '\hat{g}']
 
 [[pool]]
 name   = "QN_POOL"
-values = ["n", "m", "k", "l"]
+values = ["n", "m", "k", "l", "j", '\ell', "p"]
 
 [[pool]]
 name   = "AMPLITUDE_POOL"
-values = ["A", "B", "C", "D"]
+values = ["A", "B", "C", "D", "R", '\mathcal{A}']
 
 # ---------------------------------------------------------------------------
 # Part A: Schrödinger equations / uncertainty

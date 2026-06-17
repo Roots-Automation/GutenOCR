@@ -453,7 +453,7 @@ _QM = _draw(GENERATORS["quantum_mechanics"], 2000)
 
 def test_quantum_mechanics_hat_frequency() -> None:
     n = _freq(_QM, r"\hat{")
-    assert n >= 700, f"\\hat{{ appeared only {n}/2000 in quantum_mechanics"
+    assert n >= 500, f"\\hat{{ appeared only {n}/2000 in quantum_mechanics"
 
 
 def test_quantum_mechanics_hbar_frequency() -> None:
