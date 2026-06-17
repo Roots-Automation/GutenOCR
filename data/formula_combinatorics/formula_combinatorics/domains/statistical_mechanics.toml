@@ -51,7 +51,7 @@ values = ["V", "V_0", '\mathcal{V}', "L"]
 
 [[pool]]
 name   = "FUG_POOL"
-values = ["z", 'e^{{\beta \mu}}', '\lambda']
+values = ["z", '\lambda', '\zeta']
 
 [[pool]]
 name   = "MASS_POOL"
@@ -331,23 +331,47 @@ pool = "MASS_POOL"
 
 [[template]]
 name  = "grand_canonical_partition"
-latex = '\Xi(\mu, {vv}, {tt}) = \sum{lim_mod}_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})'
+latex = ""
 
-[template.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [[template.variants]]
+  name  = "grand_canonical_partition_fug"
+  latex = '\Xi(\mu, {vv}, {tt}) = \sum{lim_mod}_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})'
 
-[template.slots.vv]
-type = "S"
-pool = "VOL_POOL"
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.slots.tt]
-type = "S"
-pool = "TEMP_POOL"
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VOL_POOL"
 
-[template.slots.ff]
-type = "S"
-pool = "FUG_POOL"
+  [template.variants.slots.tt]
+  type = "S"
+  pool = "TEMP_POOL"
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUG_POOL"
+
+  [[template.variants]]
+  name  = "grand_canonical_partition_exp"
+  latex = '\Xi(\mu, {vv}, {tt}) = \sum{lim_mod}_{{N=0}}^{{\infty}} e^{{N {bb} \mu}} Z_N({vv}, {tt})'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VOL_POOL"
+
+  [template.variants.slots.tt]
+  type = "S"
+  pool = "TEMP_POOL"
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "BETA_POOL"
 
 # ----
 
