@@ -27,7 +27,7 @@ values = ["a", "b", "c", "d", "k", "m", "n", "r"]
 
 [[pool]]
 name   = "CIRCLE_POOL"
-values = ["①", "②", "③", "④", "⑤", "⑥"]
+values = ["1", "2", "3", "4", "5", "6"]
 
 # ---------------------------------------------------------------------------
 # Angles
@@ -1091,7 +1091,7 @@ pool = "PTS_POOL"
 
 [[template]]
 name  = "circled_num_eq"
-latex = '{n} \quad {A}{B} = {a}'
+latex = '\textcircled{{{n}}} \quad {A}{B} = {a}'
 
 [template.slots.n]
 type = "S"
@@ -1131,7 +1131,7 @@ pool = "DEG_POOL"
 
 [[template]]
 name  = "circled_num_parallel"
-latex = '{n} \quad {A}{B} \parallel {C}{D}'
+latex = '\textcircled{{{n}}} \quad {A}{B} \parallel {C}{D}'
 
 [template.slots.n]
 type = "S"
@@ -1227,7 +1227,7 @@ pool = "TRI_VERTS_POOL"
 
 [[template]]
 name  = "circled_num_perp"
-latex = '{n} \quad {A}{B} \perp {C}{D}'
+latex = '\textcircled{{{n}}} \quad {A}{B} \perp {C}{D}'
 
 [template.slots.n]
 type = "S"
