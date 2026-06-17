@@ -57,6 +57,46 @@ values = ["n", "m", "k", '\psi', '\phi', '\alpha']
 name   = "FERM_IDX_POOL"
 values = ["i", "j", "k", "l", "m"]
 
+[[pool]]
+name   = "FUNC_PAIR_F_POOL"
+values = ["f", "u", "A", "F", "h"]
+
+[[pool]]
+name   = "FUNC_PAIR_G_POOL"
+values = ["g", "v", "B", "G", "k"]
+
+[[pool]]
+name   = "DIRAC_STYLE_POOL"
+values = ["D", "DB", '{\\star}', '{\\ast}']
+
+[[pool]]
+name   = "CONSTRAINT_POOL"
+values = ['\phi', '\chi', '\Omega', '\sigma']
+
+[[pool]]
+name   = "ANG_MOM_POOL"
+values = ["L", "J", "S", '\mathbf{L}', '\mathbf{J}']
+
+[[pool]]
+name   = "IDX_TRIPLE_POOL"
+values = ["ijk", "xyz", "123"]
+
+[[pool]]
+name   = "OUTCOME_POOL"
+values = ["a", "x", '\lambda', "m", "b", "k"]
+
+[[pool]]
+name   = "LADDER_OP_POOL"
+values = ['\hat{a}', '\hat{b}', '\hat{c}', '\hat{f}']
+
+[[pool]]
+name   = "QN_POOL"
+values = ["n", "m", "k", "l"]
+
+[[pool]]
+name   = "AMPLITUDE_POOL"
+values = ["A", "B", "C", "D"]
+
 # ---------------------------------------------------------------------------
 # Part A: Schrödinger equations / uncertainty
 # ---------------------------------------------------------------------------
@@ -151,11 +191,19 @@ pool = "HBAR_POOL"
 
 [[template]]
 name  = "angular_momentum_commutator"
-latex = '[L_i,\,L_j] = i\,{hb}\,\varepsilon_{{ijk}}\,L_k'
+latex = '[{am}_i,\,{am}_j] = i\,{hb}\,\varepsilon_{{{it}}}\,{am}_k'
+
+[template.slots.am]
+type = "S"
+pool = "ANG_MOM_POOL"
 
 [template.slots.hb]
 type = "S"
 pool = "HBAR_POOL"
+
+[template.slots.it]
+type = "S"
+pool = "IDX_TRIPLE_POOL"
 
 # ----
 
@@ -234,17 +282,38 @@ pool = "OMEGA_POOL"
 
 [[template]]
 name  = "hydrogen_energy_levels"
-latex = 'E_{{{nn}}} = -\frac{{13.6\,\mathrm{{eV}}}}{{{nn}^2}}'
+latex = ""
 
-[template.slots.nn]
-type = "S"
-pool = "N_POOL"
+  [[template.variants]]
+  name  = "hydrogen_13_6"
+  latex = 'E_{{{nn}}} = -\frac{{13.6\,\mathrm{{eV}}}}{{{nn}^2}}'
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "hydrogen_rydberg"
+  latex = 'E_{{{nn}}} = -\frac{{R_\infty\,hc}}{{{nn}^2}}'
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "hydrogen_relative"
+  latex = 'E_{{{nn}}} = -\frac{{E_1}}{{{nn}^2}}'
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "N_POOL"
 
 # ----
 
 [[template]]
 name  = "ladder_op_lowering"
-latex = '\hat{{a}}\,|{nn}\rangle = \sqrt{{{nn}}}\,|{nn}-1\rangle'
+latex = '{op}\,|{nn}\rangle = \sqrt{{{nn}}}\,|{nn}-1\rangle'
+
+[template.slots.op]
+type = "S"
+pool = "LADDER_OP_POOL"
 
 [template.slots.nn]
 type = "S"
@@ -254,7 +323,11 @@ pool = "N_POOL"
 
 [[template]]
 name  = "ladder_op_raising"
-latex = '\hat{{a}}^\dagger\,|{nn}\rangle = \sqrt{{{nn}+1}}\,|{nn}+1\rangle'
+latex = '{op}^\dagger\,|{nn}\rangle = \sqrt{{{nn}+1}}\,|{nn}+1\rangle'
+
+[template.slots.op]
+type = "S"
+pool = "LADDER_OP_POOL"
 
 [template.slots.nn]
 type = "S"
@@ -264,7 +337,11 @@ pool = "N_POOL"
 
 [[template]]
 name  = "born_rule"
-latex = 'P(a) = |\langle a \mid {psi}\rangle|^2'
+latex = 'P({oc}) = |\langle {oc} \mid {psi}\rangle|^2'
+
+[template.slots.oc]
+type = "S"
+pool = "OUTCOME_POOL"
 
 [template.slots.psi]
 type = "S"
@@ -360,13 +437,59 @@ pool = "FERM_IDX_POOL"
 
 [[template]]
 name  = "dirac_bracket"
-latex = '\{f,\,g\}_D = \{f,\,g\} - \{f,\,\phi_a\}\,C^{ab}\,\{\phi_b,\,g\}'
+latex = '\{{{ff},\,{gg}\}}_{{{style}}} = \{{{ff},\,{gg}\}} - \{{{ff},\,{cn}_a\}}\,C^{{ab}}\,\{{{cn}_b,\,{gg}\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_PAIR_F_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "FUNC_PAIR_G_POOL"
+
+[template.slots.style]
+type = "S"
+pool = "DIRAC_STYLE_POOL"
+
+[template.slots.cn]
+type = "S"
+pool = "CONSTRAINT_POOL"
+
+# ----
+
+[[template]]
+name  = "dirac_bracket_modern"
+latex = '\{{{ff},\,{gg}\}}_{{{style}}} = \{{{ff},\,{gg}\}} - \sum_{{a,b}}\{{{ff},\,\tilde{{{cn}}}_a\}}\,M^{{-1}}_{{ab}}\,\{{\tilde{{{cn}}}_b,\,{gg}\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_PAIR_F_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "FUNC_PAIR_G_POOL"
+
+[template.slots.style]
+type = "S"
+pool = "DIRAC_STYLE_POOL"
+
+[template.slots.cn]
+type = "S"
+pool = "CONSTRAINT_POOL"
 
 # ----
 
 [[template]]
 name  = "moyal_bracket"
-latex = '\{{f,\,g\}}_\star = \tfrac{{1}}{{i{hb}}}(f \star g - g \star f)'
+latex = '\{{{ff},\,{gg}\}}_\star = \tfrac{{1}}{{i{hb}}}({ff} \star {gg} - {gg} \star {ff})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_PAIR_F_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "FUNC_PAIR_G_POOL"
 
 [template.slots.hb]
 type = "S"
@@ -530,7 +653,11 @@ pool = "Q_POOL"
 # perturbation_energy_first_order has {ham}' — triple-quoted
 [[template]]
 name  = "perturbation_energy_first_order"
-latex = '''E_n \approx E_n^{{(0)}} + \langle n^{{(0)}} | {ham}' | n^{{(0)}} \rangle'''
+latex = '''E_{{{qn}}} \approx E_{{{qn}}}^{{(0)}} + \langle {qn}^{{(0)}} | {ham}' | {qn}^{{(0)}} \rangle'''
+
+[template.slots.qn]
+type = "S"
+pool = "QN_POOL"
 
 [template.slots.ham]
 type = "S"
@@ -542,18 +669,26 @@ pool = "HAM_POOL"
 
 [[template]]
 name  = "wavefunction_real_part"
-latex = '\Re({psi}(\mathbf{{r}},t)) = A\cos(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
+latex = '\Re({psi}(\mathbf{{r}},t)) = {amp}\cos(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
 
 [template.slots.psi]
 type = "S"
 pool = "PSI_POOL"
+
+[template.slots.amp]
+type = "S"
+pool = "AMPLITUDE_POOL"
 
 # ----
 
 [[template]]
 name  = "wavefunction_imaginary_part"
-latex = '\Im({psi}(\mathbf{{r}},t)) = A\sin(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
+latex = '\Im({psi}(\mathbf{{r}},t)) = {amp}\sin(\mathbf{{k}}\cdot\mathbf{{r}} - \omega t)'
 
 [template.slots.psi]
 type = "S"
 pool = "PSI_POOL"
+
+[template.slots.amp]
+type = "S"
+pool = "AMPLITUDE_POOL"
