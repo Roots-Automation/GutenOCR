@@ -1039,7 +1039,7 @@ pool = "PRIME_POOL"
 
 [[template]]
 name = "lubin_tate_formal"
-latex = '\mathcal{{F}}_{{{uu}}}({xx}, {yy}) \text{{ Lubin-Tate formal {KK}-module for uniformizer }} {uu},\quad [{pp}]_{{F}}({xx}) = {pp} {xx} + {xx}^{{{pp}}}'
+latex = '\mathcal{{F}}_{{{uu}}}({xx}, {yy}) \text{{ Lubin-Tate formal }}{KK}\text{{-module for uniformizer }} {uu},\quad [{pp}]_{{F}}({xx}) = {pp} {xx} + {xx}^{{{pp}}}'
 
 [template.slots.uu]
 type = "S"
