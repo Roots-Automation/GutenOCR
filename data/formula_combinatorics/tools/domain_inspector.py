@@ -44,9 +44,10 @@ _HTML_HEAD = """\
 MathJax = {
   tex: {
     inlineMath: [['$','$']], displayMath: [['$$','$$']],
-    packages: {'[+]': ['textmacros']}
+    macros: {
+      textcircled: ["\\mathord{\\bigcirc\\!\\!\\!\\!\\raise{0.05em}{\\scriptstyle\\text{#1}}}", 1]
+    }
   },
-  loader: { load: ['[tex]/textmacros'] },
   options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
 };
 </script>
