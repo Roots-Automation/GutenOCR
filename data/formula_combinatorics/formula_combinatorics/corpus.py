@@ -28,6 +28,8 @@ logger = logging.getLogger(__name__)
 
 _TAG_POOL = ["1", "2", "3", "4", "5", "6", "*", r"\dagger", "a", "b", "i", "ii"]
 
+_STYLE_MODIFIERS = [r"\displaystyle", r"\textstyle", r"\scriptstyle", r"\scriptscriptstyle"]
+
 
 def _is_wrapped(formula: str) -> bool:
     return formula.startswith(r"\begin{") or formula.startswith(r"\[") or formula.startswith("$")
@@ -210,6 +212,7 @@ def generate(
     split_tag: str = "train",
     coverage_mode: bool = False,
     coverage_n: int = 5,
+    style_rate: float = 0.0,
 ) -> dict[str, str] | dict[str, dict]:
     """Generate a corpus of unique LaTeX formula strings.
 
@@ -248,6 +251,10 @@ def generate(
         coverage_mode: If True, continue sampling beyond ``count`` until every MUST_COVER
             symbol appears at least ``coverage_n`` times (up to ``count * 20`` attempts).
         coverage_n: Minimum appearances per MUST_COVER symbol when ``coverage_mode=True``.
+        style_rate: Probability of wrapping each non-environment formula with a uniformly
+            drawn math style command (``\\displaystyle``, ``\\textstyle``, ``\\scriptstyle``,
+            or ``\\scriptscriptstyle``).  Skipped for ``\\begin{...}`` environment formulas.
+            Default 0.0 (disabled).
 
     Returns:
         Dict mapping string index to LaTeX formula string, or to a rich Sample dict
@@ -348,6 +355,9 @@ def generate(
             template_name = _last_template_name.get()
             draws = _last_draws.get() if include_metadata else {}
             formula = formula.strip()
+            if formula and style_rate > 0.0 and not formula.startswith(r"\begin{"):
+                if rng.random() < style_rate:
+                    formula = "{" + rng.choice(_STYLE_MODIFIERS) + " " + formula + "}"
             if formula and not _is_wrapped(formula):
                 r = rng.random()
                 if r < display_fraction:

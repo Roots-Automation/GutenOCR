@@ -49,9 +49,6 @@ values = ['2', '3', '4', 'm', 'n', 'p', 'q']
 name   = "MAT_POOL"
 values = ['A', 'B', 'C', 'M', 'T', 'U']
 
-[[pool]]
-name   = "STYLE_CMDS_POOL"
-values = ['\displaystyle', '\textstyle', '\scriptstyle', '\scriptscriptstyle']
 
 [[pool]]
 name   = "GENFRAC_LEFT_POOL"
@@ -2935,84 +2932,6 @@ n    = 5
 type = "E"
 gen  = "_atom"
 n    = 150
-
-# ---------------------------------------------------------------------------
-# Math style modifier overrides
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "style_frac"
-latex = '{style} \frac{{{num}}}{{{den}}}'
-
-[template.slots.style]
-type = "S"
-pool = "STYLE_CMDS_POOL"
-
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[[template]]
-name  = "style_binom"
-latex = '{style} \binom{{{top}}}{{{bot}}}'
-
-[template.slots.style]
-type = "S"
-pool = "STYLE_CMDS_POOL"
-
-[template.slots.top]
-type = "S"
-pool = "GEO_N_POOL"
-
-[template.slots.bot]
-type = "X"
-pool = "GEO_N_POOL"
-exclude_from = ["top"]
-
-[[template]]
-name  = "style_sum_frac"
-latex = '{style} \sum_{{{lo}=0}}^{{{hi}}} \frac{{{num}}}{{{den}}}'
-
-[template.slots.style]
-type = "S"
-pool = "STYLE_CMDS_POOL"
-
-[template.slots.lo]
-type = "S"
-pool = ['k', 'j', 'i', 'm']
-
-[template.slots.hi]
-type = "S"
-pool = ['n', 'N', 'M', 'p']
-
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[[template]]
-name  = "style_expr"
-latex = '{style} {expr}'
-
-[template.slots.style]
-type = "S"
-pool = "STYLE_CMDS_POOL"
-
-[template.slots.expr]
-type = "E"
-gen  = "_expr"
-n    = 5000
 
 # ---------------------------------------------------------------------------
 # \genfrac as general-purpose fraction builder

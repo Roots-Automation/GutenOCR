@@ -38,6 +38,7 @@ formula-generate --output formulas.json --count 50000 --seed 42
 | `--seed INT` | `None` | Random seed for reproducibility |
 | `--display-fraction F` | `0.20` | Fraction of bare formulas wrapped in display-math environments (`\[...\]`, `equation`) |
 | `--inline-fraction F` | `0.10` | Fraction of bare formulas wrapped in inline `$...$` delimiters |
+| `--style-rate F` | `0.0` | Probability of wrapping each non-environment formula with a uniformly drawn math style command (`\displaystyle`, `\textstyle`, `\scriptstyle`, `\scriptscriptstyle`) |
 | `--domains D [D ...]` | all | Restrict to specific domains (see list below) |
 | `--tags TAG [TAG ...]` | `None` | Include only domains with any of these tags (`foundational`, `advanced`, `applied`, `structural`) |
 | `--exclude-tags TAG [TAG ...]` | `None` | Exclude domains with any of these tags |

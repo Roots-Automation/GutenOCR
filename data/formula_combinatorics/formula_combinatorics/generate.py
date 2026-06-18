@@ -101,6 +101,17 @@ def main() -> None:
         metavar="F",
         help="Fraction of bare formulas wrapped in inline $...$ delimiters (default: 0.10).",
     )
+    parser.add_argument(
+        "--style-rate",
+        type=float,
+        default=0.0,
+        metavar="F",
+        help=(
+            "Probability of wrapping each non-environment formula with a uniformly drawn "
+            "math style command (\\displaystyle, \\textstyle, \\scriptstyle, "
+            "\\scriptscriptstyle). Default: 0.0 (disabled)."
+        ),
+    )
     all_tags = sorted({t for tags in DOMAIN_TAGS.values() for t in tags})
     parser.add_argument(
         "--tags",
@@ -331,6 +342,10 @@ def main() -> None:
         logger.error("--inline-fraction must be in [0, 1]")
         sys.exit(1)
 
+    if not 0.0 <= args.style_rate <= 1.0:
+        logger.error("--style-rate must be in [0, 1]")
+        sys.exit(1)
+
     if args.length_range is not None and args.length_range[0] > args.length_range[1]:
         logger.error("--length-range MIN must be ≤ MAX")
         sys.exit(1)
@@ -497,6 +512,7 @@ def main() -> None:
             split_tag="train",
             coverage_mode=args.coverage_mode is not None,
             coverage_n=args.coverage_mode if args.coverage_mode is not None else 5,
+            style_rate=args.style_rate,
         )
     except ValueError as exc:
         logger.error("%s", exc)
