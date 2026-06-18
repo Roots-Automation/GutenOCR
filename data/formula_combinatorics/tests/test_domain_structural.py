@@ -18,7 +18,7 @@ import re
 
 import pytest
 from formula_combinatorics.domains import GENERATORS, TEMPLATES
-from formula_combinatorics.engine._template_dsl import sample
+from formula_combinatorics.engine._template_dsl import ExcludeSlot, Slot, sample
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -57,6 +57,67 @@ def test_no_double_subscript_500_draws(domain: str) -> None:
     for _ in range(500):
         result = gen(rng)
         assert not _DOUBLE_SUB_RE.search(result), f"{domain}: double-subscript in output: {result!r}"
+
+
+# ---------------------------------------------------------------------------
+# Static: pool-value superscript/subscript clash detection
+# ---------------------------------------------------------------------------
+# A slot immediately followed by ^ in the template latex combined with a pool
+# value that already ends with ^{...} produces a double superscript (e.g.
+# (k_B T)^{-1}^2).  The mirror holds for subscripts.  These are detected
+# statically — no sampling needed.
+
+# {slot}^ and {slot}_ in raw format strings; negative lookahead/behind
+# excludes escaped {{ }} sequences.
+_SLOT_THEN_SUPER_RE = re.compile(r"(?<!\{)\{(\w+)\}(?!\})\^")
+_SLOT_THEN_SUB_RE = re.compile(r"(?<!\{)\{(\w+)\}(?!\})_")
+# Pool values that already carry a trailing superscript or subscript.
+_TRAILING_SUPER_RE = re.compile(r"\^(\{[^{}]*\}|[A-Za-z0-9])$")
+_TRAILING_SUB_RE = re.compile(r"_(\{[^{}]*\}|\\[A-Za-z]+|[A-Za-z0-9])$")
+
+
+def _pool_vals(slot: object) -> tuple[str, ...]:
+    return slot.pool if isinstance(slot, (Slot, ExcludeSlot)) else ()
+
+
+def _script_clash_errors(t: object) -> list[str]:
+    errors: list[str] = []
+    for v in getattr(t, "variants", []):
+        errors.extend(_script_clash_errors(v))
+    latex = getattr(t, "latex", "")
+    slots = getattr(t, "slots", {})
+    if not latex or not slots:
+        return errors
+    for m in _SLOT_THEN_SUPER_RE.finditer(latex):
+        slot = slots.get(m.group(1))
+        if slot is None:
+            continue
+        for val in _pool_vals(slot):
+            if _TRAILING_SUPER_RE.search(val):
+                errors.append(
+                    f"template '{t.name}': slot '{m.group(1)}' is followed by '^' "  # type: ignore[attr-defined]
+                    f"but pool value {val!r} already ends with a superscript"
+                )
+    for m in _SLOT_THEN_SUB_RE.finditer(latex):
+        slot = slots.get(m.group(1))
+        if slot is None:
+            continue
+        for val in _pool_vals(slot):
+            if _TRAILING_SUB_RE.search(val):
+                errors.append(
+                    f"template '{t.name}': slot '{m.group(1)}' is followed by '_' "  # type: ignore[attr-defined]
+                    f"but pool value {val!r} already ends with a subscript"
+                )
+    return errors
+
+
+@pytest.mark.parametrize("domain", sorted(TEMPLATES))
+def test_no_script_clash_in_pools(domain: str) -> None:
+    """Pool value with trailing ^/_ cannot be used where the template appends ^/_."""
+    errors: list[str] = []
+    for t in TEMPLATES[domain]:
+        errors.extend(_script_clash_errors(t))
+    assert not errors, "\n".join(errors)
 
 
 # ---------------------------------------------------------------------------
