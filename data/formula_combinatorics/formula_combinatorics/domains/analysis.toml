@@ -1728,3 +1728,34 @@ n    = 30
 type = "E"
 gen  = "_fn_rich"
 n    = 30
+
+# ---------------------------------------------------------------------------
+# Infinite product formula (Weierstrass/Pochhammer style)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "product_formula"
+latex = '\prod{lim_mod}_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+idx  = 0.35
+
+[template.slots.a11]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.start]
+type = "S"
+pool = ['1', '0', '2']

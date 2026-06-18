@@ -11,7 +11,7 @@ values = ["x","t","r","s",'\tau','\sigma','\zeta','\rho']
 
 [[pool]]
 name = "COEFF_POOL"
-values = ["a","b","c","k",'\alpha','\beta','\gamma','\lambda','\mu','\nu','\kappa']
+values = ["a","b","c","k",'\alpha','\beta','\gamma','\lambda','\mu','\nu','\kappa','\vartheta']
 
 [[pool]]
 name = "PARAM_POOL"
@@ -1447,3 +1447,45 @@ exclude_from = ["a"]
 type = "S"
 pool = "PARAM_POOL"
 idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Exponential growth / decay (ODE solutions)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "exponential_ode_solution"
+latex = ""
+
+  [[template.variants]]
+  name  = "exponential_growth_pos"
+  latex = '{ff} = {aa} e^{{{kk} t}}'
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUNC_POOL"
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.kk]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["aa"]
+
+  [[template.variants]]
+  name  = "exponential_decay"
+  latex = '{ff} = {aa} e^{{-{kk} t}}'
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUNC_POOL"
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.kk]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["aa"]

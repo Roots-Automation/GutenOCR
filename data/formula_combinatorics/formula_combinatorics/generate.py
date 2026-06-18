@@ -240,6 +240,7 @@ def main() -> None:
     parser.add_argument(
         "--weight",
         nargs="+",
+        action="append",
         default=None,
         metavar="DOMAIN=VALUE",
         help=(
@@ -392,7 +393,7 @@ def main() -> None:
             logger.warning("Unknown domains in --weights file (ignored): %s", sorted(unknown))
             weight_overrides = {k: v for k, v in weight_overrides.items() if k in GENERATORS}
     if args.weight is not None:
-        for kv in args.weight:
+        for kv in (item for group in args.weight for item in group):
             if "=" not in kv:
                 logger.error("--weight entries must be in 'domain=value' format, got: %r", kv)
                 sys.exit(1)
