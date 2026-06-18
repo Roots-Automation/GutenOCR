@@ -963,3 +963,20 @@ latex = ""
   [template.variants.slots.rr]
   type = "S"
   pool = ["r", "e", '\varepsilon']
+
+[[template]]
+name  = "norm_lesssim_power"
+latex = '\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "BVAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = ['2', '3', '4', 'm', 'n', 'p', 'q']

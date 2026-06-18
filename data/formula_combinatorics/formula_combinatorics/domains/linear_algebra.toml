@@ -39,6 +39,18 @@ values = ["2", "p", '\infty', "1"]
 name   = "LIM_MOD"
 values = ["", '\limits']
 
+[[pool]]
+name   = "VEC_POOL"
+values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+[[pool]]
+name   = "MAT_POOL"
+values = ['A', 'B', 'C', 'M', 'T', 'U']
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
 # ---------------------------------------------------------------------------
 # Main templates
 # ---------------------------------------------------------------------------
@@ -498,3 +510,141 @@ latex = '\rho({AA}) \leq \lVert {AA} \rVert'
 [template.slots.AA]
 type = "S"
 pool = "MAT_LVERT_POOL"
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz and triangle inequality (inner-product / norm forms)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_vector"
+latex = '\left|\langle \mathbf{{{u1}}}, \, \mathbf{{{u2}}} \rangle\right|^2 \leq \left\|\mathbf{{{u1}}}\right\|^2 \left\|\mathbf{{{u2}}}\right\|^2'
+
+[template.slots.u1]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.slots.u2]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u1"]
+idx  = 0.35
+
+[[template]]
+name  = "triangle_inequality_norm"
+latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
+
+[template.slots.u]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.slots.v]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u"]
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Adjoint / dagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "adjoint_involutive"
+latex = '({AA}^{{\dagger}})^{{\dagger}} = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_anti_multiplicative"
+latex    = '({AA} {BB})^{{\dagger}} = {BB}^{{\dagger}} {AA}^{{\dagger}}'
+distinct = [["AA", "BB"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.BB]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_inner_product"
+latex    = '\langle {AA} {uu}, {vv} \rangle = \langle {uu}, {AA}^{{\dagger}} {vv} \rangle'
+distinct = [["uu", "vv"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Bidual / ddagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bidual_notation"
+latex = '{AA}^{{\ddagger}} = ({AA}^{{\dagger}})^{{\dagger}}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "bidual_canonical_embedding"
+latex    = '\iota : V \hookrightarrow V^{{\ddagger}},\quad \iota({vv})({ff}) = {ff}({vv})'
+distinct = [["vv", "ff"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = ['f', 'g', 'h', 'F', 'G']
+
+[[template]]
+name     = "norm_leqslant_bound"
+latex    = '\|{vv}\| \leqslant {aa} \|{ww}\|'
+distinct = [["vv", "ww"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ww]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q']
+
+[[template]]
+name  = "cauchy_schwarz_biggl"
+latex = '\Biggl| \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k {b}_k \Biggr|^2 \leq \Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k^2 \Biggr)\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'e']
+
+[template.slots.b]
+type = "S"
+pool = ['f', 'g', 'h', 'i', 'j']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm']

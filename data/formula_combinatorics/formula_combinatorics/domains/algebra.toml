@@ -38,17 +38,8 @@ name   = "GREEK_POOL"
 values = ['\alpha', '\beta', '\gamma', '\delta', '\epsilon', '\zeta', '\eta', '\theta', '\kappa', '\lambda', '\mu', '\nu', '\xi', '\rho', '\sigma', '\tau', '\phi', '\chi', '\psi', '\omega', '\varepsilon', '\varphi', '\vartheta']
 
 [[pool]]
-name   = "VEC_POOL"
-values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-
-[[pool]]
 name   = "EXP_POOL"
 values = ['2', '3', '4', 'm', 'n', 'p', 'q']
-
-[[pool]]
-name   = "MAT_POOL"
-values = ['A', 'B', 'C', 'M', 'T', 'U']
-
 
 [[pool]]
 name   = "GENFRAC_LEFT_POOL"
@@ -1033,101 +1024,6 @@ gen  = "_expr"
 n    = 5000
 
 [[template]]
-name  = "epsilon_delta"
-latex = ""
-
-[[template.variants]]
-name  = "epsilon_delta_nearness"
-latex = '\left|{v} - {pt}\right| < {tol}'
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.pt]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
-
-[template.variants.slots.tol]
-type = "E"
-gen  = "_tol_sub"
-n    = 3
-
-[[template.variants]]
-name  = "epsilon_delta_full"
-latex = '0 < \left|{v} - {pt}\right| < \delta \implies \left|{fn}({v}) - {b}\right| < {eps}'
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.pt]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
-
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich"
-n    = 272
-
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.eps]
-type = "E"
-gen  = "_eps_sub"
-n    = 2
-
-[[template.variants]]
-name  = "epsilon_delta_fn_nearness"
-latex = '\left|{fn}({v}) - {b}\right| < {eps}'
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich"
-n    = 272
-
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.eps]
-type = "E"
-gen  = "_eps_sub"
-n    = 2
-
-[[template.variants]]
-name  = "epsilon_delta_interval"
-latex = '{pt} - {eps} < {v} < {pt} + {eps}'
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.pt]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
-
-[template.variants.slots.eps]
-type = "E"
-gen  = "_eps_sub"
-n    = 2
-
-[[template]]
 name  = "completing_the_square"
 latex = ""
 
@@ -1340,30 +1236,6 @@ idx  = 0.35
 type = "X"
 pool = "SCALARS_POOL"
 exclude_from = ["a"]
-
-[[template.variants]]
-name  = "logistic_growth"
-latex = '{v}(t) = \frac{{{a}}}{{1 + {b} e^{{-{g} t}}}}'
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
-
-[template.variants.slots.g]
-type = "S"
-pool = "GREEK_POOL"
-idx  = 0.35
 
 [[template]]
 name  = "product_formula"
@@ -1675,54 +1547,6 @@ type = "X"
 pool = "SCALARS_POOL"
 exclude_from = ["p1"]
 
-[[template.variants]]
-name  = "cauchy_schwarz_integral"
-latex = '\left(\int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 \leq \int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} \cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}'
-
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
-
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
-
-[template.variants.slots.lo]
-type = "E"
-gen  = "_atom"
-n    = 150
-
-[template.variants.slots.hi]
-type = "E"
-gen  = "_atom"
-n    = 150
-
-[template.variants.slots.f1]
-type = "E"
-gen  = "_fn_rich"
-n    = 30
-
-[template.variants.slots.f2]
-type = "E"
-gen  = "_fn_rich"
-n    = 30
-
-[[template.variants]]
-name  = "cauchy_schwarz_vector"
-latex = '\left|\langle \mathbf{{{u1}}}, \, \mathbf{{{u2}}} \rangle\right|^2 \leq \left\|\mathbf{{{u1}}}\right\|^2 \left\|\mathbf{{{u2}}}\right\|^2'
-
-[template.variants.slots.u1]
-type = "S"
-pool = "VEC_POOL"
-idx  = 0.35
-
-[template.variants.slots.u2]
-type = "X"
-pool = "VEC_POOL"
-exclude_from = ["u1"]
-idx  = 0.35
-
 [[template]]
 name  = "polynomial_division"
 latex = ""
@@ -1885,21 +1709,6 @@ idx  = 0.35
 [template.variants.slots.b]
 type = "S"
 pool = "COEFF_POOL"
-idx  = 0.35
-
-[[template.variants]]
-name  = "triangle_inequality_norm"
-latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
-
-[template.variants.slots.u]
-type = "S"
-pool = "VEC_POOL"
-idx  = 0.35
-
-[template.variants.slots.v]
-type = "X"
-pool = "VEC_POOL"
-exclude_from = ["u"]
 idx  = 0.35
 
 [[template.variants]]
@@ -2714,22 +2523,6 @@ pool = "VARS_SCALARS_POOL"
 type = "S"
 pool = "VARS_SCALARS_POOL"
 
-[[template]]
-name     = "norm_leqslant_bound"
-latex    = '\|{vv}\| \leqslant {aa} \|{ww}\|'
-distinct = [["vv", "ww"]]
-
-[template.slots.vv]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.ww]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.aa]
-type = "S"
-pool = "SCALARS_POOL"
 
 [[template]]
 name  = "abs_geqslant_eps"
@@ -2770,22 +2563,6 @@ pool = "VARS_SCALARS_POOL"
 type = "S"
 pool = "VARS_SCALARS_POOL"
 
-[[template]]
-name  = "norm_lesssim_power"
-latex = '\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}'
-
-[template.slots.ff]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
-
-[template.slots.xx]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.nn]
-type = "S"
-pool = "EXP_POOL"
 
 [[template]]
 name     = "gtrsim_scalars"
@@ -2799,73 +2576,6 @@ pool = "VARS_SCALARS_POOL"
 [template.slots.bb]
 type = "S"
 pool = "VARS_SCALARS_POOL"
-
-# ---------------------------------------------------------------------------
-# Adjoint / dagger
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "adjoint_involutive"
-latex = '({AA}^{{\dagger}})^{{\dagger}} = {AA}'
-
-[template.slots.AA]
-type = "S"
-pool = "MAT_POOL"
-
-[[template]]
-name     = "adjoint_anti_multiplicative"
-latex    = '({AA} {BB})^{{\dagger}} = {BB}^{{\dagger}} {AA}^{{\dagger}}'
-distinct = [["AA", "BB"]]
-
-[template.slots.AA]
-type = "S"
-pool = "MAT_POOL"
-
-[template.slots.BB]
-type = "S"
-pool = "MAT_POOL"
-
-[[template]]
-name     = "adjoint_inner_product"
-latex    = '\langle {AA} {uu}, {vv} \rangle = \langle {uu}, {AA}^{{\dagger}} {vv} \rangle'
-distinct = [["uu", "vv"]]
-
-[template.slots.AA]
-type = "S"
-pool = "MAT_POOL"
-
-[template.slots.uu]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.vv]
-type = "S"
-pool = "VARS_POOL"
-
-# ---------------------------------------------------------------------------
-# Bidual / ddagger
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "bidual_notation"
-latex = '{AA}^{{\ddagger}} = ({AA}^{{\dagger}})^{{\dagger}}'
-
-[template.slots.AA]
-type = "S"
-pool = "MAT_POOL"
-
-[[template]]
-name     = "bidual_canonical_embedding"
-latex    = '\iota : V \hookrightarrow V^{{\ddagger}},\quad \iota({vv})({ff}) = {ff}({vv})'
-distinct = [["vv", "ff"]]
-
-[template.slots.vv]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.ff]
-type = "S"
-pool = ['f', 'g', 'h', 'F', 'G']
 
 # ---------------------------------------------------------------------------
 # Large manual bracket-size templates
@@ -2891,47 +2601,6 @@ pool = ['h', 'i', 'j', 'k', 'l', 'm', 'n']
 type = "S"
 pool = ['n', 'N', 'm']
 
-[[template]]
-name  = "cauchy_schwarz_biggl"
-latex = '\Biggl| \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k {b}_k \Biggr|^2 \leq \Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k^2 \Biggr)\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)'
-
-[template.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
-
-[template.slots.a]
-type = "S"
-pool = ['a', 'b', 'c', 'd', 'e']
-
-[template.slots.b]
-type = "S"
-pool = ['f', 'g', 'h', 'i', 'j']
-
-[template.slots.n]
-type = "S"
-pool = ['n', 'N', 'm']
-
-[[template]]
-name  = "set_comprehension_biggl"
-latex = '\Biggl\{{ {v} \in {sp} \;\Bigg|\; {f}({v}) \leq {c} \Biggr\}}'
-
-[template.slots.v]
-type = "S"
-pool = "VARS_POOL"
-
-[template.slots.sp]
-type = "S"
-pool = ['\mathbb{R}', '\mathbb{Z}', '\mathbb{N}']
-
-[template.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
-
-[template.slots.c]
-type = "E"
-gen  = "_atom"
-n    = 150
 
 # ---------------------------------------------------------------------------
 # \genfrac as general-purpose fraction builder

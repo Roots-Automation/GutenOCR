@@ -1420,3 +1420,30 @@ pool = "VAR_POOL"
 type = "X"
 pool = "VAR_POOL"
 exclude_from = ["vv"]
+
+# ---------------------------------------------------------------------------
+# Logistic growth
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "logistic_growth"
+latex = '{v}(t) = \frac{{{a}}}{{1 + {b} e^{{-{g} t}}}}'
+
+[template.slots.v]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+
+[template.slots.g]
+type = "S"
+pool = "PARAM_POOL"
+idx  = 0.35

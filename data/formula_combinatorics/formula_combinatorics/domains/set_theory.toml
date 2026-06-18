@@ -1624,3 +1624,25 @@ latex = '\forall\, {xx}:\; {xx} \notin \varnothing'
 [template.slots.xx]
 type = "S"
 pool = "VAR_POOL"
+
+[[template]]
+name  = "set_comprehension_biggl"
+latex = '\Biggl\{{ {v} \in {sp} \;\Bigg|\; {f}({v}) \leq {c} \Biggr\}}'
+
+[template.slots.v]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = ['\mathbb{R}', '\mathbb{Z}', '\mathbb{N}']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.c]
+type = "E"
+gen  = "_atom"
+n    = 150

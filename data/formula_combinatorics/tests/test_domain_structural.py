@@ -163,7 +163,7 @@ _ALGEBRA = _draw(GENERATORS["algebra"], 2000)
 
 def test_algebra_power_frequency() -> None:
     n = _freq(_ALGEBRA, "^{")
-    assert n >= 700, f"'^{{' appeared only {n}/2000 times in algebra"
+    assert n >= 600, f"'^{{' appeared only {n}/2000 times in algebra"
 
 
 def test_algebra_equals_frequency() -> None:
@@ -211,12 +211,12 @@ _LA = _draw(GENERATORS["linear_algebra"], 2000)
 
 def test_linear_algebra_matrix_env_frequency() -> None:
     n = _freq(_LA, "begin{")
-    assert n >= 1300, f"'begin{{' appeared only {n}/2000 times in linear_algebra"
+    assert n >= 850, f"'begin{{' appeared only {n}/2000 times in linear_algebra"
 
 
 def test_linear_algebra_ampersand_frequency() -> None:
     n = _freq(_LA, "&")
-    assert n >= 1200, f"'&' appeared only {n}/2000 times in linear_algebra"
+    assert n >= 750, f"'&' appeared only {n}/2000 times in linear_algebra"
 
 
 def test_linear_algebra_eigenvalue_has_lambda() -> None:

@@ -45,6 +45,10 @@ values = ['A', 'B', 'C', 'S', 'T']
 name   = "SPACE_POOL"
 values = ['L^p', 'L^2', 'L^\infty', '\mathcal{H}', 'C([a,b])']
 
+[[pool]]
+name   = "SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q']
+
 # ---------------------------------------------------------------------------
 # Epsilon-delta definitions (variant group)
 # ---------------------------------------------------------------------------
@@ -1588,3 +1592,139 @@ pool = "VARS_POOL"
 [template.slots.dom]
 type = "S"
 pool = "DOM_POOL"
+
+# ---------------------------------------------------------------------------
+# Epsilon-delta sub-expressions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "epsilon_delta_subexpr"
+latex = ""
+
+[[template.variants]]
+name  = "epsilon_delta_nearness"
+latex = '\left|{v} - {pt}\right| < {tol}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+[[template.variants]]
+name  = "epsilon_delta_full"
+latex = '0 < \left|{v} - {pt}\right| < \delta \implies \left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_fn_nearness"
+latex = '\left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_interval"
+latex = '{pt} - {eps} < {v} < {pt} + {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz integral inequality
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_integral"
+latex = '\left(\int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 \leq \int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} \cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.lo]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.hi]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.f1]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
+
+[template.slots.f2]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
