@@ -33,8 +33,13 @@ def _draw(gen, n: int, seed: int = 42) -> list[str]:
 
 
 def _sample_template(domain: str, name: str, n: int = 100, seed: int = 0) -> list[str]:
+    # Search top-level templates first, then variants one level deep.
     t_map = {t.name: t for t in TEMPLATES[domain]}
-    t = t_map[name]
+    if name in t_map:
+        t = t_map[name]
+    else:
+        variant_map = {v.name: v for t in TEMPLATES[domain] for v in getattr(t, "variants", [])}
+        t = variant_map[name]
     rng = random.Random(seed)
     return [sample(t, rng) for _ in range(n)]
 

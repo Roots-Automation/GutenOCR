@@ -77,209 +77,214 @@ values = ['n', 'm', 'd', 'k', 'r', 'N']
 # Quadratic family
 # ---------------------------------------------------------------------------
 
+# Three notational forms of the quadratic formula (±, + only, − only)
 [[template]]
-name     = "quadratic_formula_pm"
-latex    = '{v0} = \frac{{-{q} \pm \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
-distinct = [["v0", "p", "q", "r"]]
+name  = "quadratic_formula"
+latex = ""
 
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "quadratic_formula_pm"
+  latex    = '{v0} = \frac{{-{q} \pm \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+  distinct = [["v0", "p", "q", "r"]]
 
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "quadratic_formula_pos"
+  latex    = '{v0} = \frac{{-{q} + \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+  distinct = [["v0", "p", "q", "r"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "quadratic_formula_neg"
+  latex    = '{v0} = \frac{{-{q} - \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
+  distinct = [["v0", "p", "q", "r"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+# Discriminant: definition and sign condition
 [[template]]
-name     = "quadratic_formula_pos"
-latex    = '{v0} = \frac{{-{q} + \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
-distinct = [["v0", "p", "q", "r"]]
+name  = "discriminant"
+latex = ""
 
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "discriminant_def"
+  latex    = '\Delta = {q}^2 - 4 {p} {r}'
+  distinct = [["p", "q", "r"]]
 
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
+  [[template.variants]]
+  name     = "discriminant_condition"
+  latex    = '{q}^2 - 4 {p} {r} {rel} 0'
+  distinct = [["p", "q", "r"]]
+
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = ['>', '=', '<', '\geq', '\leq', '\neq']
+
+# Three equivalent forms of a quadratic equation
 [[template]]
-name     = "quadratic_formula_neg"
-latex    = '{v0} = \frac{{-{q} - \sqrt{{{q}^2 - 4 {p} {r}}}}}{{2{p}}}'
-distinct = [["v0", "p", "q", "r"]]
+name  = "quadratic_forms"
+latex = ""
 
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "quadratic_factored"
+  latex    = '{p}\left({v0} - {q}\right)\left({v0} - {r}\right) = 0'
+  distinct = [["v0", "p", "q", "r"]]
 
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[[template]]
-name     = "discriminant_def"
-latex    = '\Delta = {q}^2 - 4 {p} {r}'
-distinct = [["v0", "p", "q", "r"]]
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "quadratic_completed_square"
+  latex    = '{p}\left({v0} + \frac{{{q}}}{{2{p}}}\right)^2 = \frac{{{q}^2 - 4 {p} {r}}}{{4{p}}}'
+  distinct = [["v0", "p", "q", "r"]]
 
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[[template]]
-name     = "discriminant_condition"
-latex    = '{q}^2 - 4 {p} {r} {rel} 0'
-distinct = [["v0", "p", "q", "r"]]
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "quadratic_monic"
+  latex    = '{v0}^2 + \frac{{{q}}}{{{p}}}{v0} + \frac{{{r}}}{{{p}}} = 0'
+  distinct = [["v0", "p", "q", "r"]]
 
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.p]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.q]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.rel]
-type = "S"
-pool = ['>', '=', '<', '\geq', '\leq', '\neq']
-
-[[template]]
-name     = "quadratic_factored"
-latex    = '{p}\left({v0} - {q}\right)\left({v0} - {r}\right) = 0'
-distinct = [["v0", "p", "q", "r"]]
-
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[[template]]
-name     = "quadratic_completed_square"
-latex    = '{p}\left({v0} + \frac{{{q}}}{{2{p}}}\right)^2 = \frac{{{q}^2 - 4 {p} {r}}}{{4{p}}}'
-distinct = [["v0", "p", "q", "r"]]
-
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[[template]]
-name     = "quadratic_monic"
-latex    = '{v0}^2 + \frac{{{q}}}{{{p}}}{v0} + \frac{{{r}}}{{{p}}} = 0'
-distinct = [["v0", "p", "q", "r"]]
-
-[template.slots.v0]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.p]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.q]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
-
-[template.slots.r]
-type = "S"
-pool = "VARS_SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Absolute value equations / inequalities
@@ -289,144 +294,144 @@ idx  = 0.35
 name  = "abs_value_equations"
 latex = ""
 
-[[template.variants]]
-name     = "abs_val_eq"
-latex    = '\left|{a} {v} + {b}\right| = {c}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "abs_val_eq"
+  latex    = '\left|{a} {v} + {b}\right| = {c}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "abs_val_lt"
-latex    = '\left|{a} {v} + {b}\right| < {c}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "abs_val_lt"
+  latex    = '\left|{a} {v} + {b}\right| < {c}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "abs_val_gt"
-latex    = '\left|{a} {v} + {b}\right| > {c}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "abs_val_gt"
+  latex    = '\left|{a} {v} + {b}\right| > {c}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "abs_val_leq"
-latex    = '\left|{a} {v} + {b}\right| \leq {c}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "abs_val_leq"
+  latex    = '\left|{a} {v} + {b}\right| \leq {c}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "abs_val_two_sided"
-latex = '{c1} \leq \left|{v} - {pt}\right| \leq {c2}'
+  [[template.variants]]
+  name  = "abs_val_two_sided"
+  latex = '{c1} \leq \left|{v} - {pt}\right| \leq {c2}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.pt]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
+  [template.variants.slots.pt]
+  type = "E"
+  gen  = "_idx_atom"
+  n    = 200
 
-[template.variants.slots.c1]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c2]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["c1"]
-idx  = 0.35
+  [template.variants.slots.c2]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["c1"]
+  idx  = 0.35
 
-[[template.variants]]
-name  = "abs_val_expr"
-latex = '\left|{expr}\right| = {c}'
+  [[template.variants]]
+  name  = "abs_val_expr"
+  latex = '\left|{expr}\right| = {c}'
 
-[template.variants.slots.expr]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.expr]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.c]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Polynomial family
@@ -436,92 +441,92 @@ idx  = 0.35
 name  = "expanded_polynomial"
 latex = ""
 
-[[template.variants]]
-name  = "expanded_polynomial_deg3"
-latex = '{a} {v}^{{3}} + {mid} + {s_lin} {v} + {b}'
+  [[template.variants]]
+  name  = "expanded_polynomial_deg3"
+  latex = '{a} {v}^{{3}} + {mid} + {s_lin} {v} + {b}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.mid]
-type  = "P"
-gen   = "_poly_mid_2"
-param = "v"
-n     = 9
+  [template.variants.slots.mid]
+  type  = "P"
+  gen   = "_poly_mid_2"
+  param = "v"
+  n     = 9
 
-[template.variants.slots.s_lin]
-type = "S"
-pool = "SCALARS_POOL"
+  [template.variants.slots.s_lin]
+  type = "S"
+  pool = "SCALARS_POOL"
 
-[[template.variants]]
-name  = "expanded_polynomial_deg4"
-latex = '{a} {v}^{{4}} + {mid} + {s_lin} {v} + {b}'
+  [[template.variants]]
+  name  = "expanded_polynomial_deg4"
+  latex = '{a} {v}^{{4}} + {mid} + {s_lin} {v} + {b}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.mid]
-type  = "P"
-gen   = "_poly_mid_3"
-param = "v"
-n     = 81
+  [template.variants.slots.mid]
+  type  = "P"
+  gen   = "_poly_mid_3"
+  param = "v"
+  n     = 81
 
-[template.variants.slots.s_lin]
-type = "S"
-pool = "SCALARS_POOL"
+  [template.variants.slots.s_lin]
+  type = "S"
+  pool = "SCALARS_POOL"
 
-[[template.variants]]
-name  = "expanded_polynomial_deg5"
-latex = '{a} {v}^{{5}} + {mid} + {s_lin} {v} + {b}'
+  [[template.variants]]
+  name  = "expanded_polynomial_deg5"
+  latex = '{a} {v}^{{5}} + {mid} + {s_lin} {v} + {b}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.mid]
-type  = "P"
-gen   = "_poly_mid_4"
-param = "v"
-n     = 729
+  [template.variants.slots.mid]
+  type  = "P"
+  gen   = "_poly_mid_4"
+  param = "v"
+  n     = 729
 
-[template.variants.slots.s_lin]
-type = "S"
-pool = "SCALARS_POOL"
+  [template.variants.slots.s_lin]
+  type = "S"
+  pool = "SCALARS_POOL"
 
 [[template]]
 name  = "rational_fraction"
@@ -578,206 +583,210 @@ param = "v"
 n     = 5000
 
 [[template]]
-name  = "sum_of_cubes"
-latex = '\left({u}\right)^3 + \left({w}\right)^3 = \left({u}+{w}\right)\left(\left({u}\right)^2 - {u} {w} + \left({w}\right)^2\right)'
+name  = "cubes_identity"
+latex = ""
 
-[template.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [[template.variants]]
+  name  = "sum_of_cubes"
+  latex = '\left({u}\right)^3 + \left({w}\right)^3 = \left({u}+{w}\right)\left(\left({u}\right)^2 - {u} {w} + \left({w}\right)^2\right)'
 
-[template.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template]]
-name  = "difference_of_cubes"
-latex = '\left({u}\right)^3 - \left({w}\right)^3 = \left({u}-{w}\right)\left(\left({u}\right)^2 + {u} {w} + \left({w}\right)^2\right)'
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [[template.variants]]
+  name  = "difference_of_cubes"
+  latex = '\left({u}\right)^3 - \left({w}\right)^3 = \left({u}-{w}\right)\left(\left({u}\right)^2 + {u} {w} + \left({w}\right)^2\right)'
 
-[template.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 [[template]]
 name  = "perfect_square"
 latex = ""
 
-[[template.variants]]
-name  = "perfect_square_plus"
-latex = '\left({u} + {w}\right)^2 = \left({u}\right)^2 + 2 {u} {w} + \left({w}\right)^2'
+  [[template.variants]]
+  name  = "perfect_square_plus"
+  latex = '\left({u} + {w}\right)^2 = \left({u}\right)^2 + 2 {u} {w} + \left({w}\right)^2'
 
-[template.variants.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template.variants]]
-name  = "perfect_square_minus"
-latex = '\left({u} - {w}\right)^2 = \left({u}\right)^2 - 2 {u} {w} + \left({w}\right)^2'
+  [[template.variants]]
+  name  = "perfect_square_minus"
+  latex = '\left({u} - {w}\right)^2 = \left({u}\right)^2 - 2 {u} {w} + \left({w}\right)^2'
 
-[template.variants.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 [[template]]
 name  = "general_factored"
 latex = ""
 
-[[template.variants]]
-name  = "general_factored_2roots"
-latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right) = 0'
+  [[template.variants]]
+  name  = "general_factored_2roots"
+  latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right) = 0'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r0]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r0]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.r1]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0"]
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0"]
+  idx  = 0.35
 
-[[template.variants]]
-name  = "general_factored_3roots"
-latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right) = 0'
+  [[template.variants]]
+  name  = "general_factored_3roots"
+  latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right) = 0'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r0]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r0]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.r1]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0"]
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0"]
+  idx  = 0.35
 
-[template.variants.slots.r2]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0", "r1"]
-idx  = 0.35
+  [template.variants.slots.r2]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0", "r1"]
+  idx  = 0.35
 
-[[template.variants]]
-name  = "general_factored_4roots"
-latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right)\left({v} - {r3}\right) = 0'
+  [[template.variants]]
+  name  = "general_factored_4roots"
+  latex = '{a}\left({v} - {r0}\right)\left({v} - {r1}\right)\left({v} - {r2}\right)\left({v} - {r3}\right) = 0'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r0]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r0]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.r1]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0"]
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0"]
+  idx  = 0.35
 
-[template.variants.slots.r2]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0", "r1"]
-idx  = 0.35
+  [template.variants.slots.r2]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0", "r1"]
+  idx  = 0.35
 
-[template.variants.slots.r3]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "r0", "r1", "r2"]
-idx  = 0.35
+  [template.variants.slots.r3]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "r0", "r1", "r2"]
+  idx  = 0.35
 
 [[template]]
 name  = "remainder_factor_theorem"
 latex = ""
 
-[[template.variants]]
-name  = "remainder_theorem"
-latex = '{fn}({v}) = ({v} - {pt}) \cdot {fn}_1({v}) + {fn}({pt})'
+  [[template.variants]]
+  name  = "remainder_theorem"
+  latex = '{fn}({v}) = ({v} - {pt}) \cdot {fn}_1({v}) + {fn}({pt})'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.pt]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.pt]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template.variants]]
-name  = "factor_theorem"
-latex = '{fn}({pt}) = 0 \implies ({v} - {pt}) \mid {fn}({v})'
+  [[template.variants]]
+  name  = "factor_theorem"
+  latex = '{fn}({pt}) = 0 \implies ({v} - {pt}) \mid {fn}({v})'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich"
-n    = 272
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich"
+  n    = 272
 
-[template.variants.slots.pt]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.pt]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 # ---------------------------------------------------------------------------
 # Function composition and inverse identities
@@ -787,90 +796,90 @@ n    = 5000
 name  = "function_composition"
 latex = ""
 
-[[template.variants]]
-name  = "composition_two"
-latex = '\left({f} \circ {g}\right)({v}) = {f}\!\left({g}({v})\right)'
+  [[template.variants]]
+  name  = "composition_two"
+  latex = '\left({f} \circ {g}\right)({v}) = {f}\!\left({g}({v})\right)'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "composition_three"
-latex = '\left({f} \circ {g} \circ {h}\right)({v}) = {f}\!\left({g}\!\left({h}({v})\right)\right)'
+  [[template.variants]]
+  name  = "composition_three"
+  latex = '\left({f} \circ {g} \circ {h}\right)({v}) = {f}\!\left({g}\!\left({h}({v})\right)\right)'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.h]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.h]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "inverse_cancel_right"
-latex = '{f}\!\left({f}^{{-1}}({v})\right) = {v}'
+  [[template.variants]]
+  name  = "inverse_cancel_right"
+  latex = '{f}\!\left({f}^{{-1}}({v})\right) = {v}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "inverse_cancel_left"
-latex = '{f}^{{-1}}\!\left({f}({v})\right) = {v}'
+  [[template.variants]]
+  name  = "inverse_cancel_left"
+  latex = '{f}^{{-1}}\!\left({f}({v})\right) = {v}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "inverse_composition"
-latex = '\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}'
+  [[template.variants]]
+  name  = "inverse_composition"
+  latex = '\left({f} \circ {g}\right)^{{-1}} = {g}^{{-1}} \circ {f}^{{-1}}'
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
 # ---------------------------------------------------------------------------
 # General algebra
@@ -902,340 +911,340 @@ n    = 5000
 name  = "log_identities"
 latex = ""
 
-[[template.variants]]
-name  = "log_quotient_rule"
-latex = '\log_{{{base}}}\!\left(\frac{{{a} {v}}}{{{b}}}\right) = \log_{{{base}}} {a} + \log_{{{base}}} {v} - \log_{{{base}}} {b}'
+  [[template.variants]]
+  name  = "log_quotient_rule"
+  latex = '\log_{{{base}}}\!\left(\frac{{{a} {v}}}{{{b}}}\right) = \log_{{{base}}} {a} + \log_{{{base}}} {v} - \log_{{{base}}} {b}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[[template.variants]]
-name  = "log_power_rule"
-latex = '\log_{{{base}}}\!\left(\left({arg}\right)^{{{n}}}\right) = {n} \log_{{{base}}} {arg}'
+  [[template.variants]]
+  name  = "log_power_rule"
+  latex = '\log_{{{base}}}\!\left(\left({arg}\right)^{{{n}}}\right) = {n} \log_{{{base}}} {arg}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = ['2', '3', 'n', 'k', 'a', 'b', 'c', 'd', 'm', 'p', 'q']
+  [template.variants.slots.n]
+  type = "S"
+  pool = ['2', '3', 'n', 'k', 'a', 'b', 'c', 'd', 'm', 'p', 'q']
 
-[template.variants.slots.arg]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template.variants]]
-name  = "log_change_of_base"
-latex = '\log_{{{base}}} {arg} = \frac{{\log_{{{base2}}} {arg}}}{{\log_{{{base2}}} {base}}}'
+  [[template.variants]]
+  name  = "log_change_of_base"
+  latex = '\log_{{{base}}} {arg} = \frac{{\log_{{{base2}}} {arg}}}{{\log_{{{base2}}} {base}}}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
 
-[template.variants.slots.base2]
-type = "X"
-pool = "LOG_BASES_POOL"
-exclude_from = ["base"]
+  [template.variants.slots.base2]
+  type = "X"
+  pool = "LOG_BASES_POOL"
+  exclude_from = ["base"]
 
-[template.variants.slots.arg]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template.variants]]
-name  = "log_product_rule"
-latex = '\log_{{{base}}}\!\left({u} \cdot {w}\right) = \log_{{{base}}} {u} + \log_{{{base}}} {w}'
+  [[template.variants]]
+  name  = "log_product_rule"
+  latex = '\log_{{{base}}}\!\left({u} \cdot {w}\right) = \log_{{{base}}} {u} + \log_{{{base}}} {w}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
 
-[template.variants.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template.variants]]
-name  = "log_base_one"
-latex = '\log_{{{base}}} 1 = 0'
+  [[template.variants]]
+  name  = "log_base_one"
+  latex = '\log_{{{base}}} 1 = 0'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
-idx  = 0.35
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "log_base_self"
-latex = '\log_{{{base}}} {base} = 1'
+  [[template.variants]]
+  name  = "log_base_self"
+  latex = '\log_{{{base}}} {base} = 1'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
-idx  = 0.35
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "log_exp_cancel"
-latex = '\log_{{{base}}} {base}^{{{n}}} = {n}'
+  [[template.variants]]
+  name  = "log_exp_cancel"
+  latex = '\log_{{{base}}} {base}^{{{n}}} = {n}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
-idx  = 0.35
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = ['2', '3', 'n', 'k', 'm', 'p']
+  [template.variants.slots.n]
+  type = "S"
+  pool = ['2', '3', 'n', 'k', 'm', 'p']
 
-[[template.variants]]
-name  = "log_base_power_cancel"
-latex = '{base}^{{\log_{{{base}}} {arg}}} = {arg}'
+  [[template.variants]]
+  name  = "log_base_power_cancel"
+  latex = '{base}^{{\log_{{{base}}} {arg}}} = {arg}'
 
-[template.variants.slots.base]
-type = "S"
-pool = "LOG_BASES_POOL"
-idx  = 0.35
+  [template.variants.slots.base]
+  type = "S"
+  pool = "LOG_BASES_POOL"
+  idx  = 0.35
 
-[template.variants.slots.arg]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 [[template]]
 name  = "completing_the_square"
 latex = ""
 
-[[template.variants]]
-name  = "completing_square_monic"
-latex = '{v}^2 + {a} {v} + {c_const} = \left({v} + \frac{{{a}}}{{2}}\right)^2 + {c_const} - \frac{{{a}^2}}{{4}}'
+  [[template.variants]]
+  name  = "completing_square_monic"
+  latex = '{v}^2 + {a} {v} + {c_const} = \left({v} + \frac{{{a}}}{{2}}\right)^2 + {c_const} - \frac{{{a}^2}}{{4}}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c_const]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
+  [template.variants.slots.c_const]
+  type = "E"
+  gen  = "_idx_atom"
+  n    = 200
 
-[[template.variants]]
-name  = "completing_square_nonmonic"
-latex = '{p} {v}^2 + {a} {v} + {b} = {p}\!\left({v} + \frac{{{a}}}{{2{p}}}\right)^2 + {b} - \frac{{{a}^2}}{{4{p}}}'
+  [[template.variants]]
+  name  = "completing_square_nonmonic"
+  latex = '{p} {v}^2 + {a} {v} + {b} = {p}\!\left({v} + \frac{{{a}}}{{2{p}}}\right)^2 + {b} - \frac{{{a}^2}}{{4{p}}}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.p]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b"]
+  [template.variants.slots.p]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
 
-[[template.variants]]
-name  = "completing_square_partial"
-latex = '{v}^2 + {coeff} {v} = \left({v} + \frac{{{coeff}}}{{2}}\right)^2 - \frac{{{coeff}^2}}{{4}}'
+  [[template.variants]]
+  name  = "completing_square_partial"
+  latex = '{v}^2 + {coeff} {v} = \left({v} + \frac{{{coeff}}}{{2}}\right)^2 - \frac{{{coeff}^2}}{{4}}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.coeff]
-type = "E"
-gen  = "_idx_atom"
-n    = 200
+  [template.variants.slots.coeff]
+  type = "E"
+  gen  = "_idx_atom"
+  n    = 200
 
-[[template.variants]]
-name  = "completing_square_vertex"
-latex = 'f({v}) = {a}\!\left({v} - {b}\right)^2 + {c3}'
+  [[template.variants]]
+  name  = "completing_square_vertex"
+  latex = 'f({v}) = {a}\!\left({v} - {b}\right)^2 + {c3}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.c3]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b"]
+  [template.variants.slots.c3]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
 
 [[template]]
 name  = "floor_ceil"
 latex = ""
 
-[[template.variants]]
-name  = "floor_fraction"
-latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
+  [[template.variants]]
+  name  = "floor_fraction"
+  latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
 
-[template.variants.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.den]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[[template.variants]]
-name  = "ceil_fraction"
-latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
+  [[template.variants]]
+  name  = "ceil_fraction"
+  latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
 
-[template.variants.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.den]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[[template.variants]]
-name  = "floor_add_int"
-latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
+  [[template.variants]]
+  name  = "floor_add_int"
+  latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
 
-[template.variants.slots.v]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.variants.slots.n]
-type = "S"
-pool = "SCALARS_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "SCALARS_POOL"
 
-[[template.variants]]
-name  = "ceil_neg_floor"
-latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
+  [[template.variants]]
+  name  = "ceil_neg_floor"
+  latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
 
-[template.variants.slots.v]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[[template.variants]]
-name  = "floor_sum_bound"
-latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
+  [[template.variants]]
+  name  = "floor_sum_bound"
+  latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
 
-[template.variants.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.variants.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 [[template]]
 name  = "exponential_growth"
 latex = ""
 
-[[template.variants]]
-name  = "exponential_growth_pos"
-latex = '{v} = {a} e^{{{g} t}}'
+  [[template.variants]]
+  name  = "exponential_growth_pos"
+  latex = '{v} = {a} e^{{{g} t}}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.g]
-type = "S"
-pool = "GREEK_POOL"
-idx  = 0.35
+  [template.variants.slots.g]
+  type = "S"
+  pool = "GREEK_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "exponential_decay"
-latex = '{v} = {a} e^{{-{g} t}}'
+  [[template.variants]]
+  name  = "exponential_decay"
+  latex = '{v} = {a} e^{{-{g} t}}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.g]
-type = "S"
-pool = "GREEK_POOL"
-idx  = 0.35
+  [template.variants.slots.g]
+  type = "S"
+  pool = "GREEK_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "exponential_general_base"
-latex = '{v} = {a} \cdot {b}^t'
+  [[template.variants]]
+  name  = "exponential_general_base"
+  latex = '{v} = {a} \cdot {b}^t'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
 [[template]]
 name  = "product_formula"
@@ -1338,211 +1347,207 @@ pool = "SCALARS_POOL"
 name  = "vieta_formulas"
 latex = ""
 
-[[template.variants]]
-name  = "vieta_quadratic"
-latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
+  [[template.variants]]
+  name  = "vieta_quadratic"
+  latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
 
-[template.variants.slots.vv]
-type = "S"
-pool = "VARS_POOL"
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VARS_POOL"
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.c_coef]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b"]
+  [template.variants.slots.c_coef]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
 
-[[template.variants]]
-name  = "vieta_cubic"
-latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
+  [[template.variants]]
+  name  = "vieta_cubic"
+  latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
 
-[template.variants.slots.vv]
-type = "S"
-pool = "VARS_POOL"
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VARS_POOL"
 
-[template.variants.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
 
-[template.variants.slots.c_coef]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b"]
+  [template.variants.slots.c_coef]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
 
-[template.variants.slots.d_coef]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b", "c_coef"]
+  [template.variants.slots.d_coef]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b", "c_coef"]
 
 [[template]]
 name  = "am_gm"
 latex = ""
 
-[[template.variants]]
-name     = "am_gm_two"
-latex    = '\frac{{{u} + {w}}}{{2}} \geq \sqrt{{{u} \, {w}}}'
-distinct = [["u", "w"]]
+  [[template.variants]]
+  name     = "am_gm_two"
+  latex    = '\frac{{{u} + {w}}}{{2}} \geq \sqrt{{{u} \, {w}}}'
+  distinct = [["u", "w"]]
 
-[template.variants.slots.u]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.w]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "am_gm_three"
-latex    = '\frac{{{u} + {w} + {x}}}{{3}} \geq \sqrt[3]{{{u} \, {w} \, {x}}}'
-distinct = [["u", "w", "x"]]
+  [[template.variants]]
+  name     = "am_gm_three"
+  latex    = '\frac{{{u} + {w} + {x}}}{{3}} \geq \sqrt[3]{{{u} \, {w} \, {x}}}'
+  distinct = [["u", "w", "x"]]
 
-[template.variants.slots.u]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.w]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.x]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "am_gm_power_mean"
-latex    = '\frac{{{u}^{{1/{v}}} + {w}^{{1/{v}}}}}{{2}} \geq \left(\frac{{{u} + {w}}}{{2}}\right)^{{1/{v}}}'
-distinct = [["u", "w"]]
+  [[template.variants]]
+  name     = "am_gm_power_mean"
+  latex    = '\frac{{{u}^{{1/{v}}} + {w}^{{1/{v}}}}}{{2}} \geq \left(\frac{{{u} + {w}}}{{2}}\right)^{{1/{v}}}'
+  distinct = [["u", "w"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.u]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.w]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "am_gm_nvar"
-latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
+  [[template.variants]]
+  name  = "am_gm_nvar"
+  latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name     = "hm_gm_two"
-latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}}'
-distinct = [["u", "w"]]
+  [[template.variants]]
+  name     = "hm_gm_two"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}}'
+  distinct = [["u", "w"]]
 
-[template.variants.slots.u]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.w]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "hm_gm_am_chain"
-latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}} \leq \frac{{{u}+{w}}}{{2}}'
-distinct = [["u", "w"]]
+  [[template.variants]]
+  name     = "hm_gm_am_chain"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}} \leq \frac{{{u}+{w}}}{{2}}'
+  distinct = [["u", "w"]]
 
-[template.variants.slots.u]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.w]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "hm_def"
-latex = 'H_{{{n}}} = \frac{{{n}}}{{\frac{{1}}{{{a}_1}} + \frac{{1}}{{{a}_2}} + \cdots + \frac{{1}}{{{a}_{{{n}}}}}}}'
+  [[template.variants]]
+  name  = "hm_def"
+  latex = 'H_{{{n}}} = \frac{{{n}}}{{\frac{{1}}{{{a}_1}} + \frac{{1}}{{{a}_2}} + \cdots + \frac{{1}}{{{a}_{{{n}}}}}}}'
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "am_gm_hm_inequality"
-latex = '\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} \leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} \leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k'
+  [[template.variants]]
+  name  = "am_gm_hm_inequality"
+  latex = '\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} \leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} \leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
 [[template]]
-name  = "cauchy_schwarz"
-latex = ""
-
-[[template.variants]]
 name  = "cauchy_schwarz_sum"
 latex = '\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 \leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 \cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2'
 
-[template.variants.slots.lim_mod]
+[template.slots.lim_mod]
 type = "S"
 pool = ["", '\limits']
 
-[template.variants.slots.idx]
+[template.slots.idx]
 type = "S"
 pool = ['i', 'j', 'k', 'l', 'm', 'r']
 
-[template.variants.slots.ub]
+[template.slots.ub]
 type = "S"
 pool = ['n', 'm', 'N', 'M', 'K', 'L', 'P']
 
-[template.variants.slots.p1]
+[template.slots.p1]
 type = "S"
 pool = "SCALARS_POOL"
 
-[template.variants.slots.p2]
+[template.slots.p2]
 type = "X"
 pool = "SCALARS_POOL"
 exclude_from = ["p1"]
@@ -1551,177 +1556,177 @@ exclude_from = ["p1"]
 name  = "polynomial_division"
 latex = ""
 
-[[template.variants]]
-name  = "polynomial_division_abstract"
-latex = '{f}({v}) = {q}({v}) \cdot {g}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+  [[template.variants]]
+  name  = "polynomial_division_abstract"
+  latex = '{f}({v}) = {q}({v}) \cdot {g}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.q]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.q]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.r]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.r]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "polynomial_division_remainder_form"
-latex = '{f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v})'
+  [[template.variants]]
+  name  = "polynomial_division_remainder_form"
+  latex = '{f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v})'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.q]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.q]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.r]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.r]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "polynomial_division_linear_divisor"
-latex = '{f}({v}) = ({v} - {a}) \cdot {q}({v}) + {f}({a})'
+  [[template.variants]]
+  name  = "polynomial_division_linear_divisor"
+  latex = '{f}({v}) = ({v} - {a}) \cdot {q}({v}) + {f}({a})'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.q]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.q]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[[template.variants]]
-name  = "polynomial_division_uniqueness"
-latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+  [[template.variants]]
+  name  = "polynomial_division_uniqueness"
+  latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.f]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.g]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.q]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.q]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.r]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.r]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
 [[template]]
 name  = "triangle_inequality"
 latex = ""
 
-[[template.variants]]
-name     = "triangle_inequality_basic"
-latex    = '\left|{a} + {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "triangle_inequality_basic"
+  latex    = '\left|{a} + {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "triangle_inequality_difference"
-latex    = '\left|{a} - {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "triangle_inequality_difference"
+  latex    = '\left|{a} - {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "triangle_inequality_reverse"
-latex    = '\left|\left|{a}\right| - \left|{b}\right|\right| \leq \left|{a} - {b}\right|'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "triangle_inequality_reverse"
+  latex    = '\left|\left|{a}\right| - \left|{b}\right|\right| \leq \left|{a} - {b}\right|'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name  = "triangle_inequality_nterms"
-latex = '\left|{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}\right| \leq \left|{a}_1\right| + \left|{a}_2\right| + \cdots + \left|{a}_{{{n}}}\right|'
+  [[template.variants]]
+  name  = "triangle_inequality_nterms"
+  latex = '\left|{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}\right| \leq \left|{a}_1\right| + \left|{a}_2\right| + \cdots + \left|{a}_{{{n}}}\right|'
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
 # ---------------------------------------------------------------------------
 # Power sums (3-level nesting)
@@ -1731,174 +1736,174 @@ pool = "GEO_N_POOL"
 name  = "power_sums"
 latex = ""
 
-[[template.variants]]
-name  = "sum_of_integers"
-latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}'
+  [[template.variants]]
+  name  = "sum_of_integers"
+  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k = \frac{{{n}({n}+1)}}{{2}}'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "sum_of_integers_ellipsis"
-latex = ""
+  [[template.variants]]
+  name  = "sum_of_integers_ellipsis"
+  latex = ""
 
-[[template.variants.variants]]
-name  = "sum_of_integers_ellipsis_2"
-latex = '1 + 2 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+  [[template.variants.variants]]
+  name  = "sum_of_integers_ellipsis_2"
+  latex = '1 + 2 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants.variants]]
-name  = "sum_of_integers_ellipsis_3"
-latex = '1 + 2 + 3 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+  [[template.variants.variants]]
+  name  = "sum_of_integers_ellipsis_3"
+  latex = '1 + 2 + 3 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants.variants]]
-name  = "sum_of_integers_ellipsis_4"
-latex = '1 + 2 + 3 + 4 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
+  [[template.variants.variants]]
+  name  = "sum_of_integers_ellipsis_4"
+  latex = '1 + 2 + 3 + 4 + \cdots + {n} = \frac{{{n}({n}+1)}}{{2}}'
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "sum_of_squares_gauss"
-latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
+  [[template.variants]]
+  name  = "sum_of_squares_gauss"
+  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "sum_of_cubes_gauss"
-latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
+  [[template.variants]]
+  name  = "sum_of_cubes_gauss"
+  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name     = "arithmetic_progression_sum"
-latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} \left({a} + k{d}\right) = \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}'
-distinct = [["a", "d"]]
+  [[template.variants]]
+  name     = "arithmetic_progression_sum"
+  latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} \left({a} + k{d}\right) = \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}'
+  distinct = [["a", "d"]]
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.d]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.d]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "arithmetic_progression_ellipsis"
-latex = ""
+  [[template.variants]]
+  name  = "arithmetic_progression_ellipsis"
+  latex = ""
 
-[[template.variants.variants]]
-name     = "arithmetic_progression_ellipsis_2"
-latex    = '{a} + ({a}+{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
-distinct = [["a", "d"]]
+  [[template.variants.variants]]
+  name     = "arithmetic_progression_ellipsis_2"
+  latex    = '{a} + ({a}+{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+  distinct = [["a", "d"]]
 
-[template.variants.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.variants.slots.d]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.variants.slots.d]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants.variants]]
-name     = "arithmetic_progression_ellipsis_3"
-latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
-distinct = [["a", "d"]]
+  [[template.variants.variants]]
+  name     = "arithmetic_progression_ellipsis_3"
+  latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+  distinct = [["a", "d"]]
 
-[template.variants.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.variants.slots.d]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.variants.slots.d]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants.variants]]
-name     = "arithmetic_progression_ellipsis_4"
-latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + ({a}+3{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
-distinct = [["a", "d"]]
+  [[template.variants.variants]]
+  name     = "arithmetic_progression_ellipsis_4"
+  latex    = '{a} + ({a}+{d}) + ({a}+2{d}) + ({a}+3{d}) + \cdots + ({a}+{n}{d}) = \frac{{({n}+1)(2{a}+{n}{d})}}{{2}}'
+  distinct = [["a", "d"]]
 
-[template.variants.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.variants.slots.d]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.variants.slots.d]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "telescoping_sum"
-latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) = {fn}({n}+1) - {fn}(1)'
+  [[template.variants]]
+  name  = "telescoping_sum"
+  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) = {fn}({n}+1) - {fn}(1)'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
 # ---------------------------------------------------------------------------
 # Geometric series
@@ -1908,86 +1913,86 @@ pool = "GEO_N_POOL"
 name  = "geometric_series"
 latex = ""
 
-[[template.variants]]
-name     = "geometric_series_finite"
-latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
-distinct = [["a", "r"]]
+  [[template.variants]]
+  name     = "geometric_series_finite"
+  latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} {a} {r}^k = {a} \, \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
+  distinct = [["a", "r"]]
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name  = "geometric_series_finite_unit"
-latex = '\sum{lim_mod}_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
+  [[template.variants]]
+  name  = "geometric_series_finite_unit"
+  latex = '\sum{lim_mod}_{{k=0}}^{{{n}}} {r}^k = \frac{{1 - {r}^{{{n}+1}}}}{{1 - {r}}}'
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.r]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name     = "geometric_series_infinite"
-latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
-distinct = [["a", "r"]]
+  [[template.variants]]
+  name     = "geometric_series_infinite"
+  latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
+  distinct = [["a", "r"]]
 
-[template.variants.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[[template.variants]]
-name     = "geometric_series_closed_form"
-latex    = '{a} + {a} {r} + {a} {r}^2 + \cdots + {a} {r}^{{{n}}} = {a} \, \frac{{{r}^{{{n}+1}} - 1}}{{{r} - 1}}'
-distinct = [["a", "r"]]
+  [[template.variants]]
+  name     = "geometric_series_closed_form"
+  latex    = '{a} + {a} {r} + {a} {r}^2 + \cdots + {a} {r}^{{{n}}} = {a} \, \frac{{{r}^{{{n}+1}} - 1}}{{{r} - 1}}'
+  distinct = [["a", "r"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r]
-type = "X"
-pool = "COEFF_POOL"
-exclude_from = ["a"]
-idx  = 0.35
+  [template.variants.slots.r]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
 # ---------------------------------------------------------------------------
 # Sophie Germain identity
@@ -1997,50 +2002,50 @@ pool = "GEO_N_POOL"
 name  = "sophie_germain"
 latex = ""
 
-[[template.variants]]
-name     = "sophie_germain_standard"
-latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "sophie_germain_standard"
+  latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "sophie_germain_sum_of_squares"
-latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "sophie_germain_sum_of_squares"
+  latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "sophie_germain_lhs_only"
-latex    = '{a}^4 + 4{b}^4'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "sophie_germain_lhs_only"
+  latex    = '{a}^4 + 4{b}^4'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Difference / sum of nth powers
@@ -2050,81 +2055,81 @@ idx  = 0.35
 name  = "nth_power_factoring"
 latex = ""
 
-[[template.variants]]
-name     = "difference_nth_powers_ellipsis2"
-latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + \cdots + {b}^{{{n}-1}}\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "difference_nth_powers_ellipsis2"
+  latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + \cdots + {b}^{{{n}-1}}\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name     = "difference_nth_powers_ellipsis3"
-latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + {a}^{{{n}-3}}{b}^2 + \cdots + {b}^{{{n}-1}}\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "difference_nth_powers_ellipsis3"
+  latex    = '{a}^{{{n}}} - {b}^{{{n}}} = ({a}-{b})\left({a}^{{{n}-1}} + {a}^{{{n}-2}}{b} + {a}^{{{n}-3}}{b}^2 + \cdots + {b}^{{{n}-1}}\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
-[[template.variants]]
-name     = "sum_odd_powers_ellipsis2"
-latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + \cdots + {b}^{{2{k}}}\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "sum_odd_powers_ellipsis2"
+  latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + \cdots + {b}^{{2{k}}}\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.k]
-type = "S"
-pool = ['n', 'm', 'p', 'r', 'j', 'l']
+  [template.variants.slots.k]
+  type = "S"
+  pool = ['n', 'm', 'p', 'r', 'j', 'l']
 
-[[template.variants]]
-name     = "sum_odd_powers_ellipsis3"
-latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + {a}^{{2{k}-2}}{b}^2 - \cdots + {b}^{{2{k}}}\right)'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "sum_odd_powers_ellipsis3"
+  latex    = '{a}^{{2{k}+1}} + {b}^{{2{k}+1}} = ({a}+{b})\left({a}^{{2{k}}} - {a}^{{2{k}-1}}{b} + {a}^{{2{k}-2}}{b}^2 - \cdots + {b}^{{2{k}}}\right)'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.k]
-type = "S"
-pool = ['n', 'm', 'p', 'r', 'j', 'l']
+  [template.variants.slots.k]
+  type = "S"
+  pool = ['n', 'm', 'p', 'r', 'j', 'l']
 
 # ---------------------------------------------------------------------------
 # Conjugate radical pairs
@@ -2134,121 +2139,121 @@ pool = ['n', 'm', 'p', 'r', 'j', 'l']
 name  = "conjugate_pairs"
 latex = ""
 
-[[template.variants]]
-name     = "conjugate_radical_basic"
-latex    = '({a} + \sqrt{{{b}}})({a} - \sqrt{{{b}}}) = {a}^2 - {b}'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "conjugate_radical_basic"
+  latex    = '({a} + \sqrt{{{b}}})({a} - \sqrt{{{b}}}) = {a}^2 - {b}'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[[template.variants]]
-name     = "conjugate_radical_both"
-latex    = '(\sqrt{{{a}}} + \sqrt{{{b}}})(\sqrt{{{a}}} - \sqrt{{{b}}}) = {a} - {b}'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "conjugate_radical_both"
+  latex    = '(\sqrt{{{a}}} + \sqrt{{{b}}})(\sqrt{{{a}}} - \sqrt{{{b}}}) = {a} - {b}'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "conjugate_radical_coeff"
-latex    = '({a} + {c}\sqrt{{{b}}})({a} - {c}\sqrt{{{b}}}) = {a}^2 - {c}^2 {b}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "conjugate_radical_coeff"
+  latex    = '({a} + {c}\sqrt{{{b}}})({a} - {c}\sqrt{{{b}}}) = {a}^2 - {c}^2 {b}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.c]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "conjugate_complex"
-latex    = '({a} + {b}\,i)({a} - {b}\,i) = {a}^2 + {b}^2'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "conjugate_complex"
+  latex    = '({a} + {b}\,i)({a} - {b}\,i) = {a}^2 + {b}^2'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "conjugate_rationalise"
-latex    = '\frac{{1}}{{{a} + \sqrt{{{b}}}}} = \frac{{{a} - \sqrt{{{b}}}}}{{{a}^2 - {b}}}'
-distinct = [["a", "b"]]
+  [[template.variants]]
+  name     = "conjugate_rationalise"
+  latex    = '\frac{{1}}{{{a} + \sqrt{{{b}}}}} = \frac{{{a} - \sqrt{{{b}}}}}{{{a}^2 - {b}}}'
+  distinct = [["a", "b"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[[template.variants]]
-name     = "rationalize_scalar_plus_radical"
-latex    = '\frac{{{a}}}{{{b} + \sqrt{{{c}}}}} = \frac{{{a}({b} - \sqrt{{{c}}})}}{{ {b}^2 - {c} }}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "rationalize_scalar_plus_radical"
+  latex    = '\frac{{{a}}}{{{b} + \sqrt{{{c}}}}} = \frac{{{a}({b} - \sqrt{{{c}}})}}{{ {b}^2 - {c} }}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.c]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[[template.variants]]
-name     = "rationalize_two_radicals"
-latex    = '\frac{{{a}}}{{\sqrt{{{b}}} + \sqrt{{{c}}}}} = \frac{{{a}(\sqrt{{{b}}} - \sqrt{{{c}}})}}{{ {b} - {c} }}'
-distinct = [["a", "b", "c"]]
+  [[template.variants]]
+  name     = "rationalize_two_radicals"
+  latex    = '\frac{{{a}}}{{\sqrt{{{b}}} + \sqrt{{{c}}}}} = \frac{{{a}(\sqrt{{{b}}} - \sqrt{{{c}}})}}{{ {b} - {c} }}'
+  distinct = [["a", "b", "c"]]
 
-[template.variants.slots.a]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.b]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.c]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.c]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Rational exponent rules
@@ -2258,118 +2263,118 @@ idx  = 0.35
 name  = "rational_exponent_rules"
 latex = ""
 
-[[template.variants]]
-name  = "rational_exp_radical"
-latex = '{x}^{{{m}/{n}}} = \sqrt[{{{n}}}]{{{x}^{{{m}}}}}'
+  [[template.variants]]
+  name  = "rational_exp_radical"
+  latex = '{x}^{{{m}/{n}}} = \sqrt[{{{n}}}]{{{x}^{{{m}}}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.m]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.m]
+  type = "S"
+  pool = "EXP_POOL"
 
-[template.variants.slots.n]
-type = "X"
-pool = "EXP_POOL"
-exclude_from = ["m"]
+  [template.variants.slots.n]
+  type = "X"
+  pool = "EXP_POOL"
+  exclude_from = ["m"]
 
-[[template.variants]]
-name  = "negative_exp"
-latex = '{x}^{{-{n}}} = \frac{{1}}{{{x}^{{{n}}}}}'
+  [[template.variants]]
+  name  = "negative_exp"
+  latex = '{x}^{{-{n}}} = \frac{{1}}{{{x}^{{{n}}}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
 
-[[template.variants]]
-name  = "product_of_powers"
-latex = '{x}^{{{m}}} \cdot {x}^{{{n}}} = {x}^{{{m}+{n}}}'
+  [[template.variants]]
+  name  = "product_of_powers"
+  latex = '{x}^{{{m}}} \cdot {x}^{{{n}}} = {x}^{{{m}+{n}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.m]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.m]
+  type = "S"
+  pool = "EXP_POOL"
 
-[template.variants.slots.n]
-type = "X"
-pool = "EXP_POOL"
-exclude_from = ["m"]
+  [template.variants.slots.n]
+  type = "X"
+  pool = "EXP_POOL"
+  exclude_from = ["m"]
 
-[[template.variants]]
-name  = "power_of_power"
-latex = '\left({x}^{{{m}}}\right)^{{{n}}} = {x}^{{{m} \cdot {n}}}'
+  [[template.variants]]
+  name  = "power_of_power"
+  latex = '\left({x}^{{{m}}}\right)^{{{n}}} = {x}^{{{m} \cdot {n}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.m]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.m]
+  type = "S"
+  pool = "EXP_POOL"
 
-[template.variants.slots.n]
-type = "X"
-pool = "EXP_POOL"
-exclude_from = ["m"]
+  [template.variants.slots.n]
+  type = "X"
+  pool = "EXP_POOL"
+  exclude_from = ["m"]
 
-[[template.variants]]
-name  = "power_of_product"
-latex = '({x}{y})^{{{n}}} = {x}^{{{n}}} {y}^{{{n}}}'
+  [[template.variants]]
+  name  = "power_of_product"
+  latex = '({x}{y})^{{{n}}} = {x}^{{{n}}} {y}^{{{n}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.y]
-type = "X"
-pool = "VARS_POOL"
-exclude_from = ["x"]
-idx  = 0.35
+  [template.variants.slots.y]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["x"]
+  idx  = 0.35
 
-[template.variants.slots.n]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
 
-[[template.variants]]
-name  = "quotient_of_powers"
-latex = '\frac{{{x}^{{{m}}}}}{{{x}^{{{n}}}}} = {x}^{{{m}-{n}}}'
+  [[template.variants]]
+  name  = "quotient_of_powers"
+  latex = '\frac{{{x}^{{{m}}}}}{{{x}^{{{n}}}}} = {x}^{{{m}-{n}}}'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.m]
-type = "S"
-pool = "EXP_POOL"
+  [template.variants.slots.m]
+  type = "S"
+  pool = "EXP_POOL"
 
-[template.variants.slots.n]
-type = "X"
-pool = "EXP_POOL"
-exclude_from = ["m"]
+  [template.variants.slots.n]
+  type = "X"
+  pool = "EXP_POOL"
+  exclude_from = ["m"]
 
-[[template.variants]]
-name  = "zero_exponent"
-latex = '{x}^0 = 1 \quad ({x} \neq 0)'
+  [[template.variants]]
+  name  = "zero_exponent"
+  latex = '{x}^0 = 1 \quad ({x} \neq 0)'
 
-[template.variants.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Polynomial root factoring form
@@ -2379,203 +2384,218 @@ idx  = 0.35
 name  = "polynomial_root_form"
 latex = ""
 
-[[template.variants]]
-name     = "polynomial_root_form_general"
-latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
-distinct = [["lc", "r1", "r2", "rn"]]
+  [[template.variants]]
+  name     = "polynomial_root_form_general"
+  latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
+  distinct = [["lc", "r1", "r2", "rn"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.lc]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.lc]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r1]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r2]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r2]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.rn]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.rn]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "polynomial_root_form_monic"
-latex    = '{fn}({v}) = ({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
-distinct = [["r1", "r2", "rn"]]
+  [[template.variants]]
+  name     = "polynomial_root_form_monic"
+  latex    = '{fn}({v}) = ({v} - {r1})({v} - {r2}) \cdots ({v} - {rn})'
+  distinct = [["r1", "r2", "rn"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.r1]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r2]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r2]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.rn]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.rn]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "polynomial_root_form_quadratic"
-latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2})'
-distinct = [["lc", "r1", "r2"]]
+  [[template.variants]]
+  name     = "polynomial_root_form_quadratic"
+  latex    = '{fn}({v}) = {lc}({v} - {r1})({v} - {r2})'
+  distinct = [["lc", "r1", "r2"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.lc]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.lc]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r1]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r1]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r2]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.r2]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[[template.variants]]
-name     = "polynomial_root_form_subscript"
-latex    = '{fn}({v}) = {lc}({v} - {r}_1)({v} - {r}_2) \cdots ({v} - {r}_{{{n}}})'
-distinct = [["lc", "r"]]
+  [[template.variants]]
+  name     = "polynomial_root_form_subscript"
+  latex    = '{fn}({v}) = {lc}({v} - {r}_1)({v} - {r}_2) \cdots ({v} - {r}_{{{n}}})'
+  distinct = [["lc", "r"]]
 
-[template.variants.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.variants.slots.fn]
-type = "E"
-gen  = "_fn_rich_nosub"
-n    = 5
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
 
-[template.variants.slots.lc]
-type = "S"
-pool = "COEFF_POOL"
-idx  = 0.35
+  [template.variants.slots.lc]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
 
-[template.variants.slots.r]
-type = "S"
-pool = "COEFF_POOL"
+  [template.variants.slots.r]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.variants.slots.n]
-type = "S"
-pool = "GEO_N_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
 
 # ---------------------------------------------------------------------------
 # leqslant / geqslant / lll / ggg / lesssim / gtrsim
 # ---------------------------------------------------------------------------
 
 [[template]]
-name     = "leqslant_chain"
-latex    = '{aa} \leqslant {bb} \leqslant {cc}'
-distinct = [["aa", "bb", "cc"]]
+name  = "inequality_symbols"
+latex = ""
 
-[template.slots.aa]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [[template.variants]]
+  name     = "leqslant_chain"
+  latex    = '{aa} \leqslant {bb} \leqslant {cc}'
+  distinct = [["aa", "bb", "cc"]]
 
-[template.slots.bb]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[template.slots.cc]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
+  [template.variants.slots.cc]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[[template]]
-name  = "abs_geqslant_eps"
-latex = '|{xx}| \geqslant {eps}'
+  [[template.variants]]
+  name  = "abs_geqslant_eps"
+  latex = '|{xx}| \geqslant {eps}'
 
-[template.slots.xx]
-type = "S"
-pool = "VARS_POOL"
+  [template.variants.slots.xx]
+  type = "S"
+  pool = "VARS_POOL"
 
-[template.slots.eps]
-type = "E"
-gen  = "_eps_sub"
-n    = 2
+  [template.variants.slots.eps]
+  type = "E"
+  gen  = "_eps_sub"
+  n    = 2
 
-[[template]]
-name     = "much_less_than"
-latex    = '{aa} \lll {bb}'
-distinct = [["aa", "bb"]]
+  [[template.variants]]
+  name     = "much_less_than"
+  latex    = '{aa} \lll {bb}'
+  distinct = [["aa", "bb"]]
 
-[template.slots.aa]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[template.slots.bb]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[[template]]
-name     = "much_greater_than"
-latex    = '{aa} \ggg {bb}'
-distinct = [["aa", "bb"]]
+  [[template.variants]]
+  name     = "much_greater_than"
+  latex    = '{aa} \ggg {bb}'
+  distinct = [["aa", "bb"]]
 
-[template.slots.aa]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[template.slots.bb]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
+  [[template.variants]]
+  name     = "lesssim_scalars"
+  latex    = '{aa} \lesssim {bb}'
+  distinct = [["aa", "bb"]]
 
-[[template]]
-name     = "gtrsim_scalars"
-latex    = '{aa} \gtrsim {bb}'
-distinct = [["aa", "bb"]]
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[template.slots.aa]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
-[template.slots.bb]
-type = "S"
-pool = "VARS_SCALARS_POOL"
+  [[template.variants]]
+  name     = "gtrsim_scalars"
+  latex    = '{aa} \gtrsim {bb}'
+  distinct = [["aa", "bb"]]
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "VARS_SCALARS_POOL"
 
 # ---------------------------------------------------------------------------
 # Large manual bracket-size templates
@@ -2607,318 +2627,338 @@ pool = ['n', 'N', 'm']
 # ---------------------------------------------------------------------------
 
 [[template]]
-name  = "genfrac_general"
-latex = '\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}'
+name  = "genfrac"
+latex = ""
 
-[template.slots.lft]
-type = "S"
-pool = "GENFRAC_LEFT_POOL"
+  [[template.variants]]
+  name  = "genfrac_general"
+  latex = '\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}'
 
-[template.slots.rgt]
-type = "S"
-pool = "GENFRAC_RIGHT_POOL"
+  [template.variants.slots.lft]
+  type = "S"
+  pool = "GENFRAC_LEFT_POOL"
 
-[template.slots.thk]
-type = "S"
-pool = "GENFRAC_THICK_POOL"
+  [template.variants.slots.rgt]
+  type = "S"
+  pool = "GENFRAC_RIGHT_POOL"
 
-[template.slots.sty]
-type = "S"
-pool = "GENFRAC_STYLE_POOL"
+  [template.variants.slots.thk]
+  type = "S"
+  pool = "GENFRAC_THICK_POOL"
 
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.sty]
+  type = "S"
+  pool = "GENFRAC_STYLE_POOL"
 
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template]]
-name  = "genfrac_no_rule"
-latex = '\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [[template.variants]]
+  name  = "genfrac_no_rule"
+  latex = '\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}'
 
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template]]
-name  = "genfrac_angle"
-latex = '\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [[template.variants]]
+  name  = "genfrac_angle"
+  latex = '\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}'
 
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
 # ---------------------------------------------------------------------------
 # Text-in-fraction patterns
 # ---------------------------------------------------------------------------
 
 [[template]]
-name  = "text_over_text_frac"
-latex = '\frac{{{num}}}{{{den}}}'
+name  = "text_fraction"
+latex = ""
 
-[template.slots.num]
-type = "S"
-pool = "TEXT_NUMER_POOL"
+  [[template.variants]]
+  name  = "text_over_text_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
 
-[template.slots.den]
-type = "X"
-pool = "TEXT_DENOM_POOL"
-exclude_from = ["num"]
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
 
-[[template]]
-name  = "text_over_expr_frac"
-latex = '\frac{{{num}}}{{{den}}}'
+  [template.variants.slots.den]
+  type = "X"
+  pool = "TEXT_DENOM_POOL"
+  exclude_from = ["num"]
 
-[template.slots.num]
-type = "S"
-pool = "TEXT_NUMER_POOL"
+  [[template.variants]]
+  name  = "text_over_expr_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
 
-[template.slots.den]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
 
-[[template]]
-name  = "expr_over_text_frac"
-latex = '\frac{{{num}}}{{{den}}}'
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[template.slots.num]
-type = "E"
-gen  = "_expr"
-n    = 5000
+  [[template.variants]]
+  name  = "expr_over_text_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
 
-[template.slots.den]
-type = "S"
-pool = "TEXT_DENOM_POOL"
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
 
-[[template]]
-name  = "text_frac_equality"
-latex = '{lhs} = \frac{{{num}}}{{{den}}}'
+  [template.variants.slots.den]
+  type = "S"
+  pool = "TEXT_DENOM_POOL"
 
-[template.slots.lhs]
-type = "S"
-pool = "TEXT_NUMER_POOL"
+  [[template.variants]]
+  name  = "text_frac_equality"
+  latex = '{lhs} = \frac{{{num}}}{{{den}}}'
 
-[template.slots.num]
-type = "S"
-pool = "TEXT_NUMER_POOL"
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
 
-[template.slots.den]
-type = "X"
-pool = "TEXT_DENOM_POOL"
-exclude_from = ["num"]
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
+
+  [template.variants.slots.den]
+  type = "X"
+  pool = "TEXT_DENOM_POOL"
+  exclude_from = ["num"]
 
 # ---------------------------------------------------------------------------
 # Polynomial degree templates
 # ---------------------------------------------------------------------------
 
 [[template]]
-name     = "deg_definition"
-latex    = '\deg({pp}) = {nn}'
-distinct = [["pp", "nn"]]
+name  = "polynomial_degree"
+latex = ""
 
-[template.slots.pp]
-type = "S"
-pool = "DEG_POLY_POOL"
+  [[template.variants]]
+  name     = "deg_definition"
+  latex    = '\deg({pp}) = {nn}'
+  distinct = [["pp", "nn"]]
 
-[template.slots.nn]
-type = "S"
-pool = "DEG_N_POOL"
+  [template.variants.slots.pp]
+  type = "S"
+  pool = "DEG_POLY_POOL"
 
-[[template]]
-name  = "deg_product"
-latex = '\deg({pp} \cdot {qq}) = \deg({pp}) + \deg({qq})'
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "DEG_N_POOL"
 
-[template.slots.pp]
-type = "S"
-pool = "DEG_POLY_POOL"
+  [[template.variants]]
+  name  = "deg_product"
+  latex = '\deg({pp} \cdot {qq}) = \deg({pp}) + \deg({qq})'
 
-[template.slots.qq]
-type = "X"
-pool = "DEG_POLY_POOL"
-exclude_from = ["pp"]
+  [template.variants.slots.pp]
+  type = "S"
+  pool = "DEG_POLY_POOL"
 
-[[template]]
-name  = "deg_sum_ineq"
-latex = '\deg({pp} + {qq}) \leq \max(\deg({pp}),\, \deg({qq}))'
+  [template.variants.slots.qq]
+  type = "X"
+  pool = "DEG_POLY_POOL"
+  exclude_from = ["pp"]
 
-[template.slots.pp]
-type = "S"
-pool = "DEG_POLY_POOL"
+  [[template.variants]]
+  name  = "deg_sum_ineq"
+  latex = '\deg({pp} + {qq}) \leq \max(\deg({pp}),\, \deg({qq}))'
 
-[template.slots.qq]
-type = "X"
-pool = "DEG_POLY_POOL"
-exclude_from = ["pp"]
+  [template.variants.slots.pp]
+  type = "S"
+  pool = "DEG_POLY_POOL"
 
-[[template]]
-name  = "deg_composition"
-latex = '\deg({pp} \circ {qq}) = \deg({pp}) \cdot \deg({qq})'
+  [template.variants.slots.qq]
+  type = "X"
+  pool = "DEG_POLY_POOL"
+  exclude_from = ["pp"]
 
-[template.slots.pp]
-type = "S"
-pool = "DEG_POLY_POOL"
+  [[template.variants]]
+  name  = "deg_composition"
+  latex = '\deg({pp} \circ {qq}) = \deg({pp}) \cdot \deg({qq})'
 
-[template.slots.qq]
-type = "X"
-pool = "DEG_POLY_POOL"
-exclude_from = ["pp"]
+  [template.variants.slots.pp]
+  type = "S"
+  pool = "DEG_POLY_POOL"
 
-[[template]]
-name     = "deg_monomial"
-latex    = '\deg({aa} {vv}^{{{nn}}}) = {nn}'
-distinct = [["aa", "nn"]]
+  [template.variants.slots.qq]
+  type = "X"
+  pool = "DEG_POLY_POOL"
+  exclude_from = ["pp"]
 
-[template.slots.aa]
-type = "S"
-pool = "SCALARS_POOL"
+  [[template.variants]]
+  name     = "deg_monomial"
+  latex    = '\deg({aa} {vv}^{{{nn}}}) = {nn}'
+  distinct = [["aa", "nn"]]
 
-[template.slots.vv]
-type = "S"
-pool = "VARS_POOL"
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "SCALARS_POOL"
 
-[template.slots.nn]
-type = "S"
-pool = "DEG_N_POOL"
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VARS_POOL"
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "DEG_N_POOL"
 
 # ---------------------------------------------------------------------------
 # Division operator templates
 # ---------------------------------------------------------------------------
 
 [[template]]
-name  = "div_expr_eq"
-latex = '{a} \div {b} = {c}'
+name  = "division"
+latex = ""
 
-[template.slots.a]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [[template.variants]]
+  name  = "div_expr_eq"
+  latex = '{a} \div {b} = {c}'
 
-[template.slots.b]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [template.variants.slots.a]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
 
-[template.slots.c]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [template.variants.slots.b]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
 
-[[template]]
-name  = "div_remainder"
-latex = '{a} \div {b} = {q} \cdots {r}'
+  [template.variants.slots.c]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
 
-[template.slots.a]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [[template.variants]]
+  name  = "div_remainder"
+  latex = '{a} \div {b} = {q} \cdots {r}'
 
-[template.slots.b]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.a]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.q]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.b]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.r]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.q]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[[template]]
-name  = "div_fraction_identity"
-latex = '{a} \div {b} = \frac{{{a2}}}{{{b2}}}'
+  [template.variants.slots.r]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.a]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [[template.variants]]
+  name  = "div_fraction_identity"
+  latex = '{a} \div {b} = \frac{{{a2}}}{{{b2}}}'
 
-[template.slots.b]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.a]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.a2]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.b]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.b2]
-type = "E"
-gen  = "_atom"
-n    = 150
+  [template.variants.slots.a2]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[[template]]
-name  = "div_paren_expr"
-latex = '\left({a} + {b}\right) \div {c}'
+  [template.variants.slots.b2]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
 
-[template.slots.a]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [[template.variants]]
+  name  = "div_paren_expr"
+  latex = '\left({a} + {b}\right) \div {c}'
 
-[template.slots.b]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [template.variants.slots.a]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
 
-[template.slots.c]
-type = "E"
-gen  = "_expr"
-n    = 50
+  [template.variants.slots.b]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
+
+  [template.variants.slots.c]
+  type = "E"
+  gen  = "_expr"
+  n    = 50
 
 # ---------------------------------------------------------------------------
 # Substack templates
 # ---------------------------------------------------------------------------
 
 [[template]]
-name  = "substack_sum_alg"
-latex = '{s}'
+name  = "substack"
+latex = ""
 
-[template.slots.s]
-type = "E"
-gen  = "_substack_sum"
-n    = 5000000
+  [[template.variants]]
+  name  = "substack_sum_alg"
+  latex = '{s}'
 
-[[template]]
-name  = "substack_prod_alg"
-latex = '{s}'
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_sum"
+  n    = 5000000
 
-[template.slots.s]
-type = "E"
-gen  = "_substack_prod"
-n    = 5000000
+  [[template.variants]]
+  name  = "substack_prod_alg"
+  latex = '{s}'
 
-[[template]]
-name  = "substack_sum_eq"
-latex = '{s} = {v}'
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_prod"
+  n    = 5000000
 
-[template.slots.s]
-type = "E"
-gen  = "_substack_sum"
-n    = 1800
+  [[template.variants]]
+  name  = "substack_sum_eq"
+  latex = '{s} = {v}'
 
-[template.slots.v]
-type = "E"
-gen  = "_expr"
-n    = 1800
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_sum"
+  n    = 1800
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_expr"
+  n    = 1800
