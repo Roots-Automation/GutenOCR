@@ -166,45 +166,53 @@ formula = GENERATORS["calculus"](rng)
 
 | Domain | File | Weight | Tags | Difficulty |
 |---|---|---|---|---|
+| **foundational · elementary** | | | | |
 | `algebra` | `domains/algebra.toml` | 0.09 | foundational | elementary |
+| `geometry` | `domains/geometry.toml` | 0.07 | foundational | elementary |
 | `trigonometry` | `domains/trigonometry.toml` | 0.04 | foundational | elementary |
+| **foundational · undergraduate** | | | | |
 | `calculus` | `domains/calculus.toml` | 0.10 | foundational | undergraduate |
 | `linear_algebra` | `domains/linear_algebra.toml` | 0.08 | foundational | undergraduate |
-| `geometry` | `domains/geometry.toml` | 0.07 | foundational | elementary |
 | `probability` | `domains/probability.toml` | 0.07 | foundational | undergraduate |
-| `classical_mechanics` | `domains/classical_mechanics.toml` | 0.030 | applied | undergraduate |
-| `electromagnetism` | `domains/electromagnetism.toml` | 0.020 | applied | undergraduate |
-| `statistical_mechanics` | `domains/statistical_mechanics.toml` | 0.020 | applied | undergraduate |
-| `quantum_mechanics` | `domains/quantum_mechanics.toml` | 0.020 | applied | graduate |
-| `field_theory` | `domains/field_theory.toml` | 0.010 | advanced | research |
-| `chemistry` | `domains/chemistry.toml` | 0.05 | applied | undergraduate |
-| `optimization` | `domains/optimization.toml` | 0.05 | applied | undergraduate |
 | `set_theory` | `domains/set_theory.toml` | 0.05 | foundational | undergraduate |
 | `logic` | `domains/logic.toml` | 0.05 | foundational | undergraduate |
-| `proof_theory` | `domains/proof_theory.toml` | 0.020 | advanced | graduate |
-| `asymptotics` | `domains/asymptotics.toml` | 0.030 | applied | graduate |
-| `group_theory` | `domains/group_theory.toml` | 0.04 | advanced | graduate |
-| `analysis` | `domains/analysis.toml` | 0.04 | advanced | graduate |
-| `number_theory` | `domains/number_theory.toml` | 0.04 | advanced | graduate |
-| `quantum_notation` | `domains/quantum_notation.toml` | 0.04 | applied | graduate |
 | `statistics` | `domains/statistics.toml` | 0.04 | foundational | undergraduate |
+| `combinatorics` | `domains/combinatorics.toml` | 0.03 | foundational | undergraduate |
+| `differential_equations` | `domains/differential_equations.toml` | 0.03 | foundational | undergraduate |
+| **applied · undergraduate** | | | | |
+| `chemistry` | `domains/chemistry.toml` | 0.05 | applied | undergraduate |
+| `optimization` | `domains/optimization.toml` | 0.05 | applied | undergraduate |
+| `classical_mechanics` | `domains/classical_mechanics.toml` | 0.03 | applied | undergraduate |
+| `electromagnetism` | `domains/electromagnetism.toml` | 0.02 | applied | undergraduate |
+| `statistical_mechanics` | `domains/statistical_mechanics.toml` | 0.02 | applied | undergraduate |
+| **structural · undergraduate** | | | | |
+| `align` | `domains/align.toml` | 0.15 | structural | undergraduate |
+| `math_fonts` | `domains/math_fonts.toml` | 0.03 | structural | undergraduate |
+| **applied · graduate** | | | | |
+| `quantum_notation` | `domains/quantum_notation.toml` | 0.04 | applied | graduate |
+| `asymptotics` | `domains/asymptotics.toml` | 0.03 | applied | graduate |
+| `information_theory` | `domains/information_theory.toml` | 0.03 | applied | graduate |
+| `quantum_mechanics` | `domains/quantum_mechanics.toml` | 0.02 | applied | graduate |
+| **advanced · graduate** | | | | |
+| `analysis` | `domains/analysis.toml` | 0.04 | advanced | graduate |
+| `group_theory` | `domains/group_theory.toml` | 0.04 | advanced | graduate |
+| `number_theory` | `domains/number_theory.toml` | 0.04 | advanced | graduate |
 | `topology` | `domains/topology.toml` | 0.04 | advanced | graduate |
 | `complex_analysis` | `domains/complex_analysis.toml` | 0.03 | advanced | graduate |
-| `combinatorics` | `domains/combinatorics.toml` | 0.03 | foundational | undergraduate |
-| `custom_operators` | `domains/custom_operators.toml` | 0.03 | structural | graduate |
-| `differential_equations` | `domains/differential_equations.toml` | 0.03 | foundational | undergraduate |
-| `information_theory` | `domains/information_theory.toml` | 0.03 | applied | graduate |
-| `math_fonts` | `domains/math_fonts.toml` | 0.03 | structural | undergraduate |
-| `category_theory` | `domains/category_theory.toml` | 0.02 | advanced | research |
+| `proof_theory` | `domains/proof_theory.toml` | 0.02 | advanced | graduate |
 | `differential_geometry` | `domains/differential_geometry.toml` | 0.02 | advanced | graduate |
 | `fourier` | `domains/fourier.toml` | 0.02 | advanced | graduate |
 | `graph_theory` | `domains/graph_theory.toml` | 0.02 | advanced | graduate |
 | `measure_theory` | `domains/measure_theory.toml` | 0.02 | advanced | graduate |
-| `p_adic` | `domains/p_adic.toml` | 0.02 | advanced | research |
 | `stochastic_processes` | `domains/stochastic_processes.toml` | 0.02 | advanced | graduate |
-| `representation_theory` | `domains/representation_theory.toml` | 0.01 | advanced | research |
 | `ring_field_theory` | `domains/ring_field_theory.toml` | 0.01 | advanced | graduate |
-| `align` | `domains/align.toml` | 0.15 | structural | undergraduate |
+| **structural · graduate** | | | | |
+| `custom_operators` | `domains/custom_operators.toml` | 0.03 | structural | graduate |
+| **advanced · research** | | | | |
+| `category_theory` | `domains/category_theory.toml` | 0.02 | advanced | research |
+| `p_adic` | `domains/p_adic.toml` | 0.02 | advanced | research |
+| `field_theory` | `domains/field_theory.toml` | 0.01 | advanced | research |
+| `representation_theory` | `domains/representation_theory.toml` | 0.01 | advanced | research |
 
 Sampling weights are renormalized automatically when `--domains` restricts the active set, so partial runs produce the correct relative distribution.
 

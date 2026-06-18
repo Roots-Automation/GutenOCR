@@ -39,50 +39,53 @@ class DomainMeta:
 # ---------------------------------------------------------------------------
 
 DOMAIN_CONFIG: dict[str, DomainMeta] = {
-    # ── foundational ─────────────────────────────────────────────────────────
+    # ── foundational · elementary ─────────────────────────────────────────────
     "algebra": DomainMeta(weight=0.09, cap=75_000_000, tags=("foundational",), difficulty="elementary"),
+    "geometry": DomainMeta(weight=0.07, tags=("foundational",), difficulty="elementary"),
     "trigonometry": DomainMeta(weight=0.04, cap=75_000_000, tags=("foundational",), difficulty="elementary"),
+    # ── foundational · undergraduate ──────────────────────────────────────────
     "calculus": DomainMeta(weight=0.10, tags=("foundational",), difficulty="undergraduate"),
     "linear_algebra": DomainMeta(weight=0.08, tags=("foundational",), difficulty="undergraduate"),
-    "geometry": DomainMeta(weight=0.07, tags=("foundational",), difficulty="elementary"),
     "probability": DomainMeta(weight=0.07, tags=("foundational",), difficulty="undergraduate"),
-    # ── applied ──────────────────────────────────────────────────────────────
-    "classical_mechanics": DomainMeta(weight=0.030, tags=("applied",), difficulty="undergraduate"),
-    "electromagnetism": DomainMeta(weight=0.020, tags=("applied",), difficulty="undergraduate"),
-    "statistical_mechanics": DomainMeta(weight=0.020, tags=("applied",), difficulty="undergraduate"),
-    "quantum_mechanics": DomainMeta(weight=0.020, tags=("applied",), difficulty="graduate"),
-    "field_theory": DomainMeta(weight=0.010, tags=("advanced",), difficulty="research"),
-    "chemistry": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
-    "optimization": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
-    # ── core mathematics ─────────────────────────────────────────────────────
     "set_theory": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
     "logic": DomainMeta(weight=0.05, tags=("foundational",), difficulty="undergraduate"),
-    "proof_theory": DomainMeta(weight=0.020, tags=("advanced",), difficulty="graduate"),
-    "group_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
-    "analysis": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
-    "asymptotics": DomainMeta(weight=0.030, tags=("applied",), difficulty="graduate"),
-    "number_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
-    "quantum_notation": DomainMeta(weight=0.04, tags=("applied",), difficulty="graduate"),
     "statistics": DomainMeta(weight=0.04, tags=("foundational",), difficulty="undergraduate"),
+    "combinatorics": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
+    "differential_equations": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
+    # ── applied · undergraduate ───────────────────────────────────────────────
+    "chemistry": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
+    "optimization": DomainMeta(weight=0.05, tags=("applied",), difficulty="undergraduate"),
+    "classical_mechanics": DomainMeta(weight=0.03, tags=("applied",), difficulty="undergraduate"),
+    "electromagnetism": DomainMeta(weight=0.02, tags=("applied",), difficulty="undergraduate"),
+    "statistical_mechanics": DomainMeta(weight=0.02, tags=("applied",), difficulty="undergraduate"),
+    # ── structural · undergraduate ────────────────────────────────────────────
+    "align": DomainMeta(weight=0.15, cap=5_000_000, tags=("structural",), difficulty="undergraduate"),
+    "math_fonts": DomainMeta(weight=0.03, tags=("structural",), difficulty="undergraduate"),
+    # ── applied · graduate ────────────────────────────────────────────────────
+    "quantum_notation": DomainMeta(weight=0.04, tags=("applied",), difficulty="graduate"),
+    "asymptotics": DomainMeta(weight=0.03, tags=("applied",), difficulty="graduate"),
+    "information_theory": DomainMeta(weight=0.03, tags=("applied",), difficulty="graduate"),
+    "quantum_mechanics": DomainMeta(weight=0.02, tags=("applied",), difficulty="graduate"),
+    # ── advanced · graduate ───────────────────────────────────────────────────
+    "analysis": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "group_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
+    "number_theory": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "topology": DomainMeta(weight=0.04, tags=("advanced",), difficulty="graduate"),
     "complex_analysis": DomainMeta(weight=0.03, tags=("advanced",), difficulty="graduate"),
-    "combinatorics": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
-    "custom_operators": DomainMeta(weight=0.03, tags=("structural",), difficulty="graduate"),
-    "differential_equations": DomainMeta(weight=0.03, tags=("foundational",), difficulty="undergraduate"),
-    "information_theory": DomainMeta(weight=0.03, tags=("applied",), difficulty="graduate"),
-    "math_fonts": DomainMeta(weight=0.03, tags=("structural",), difficulty="undergraduate"),
-    # ── advanced / specialised ────────────────────────────────────────────────
-    "category_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
+    "proof_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
     "differential_geometry": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
     "fourier": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
     "graph_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
     "measure_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
-    "p_adic": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
     "stochastic_processes": DomainMeta(weight=0.02, tags=("advanced",), difficulty="graduate"),
-    "representation_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="research"),
     "ring_field_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="graduate"),
-    # ── structural / formatting ───────────────────────────────────────────────
-    "align": DomainMeta(weight=0.15, cap=5_000_000, tags=("structural",), difficulty="undergraduate"),
+    # ── structural · graduate ─────────────────────────────────────────────────
+    "custom_operators": DomainMeta(weight=0.03, tags=("structural",), difficulty="graduate"),
+    # ── advanced · research ───────────────────────────────────────────────────
+    "category_theory": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
+    "p_adic": DomainMeta(weight=0.02, tags=("advanced",), difficulty="research"),
+    "field_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="research"),
+    "representation_theory": DomainMeta(weight=0.01, tags=("advanced",), difficulty="research"),
 }
 
 
