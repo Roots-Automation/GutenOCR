@@ -173,7 +173,7 @@ pool = "KB_POOL"
 
 [template.slots.bt]
 type = "S"
-pool = "BETA_POOL"
+pool = ['\beta', '\beta_0', '\tilde{\beta}', '\bar{\beta}', '\hat{\beta}']
 
 # ----
 
