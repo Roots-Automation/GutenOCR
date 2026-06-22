@@ -2186,3 +2186,599 @@ latex = ""
 # ---------------------------------------------------------------------------
 # Substack templates
 # ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Linear equations
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "linear_equation"
+latex = ""
+
+  [[template.variants]]
+  name     = "linear_eq_simple"
+  latex    = '{a}{v} + {b} = {c}'
+  distinct = [["a", "b", "c"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "linear_eq_two_side"
+  latex    = '{a}{v} + {b} = {c}{v} + {d}'
+  distinct = [["a", "b", "c", "d"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "linear_eq_frac"
+  latex    = '\frac{{{a}{v} + {b}}}{{{c}}} = {d}'
+  distinct = [["a", "b", "c", "d"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Linear forms — slope and lines
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "linear_forms"
+latex = ""
+
+  [[template.variants]]
+  name     = "slope_intercept"
+  latex    = '{v1} = {m}{v0} + {b}'
+  distinct = [["v0", "v1", "m", "b"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.m]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "point_slope"
+  latex    = '{v1} - {y1} = {m}\left({v0} - {x1}\right)'
+  distinct = [["v0", "v1", "m", "x1", "y1"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.m]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.y1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "slope_formula"
+  latex    = '{m} = \frac{{{y2} - {y1}}}{{{x2} - {x1}}}'
+  distinct = [["m", "x1", "x2", "y1", "y2"]]
+
+  [template.variants.slots.m]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x2]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["x1"]
+
+  [template.variants.slots.y1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.y2]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["y1"]
+
+  [[template.variants]]
+  name     = "standard_line"
+  latex    = '{a}{v0} + {b}{v1} = {c}'
+  distinct = [["v0", "v1", "a", "b", "c"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Systems of linear equations
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "linear_system"
+latex = ""
+
+  [[template.variants]]
+  name     = "linear_system_2x2"
+  latex    = '{a1}{v0} + {b1}{v1} = {c1}, \quad {a2}{v0} + {b2}{v1} = {c2}'
+  distinct = [["v0", "v1"], ["a1", "b1", "c1", "a2", "b2", "c2"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.a1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c1]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a2]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b2]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c2]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "linear_system_substitution"
+  latex    = '{v1} = {m}{v0} + {b}'
+  distinct = [["v0", "v1", "m", "b"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.m]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "linear_system_solution"
+  latex    = '({v0},\, {v1}) = \left(\frac{{{p}}}{{{q}}},\, \frac{{{r}}}{{{s}}}\right)'
+  distinct = [["v0", "v1"], ["p", "q", "r", "s"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.p]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.q]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.s]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["q"]
+
+# ---------------------------------------------------------------------------
+# Direct and inverse variation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "variation"
+latex = ""
+
+  [[template.variants]]
+  name     = "direct_variation"
+  latex    = '{v1} = {k}{v0}'
+  distinct = [["v0", "v1", "k"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "inverse_variation"
+  latex    = '{v1} = \frac{{{k}}}{{{v0}}}'
+  distinct = [["v0", "v1", "k"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "joint_variation"
+  latex    = '{v2} = {k}{v0}{v1}'
+  distinct = [["v0", "v1", "v2", "k"]]
+
+  [template.variants.slots.v0]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.v1]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0"]
+
+  [template.variants.slots.v2]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v0", "v1"]
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Sequence explicit forms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sequence_explicit"
+latex = ""
+
+  [[template.variants]]
+  name     = "arithmetic_nth_term"
+  latex    = '{a}_{{{nn}}} = {a}_1 + ({nn} - 1){d}'
+  distinct = [["a", "d", "nn"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "GEO_N_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "geometric_nth_term"
+  latex    = '{a}_{{{nn}}} = {a}_1 \cdot {r}^{{{nn}-1}}'
+  distinct = [["a", "r", "nn"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "GEO_N_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Compound interest / exponential applications
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "compound_interest"
+latex = ""
+
+  [[template.variants]]
+  name     = "compound_interest_formula"
+  latex    = '{A} = {P}\!\left(1 + \frac{{{r}}}{{{nn}}}\right)^{{{nn}{t}}}'
+  distinct = [["A", "P", "r", "nn", "t"]]
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.P]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["A"]
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = "GEO_N_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "continuous_compounding"
+  latex    = '{A} = {P} e^{{{r}{t}}}'
+  distinct = [["A", "P", "r", "t"]]
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.P]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["A"]
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Quadratic inequalities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "quadratic_inequality"
+latex = ""
+
+  [[template.variants]]
+  name     = "quadratic_ineq_gt"
+  latex    = '{a}{v}^2 + {b}{v} + {c} > 0'
+  distinct = [["a", "b", "c"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "quadratic_ineq_lt"
+  latex    = '{a}{v}^2 + {b}{v} + {c} < 0'
+  distinct = [["a", "b", "c"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "quadratic_ineq_geq"
+  latex    = '{a}{v}^2 + {b}{v} + {c} \geq 0'
+  distinct = [["a", "b", "c"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
