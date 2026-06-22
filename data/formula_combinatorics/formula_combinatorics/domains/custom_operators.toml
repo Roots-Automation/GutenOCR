@@ -37,6 +37,14 @@ values = ['\theta', '\phi', '\varphi', '\alpha', '\beta', '\gamma', "x", "y", "t
 name   = "MATHCLASS_SYMS_POOL"
 values = ['\#', '\dagger', '\ddagger', '\star', '\bullet', '\diamond', '\circ', '\S', '\clubsuit', '\spadesuit']
 
+[[pool]]
+name   = "TEXT_NUMER_POOL"
+values = ['\text{rise}', '\text{distance}', '\text{rate}', '\text{observed}', '\text{output}', '\text{signal}', '\text{profit}', '\text{numerator}', '''\text{change in } y''', '\text{work}', '\text{input}', '\text{cost}']
+
+[[pool]]
+name   = "TEXT_DENOM_POOL"
+values = ['\text{run}', '\text{time}', '\text{rate}', '\text{expected}', '\text{input}', '\text{noise}', '\text{cost}', '\text{denominator}', '''\text{change in } x''', '\text{work}', '\text{output}', '\text{profit}']
+
 # ---------------------------------------------------------------------------
 # Section A — \operatorname{sgn}
 # ---------------------------------------------------------------------------
@@ -758,3 +766,123 @@ latex = ""
   type = "E"
   gen  = "_expr"
   n    = 5000
+
+# ---------------------------------------------------------------------------
+# Typographic display templates (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "prod_of_sums_biggl"
+latex = '\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k \biggr)\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k \biggr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+
+[template.slots.b]
+type = "S"
+pool = ['h', 'i', 'j', 'k', 'l', 'm', 'n']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm']
+
+[[template]]
+name  = "text_fraction"
+latex = ""
+
+  [[template.variants]]
+  name  = "text_over_text_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
+
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
+
+  [template.variants.slots.den]
+  type = "X"
+  pool = "TEXT_DENOM_POOL"
+  exclude_from = ["num"]
+
+  [[template.variants]]
+  name  = "text_over_expr_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
+
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [[template.variants]]
+  name  = "expr_over_text_frac"
+  latex = '\frac{{{num}}}{{{den}}}'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "S"
+  pool = "TEXT_DENOM_POOL"
+
+  [[template.variants]]
+  name  = "text_frac_equality"
+  latex = '{lhs} = \frac{{{num}}}{{{den}}}'
+
+  [template.variants.slots.lhs]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
+
+  [template.variants.slots.num]
+  type = "S"
+  pool = "TEXT_NUMER_POOL"
+
+  [template.variants.slots.den]
+  type = "X"
+  pool = "TEXT_DENOM_POOL"
+  exclude_from = ["num"]
+
+[[template]]
+name  = "substack"
+latex = ""
+
+  [[template.variants]]
+  name  = "substack_sum_alg"
+  latex = '{s}'
+
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_sum"
+  n    = 5000000
+
+  [[template.variants]]
+  name  = "substack_prod_alg"
+  latex = '{s}'
+
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_prod"
+  n    = 5000000
+
+  [[template.variants]]
+  name  = "substack_sum_eq"
+  latex = '{s} = {v}'
+
+  [template.variants.slots.s]
+  type = "E"
+  gen  = "_substack_sum"
+  n    = 1800
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_expr"
+  n    = 1800

@@ -815,7 +815,7 @@ _CUSTOM = _draw(GENERATORS["custom_operators"], 2000)
 
 def test_custom_operators_operatorname_frequency() -> None:
     n = _freq(_CUSTOM, r"\operatorname")
-    assert n >= 150, f"\\operatorname appeared only {n}/2000 in custom_operators"
+    assert n >= 80, f"\\operatorname appeared only {n}/2000 in custom_operators"
 
 
 def test_custom_operators_lceil_frequency() -> None:

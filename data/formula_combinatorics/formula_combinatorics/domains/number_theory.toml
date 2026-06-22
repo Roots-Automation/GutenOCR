@@ -1659,3 +1659,51 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Vieta's formulas — cubic (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vieta_cubic"
+latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+
+[template.slots.c_coef]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a", "b"]
+
+[template.slots.d_coef]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a", "b", "c_coef"]
+
+# ---------------------------------------------------------------------------
+# AM-GM inequality — general n-variable form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "am_gm_nvar"
+latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.n]
+type = "S"
+pool = "IDX_POOL"

@@ -870,28 +870,6 @@ latex = ""
 # ---------------------------------------------------------------------------
 
 [[template]]
-name  = "binomial_theorem"
-latex = '\left({u} + {w}\right)^{{{exp}}} = \sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}'
-
-[template.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
-
-[template.slots.exp]
-type = "S"
-pool = ['n', 'm', 'k', 'p', 'r', '2', '3', '4', '5', '6']
-
-[template.slots.u]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[template.slots.w]
-type = "E"
-gen  = "_expr"
-n    = 5000
-
-[[template]]
 name  = "log_identities"
 latex = ""
 
@@ -1164,59 +1142,27 @@ gen  = "_atom"
 n    = 150
 
 [[template]]
-name  = "vieta_formulas"
-latex = ""
+name  = "vieta_quadratic"
+latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
 
-  [[template.variants]]
-  name  = "vieta_quadratic"
-  latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
 
-  [template.variants.slots.vv]
-  type = "S"
-  pool = "VARS_POOL"
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
 
-  [template.variants.slots.a]
-  type = "S"
-  pool = "SCALARS_POOL"
-  idx  = 0.35
+[template.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
 
-  [template.variants.slots.b]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a"]
-
-  [template.variants.slots.c_coef]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a", "b"]
-
-  [[template.variants]]
-  name  = "vieta_cubic"
-  latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
-
-  [template.variants.slots.vv]
-  type = "S"
-  pool = "VARS_POOL"
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "SCALARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a"]
-
-  [template.variants.slots.c_coef]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a", "b"]
-
-  [template.variants.slots.d_coef]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a", "b", "c_coef"]
+[template.slots.c_coef]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a", "b"]
 
 [[template]]
 name  = "am_gm"
@@ -1256,18 +1202,6 @@ latex = ""
   type = "S"
   pool = "COEFF_POOL"
   idx  = 0.35
-
-  [[template.variants]]
-  name  = "am_gm_nvar"
-  latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "COEFF_POOL"
-
-  [template.variants.slots.n]
-  type = "S"
-  pool = "GEO_N_POOL"
 
 [[template]]
 name  = "polynomial_division"
@@ -1438,30 +1372,6 @@ latex = ""
   pool = "GEO_N_POOL"
 
   [[template.variants]]
-  name  = "sum_of_squares_gauss"
-  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
-
-  [template.variants.slots.lim_mod]
-  type = "S"
-  pool = ["", '\limits']
-
-  [template.variants.slots.n]
-  type = "S"
-  pool = "GEO_N_POOL"
-
-  [[template.variants]]
-  name  = "sum_of_cubes_gauss"
-  latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
-
-  [template.variants.slots.lim_mod]
-  type = "S"
-  pool = ["", '\limits']
-
-  [template.variants.slots.n]
-  type = "S"
-  pool = "GEO_N_POOL"
-
-  [[template.variants]]
   name     = "arithmetic_progression_sum"
   latex    = '\sum{lim_mod}_{{k=0}}^{{{n}}} \left({a} + k{d}\right) = \frac{{({n}+1)(2{a} + {n}{d})}}{{2}}'
   distinct = [["a", "d"]]
@@ -1597,26 +1507,6 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "GEO_N_POOL"
-
-  [[template.variants]]
-  name     = "geometric_series_infinite"
-  latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
-  distinct = [["a", "r"]]
-
-  [template.variants.slots.lim_mod]
-  type = "S"
-  pool = ["", '\limits']
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.r]
-  type = "X"
-  pool = "COEFF_POOL"
-  exclude_from = ["a"]
-  idx  = 0.35
 
   [[template.variants]]
   name     = "geometric_series_closed_form"
@@ -2119,94 +2009,8 @@ pool = "VARS_SCALARS_POOL"
 type = "S"
 pool = "VARS_SCALARS_POOL"
 
-# ---------------------------------------------------------------------------
-# Large manual bracket-size templates
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "prod_of_sums_biggl"
-latex = '\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k \biggr)\biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k \biggr)'
-
-[template.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
-
-[template.slots.a]
-type = "S"
-pool = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-
-[template.slots.b]
-type = "S"
-pool = ['h', 'i', 'j', 'k', 'l', 'm', 'n']
-
-[template.slots.n]
-type = "S"
-pool = ['n', 'N', 'm']
 
 
-# ---------------------------------------------------------------------------
-# Text-in-fraction patterns
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "text_fraction"
-latex = ""
-
-  [[template.variants]]
-  name  = "text_over_text_frac"
-  latex = '\frac{{{num}}}{{{den}}}'
-
-  [template.variants.slots.num]
-  type = "S"
-  pool = "TEXT_NUMER_POOL"
-
-  [template.variants.slots.den]
-  type = "X"
-  pool = "TEXT_DENOM_POOL"
-  exclude_from = ["num"]
-
-  [[template.variants]]
-  name  = "text_over_expr_frac"
-  latex = '\frac{{{num}}}{{{den}}}'
-
-  [template.variants.slots.num]
-  type = "S"
-  pool = "TEXT_NUMER_POOL"
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [[template.variants]]
-  name  = "expr_over_text_frac"
-  latex = '\frac{{{num}}}{{{den}}}'
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "S"
-  pool = "TEXT_DENOM_POOL"
-
-  [[template.variants]]
-  name  = "text_frac_equality"
-  latex = '{lhs} = \frac{{{num}}}{{{den}}}'
-
-  [template.variants.slots.lhs]
-  type = "S"
-  pool = "TEXT_NUMER_POOL"
-
-  [template.variants.slots.num]
-  type = "S"
-  pool = "TEXT_NUMER_POOL"
-
-  [template.variants.slots.den]
-  type = "X"
-  pool = "TEXT_DENOM_POOL"
-  exclude_from = ["num"]
 
 # ---------------------------------------------------------------------------
 # Polynomial degree templates
@@ -2382,39 +2186,3 @@ latex = ""
 # ---------------------------------------------------------------------------
 # Substack templates
 # ---------------------------------------------------------------------------
-
-[[template]]
-name  = "substack"
-latex = ""
-
-  [[template.variants]]
-  name  = "substack_sum_alg"
-  latex = '{s}'
-
-  [template.variants.slots.s]
-  type = "E"
-  gen  = "_substack_sum"
-  n    = 5000000
-
-  [[template.variants]]
-  name  = "substack_prod_alg"
-  latex = '{s}'
-
-  [template.variants.slots.s]
-  type = "E"
-  gen  = "_substack_prod"
-  n    = 5000000
-
-  [[template.variants]]
-  name  = "substack_sum_eq"
-  latex = '{s} = {v}'
-
-  [template.variants.slots.s]
-  type = "E"
-  gen  = "_substack_sum"
-  n    = 1800
-
-  [template.variants.slots.v]
-  type = "E"
-  gen  = "_expr"
-  n    = 1800

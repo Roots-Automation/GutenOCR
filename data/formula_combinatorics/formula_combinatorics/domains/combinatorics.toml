@@ -778,3 +778,57 @@ n    = 5
 [template.slots.n]
 type = "S"
 pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Binomial theorem — two-variable form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "binomial_theorem_two_var"
+latex = '\left({u} + {w}\right)^{{{exp}}} = \sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.exp]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# Gauss power-sum identities (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sum_of_squares_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "sum_of_cubes_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"

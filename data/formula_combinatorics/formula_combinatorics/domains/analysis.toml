@@ -1811,3 +1811,27 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Geometric series — infinite convergent form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "geometric_series_infinite"
+latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
+distinct = [["a", "r"]]
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+idx  = 0.35
