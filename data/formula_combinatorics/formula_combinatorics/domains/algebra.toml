@@ -51,11 +51,11 @@ values = ['\text{run}', '\text{time}', '\text{rate}', '\text{expected}', '\text{
 
 [[pool]]
 name   = "DEG_POLY_POOL"
-values = ['p', 'q', 'f', 'g', 'h', 'r', 's']
+values = ['p', 'q', 'f', 'g', 'h', 'r', 's', 'u', 'v', 'w', 'F', 'G', 'H', 'P', 'Q']
 
 [[pool]]
 name   = "DEG_N_POOL"
-values = ['n', 'm', 'd', 'k', 'r', 'N']
+values = ['n', 'm', 'd', 'k', 'r', 'N', '2', '3', '4', 'j', 'l', 'M']
 
 # ---------------------------------------------------------------------------
 # Quadratic family
