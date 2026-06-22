@@ -1770,3 +1770,24 @@ pool = "SCALARS_POOL"
 [template.slots.s2]
 type = "S"
 pool = "SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Telescoping sum
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "telescoping_sum"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) = {fn}({n}+1) - {fn}(1)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "SCALARS_POOL"

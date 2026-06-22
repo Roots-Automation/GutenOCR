@@ -1014,3 +1014,33 @@ pool = "VARS_SCALARS_POOL"
 [template.slots.bb]
 type = "S"
 pool = "VARS_SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Much-less-than / much-greater-than order-of-magnitude symbols
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "much_less_than"
+latex    = '{aa} \lll {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "much_greater_than"
+latex    = '{aa} \ggg {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"

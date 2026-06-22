@@ -36,6 +36,14 @@ values = ['\mathbb{Z}', '\mathbb{Z}[i]', '\mathbb{Z}[\omega]', '\mathcal{O}_K', 
 name   = "FIELD_POOL"
 values = ['\mathbb{Q}', '\mathbb{F}_p', '\mathbb{F}_q', '\mathbb{Q}(\sqrt{d})', '\mathbb{Q}(\zeta_n)']
 
+[[pool]]
+name   = "COEFF_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', '\alpha', '\beta', '\gamma', '\lambda', '\mu']
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
 # ---------------------------------------------------------------------------
 # Part A: 20 templates
 # ---------------------------------------------------------------------------
@@ -1565,3 +1573,89 @@ latex = ""
   type = "S"
   pool = "INT_POOL"
   idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Mean inequalities (power mean, harmonic mean)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mean_inequalities"
+latex = ""
+
+  [[template.variants]]
+  name     = "am_gm_power_mean"
+  latex    = '\frac{{{u}^{{1/{v}}} + {w}^{{1/{v}}}}}{{2}} \geq \left(\frac{{{u} + {w}}}{{2}}\right)^{{1/{v}}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "hm_gm_two"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "hm_gm_am_chain"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}} \leq \frac{{{u}+{w}}}{{2}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "hm_def"
+  latex = 'H_{{{n}}} = \frac{{{n}}}{{\frac{{1}}{{{a}_1}} + \frac{{1}}{{{a}_2}} + \cdots + \frac{{1}}{{{a}_{{{n}}}}}}}'
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "IDX_POOL"
+
+  [[template.variants]]
+  name  = "am_gm_hm_inequality"
+  latex = '\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} \leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} \leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "IDX_POOL"

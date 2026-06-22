@@ -1776,3 +1776,38 @@ pool = "VARS_POOL"
 type = "E"
 gen  = "_eps_sub"
 n    = 2
+
+# ---------------------------------------------------------------------------
+# Triangle inequality — reverse and n-term forms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "triangle_inequality_advanced"
+latex = ""
+
+  [[template.variants]]
+  name     = "triangle_inequality_reverse"
+  latex    = '\left|\left|{a}\right| - \left|{b}\right|\right| \leq \left|{a} - {b}\right|'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "triangle_inequality_nterms"
+  latex = '\left|{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}\right| \leq \left|{a}_1\right| + \left|{a}_2\right| + \cdots + \left|{a}_{{{n}}}\right|'
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
