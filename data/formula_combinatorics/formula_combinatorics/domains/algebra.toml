@@ -2031,6 +2031,7 @@ latex = ""
   [template.variants.slots.pp]
   type = "S"
   pool = "DEG_POLY_POOL"
+  idx  = 0.35
 
   [template.variants.slots.nn]
   type = "S"
@@ -2043,11 +2044,13 @@ latex = ""
   [template.variants.slots.pp]
   type = "S"
   pool = "DEG_POLY_POOL"
+  idx  = 0.35
 
   [template.variants.slots.qq]
   type = "X"
   pool = "DEG_POLY_POOL"
   exclude_from = ["pp"]
+  idx  = 0.35
 
   [[template.variants]]
   name  = "deg_sum_ineq"
@@ -2056,11 +2059,13 @@ latex = ""
   [template.variants.slots.pp]
   type = "S"
   pool = "DEG_POLY_POOL"
+  idx  = 0.35
 
   [template.variants.slots.qq]
   type = "X"
   pool = "DEG_POLY_POOL"
   exclude_from = ["pp"]
+  idx  = 0.35
 
   [[template.variants]]
   name  = "deg_composition"
@@ -2069,11 +2074,13 @@ latex = ""
   [template.variants.slots.pp]
   type = "S"
   pool = "DEG_POLY_POOL"
+  idx  = 0.35
 
   [template.variants.slots.qq]
   type = "X"
   pool = "DEG_POLY_POOL"
   exclude_from = ["pp"]
+  idx  = 0.35
 
   [[template.variants]]
   name     = "deg_monomial"
@@ -2083,10 +2090,12 @@ latex = ""
   [template.variants.slots.aa]
   type = "S"
   pool = "SCALARS_POOL"
+  idx  = 0.35
 
   [template.variants.slots.vv]
   type = "S"
   pool = "VARS_POOL"
+  idx  = 0.35
 
   [template.variants.slots.nn]
   type = "S"
