@@ -1215,26 +1215,57 @@ n    = 150
 
 [[template]]
 name  = "vieta_quadratic"
-latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
+latex = ""
 
-[template.slots.vv]
-type = "S"
-pool = "VARS_POOL"
+  [[template.variants]]
+  name  = "vieta_quadratic_inline"
+  latex = '{vv}_1 + {vv}_2 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 = \frac{{{c_coef}}}{{{a}}}'
 
-[template.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "COEFF_POOL"
 
-[template.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
 
-[template.slots.c_coef]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a", "b"]
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.c_coef]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "vieta_quadratic_cases"
+  latex = '\begin{{cases}} {vv}_1 + {vv}_2 = -\dfrac{{{b}}}{{{a}}} \\[6pt] {vv}_1 {vv}_2 = \dfrac{{{c_coef}}}{{{a}}} \end{{cases}}'
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.c_coef]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
+  idx  = 0.35
 
 [[template]]
 name  = "am_gm"
