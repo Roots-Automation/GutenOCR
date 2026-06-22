@@ -42,22 +42,6 @@ name   = "EXP_POOL"
 values = ['2', '3', '4', 'm', 'n', 'p', 'q']
 
 [[pool]]
-name   = "GENFRAC_LEFT_POOL"
-values = ['', '\langle', '\lfloor', '\lceil', '\|', '(', '[', '\{']
-
-[[pool]]
-name   = "GENFRAC_RIGHT_POOL"
-values = ['', '\rangle', '\rfloor', '\rceil', '\|', ')', ']', '\}']
-
-[[pool]]
-name   = "GENFRAC_THICK_POOL"
-values = ['', '0pt', '0.4pt', '0.8pt']
-
-[[pool]]
-name   = "GENFRAC_STYLE_POOL"
-values = ['', '0', '1', '2', '3']
-
-[[pool]]
 name   = "TEXT_NUMER_POOL"
 values = ['\text{rise}', '\text{distance}', '\text{rate}', '\text{observed}', '\text{output}', '\text{signal}', '\text{profit}', '\text{numerator}', '''\text{change in } y''', '\text{work}', '\text{input}', '\text{cost}']
 
@@ -529,56 +513,25 @@ latex = ""
   pool = "SCALARS_POOL"
 
 [[template]]
-name  = "rational_expressions"
-latex = ""
+name  = "rational_fraction"
+latex = '\frac{{{num}}}{{{den}}}'
 
-  [[template.variants]]
-  name  = "rational_fraction"
-  latex = '\frac{{{num}}}{{{den}}}'
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
 
-  [template.variants.slots.v]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
+[template.slots.num]
+type  = "P"
+gen   = "_poly"
+param = "v"
+n     = 500
 
-  [template.variants.slots.num]
-  type  = "P"
-  gen   = "_poly"
-  param = "v"
-  n     = 500
-
-  [template.variants.slots.den]
-  type  = "P"
-  gen   = "_poly"
-  param = "v"
-  n     = 500
-
-  [[template.variants]]
-  name  = "partial_fraction"
-  latex = '\frac{{{a}}}{{{v}({v} - {b})}} = \frac{{{s1}}}{{{v}}} + \frac{{{s2}}}{{{v} - {b}}}'
-
-  [template.variants.slots.v]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "SCALARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
-  type = "X"
-  pool = "SCALARS_POOL"
-  exclude_from = ["a"]
-
-  [template.variants.slots.s1]
-  type = "S"
-  pool = "SCALARS_POOL"
-
-  [template.variants.slots.s2]
-  type = "S"
-  pool = "SCALARS_POOL"
+[template.slots.den]
+type  = "P"
+gen   = "_poly"
+param = "v"
+n     = 500
 
 [[template]]
 name  = "polynomial_nth_root"
@@ -1149,74 +1102,6 @@ latex = ""
   exclude_from = ["a", "b"]
 
 [[template]]
-name  = "floor_ceil"
-latex = ""
-
-  [[template.variants]]
-  name  = "floor_fraction"
-  latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_atom"
-  n    = 150
-
-  [[template.variants]]
-  name  = "ceil_fraction"
-  latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_atom"
-  n    = 150
-
-  [[template.variants]]
-  name  = "floor_add_int"
-  latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
-
-  [template.variants.slots.v]
-  type = "E"
-  gen  = "_atom"
-  n    = 150
-
-  [template.variants.slots.n]
-  type = "S"
-  pool = "SCALARS_POOL"
-
-  [[template.variants]]
-  name  = "ceil_neg_floor"
-  latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
-
-  [template.variants.slots.v]
-  type = "E"
-  gen  = "_atom"
-  n    = 150
-
-  [[template.variants]]
-  name  = "floor_sum_bound"
-  latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
-
-  [template.variants.slots.u]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.w]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-[[template]]
 name  = "exponential_general_base"
 latex = '{v} = {a} \cdot {b}^t'
 
@@ -1463,31 +1348,6 @@ latex = ""
   pool = "GEO_N_POOL"
 
 [[template]]
-name  = "cauchy_schwarz_sum"
-latex = '\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 \leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 \cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2'
-
-[template.slots.lim_mod]
-type = "S"
-pool = ["", '\limits']
-
-[template.slots.idx]
-type = "S"
-pool = ['i', 'j', 'k', 'l', 'm', 'r']
-
-[template.slots.ub]
-type = "S"
-pool = ['n', 'm', 'N', 'M', 'K', 'L', 'P']
-
-[template.slots.p1]
-type = "S"
-pool = "SCALARS_POOL"
-
-[template.slots.p2]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["p1"]
-
-[[template]]
 name  = "polynomial_division"
 latex = ""
 
@@ -1569,35 +1429,6 @@ latex = ""
   n    = 5
 
   [template.variants.slots.q]
-  type = "E"
-  gen  = "_fn_rich_nosub"
-  n    = 5
-
-  [[template.variants]]
-  name  = "polynomial_division_uniqueness"
-  latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
-
-  [template.variants.slots.v]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.f]
-  type = "E"
-  gen  = "_fn_rich_nosub"
-  n    = 5
-
-  [template.variants.slots.g]
-  type = "E"
-  gen  = "_fn_rich_nosub"
-  n    = 5
-
-  [template.variants.slots.q]
-  type = "E"
-  gen  = "_fn_rich_nosub"
-  n    = 5
-
-  [template.variants.slots.r]
   type = "E"
   gen  = "_fn_rich_nosub"
   n    = 5
@@ -1928,59 +1759,6 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "GEO_N_POOL"
-
-# ---------------------------------------------------------------------------
-# Sophie Germain identity
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "sophie_germain"
-latex = ""
-
-  [[template.variants]]
-  name     = "sophie_germain_standard"
-  latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
-  distinct = [["a", "b"]]
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name     = "sophie_germain_sum_of_squares"
-  latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
-  distinct = [["a", "b"]]
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name     = "sophie_germain_lhs_only"
-  latex    = '{a}^4 + 4{b}^4'
-  distinct = [["a", "b"]]
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
-  type = "S"
-  pool = "COEFF_POOL"
-  idx  = 0.35
 
 # ---------------------------------------------------------------------------
 # Difference / sum of nth powers
@@ -2468,19 +2246,6 @@ latex = ""
   pool = "VARS_SCALARS_POOL"
 
   [[template.variants]]
-  name  = "abs_geqslant_eps"
-  latex = '|{xx}| \geqslant {eps}'
-
-  [template.variants.slots.xx]
-  type = "S"
-  pool = "VARS_POOL"
-
-  [template.variants.slots.eps]
-  type = "E"
-  gen  = "_eps_sub"
-  n    = 2
-
-  [[template.variants]]
   name     = "much_less_than"
   latex    = '{aa} \lll {bb}'
   distinct = [["aa", "bb"]]
@@ -2496,32 +2261,6 @@ latex = ""
   [[template.variants]]
   name     = "much_greater_than"
   latex    = '{aa} \ggg {bb}'
-  distinct = [["aa", "bb"]]
-
-  [template.variants.slots.aa]
-  type = "S"
-  pool = "VARS_SCALARS_POOL"
-
-  [template.variants.slots.bb]
-  type = "S"
-  pool = "VARS_SCALARS_POOL"
-
-  [[template.variants]]
-  name     = "lesssim_scalars"
-  latex    = '{aa} \lesssim {bb}'
-  distinct = [["aa", "bb"]]
-
-  [template.variants.slots.aa]
-  type = "S"
-  pool = "VARS_SCALARS_POOL"
-
-  [template.variants.slots.bb]
-  type = "S"
-  pool = "VARS_SCALARS_POOL"
-
-  [[template.variants]]
-  name     = "gtrsim_scalars"
-  latex    = '{aa} \gtrsim {bb}'
   distinct = [["aa", "bb"]]
 
   [template.variants.slots.aa]
@@ -2556,72 +2295,6 @@ pool = ['h', 'i', 'j', 'k', 'l', 'm', 'n']
 type = "S"
 pool = ['n', 'N', 'm']
 
-
-# ---------------------------------------------------------------------------
-# \genfrac as general-purpose fraction builder
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "genfrac"
-latex = ""
-
-  [[template.variants]]
-  name  = "genfrac_general"
-  latex = '\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}'
-
-  [template.variants.slots.lft]
-  type = "S"
-  pool = "GENFRAC_LEFT_POOL"
-
-  [template.variants.slots.rgt]
-  type = "S"
-  pool = "GENFRAC_RIGHT_POOL"
-
-  [template.variants.slots.thk]
-  type = "S"
-  pool = "GENFRAC_THICK_POOL"
-
-  [template.variants.slots.sty]
-  type = "S"
-  pool = "GENFRAC_STYLE_POOL"
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [[template.variants]]
-  name  = "genfrac_no_rule"
-  latex = '\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}'
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [[template.variants]]
-  name  = "genfrac_angle"
-  latex = '\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}'
-
-  [template.variants.slots.num]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
-
-  [template.variants.slots.den]
-  type = "E"
-  gen  = "_expr"
-  n    = 5000
 
 # ---------------------------------------------------------------------------
 # Text-in-fraction patterns

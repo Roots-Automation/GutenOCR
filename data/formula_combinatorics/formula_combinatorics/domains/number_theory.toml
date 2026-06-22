@@ -1440,3 +1440,128 @@ latex = '{s}'
 type = "E"
 gen  = "_substack_prod"
 n    = 5000000
+
+# ---------------------------------------------------------------------------
+# Floor and ceiling functions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "floor_ceil"
+latex = ""
+
+  [[template.variants]]
+  name  = "floor_fraction"
+  latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "ceil_fraction"
+  latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "floor_add_int"
+  latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "INT_POOL"
+
+  [[template.variants]]
+  name  = "ceil_neg_floor"
+  latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "floor_sum_bound"
+  latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
+
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+# ---------------------------------------------------------------------------
+# Sophie Germain identity
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sophie_germain"
+latex = ""
+
+  [[template.variants]]
+  name     = "sophie_germain_standard"
+  latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "sophie_germain_sum_of_squares"
+  latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "sophie_germain_lhs_only"
+  latex    = '{a}^4 + 4{b}^4'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35

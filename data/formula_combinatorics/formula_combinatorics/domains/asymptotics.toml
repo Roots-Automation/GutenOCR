@@ -980,3 +980,37 @@ pool = "BVAR_POOL"
 [template.slots.nn]
 type = "S"
 pool = ['2', '3', '4', 'm', 'n', 'p', 'q']
+
+# ---------------------------------------------------------------------------
+# Asymptotic inequality symbols (\lesssim, \gtrsim)
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VARS_SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z']
+
+[[template]]
+name     = "lesssim_scalars"
+latex    = '{aa} \lesssim {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "gtrsim_scalars"
+latex    = '{aa} \gtrsim {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"

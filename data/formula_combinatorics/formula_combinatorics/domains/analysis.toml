@@ -1759,3 +1759,20 @@ idx  = 0.35
 [template.slots.start]
 type = "S"
 pool = ['1', '0', '2']
+
+# ---------------------------------------------------------------------------
+# Absolute value lower-bound (epsilon notation)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "abs_geqslant_eps"
+latex = '|{xx}| \geqslant {eps}'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2

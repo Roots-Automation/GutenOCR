@@ -1739,3 +1739,34 @@ n    = 324
 type = "E"
 gen  = "_interval"
 n    = 324
+
+# ---------------------------------------------------------------------------
+# Partial fraction decomposition
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "partial_fraction"
+latex = '\frac{{{a}}}{{{v}({v} - {b})}} = \frac{{{s1}}}{{{v}}} + \frac{{{s2}}}{{{v} - {b}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.slots.s1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.s2]
+type = "S"
+pool = "SCALARS_POOL"

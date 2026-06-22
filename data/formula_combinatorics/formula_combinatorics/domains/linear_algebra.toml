@@ -648,3 +648,32 @@ pool = ['f', 'g', 'h', 'i', 'j']
 [template.slots.n]
 type = "S"
 pool = ['n', 'N', 'm']
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz inequality (sum form)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_sum"
+latex = '\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 \leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 \cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = "LIM_MOD"
+
+[template.slots.idx]
+type = "S"
+pool = ['i', 'j', 'k', 'l', 'm', 'r']
+
+[template.slots.ub]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.p1]
+type = "S"
+pool = "VEC_POOL"
+
+[template.slots.p2]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["p1"]

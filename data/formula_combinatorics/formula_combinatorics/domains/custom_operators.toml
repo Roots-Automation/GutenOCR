@@ -676,3 +676,85 @@ pool = ["n", "k", "1", "2", "i", "j"]
 type = "E"
 gen  = "_atom"
 n    = 200
+
+# ---------------------------------------------------------------------------
+# \genfrac as general-purpose fraction builder
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "GENFRAC_LEFT_POOL"
+values = ['', '\langle', '\lfloor', '\lceil', '\|', '(', '[', '\{']
+
+[[pool]]
+name   = "GENFRAC_RIGHT_POOL"
+values = ['', '\rangle', '\rfloor', '\rceil', '\|', ')', ']', '\}']
+
+[[pool]]
+name   = "GENFRAC_THICK_POOL"
+values = ['', '0pt', '0.4pt', '0.8pt']
+
+[[pool]]
+name   = "GENFRAC_STYLE_POOL"
+values = ['', '0', '1', '2', '3']
+
+[[template]]
+name  = "genfrac"
+latex = ""
+
+  [[template.variants]]
+  name  = "genfrac_general"
+  latex = '\genfrac{{{lft}}}{{{rgt}}}{{{thk}}}{{{sty}}}{{{num}}}{{{den}}}'
+
+  [template.variants.slots.lft]
+  type = "S"
+  pool = "GENFRAC_LEFT_POOL"
+
+  [template.variants.slots.rgt]
+  type = "S"
+  pool = "GENFRAC_RIGHT_POOL"
+
+  [template.variants.slots.thk]
+  type = "S"
+  pool = "GENFRAC_THICK_POOL"
+
+  [template.variants.slots.sty]
+  type = "S"
+  pool = "GENFRAC_STYLE_POOL"
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [[template.variants]]
+  name  = "genfrac_no_rule"
+  latex = '\genfrac{{}}{{}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [[template.variants]]
+  name  = "genfrac_angle"
+  latex = '\genfrac{{\langle}}{{\rangle}}{{0pt}}{{}}{{{num}}}{{{den}}}'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000

@@ -1363,3 +1363,36 @@ latex = '\mathrm{{Frob}}: {rr} \longmapsto {rr}^p \quad (p\text{{ prime}})'
 [template.slots.rr]
 type = "S"
 pool = "ELT_POOL"
+
+# ---------------------------------------------------------------------------
+# Polynomial division uniqueness (existence-uniqueness statement)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "polynomial_division_uniqueness"
+latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+
+[template.slots.v]
+type = "S"
+pool = "ELEM_POOL"
+idx  = 0.35
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.r]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
