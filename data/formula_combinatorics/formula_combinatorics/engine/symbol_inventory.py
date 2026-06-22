@@ -150,5 +150,5 @@ def collect_should_cover() -> frozenset[str]:
 
 
 # Constants for coverage tests
-COVERAGE_N: int = 5_000
+COVERAGE_N: int = 8_000
 COVERAGE_SEED: int = 0

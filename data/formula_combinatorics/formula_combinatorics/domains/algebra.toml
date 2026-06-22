@@ -1081,22 +1081,94 @@ latex = ""
 
 [[template]]
 name  = "exponential_general_base"
-latex = '{v} = {a} \cdot {b}^t'
+latex = ""
 
-[template.slots.v]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name     = "exponential_base_simple"
+  latex    = '{v} = {a} \cdot {b}^{{{exp}}}'
+  distinct = [["v", "exp"]]
 
-[template.slots.a]
-type = "S"
-pool = "SCALARS_POOL"
-idx  = 0.35
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
 
-[template.slots.b]
-type = "X"
-pool = "SCALARS_POOL"
-exclude_from = ["a"]
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.exp]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v"]
+  idx  = 0.2
+
+  [[template.variants]]
+  name     = "exponential_base_func"
+  latex    = '{v}({exp}) = {a} \cdot {b}^{{{exp}}}'
+  distinct = [["v", "exp"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.exp]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v"]
+  idx  = 0.2
+
+  [[template.variants]]
+  name     = "exponential_base_rate"
+  latex    = '{v} = {a} \cdot {b}^{{{r} {exp}}}'
+  distinct = [["v", "exp"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.r]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a", "b"]
+  idx  = 0.35
+
+  [template.variants.slots.exp]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["v"]
+  idx  = 0.2
 
 [[template]]
 name  = "proportion_identity"
@@ -1311,6 +1383,66 @@ latex = ""
   [[template.variants]]
   name     = "triangle_inequality_difference"
   latex    = '\left|{a} - {b}\right| \leq \left|{a}\right| + \left|{b}\right|'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "triangle_inequality_reverse"
+  latex    = '\bigl|\,|{a}| - |{b}|\,\bigr| \leq |{a} - {b}|'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "triangle_inequality_lvert_basic"
+  latex    = '\lvert {a} + {b} \rvert \leq \lvert {a} \rvert + \lvert {b} \rvert'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "triangle_inequality_lvert_diff"
+  latex    = '\lvert {a} - {b} \rvert \leq \lvert {a} \rvert + \lvert {b} \rvert'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "triangle_inequality_reverse_lvert"
+  latex    = '\bigl|\,\lvert {a} \rvert - \lvert {b} \rvert\,\bigr| \leq \lvert {a} - {b} \rvert'
   distinct = [["a", "b"]]
 
   [template.variants.slots.a]
