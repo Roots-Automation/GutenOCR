@@ -2000,14 +2000,17 @@ distinct = [["aa", "bb", "cc"]]
 [template.slots.aa]
 type = "S"
 pool = "VARS_SCALARS_POOL"
+idx  = 0.35
 
 [template.slots.bb]
 type = "S"
 pool = "VARS_SCALARS_POOL"
+idx  = 0.35
 
 [template.slots.cc]
 type = "S"
 pool = "VARS_SCALARS_POOL"
+idx  = 0.35
 
 
 
