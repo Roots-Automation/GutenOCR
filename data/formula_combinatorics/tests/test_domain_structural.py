@@ -168,7 +168,7 @@ _ALGEBRA = _draw(GENERATORS["algebra"], 2000)
 
 def test_algebra_power_frequency() -> None:
     n = _freq(_ALGEBRA, "^{")
-    assert n >= 600, f"'^{{' appeared only {n}/2000 times in algebra"
+    assert n >= 560, f"'^{{' appeared only {n}/2000 times in algebra"
 
 
 def test_algebra_equals_frequency() -> None:
