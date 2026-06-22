@@ -746,7 +746,7 @@ latex = ""
   [template.variants.slots.fn]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.pt]
   type = "E"
@@ -792,12 +792,12 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.g]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "composition_three"
@@ -811,17 +811,17 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.g]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.h]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "inverse_cancel_right"
@@ -835,7 +835,7 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "inverse_cancel_left"
@@ -849,7 +849,7 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "inverse_composition"
@@ -858,12 +858,12 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.g]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
 # ---------------------------------------------------------------------------
 # General algebra
@@ -1219,22 +1219,22 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.q]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.g]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.r]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "polynomial_division_remainder_form"
@@ -1248,22 +1248,22 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.g]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.q]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.r]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [[template.variants]]
   name  = "polynomial_division_linear_divisor"
@@ -1282,12 +1282,12 @@ latex = ""
   [template.variants.slots.f]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.q]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
 [[template]]
 name  = "triangle_inequality"
@@ -1878,7 +1878,7 @@ latex = ""
   [template.variants.slots.fn]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.lc]
   type = "S"
@@ -1913,7 +1913,7 @@ latex = ""
   [template.variants.slots.fn]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.r1]
   type = "S"
@@ -1943,7 +1943,7 @@ latex = ""
   [template.variants.slots.fn]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.lc]
   type = "S"
@@ -1973,7 +1973,7 @@ latex = ""
   [template.variants.slots.fn]
   type = "E"
   gen  = "_fn_rich_nosub"
-  n    = 5
+  n    = 50
 
   [template.variants.slots.lc]
   type = "S"
