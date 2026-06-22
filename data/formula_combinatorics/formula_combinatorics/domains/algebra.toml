@@ -1888,11 +1888,27 @@ latex = ""
   [template.variants.slots.m]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
 
   [template.variants.slots.n]
   type = "X"
   pool = "EXP_POOL"
   exclude_from = ["m"]
+  idx  = 0.2
+
+  [[template.variants]]
+  name  = "rational_exp_root"
+  latex = '\sqrt[{{{n}}}]{{{x}}} = {x}^{{1/{{{n}}}}}'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
 
   [[template.variants]]
   name  = "negative_exp"
@@ -1906,6 +1922,40 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
+
+  [[template.variants]]
+  name  = "negative_exp_coeff"
+  latex = '({a}{x})^{{-{n}}} = \frac{{1}}{{({a}{x})^{{{n}}}}}'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
+
+  [[template.variants]]
+  name  = "negative_exp_rev"
+  latex = '\frac{{1}}{{{x}^{{{n}}}}} = {x}^{{-{n}}}'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
 
   [[template.variants]]
   name  = "product_of_powers"
@@ -1919,11 +1969,13 @@ latex = ""
   [template.variants.slots.m]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
 
   [template.variants.slots.n]
   type = "X"
   pool = "EXP_POOL"
   exclude_from = ["m"]
+  idx  = 0.2
 
   [[template.variants]]
   name  = "power_of_power"
@@ -1937,15 +1989,18 @@ latex = ""
   [template.variants.slots.m]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
 
   [template.variants.slots.n]
   type = "X"
   pool = "EXP_POOL"
   exclude_from = ["m"]
+  idx  = 0.2
 
   [[template.variants]]
   name  = "power_of_product"
   latex = '({x}{y})^{{{n}}} = {x}^{{{n}}} {y}^{{{n}}}'
+  distinct = [["x", "y"]]
 
   [template.variants.slots.x]
   type = "S"
@@ -1961,6 +2016,60 @@ latex = ""
   [template.variants.slots.n]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
+
+  [[template.variants]]
+  name  = "power_of_product_cdot"
+  latex = '({x} \cdot {y})^{{{n}}} = {x}^{{{n}}} \cdot {y}^{{{n}}}'
+  distinct = [["x", "y"]]
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.y]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["x"]
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
+
+  [[template.variants]]
+  name     = "power_of_product_coeff"
+  latex    = '({a}{x} \cdot {b}{y})^{{{n}}} = {a}^{{{n}}} {x}^{{{n}}} \cdot {b}^{{{n}}} {y}^{{{n}}}'
+  distinct = [["x", "y"], ["a", "b"]]
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.y]
+  type = "X"
+  pool = "VARS_POOL"
+  exclude_from = ["x"]
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "X"
+  pool = "SCALARS_POOL"
+  exclude_from = ["a"]
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
 
   [[template.variants]]
   name  = "quotient_of_powers"
@@ -1974,11 +2083,13 @@ latex = ""
   [template.variants.slots.m]
   type = "S"
   pool = "EXP_POOL"
+  idx  = 0.2
 
   [template.variants.slots.n]
   type = "X"
   pool = "EXP_POOL"
   exclude_from = ["m"]
+  idx  = 0.2
 
   [[template.variants]]
   name  = "zero_exponent"
@@ -1988,6 +2099,34 @@ latex = ""
   type = "S"
   pool = "VARS_POOL"
   idx  = 0.35
+
+  [[template.variants]]
+  name  = "zero_exponent_coeff"
+  latex = '({a}{x})^0 = 1 \quad ({x} \neq 0)'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "zero_exponent_power"
+  latex = '\left({x}^{{{n}}}\right)^0 = 1'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "EXP_POOL"
+  idx  = 0.2
 
 # ---------------------------------------------------------------------------
 # Polynomial root factoring form
