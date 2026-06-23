@@ -513,6 +513,51 @@ latex = ""
   gen  = "_trig_pyth_arg_sub"
   n    = 900
 
+  [[template.variants]]
+  name  = "pythagorean_tan_coeff"
+  latex = '1 + {tn}^2({c}\,{x}) = {secn}^2({c}\,{x})'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type         = "X"
+  pool         = "TRIG_ARG_POOL"
+  exclude_from = ["c"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "pythagorean_cot_coeff"
+  latex = '1 + {ctn}^2({c}\,{x}) = {cscn}^2({c}\,{x})'
+
+  [template.variants.slots.ctn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.cscn]
+  type = "S"
+  pool = "CSC_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type         = "X"
+  pool         = "TRIG_ARG_POOL"
+  exclude_from = ["c"]
+  idx          = 0.35
 
 # ── product_to_sum_sin_cos ────────────────────────────────────────────────────
 
