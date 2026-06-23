@@ -1169,3 +1169,93 @@ latex = '|\Im({zz})| \leq |{zz}|'
 [template.slots.zz]
 type = "S"
 pool = "VAR_POOL"
+
+# ── Trig pools (moved from trigonometry) ─────────────────────────────────────
+
+[[pool]]
+name   = "TRIG_ARG_POOL"
+values = ["a","b","c","d","k","m","n","p","q",'\theta','\phi','\varphi','\psi','\omega','\alpha','\beta','\gamma','\delta']
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x","y","z","t","u","v","r","s"]
+
+[[pool]]
+name   = "SIN_NAMES"
+values = ['\sin','\text{sine}']
+
+[[pool]]
+name   = "COS_NAMES"
+values = ['\cos','\text{cosine}']
+
+[[pool]]
+name   = "FOURIER_N_POOL"
+values = ["2","3","4","5","6","n","m","N","M","K","p"]
+
+# ── euler_sin_cos_exponential ─────────────────────────────────────────────────
+
+[[template]]
+name  = "euler_sin_cos_exponential"
+latex = ""
+
+  [[template.variants]]
+  name  = "euler_exp_sin_cos_bare"
+  latex = '{sn} {a} = \frac{{e^{{i{a}}} - e^{{-i{a}}}}}{{2i}}, \quad {cn} {a} = \frac{{e^{{i{a}}} + e^{{-i{a}}}}}{{2}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "euler_exp_sin_cos_coeff"
+  latex = '{sn}({c} {x}) = \frac{{e^{{i{c} {x}}} - e^{{-i{c} {x}}}}}{{2i}}, \quad {cn}({c} {x}) = \frac{{e^{{i{c} {x}}} + e^{{-i{c} {x}}}}}{{2}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+# ── roots_of_unity_sum ────────────────────────────────────────────────────────
+
+[[template]]
+name  = "roots_of_unity_sum"
+latex = '\sum{lim_mod}_{{{k}=0}}^{{{n}-1}} e^{{2\pi i {k} {x} / {n}}} = 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.k]
+type = "S"
+pool = ["j","k","l","m","r","s","t"]
+
+[template.slots.n]
+type = "S"
+pool = "FOURIER_N_POOL"
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35

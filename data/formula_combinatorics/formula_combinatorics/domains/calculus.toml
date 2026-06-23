@@ -1791,3 +1791,642 @@ n    = 5
 [template.slots.n]
 type = "S"
 pool = "SCALARS_POOL"
+
+# ── Trig pools (moved from trigonometry) ─────────────────────────────────────
+
+[[pool]]
+name   = "TRIG_ARG_POOL"
+values = ["a","b","c","d","k","m","n","p","q",'\theta','\phi','\varphi','\psi','\omega','\alpha','\beta','\gamma','\delta']
+
+[[pool]]
+name   = "TRIG_INT_FN_POOL"
+values = ['\sin','\cos','\tan','\sinh','\cosh','\sec','\text{sine}','\text{cosine}','\text{tangent}','\text{sh}','\text{ch}']
+
+[[pool]]
+name   = "SIN_NAMES"
+values = ['\sin','\text{sine}']
+
+[[pool]]
+name   = "COS_NAMES"
+values = ['\cos','\text{cosine}']
+
+[[pool]]
+name   = "TAN_NAMES"
+values = ['\tan','\text{tangent}']
+
+[[pool]]
+name   = "SEC_NAMES"
+values = ['\sec','\text{secant}']
+
+[[pool]]
+name   = "CSC_NAMES"
+values = ['\csc','\text{cosecant}']
+
+[[pool]]
+name   = "COT_NAMES"
+values = ['\cot','\text{cotangent}']
+
+[[pool]]
+name   = "ARCSIN_NAMES"
+values = ['\arcsin','\sin^{-1}','\text{asin}','\text{Arcsin}']
+
+[[pool]]
+name   = "ARCCOS_NAMES"
+values = ['\arccos','\cos^{-1}','\text{acos}','\text{Arccos}']
+
+[[pool]]
+name   = "ARCTAN_NAMES"
+values = ['\arctan','\tan^{-1}','\text{atan}','\text{Arctan}']
+
+[[pool]]
+name   = "ARCCOT_NAMES"
+values = ['\text{arccot}','\cot^{-1}','\text{acot}']
+
+[[pool]]
+name   = "ARCSEC_NAMES"
+values = ['\text{arcsec}','\sec^{-1}','\text{asec}']
+
+[[pool]]
+name   = "ARCCSC_NAMES"
+values = ['\text{arccsc}','\csc^{-1}','\text{acsc}']
+
+[[pool]]
+name   = "ARCTANH_NAMES"
+values = ['\text{arctanh}','\tanh^{-1}','\text{atanh}']
+
+[[pool]]
+name   = "ARCSINH_NAMES"
+values = ['\text{arcsinh}','\sinh^{-1}','\text{asinh}']
+
+# ── trig_integral ─────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "trig_integral"
+latex = '\int {fn}\!\left({coeff} {x}\right) \, d{x}'
+
+[template.slots.fn]
+type = "S"
+pool = "TRIG_INT_FN_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "TRIG_ARG_POOL"
+idx  = 0.35
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ── inverse_trig_derivative ───────────────────────────────────────────────────
+
+[[template]]
+name  = "inverse_trig_derivative"
+latex = ""
+
+  [[template.variants]]
+  name  = "arcsin_derivative"
+  latex = '\frac{{d}}{{d{x}}}{asn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 - {x}^2}}}}'
+
+  [template.variants.slots.asn]
+  type = "S"
+  pool = "ARCSIN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsin_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{asn}\!\left({c} {x}\right) = \frac{{{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}'
+
+  [template.variants.slots.asn]
+  type = "S"
+  pool = "ARCSIN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccos_derivative"
+  latex = '\frac{{d}}{{d{x}}}{acn}\!\left({x}\right) = \frac{{-1}}{{\sqrt{{1 - {x}^2}}}}'
+
+  [template.variants.slots.acn]
+  type = "S"
+  pool = "ARCCOS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccos_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{acn}\!\left({c} {x}\right) = \frac{{-{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}'
+
+  [template.variants.slots.acn]
+  type = "S"
+  pool = "ARCCOS_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctan_derivative"
+  latex = '\frac{{d}}{{d{x}}}{atn}\!\left({x}\right) = \frac{{1}}{{1 + {x}^2}}'
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctan_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{atn}\!\left({c} {x}\right) = \frac{{{c}}}{{1 + {c}^2{x}^2}}'
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccot_derivative"
+  latex = '\frac{{d}}{{d{x}}}{actn}\!\left({x}\right) = \frac{{-1}}{{1 + {x}^2}}'
+
+  [template.variants.slots.actn]
+  type = "S"
+  pool = "ARCCOT_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsec_derivative"
+  latex = '\frac{{d}}{{d{x}}}{asecn}\!\left({x}\right) = \frac{{1}}{{{x}\sqrt{{{x}^2 - 1}}}}'
+
+  [template.variants.slots.asecn]
+  type = "S"
+  pool = "ARCSEC_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccsc_derivative"
+  latex = '\frac{{d}}{{d{x}}}{acscn}\!\left({x}\right) = \frac{{-1}}{{{x}\sqrt{{{x}^2 - 1}}}}'
+
+  [template.variants.slots.acscn]
+  type = "S"
+  pool = "ARCCSC_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctanh_derivative"
+  latex = '\frac{{d}}{{d{x}}}{athn}\!\left({x}\right) = \frac{{1}}{{1 - {x}^2}}'
+
+  [template.variants.slots.athn]
+  type = "S"
+  pool = "ARCTANH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsinh_derivative"
+  latex = '\frac{{d}}{{d{x}}}{ashn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 + {x}^2}}}}'
+
+  [template.variants.slots.ashn]
+  type = "S"
+  pool = "ARCSINH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+# ── taylor_series_trig ────────────────────────────────────────────────────────
+
+[[template]]
+name  = "taylor_series_trig"
+latex = ""
+
+  [[template.variants]]
+  name  = "taylor_sin"
+  latex = '{sn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n+1}}}}{{(2n+1)!}}'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_taylor_arg_sub"
+  n    = 450
+
+  [[template.variants]]
+  name  = "taylor_cos"
+  latex = '{cn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n}}}}{{(2n)!}}'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_taylor_arg_sub"
+  n    = 450
+
+  [[template.variants]]
+  name  = "taylor_tan_approx"
+  latex = '{tn} {x} \approx {x} + \frac{{{x}^3}}{{3}} + \frac{{2{x}^5}}{{15}} + \cdots'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "taylor_tan_approx_coeff"
+  latex = '{tn}({c} {x}) \approx {c} {x} + \frac{{({c} {x})^3}}{{3}} + \frac{{2({c} {x})^5}}{{15}} + \cdots'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+# ── weierstrass_substitution ──────────────────────────────────────────────────
+
+[[template]]
+name  = "weierstrass_substitution"
+latex = ""
+
+  [[template.variants]]
+  name  = "weierstrass_def"
+  latex = '{t} = {tn}\!\frac{{{x}}}{{2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_sin"
+  latex = '{sn} {x} = \frac{{2{t}}}{{1 + {t}^2}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_cos"
+  latex = '{cn} {x} = \frac{{1 - {t}^2}}{{1 + {t}^2}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_tan"
+  latex = '{tn} {x} = \frac{{2{t}}}{{1 - {t}^2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_dx"
+  latex = 'd{x} = \frac{{2}}{{1 + {t}^2}} \, d{t}'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_combined"
+  latex = '{t} = {tn}\!\frac{{{x}}}{{2}}, \quad {sn} {x} = \frac{{2{t}}}{{1 + {t}^2}}, \quad {cn} {x} = \frac{{1 - {t}^2}}{{1 + {t}^2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+# ── trig_antiderivative ───────────────────────────────────────────────────────
+
+[[template]]
+name  = "trig_antiderivative"
+latex = ""
+
+  [[template.variants]]
+  name  = "antideriv_sin_bare"
+  latex = '\int {sn} {x}\,d{x} = -{cn} {x} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_cos_bare"
+  latex = '\int {cn} {x}\,d{x} = {sn} {x} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sin_coeff"
+  latex = '\int {sn}({a} {x})\,d{x} = -\frac{{{cn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_cos_coeff"
+  latex = '\int {cn}({a} {x})\,d{x} = \frac{{{sn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_tan_cos"
+  latex = '\int {tn}({a} {x})\,d{x} = -\frac{{\ln\left|{cn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_tan_sec"
+  latex = '\int {tn}({a} {x})\,d{x} = \frac{{\ln\left|{secn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sec2_coeff"
+  latex = '\int {secn}^2({a} {x})\,d{x} = \frac{{{tn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_csc2_coeff"
+  latex = '\int {cscn}^2({a} {x})\,d{x} = -\frac{{{ctn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.cscn]
+  type = "S"
+  pool = "CSC_NAMES"
+
+  [template.variants.slots.ctn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sec_coeff"
+  latex = '\int {secn}({a} {x})\,d{x} = \frac{{\ln\left|{secn}({a} {x}) + {tn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35

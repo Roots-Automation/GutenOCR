@@ -1693,3 +1693,97 @@ pool = "FUNC_POOL"
 [template.slots.xi]
 type = "S"
 pool = "FREQ_POOL"
+
+# ── Pools (moved from trigonometry) ──────────────────────────────────────────
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x","y","z","t","u","v","r","s"]
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ["a","b","c","d","k","m","n","p","q"]
+
+# ── fourier_series_trig ───────────────────────────────────────────────────────
+
+[[template]]
+name  = "fourier_series_trig"
+latex = ""
+
+  [[template.variants]]
+  name  = "fourier_series_full"
+  latex = '{fn}({v}) = \frac{{{ca}_0}}{{2}} + \sum{lim_mod}_{{k=1}}^{{\infty}}\!\left({ca}_k \cos\frac{{k\pi {v}}}{{{L}}} + {cb}_k \sin\frac{{k\pi {v}}}{{{L}}}\right)'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ca]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.cb]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca"]
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca","cb"]
+
+  [[template.variants]]
+  name  = "fourier_coeff_an"
+  latex = '{ca}_n = \frac{{2}}{{{L}}} \int_0^{{{L}}} {fn}({v}) \cos\frac{{n\pi {v}}}{{{L}}} \, d{v}'
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ca]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca"]
+
+  [[template.variants]]
+  name  = "fourier_coeff_bn"
+  latex = '{cb}_n = \frac{{2}}{{{L}}} \int_0^{{{L}}} {fn}({v}) \sin\frac{{n\pi {v}}}{{{L}}} \, d{v}'
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.cb]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["cb"]
