@@ -58,6 +58,18 @@ name   = "TANH_NAMES"
 values = ['\tanh','\text{th}']
 
 [[pool]]
+name   = "SECH_NAMES"
+values = ['\operatorname{sech}','\text{sech}']
+
+[[pool]]
+name   = "CSCH_NAMES"
+values = ['\operatorname{csch}','\text{csch}','\text{cosech}']
+
+[[pool]]
+name   = "COTH_NAMES"
+values = ['\coth','\text{coth}','\text{cth}']
+
+[[pool]]
 name   = "ARCSIN_NAMES"
 values = ['\arcsin','\sin^{-1}','\text{asin}','\text{Arcsin}']
 
@@ -2459,7 +2471,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sech_reciprocal_bare"
-  latex = '\operatorname{{sech}}({vv}) = \frac{{1}}{{\cosh({vv})}}'
+  latex = '{sn}({vv}) = \frac{{1}}{{{chn}({vv})}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SECH_NAMES"
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2468,7 +2488,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sech_reciprocal_coeff"
-  latex = '\operatorname{{sech}}({c}\,{x}) = \frac{{1}}{{\cosh({c}\,{x})}}'
+  latex = '{sn}({c}\,{x}) = \frac{{1}}{{{chn}({c}\,{x})}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SECH_NAMES"
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2483,7 +2511,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sech_reciprocal_flipped"
-  latex = '\frac{{1}}{{\operatorname{{sech}}({vv})}} = \cosh({vv})'
+  latex = '\frac{{1}}{{{sn}({vv})}} = {chn}({vv})'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SECH_NAMES"
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2496,7 +2532,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_reciprocal_bare"
-  latex = '\operatorname{{csch}}({vv}) = \frac{{1}}{{\sinh({vv})}}'
+  latex = '{cn}({vv}) = \frac{{1}}{{{shn}({vv})}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2505,7 +2549,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_reciprocal_coeff"
-  latex = '\operatorname{{csch}}({c}\,{x}) = \frac{{1}}{{\sinh({c}\,{x})}}'
+  latex = '{cn}({c}\,{x}) = \frac{{1}}{{{shn}({c}\,{x})}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2520,7 +2572,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_reciprocal_flipped"
-  latex = '\frac{{1}}{{\operatorname{{csch}}({vv})}} = \sinh({vv})'
+  latex = '\frac{{1}}{{{cn}({vv})}} = {shn}({vv})'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2533,7 +2593,11 @@ latex = ""
 
   [[template.variants]]
   name  = "sech_exp_form_bare"
-  latex = '\operatorname{{sech}}({vv}) = \frac{{2}}{{e^{{{vv}}} + e^{{-{vv}}}}}'
+  latex = '{sn}({vv}) = \frac{{2}}{{e^{{{vv}}} + e^{{-{vv}}}}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SECH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2542,7 +2606,11 @@ latex = ""
 
   [[template.variants]]
   name  = "sech_exp_form_coeff"
-  latex = '\operatorname{{sech}}({c}\,{x}) = \frac{{2}}{{e^{{{c}\,{x}}} + e^{{-{c}\,{x}}}}}'
+  latex = '{sn}({c}\,{x}) = \frac{{2}}{{e^{{{c}\,{x}}} + e^{{-{c}\,{x}}}}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SECH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2561,7 +2629,11 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_exp_form_bare"
-  latex = '\operatorname{{csch}}({vv}) = \frac{{2}}{{e^{{{vv}}} - e^{{-{vv}}}}}'
+  latex = '{cn}({vv}) = \frac{{2}}{{e^{{{vv}}} - e^{{-{vv}}}}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2570,7 +2642,11 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_exp_form_coeff"
-  latex = '\operatorname{{csch}}({c}\,{x}) = \frac{{2}}{{e^{{{c}\,{x}}} - e^{{-{c}\,{x}}}}}'
+  latex = '{cn}({c}\,{x}) = \frac{{2}}{{e^{{{c}\,{x}}} - e^{{-{c}\,{x}}}}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2589,7 +2665,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_sq_identity_bare"
-  latex = '\operatorname{{csch}}^2({vv}) = \coth^2({vv}) - 1'
+  latex = '{cn}^2({vv}) = {cotn}^2({vv}) - 1'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COTH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2598,7 +2682,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_sq_identity_coeff"
-  latex = '\operatorname{{csch}}^2({c}\,{x}) = \coth^2({c}\,{x}) - 1'
+  latex = '{cn}^2({c}\,{x}) = {cotn}^2({c}\,{x}) - 1'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COTH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2613,7 +2705,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csch_sq_identity_rearranged"
-  latex = '\coth^2({vv}) = \operatorname{{csch}}^2({vv}) + 1'
+  latex = '{cotn}^2({vv}) = {cn}^2({vv}) + 1'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "CSCH_NAMES"
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COTH_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
