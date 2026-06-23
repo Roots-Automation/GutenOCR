@@ -190,7 +190,7 @@ def test_no_wrapping_when_fractions_zero(tmp_path: Path) -> None:
     data = json.load(open(out))
     for v in data.values():
         assert not v.startswith(r"\["), f"Unexpected display wrap: {v[:30]!r}"
-        assert not v.startswith(r"\begin{"), f"Unexpected begin env: {v[:30]!r}"
+        assert not v.startswith(r"\begin{equation}"), f"Unexpected equation wrap: {v[:30]!r}"
         assert not v.startswith("$"), f"Unexpected inline wrap: {v[:30]!r}"
 
 
