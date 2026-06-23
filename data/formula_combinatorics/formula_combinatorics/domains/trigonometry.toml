@@ -2255,6 +2255,90 @@ idx          = 0.35
 
 
 
+# ── law_of_cotangents ─────────────────────────────────────────────────────────
+
+[[template]]
+name  = "law_of_cotangents"
+latex = ""
+
+  [[template.variants]]
+  name  = "law_of_cotangents_triple"
+  latex = '\frac{{{cotn}\!\left(\frac{{{A0}}}{{2}}\right)}}{{s - {s0}}} = \frac{{{cotn}\!\left(\frac{{{A1}}}{{2}}\right)}}{{s - {s1}}} = \frac{{{cotn}\!\left(\frac{{{A2}}}{{2}}\right)}}{{s - {s2}}} = \frac{{1}}{{r}}'
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
+
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
+
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A1]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0"]
+  idx          = 0.35
+
+  [template.variants.slots.A2]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0","A1"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "law_of_cotangents_single"
+  latex = '\frac{{{cotn}\!\left(\frac{{{A0}}}{{2}}\right)}}{{s - {s0}}} = \frac{{1}}{{r}}'
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "law_of_cotangents_rearranged"
+  latex = '{cotn}\!\left(\frac{{{A0}}}{{2}}\right) = \frac{{s - {s0}}}{{r}}'
+
+  [template.variants.slots.cotn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
 # ── standalone reciprocal / identity templates ────────────────────────────────
 
 [[template]]
