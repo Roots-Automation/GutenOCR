@@ -32,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from formula_combinatorics._calibration import probe_single as _probe_single
 from formula_combinatorics._template_dsl import n_eff as _n_eff
 from formula_combinatorics.domains import DEFAULT_WEIGHTS, GENERATORS, TEMPLATES
+from formula_combinatorics.engine._template_dsl import sample as _sample
 
 # ── terminal colours (degraded gracefully if not a tty) ──────────────────────
 _TTY = sys.stdout.isatty()
@@ -304,6 +305,42 @@ def run_batch(
         print()
 
 
+# ── per-template batch uniqueness ────────────────────────────────────────────
+
+
+def run_batch_per_template(domains: list[str], seed: int, batch_size: int) -> None:
+    """For each template in each domain, draw batch_size samples and report % unique."""
+    ported = [d for d in domains if d in TEMPLATES]
+    unported = [d for d in domains if d not in TEMPLATES]
+
+    print(f"\n{BOLD('Per-Template Batch Uniqueness')}  {DIM(f'batch={batch_size:,}  seed={seed}')}\n")
+
+    if not ported:
+        print(f"  {YELLOW('No ported domains found.')}\n")
+    else:
+        for domain in ported:
+            templates = TEMPLATES[domain]
+            weight = DEFAULT_WEIGHTS.get(domain, 0.0)
+            print(f"  {BOLD(domain)}  {DIM(f'{weight:.0%}')}")
+            print(f"    {'template':<36}  {'unique':>8}  {'%unique':>8}  {'n_eff':>14}")
+            print("    " + "─" * 72)
+
+            for t in templates:
+                rng = random.Random(seed)
+                seen: set[str] = set()
+                for _ in range(batch_size):
+                    seen.add(_sample(t, rng))
+                frac = len(seen) / batch_size
+                te = _n_eff(t)
+
+                col = GREEN if frac >= 0.99 else YELLOW if frac >= 0.90 else RED
+                print(f"    {col(f'{t.name:<36}')}  {len(seen):>8,}  {col(f'{frac:>7.1%}')}  {DIM(f'{te:>14,.0f}')}")
+            print()
+
+    if unported:
+        print(f"  {DIM('Not yet ported:')} {DIM(', '.join(unported))}\n")
+
+
 # ── analytical n_eff ──────────────────────────────────────────────────────────
 
 
@@ -388,6 +425,13 @@ def main() -> None:
         help="If set, report %% unique in a batch of N samples instead of collision horizon.",
     )
     parser.add_argument(
+        "--batch-per-template",
+        type=int,
+        default=None,
+        metavar="N",
+        help="For each template, draw N samples and report %% unique alongside n_eff.",
+    )
+    parser.add_argument(
         "--n-eff",
         action="store_true",
         help="Print analytically-computed n_eff per template for ported domains (no sampling).",
@@ -396,6 +440,8 @@ def main() -> None:
 
     if args.n_eff:
         run_n_eff(args.domains)
+    elif args.batch_per_template is not None:
+        run_batch_per_template(args.domains, args.seed, args.batch_per_template)
     elif args.batch is not None:
         run_batch(args.domains, args.seed, args.batch, args.trials)
     elif args.trials == 1:
