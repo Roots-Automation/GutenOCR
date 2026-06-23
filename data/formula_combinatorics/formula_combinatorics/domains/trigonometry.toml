@@ -658,20 +658,81 @@ idx          = 0.35
 
 [[template]]
 name  = "hyperbolic_pythagorean"
-latex = '{chn}^2({arg}) - {shn}^2({arg}) = 1'
+latex = ""
 
-[template.slots.chn]
-type = "S"
-pool = "COSH_NAMES"
+  [[template.variants]]
+  name  = "hyperbolic_pythagorean_bare"
+  latex = '{chn}^2({arg}) - {shn}^2({arg}) = 1'
 
-[template.slots.shn]
-type = "S"
-pool = "SINH_NAMES"
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
 
-[template.slots.arg]
-type = "E"
-gen  = "_hyp_arg_sub"
-n    = 1200
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_hyp_arg_sub"
+  n    = 1200
+
+  [[template.variants]]
+  name  = "hyperbolic_pythagorean_coeff"
+  latex = '{chn}^2({c}\,{x}) - {shn}^2({c}\,{x}) = 1'
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type         = "X"
+  pool         = "TRIG_ARG_POOL"
+  exclude_from = ["c"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "hyperbolic_pythagorean_sinh_form"
+  latex = '{shn}^2({arg}) = {chn}^2({arg}) - 1'
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_hyp_arg_sub"
+  n    = 1200
+
+  [[template.variants]]
+  name  = "hyperbolic_pythagorean_cosh_form"
+  latex = '{chn}^2({arg}) = 1 + {shn}^2({arg})'
+
+  [template.variants.slots.chn]
+  type = "S"
+  pool = "COSH_NAMES"
+
+  [template.variants.slots.shn]
+  type = "S"
+  pool = "SINH_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_hyp_arg_sub"
+  n    = 1200
 
 
 # ── hyperbolic_addition ───────────────────────────────────────────────────────
