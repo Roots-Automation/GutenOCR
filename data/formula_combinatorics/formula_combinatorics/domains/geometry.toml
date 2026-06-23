@@ -15,7 +15,7 @@ values = ["A", "B", "C", "D", "E", "F", "X", "Y", "Z"]
 
 [[pool]]
 name   = "ANGLE_POOL"
-values = ["A", "B", "C", "D", "E", "F", "P", "Q", "R", '\alpha', '\beta', '\gamma']
+values = ["A", "B", "C", "D", "E", "F", "P", "Q", "R", '\alpha', '\beta', '\gamma', '\theta', '\vartheta', '\phi', '\varphi']
 
 [[pool]]
 name   = "DEG_POOL"
@@ -55,7 +55,7 @@ values = ["=", "\\approx"]
 
 [[pool]]
 name   = "DEG_SUFFIX_POOL"
-values = ['^{{\circ}}', '\,^{{\circ}}', '^{{o}}', '\,\mathrm{{deg}}', '\,\text{{deg}}', '^\prime', '^{{\prime\prime}}']
+values = ['^{{\circ}}', '\,^{{\circ}}', '^{{o}}', '\,\mathrm{{deg}}', '\,\text{{deg}}', '^\prime', '^{{\prime\prime}}', '\,\text{rad}', '\,\text{grad}']
 
 [[pool]]
 name   = "ANGLE_CMD_POOL"
