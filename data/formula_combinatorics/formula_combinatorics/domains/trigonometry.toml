@@ -83,15 +83,27 @@ values = ['\text{arccsc}','\csc^{-1}','\text{acsc}']
 
 [[pool]]
 name   = "ARCTANH_NAMES"
-values = ['\text{arctanh}','\tanh^{-1}','\text{atanh}']
+values = ['\text{arctanh}','\text{artanh}','\tanh^{-1}','\text{atanh}']
 
 [[pool]]
 name   = "ARCSINH_NAMES"
-values = ['\text{arcsinh}','\sinh^{-1}','\text{asinh}']
+values = ['\text{arcsinh}','\text{arsinh}','\sinh^{-1}','\text{asinh}']
 
 [[pool]]
 name   = "ARCCOSH_NAMES"
-values = ['\text{arccosh}','\cosh^{-1}','\text{acosh}']
+values = ['\text{arccosh}','\text{arcosh}','\cosh^{-1}','\text{acosh}']
+
+[[pool]]
+name   = "ARCCOTH_NAMES"
+values = ['\text{arccoth}','\text{arcoth}','\coth^{-1}','\text{acoth}']
+
+[[pool]]
+name   = "ARCSECH_NAMES"
+values = ['\text{arcsech}','\text{arsech}','\operatorname{sech}^{-1}','\text{asech}']
+
+[[pool]]
+name   = "ARCCSCH_NAMES"
+values = ['\text{arccsch}','\text{arcsch}','\operatorname{csch}^{-1}','\text{acsch}','\text{arcosech}']
 
 # ── pythagorean_identity ──────────────────────────────────────────────────────
 
@@ -1988,6 +2000,99 @@ latex = ""
   [template.variants.slots.athn]
   type = "S"
   pool = "ARCTANH_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccoth_log"
+  latex = '{acothn}({x}) = \tfrac{{1}}{{2}} \ln \frac{{{x} + 1}}{{{x} - 1}}'
+
+  [template.variants.slots.acothn]
+  type = "S"
+  pool = "ARCCOTH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccoth_log_coeff"
+  latex = '{acothn}({c} {x}) = \tfrac{{1}}{{2}} \ln \frac{{{c} {x} + 1}}{{{c} {x} - 1}}'
+
+  [template.variants.slots.acothn]
+  type = "S"
+  pool = "ARCCOTH_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsech_log"
+  latex = '{asechn}({x}) = \ln\!\frac{{1 + \sqrt{{1 - {x}^2}}}}{{{x}}}'
+
+  [template.variants.slots.asechn]
+  type = "S"
+  pool = "ARCSECH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsech_log_coeff"
+  latex = '{asechn}({c} {x}) = \ln\!\frac{{1 + \sqrt{{1 - {c}^2 {x}^2}}}}{{{c} {x}}}'
+
+  [template.variants.slots.asechn]
+  type = "S"
+  pool = "ARCSECH_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccsch_log"
+  latex = '{acschn}({x}) = \ln\!\frac{{1 + \sqrt{{1 + {x}^2}}}}{{{x}}}'
+
+  [template.variants.slots.acschn]
+  type = "S"
+  pool = "ARCCSCH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccsch_log_coeff"
+  latex = '{acschn}({c} {x}) = \ln\!\frac{{1 + \sqrt{{1 + {c}^2 {x}^2}}}}{{{c} {x}}}'
+
+  [template.variants.slots.acschn]
+  type = "S"
+  pool = "ARCCSCH_NAMES"
 
   [template.variants.slots.c]
   type = "S"
