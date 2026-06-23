@@ -525,89 +525,113 @@ pool = "ANGLE_CMD_POOL"
 
 [[template]]
 name  = "parallel_lines"
-latex = '{A}{B} \parallel {C}{D}'
+latex = ""
 
-[template.slots.A]
-type = "S"
-pool = "PTS_POOL"
+  [[template.variants]]
+  name  = "parallel_bare"
+  latex = '{A}{B} \parallel {C}{D}'
 
-[template.slots.B]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.C]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.D]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "parallel_overline"
+  latex = '\overline{{{A}{B}}} \parallel \overline{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
 
 # ----
 
 [[template]]
 name  = "perp_lines"
-latex = '{A}{B} \perp {C}{D}'
+latex = ""
 
-[template.slots.A]
-type = "S"
-pool = "PTS_POOL"
+  [[template.variants]]
+  name  = "perp_bare"
+  latex = '{A}{B} \perp {C}{D}'
 
-[template.slots.B]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.C]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.D]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
 
-# ----
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
 
-[[template]]
-name  = "parallel_overline"
-latex = '\overline{{{A}{B}}} \parallel \overline{{{C}{D}}}'
+  [[template.variants]]
+  name  = "perp_overline"
+  latex = '\overline{{{A}{B}}} \perp \overline{{{C}{D}}}'
 
-[template.slots.A]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.B]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.C]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.D]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
 
-# ----
+  [[template.variants]]
+  name  = "perp_vec"
+  latex = '\overrightarrow{{{A}{B}}} \perp \overrightarrow{{{C}{D}}}'
 
-[[template]]
-name  = "perp_overline"
-latex = '\overline{{{A}{B}}} \perp \overline{{{C}{D}}}'
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.A]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.B]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.C]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.D]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
 
 # ----
 
@@ -895,23 +919,47 @@ pool = "ANGLE_CMD_POOL"
 
 [[template]]
 name  = "therefore_parallel"
-latex = '\therefore {A}{B} \parallel {C}{D}'
+latex = ""
 
-[template.slots.A]
-type = "S"
-pool = "PTS_POOL"
+  [[template.variants]]
+  name  = "therefore_parallel_bare"
+  latex = '\therefore {A}{B} \parallel {C}{D}'
 
-[template.slots.B]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.C]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
 
-[template.slots.D]
-type = "S"
-pool = "PTS_POOL"
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "therefore_parallel_overline"
+  latex = '\therefore \overline{{{A}{B}}} \parallel \overline{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
 
 # ----
 
@@ -1044,56 +1092,6 @@ pool = "PTS_POOL"
 # ---------------------------------------------------------------------------
 # Rich proof (E → S conversions)
 # ---------------------------------------------------------------------------
-
-[[template]]
-name  = "therefore_parallel_rich"
-latex = '\therefore \overline{{{P1}{P2}}} \parallel \overline{{{P3}{P4}}}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P4]
-type = "S"
-pool = "PTS_POOL"
-
-# ----
-
-[[template]]
-name  = "therefore_congruent_rich"
-latex = '\therefore \triangle {P1}{Q1}{R1} \cong \triangle {P2}{Q2}{R2}'
-
-[template.slots.P1]
-type = "S"
-pool = "TRI_VERTS_POOL"
-
-[template.slots.Q1]
-type = "S"
-pool = "TRI_VERTS_POOL"
-
-[template.slots.R1]
-type = "S"
-pool = "TRI_VERTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "TRI_VERTS_POOL"
-
-[template.slots.Q2]
-type = "S"
-pool = "TRI_VERTS_POOL"
-
-[template.slots.R2]
-type = "S"
-pool = "TRI_VERTS_POOL"
 
 # ---------------------------------------------------------------------------
 # Vectors
@@ -1308,116 +1306,6 @@ latex = ""
 
 # ----
 
-[[template]]
-name  = "vec_addition_rich"
-latex = '\overrightarrow{{{P1}{P2}}} + \overrightarrow{{{P2}{P3}}} = \overrightarrow{{{P1}{P3}}}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-# ----
-
-[[template]]
-name  = "vec_scalar_rich"
-latex = '\overrightarrow{{{P1}{P2}}} = {k} \overrightarrow{{{P3}{P4}}}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P4]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.k]
-type = "S"
-pool = "SCALAR_POOL"
-
-# ----
-
-[[template]]
-name  = "vec_perp_rich"
-latex = '\overrightarrow{{{P1}{P2}}} \perp \overrightarrow{{{P3}{P4}}}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P4]
-type = "S"
-pool = "PTS_POOL"
-
-# ---------------------------------------------------------------------------
-# More parallel (rich: E→S)
-# ---------------------------------------------------------------------------
-
-[[template]]
-name  = "parallel_rich"
-latex = '{P1}{P2} \parallel {P3}{P4}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P4]
-type = "S"
-pool = "PTS_POOL"
-
-# ----
-
-[[template]]
-name  = "parallel_overline_rich"
-latex = '\overline{{{P1}{P2}}} \parallel \overline{{{P3}{P4}}}'
-
-[template.slots.P1]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P2]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P3]
-type = "S"
-pool = "PTS_POOL"
-
-[template.slots.P4]
-type = "S"
-pool = "PTS_POOL"
-
 # ---------------------------------------------------------------------------
 # Annotation (circled numbers)
 # ---------------------------------------------------------------------------
@@ -1501,72 +1389,72 @@ pool = "PTS_POOL"
 # ----
 
 [[template]]
-name  = "circled_num_congruent"
-latex = '{n} \quad\triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+name  = "circled_num_triangle_rel"
+latex = ""
 
-[template.slots.n]
-type = "S"
-pool = "CIRCLE_POOL"
+  [[template.variants]]
+  name  = "circled_num_triangle_congruent"
+  latex = '{n} \quad\triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
 
-[template.slots.P]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "CIRCLE_POOL"
 
-[template.slots.Q]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.R]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.P2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.Q2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.R2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-# ---------------------------------------------------------------------------
-# More annotation (rich: E→S)
-# ---------------------------------------------------------------------------
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[[template]]
-name  = "circled_num_similar"
-latex = '{n} \quad\triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
+  [[template.variants]]
+  name  = "circled_num_triangle_similar"
+  latex = '{n} \quad\triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
 
-[template.slots.n]
-type = "S"
-pool = "CIRCLE_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "CIRCLE_POOL"
 
-[template.slots.P]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.Q]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.R]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.P2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.Q2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
-[template.slots.R2]
-type = "S"
-pool = "TRI_VERTS_POOL"
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
 
 # ----
 
