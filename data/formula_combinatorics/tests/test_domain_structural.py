@@ -199,12 +199,12 @@ _TRIG = _draw(GENERATORS["trigonometry"], 2000)
 
 def test_trigonometry_sin_frequency() -> None:
     n = _freq(_TRIG, r"\sin")
-    assert n >= 850, f"\\sin appeared only {n}/2000 times in trigonometry"
+    assert n >= 550, f"\\sin appeared only {n}/2000 times in trigonometry"
 
 
 def test_trigonometry_cos_frequency() -> None:
     n = _freq(_TRIG, r"\cos")
-    assert n >= 150, f"\\cos appeared only {n}/2000 times in trigonometry"
+    assert n >= 110, f"\\cos appeared only {n}/2000 times in trigonometry"
 
 
 # ---------------------------------------------------------------------------

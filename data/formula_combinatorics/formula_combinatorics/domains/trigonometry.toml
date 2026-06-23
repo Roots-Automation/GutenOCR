@@ -188,49 +188,171 @@ latex = ""
 
 [[template]]
 name  = "double_angle_sin"
-latex = '{sn}({coeff} {x}) = 2 {sn}\!\left(\frac{{{coeff} {x}}}{{2}}\right) {cn}\!\left(\frac{{{coeff} {x}}}{{2}}\right)'
+latex = ""
 
-[template.slots.sn]
-type = "S"
-pool = "SIN_NAMES"
+  [[template.variants]]
+  name  = "double_angle_sin_compound"
+  latex = '{sn}({coeff} {x}) = 2 {sn}\!\left(\frac{{{coeff} {x}}}{{2}}\right) {cn}\!\left(\frac{{{coeff} {x}}}{{2}}\right)'
 
-[template.slots.cn]
-type = "S"
-pool = "COS_NAMES"
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
 
-[template.slots.coeff]
-type = "E"
-gen  = "_sin_dbl_coeff_sub"
-n    = 72
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
 
-[template.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.coeff]
+  type = "E"
+  gen  = "_sin_dbl_coeff_sub"
+  n    = 72
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_sin_pure"
+  latex = '{sn}(2{a}) = 2 {sn} {a} \, {cn} {a}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_sin_coeff"
+  latex = '{sn}(2{c}\,{x}) = 2 {sn}({c}\,{x})\,{cn}({c}\,{x})'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type         = "X"
+  pool         = "TRIG_ARG_POOL"
+  exclude_from = ["c"]
+  idx          = 0.35
 
 # ── double_angle_cos ──────────────────────────────────────────────────────────
 
 [[template]]
 name  = "double_angle_cos"
-latex = '{cn}({coeff} {x}) = {cn}^2\!\left(\frac{{{coeff} {x}}}{{2}}\right) - {sn}^2\!\left(\frac{{{coeff} {x}}}{{2}}\right)'
+latex = ""
 
-[template.slots.sn]
-type = "S"
-pool = "SIN_NAMES"
+  [[template.variants]]
+  name  = "double_angle_cos_compound"
+  latex = '{cn}({coeff} {x}) = {cn}^2\!\left(\frac{{{coeff} {x}}}{{2}}\right) - {sn}^2\!\left(\frac{{{coeff} {x}}}{{2}}\right)'
 
-[template.slots.cn]
-type = "S"
-pool = "COS_NAMES"
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
 
-[template.slots.coeff]
-type = "E"
-gen  = "_cos_dbl_coeff_sub"
-n    = 70
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
 
-[template.slots.x]
-type = "S"
-pool = "VARS_POOL"
-idx  = 0.35
+  [template.variants.slots.coeff]
+  type = "E"
+  gen  = "_cos_dbl_coeff_sub"
+  n    = 70
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_cos_pure"
+  latex = '{cn}(2{a}) = {cn}^2 {a} - {sn}^2 {a}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_cos_sin2"
+  latex = '{cn}(2{a}) = 1 - 2{sn}^2 {a}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_cos_cos2"
+  latex = '{cn}(2{a}) = 2{cn}^2 {a} - 1'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "double_angle_cos_coeff"
+  latex = '{cn}(2{c}\,{x}) = {cn}^2({c}\,{x}) - {sn}^2({c}\,{x})'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type         = "X"
+  pool         = "TRIG_ARG_POOL"
+  exclude_from = ["c"]
+  idx          = 0.35
 
 # ── sin_addition ──────────────────────────────────────────────────────────────
 
@@ -387,69 +509,157 @@ latex = ""
 
 [[template]]
 name  = "law_of_cosines"
-latex = '{s0}^2 = {s1}^2 + {s2}^2 - 2{s1}{s2} \cos {A}'
+latex = ""
 
-[template.slots.s0]
-type = "S"
-pool = "SIDES_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name  = "law_of_cosines_standard"
+  latex = '{s0}^2 = {s1}^2 + {s2}^2 - 2{s1}{s2} {cn} {A}'
 
-[template.slots.s1]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0"]
-idx          = 0.35
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
 
-[template.slots.s2]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0","s1"]
-idx          = 0.35
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
 
-[template.slots.A]
-type = "S"
-pool = "ANGLES_POOL"
-idx  = 0.35
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
+
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "law_of_cosines_cos_form"
+  latex = '{cn} {A} = \frac{{{s0}^2 - {s1}^2 - {s2}^2}}{{2 {s1} {s2}}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
+
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
 
 # ── law_of_sines ──────────────────────────────────────────────────────────────
 
 [[template]]
 name  = "law_of_sines"
-latex = '\frac{{\sin {A0}}}{{{s0}}} = \frac{{\sin {A1}}}{{{s1}}} = \frac{{\sin {A2}}}{{{s2}}}'
+latex = ""
 
-[template.slots.s0]
-type = "S"
-pool = "SIDES_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name  = "law_of_sines_standard"
+  latex = '\frac{{{sn} {A0}}}{{{s0}}} = \frac{{{sn} {A1}}}{{{s1}}} = \frac{{{sn} {A2}}}{{{s2}}}'
 
-[template.slots.s1]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0"]
-idx          = 0.35
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
 
-[template.slots.s2]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0","s1"]
-idx          = 0.35
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
 
-[template.slots.A0]
-type = "S"
-pool = "ANGLES_POOL"
-idx  = 0.35
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
 
-[template.slots.A1]
-type         = "X"
-pool         = "ANGLES_POOL"
-exclude_from = ["A0"]
-idx          = 0.35
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
 
-[template.slots.A2]
-type         = "X"
-pool         = "ANGLES_POOL"
-exclude_from = ["A0","A1"]
-idx          = 0.35
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A1]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0"]
+  idx          = 0.35
+
+  [template.variants.slots.A2]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0","A1"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "law_of_sines_flipped"
+  latex = '\frac{{{s0}}}{{{sn} {A0}}} = \frac{{{s1}}}{{{sn} {A1}}} = \frac{{{s2}}}{{{sn} {A2}}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
+
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
+
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A1]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0"]
+  idx          = 0.35
+
+  [template.variants.slots.A2]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0","A1"]
+  idx          = 0.35
 
 
 # ── arctan_ratio ──────────────────────────────────────────────────────────────
@@ -1786,41 +1996,91 @@ latex = ""
 
 [[template]]
 name  = "law_of_sines_extended"
-latex = '\frac{{{s0}}}{{\sin {A0}}} = \frac{{{s1}}}{{\sin {A1}}} = \frac{{{s2}}}{{\sin {A2}}} = 2R'
+latex = ""
 
-[template.slots.s0]
-type = "S"
-pool = "SIDES_POOL"
-idx  = 0.35
+  [[template.variants]]
+  name  = "law_of_sines_extended_standard"
+  latex = '\frac{{{s0}}}{{{sn} {A0}}} = \frac{{{s1}}}{{{sn} {A1}}} = \frac{{{s2}}}{{{sn} {A2}}} = 2R'
 
-[template.slots.s1]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0"]
-idx          = 0.35
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
 
-[template.slots.s2]
-type         = "X"
-pool         = "SIDES_POOL"
-exclude_from = ["s0","s1"]
-idx          = 0.35
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
 
-[template.slots.A0]
-type = "S"
-pool = "ANGLES_POOL"
-idx  = 0.35
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
 
-[template.slots.A1]
-type         = "X"
-pool         = "ANGLES_POOL"
-exclude_from = ["A0"]
-idx          = 0.35
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
 
-[template.slots.A2]
-type         = "X"
-pool         = "ANGLES_POOL"
-exclude_from = ["A0","A1"]
-idx          = 0.35
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A1]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0"]
+  idx          = 0.35
+
+  [template.variants.slots.A2]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0","A1"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "law_of_sines_extended_flipped"
+  latex = '\frac{{{sn} {A0}}}{{{s0}}} = \frac{{{sn} {A1}}}{{{s1}}} = \frac{{{sn} {A2}}}{{{s2}}} = \frac{{1}}{{2R}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.s0]
+  type = "S"
+  pool = "SIDES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.s1]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0"]
+  idx          = 0.35
+
+  [template.variants.slots.s2]
+  type         = "X"
+  pool         = "SIDES_POOL"
+  exclude_from = ["s0","s1"]
+  idx          = 0.35
+
+  [template.variants.slots.A0]
+  type = "S"
+  pool = "ANGLES_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.A1]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0"]
+  idx          = 0.35
+
+  [template.variants.slots.A2]
+  type         = "X"
+  pool         = "ANGLES_POOL"
+  exclude_from = ["A0","A1"]
+  idx          = 0.35
 
 # ── law_of_sines_2r_ratio ─────────────────────────────────────────────────────
 
@@ -2453,11 +2713,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sec_recip_bare"
-  latex = '{sn}({vv}) = \frac{{1}}{{\cos({vv})}}'
+  latex = '{sn}({vv}) = \frac{{1}}{{{cosn}({vv})}}'
 
   [template.variants.slots.sn]
   type = "S"
   pool = "SEC_NAMES"
+
+  [template.variants.slots.cosn]
+  type = "S"
+  pool = "COS_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2466,11 +2730,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sec_recip_coeff"
-  latex = '{sn}({c}\,{x}) = \frac{{1}}{{\cos({c}\,{x})}}'
+  latex = '{sn}({c}\,{x}) = \frac{{1}}{{{cosn}({c}\,{x})}}'
 
   [template.variants.slots.sn]
   type = "S"
   pool = "SEC_NAMES"
+
+  [template.variants.slots.cosn]
+  type = "S"
+  pool = "COS_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2485,11 +2753,15 @@ latex = ""
 
   [[template.variants]]
   name  = "sec_reciprocal_flipped"
-  latex = '\frac{{1}}{{{sn}({vv})}} = \cos({vv})'
+  latex = '\frac{{1}}{{{sn}({vv})}} = {cosn}({vv})'
 
   [template.variants.slots.sn]
   type = "S"
   pool = "SEC_NAMES"
+
+  [template.variants.slots.cosn]
+  type = "S"
+  pool = "COS_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2563,11 +2835,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csc_recip_bare"
-  latex = '{cn}({vv}) = \frac{{1}}{{\sin({vv})}}'
+  latex = '{cn}({vv}) = \frac{{1}}{{{sinn}({vv})}}'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "CSC_NAMES"
+
+  [template.variants.slots.sinn]
+  type = "S"
+  pool = "SIN_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2576,11 +2852,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csc_recip_coeff"
-  latex = '{cn}({c}\,{x}) = \frac{{1}}{{\sin({c}\,{x})}}'
+  latex = '{cn}({c}\,{x}) = \frac{{1}}{{{sinn}({c}\,{x})}}'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "CSC_NAMES"
+
+  [template.variants.slots.sinn]
+  type = "S"
+  pool = "SIN_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -2595,11 +2875,15 @@ latex = ""
 
   [[template.variants]]
   name  = "csc_reciprocal_flipped"
-  latex = '\frac{{1}}{{{cn}({vv})}} = \sin({vv})'
+  latex = '\frac{{1}}{{{cn}({vv})}} = {sinn}({vv})'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "CSC_NAMES"
+
+  [template.variants.slots.sinn]
+  type = "S"
+  pool = "SIN_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2612,11 +2896,19 @@ latex = ""
 
   [[template.variants]]
   name  = "cot_reciprocal_sin_cos"
-  latex = '{cn}({vv}) = \frac{{\cos({vv})}}{{\sin({vv})}}'
+  latex = '{cn}({vv}) = \frac{{{cosn}({vv})}}{{{sinn}({vv})}}'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "COT_NAMES"
+
+  [template.variants.slots.cosn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.sinn]
+  type = "S"
+  pool = "SIN_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2625,11 +2917,15 @@ latex = ""
 
   [[template.variants]]
   name  = "cot_reciprocal_tan"
-  latex = '{cn}({vv}) = \frac{{1}}{{\tan({vv})}}'
+  latex = '{cn}({vv}) = \frac{{1}}{{{tn}({vv})}}'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "COT_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
 
   [template.variants.slots.vv]
   type = "S"
@@ -2638,11 +2934,19 @@ latex = ""
 
   [[template.variants]]
   name  = "cot_reciprocal_coeff"
-  latex = '{cn}({c}\,{x}) = \frac{{\cos({c}\,{x})}}{{\sin({c}\,{x})}}'
+  latex = '{cn}({c}\,{x}) = \frac{{{cosn}({c}\,{x})}}{{{sinn}({c}\,{x})}}'
 
   [template.variants.slots.cn]
   type = "S"
   pool = "COT_NAMES"
+
+  [template.variants.slots.cosn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.sinn]
+  type = "S"
+  pool = "SIN_NAMES"
 
   [template.variants.slots.c]
   type = "S"
@@ -3547,7 +3851,11 @@ latex = ""
 
   [[template.variants]]
   name  = "amplitude_phase_tan_def"
-  latex = '\tan \varphi = \frac{{{b}}}{{{a}}}'
+  latex = '{tn} \varphi = \frac{{{b}}}{{{a}}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
 
   [template.variants.slots.a]
   type = "S"
@@ -3560,7 +3868,7 @@ latex = ""
 
   [[template.variants]]
   name  = "amplitude_phase_expanded"
-  latex = '{a} {sn} {x} + {b} {cn} {x} = \sqrt{{{a}^2 + {b}^2}} \, {sn}\!\left({x} + \arctan\!\frac{{{b}}}{{{a}}}\right)'
+  latex = '{a} {sn} {x} + {b} {cn} {x} = \sqrt{{{a}^2 + {b}^2}} \, {sn}\!\left({x} + {atn}\!\frac{{{b}}}{{{a}}}\right)'
 
   [template.variants.slots.sn]
   type = "S"
@@ -3569,6 +3877,10 @@ latex = ""
   [template.variants.slots.cn]
   type = "S"
   pool = "COS_NAMES"
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
 
   [template.variants.slots.a]
   type = "S"
@@ -3586,7 +3898,7 @@ latex = ""
 
   [[template.variants]]
   name  = "amplitude_phase_cos_form"
-  latex = '{a} {sn} {x} + {b} {cn} {x} = \sqrt{{{a}^2 + {b}^2}} \, {cn}\!\left({x} - \arctan\!\frac{{{a}}}{{{b}}}\right)'
+  latex = '{a} {sn} {x} + {b} {cn} {x} = \sqrt{{{a}^2 + {b}^2}} \, {cn}\!\left({x} - {atn}\!\frac{{{a}}}{{{b}}}\right)'
 
   [template.variants.slots.sn]
   type = "S"
@@ -3595,6 +3907,10 @@ latex = ""
   [template.variants.slots.cn]
   type = "S"
   pool = "COS_NAMES"
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
 
   [template.variants.slots.a]
   type = "S"
@@ -3612,7 +3928,7 @@ latex = ""
 
   [[template.variants]]
   name  = "amplitude_phase_omega"
-  latex = '{a} {sn}(\omega {x}) + {b} {cn}(\omega {x}) = \sqrt{{{a}^2 + {b}^2}} \, {sn}\!\left(\omega {x} + \arctan\!\frac{{{b}}}{{{a}}}\right)'
+  latex = '{a} {sn}(\omega {x}) + {b} {cn}(\omega {x}) = \sqrt{{{a}^2 + {b}^2}} \, {sn}\!\left(\omega {x} + {atn}\!\frac{{{b}}}{{{a}}}\right)'
 
   [template.variants.slots.sn]
   type = "S"
@@ -3621,6 +3937,10 @@ latex = ""
   [template.variants.slots.cn]
   type = "S"
   pool = "COS_NAMES"
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
 
   [template.variants.slots.a]
   type = "S"
