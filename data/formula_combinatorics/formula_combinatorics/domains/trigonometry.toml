@@ -31,7 +31,7 @@ values = ['\cos','\text{cosine}']
 
 [[pool]]
 name   = "TAN_NAMES"
-values = ['\tan','\text{tangent}']
+values = ['\tan','\text{tangent}','\text{tg}']
 
 [[pool]]
 name   = "SEC_NAMES"
@@ -39,11 +39,11 @@ values = ['\sec','\text{secant}']
 
 [[pool]]
 name   = "CSC_NAMES"
-values = ['\csc','\text{cosecant}']
+values = ['\csc','\text{cosecant}','\text{cosec}']
 
 [[pool]]
 name   = "COT_NAMES"
-values = ['\cot','\text{cotangent}']
+values = ['\cot','\text{cotangent}','\text{ctg}']
 
 [[pool]]
 name   = "SINH_NAMES"
