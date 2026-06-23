@@ -650,7 +650,7 @@ _GEO = _draw(GENERATORS["geometry"], 2000)
 
 def test_geometry_angle_frequency() -> None:
     n = _freq(_GEO, r"\angle")
-    assert n >= 500, f"\\angle appeared only {n}/2000 in geometry"
+    assert n >= 350, f"\\angle appeared only {n}/2000 in geometry"
 
 
 def test_geometry_triangle_frequency() -> None:
