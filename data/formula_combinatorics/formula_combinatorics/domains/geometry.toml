@@ -61,6 +61,30 @@ values = ['^{{\circ}}', '\,^{{\circ}}', '^{{o}}', '\,\mathrm{{deg}}', '\,\text{{
 name   = "ANGLE_CMD_POOL"
 values = ['\angle', '\measuredangle', '\sphericalangle']
 
+[[pool]]
+name   = "RADIUS_POOL"
+values = ["r", "R", "\\rho", "\\varrho"]
+
+[[pool]]
+name   = "CIRC_LABEL_POOL"
+values = ["C", "L", "P"]
+
+[[pool]]
+name   = "DIST_VAR_POOL"
+values = ["d", "D", "\\ell", "s"]
+
+[[pool]]
+name   = "SLOPE_VAR_POOL"
+values = ["m", "k", "\\lambda", "a", "\\mu"]
+
+[[pool]]
+name   = "HEIGHT_POOL"
+values = ["h", "H", "\\ell", "d"]
+
+[[pool]]
+name   = "INTERCEPT_POOL"
+values = ["b", "c", "d", "n", "q"]
+
 # ---------------------------------------------------------------------------
 # Angles
 # ---------------------------------------------------------------------------
@@ -1708,3 +1732,459 @@ latex = ""
   [template.variants.slots.ac]
   type = "S"
   pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Circles
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "circle_area"
+latex = ""
+
+  [[template.variants]]
+  name  = "circle_area_standard"
+  latex = '{al} = \pi {r}^2'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_area_rearranged"
+  latex = '\pi {r}^2 = {al}'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_area_radius"
+  latex = '{r} = \sqrt{{\frac{{{al}}}{{\pi}}}}'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "circle_circumference"
+latex = ""
+
+  [[template.variants]]
+  name  = "circle_circumference_radius"
+  latex = '{cl} = 2\pi {r}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_diameter"
+  latex = '{cl} = \pi {d}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_radius_solved"
+  latex = '{r} = \frac{{{cl}}}{{2\pi}}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_diameter_solved"
+  latex = '{d} = \frac{{{cl}}}{{\pi}}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "arc_length"
+latex = '{s} = {r} {ang}'
+
+[template.slots.s]
+type = "S"
+pool = "DIST_VAR_POOL"
+
+[template.slots.r]
+type = "S"
+pool = "RADIUS_POOL"
+idx  = 0.35
+
+[template.slots.ang]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "sector_area"
+latex = '{al} = \frac{{1}}{{2}} {r}^2 {ang}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.r]
+type = "S"
+pool = "RADIUS_POOL"
+idx  = 0.35
+
+[template.slots.ang]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Areas
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "rectangle_area"
+latex = '{al} = {a} {b}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "parallelogram_area"
+latex = '{al} = {b} {h}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.h]
+type = "S"
+pool = "HEIGHT_POOL"
+idx  = 0.2
+
+# ----
+
+[[template]]
+name  = "trapezoid_area"
+latex = '{al} = \frac{{1}}{{2}} ({a} + {b}) {h}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.h]
+type = "S"
+pool = "HEIGHT_POOL"
+idx  = 0.2
+
+# ----
+
+[[template]]
+name  = "rhombus_area"
+latex = '{al} = \frac{{{d1} {d2}}}{{2}}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.d1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.d2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Coordinate geometry
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "distance_formula"
+latex = '{dv} = \sqrt{{({x2}-{x1})^2 + ({y2}-{y1})^2}}'
+
+[template.slots.dv]
+type = "S"
+pool = "DIST_VAR_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "midpoint_formula"
+latex = '{M} = \left(\frac{{{x1}+{x2}}}{{2}},\, \frac{{{y1}+{y2}}}{{2}}\right)'
+
+[template.slots.M]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "slope_formula"
+latex = '{mv} = \frac{{{y2}-{y1}}}{{{x2}-{x1}}}'
+
+[template.slots.mv]
+type = "S"
+pool = "SLOPE_VAR_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "line_equation"
+latex = ""
+
+  [[template.variants]]
+  name  = "line_equation_slope_intercept"
+  latex = 'y = {mv} x + {ic}'
+
+  [template.variants.slots.mv]
+  type = "S"
+  pool = "SLOPE_VAR_POOL"
+
+  [template.variants.slots.ic]
+  type = "S"
+  pool = "INTERCEPT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "line_equation_general"
+  latex = '{mv} x + {a} y + {ic} = 0'
+
+  [template.variants.slots.mv]
+  type = "S"
+  pool = "SLOPE_VAR_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ic]
+  type = "S"
+  pool = "INTERCEPT_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Widehat angle notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "widehat_angle_eq_angle"
+latex = '\widehat{{{A}{B}{C}}} = \widehat{{{D}{E}{F}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "widehat_angle_eq_deg"
+latex = ""
+
+  [[template.variants]]
+  name  = "widehat_angle_eq_deg_fixed"
+  latex = '\widehat{{{A}{B}{C}}} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "DEG_POOL"
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [[template.variants]]
+  name  = "widehat_angle_eq_deg_alg"
+  latex = '\widehat{{{A}{B}{C}}} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
