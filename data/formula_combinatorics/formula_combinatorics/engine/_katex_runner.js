@@ -36,6 +36,11 @@ function prepareFormula(formula) {
         return { math: formula, displayMode: true, skip: true };
     }
 
+    // \ce{} requires mhchem which KaTeX doesn't load by default — pass through.
+    if (/\\ce\{/.test(formula)) {
+        return { math: formula, displayMode: true, skip: true };
+    }
+
     // \begin{align*}...\end{align*} and similar — display mode, keep as-is.
     if (/^\\begin\{(align|gather|flalign|alignat|split)[*]?\}/.test(formula)) {
         return { math: formula, displayMode: true };

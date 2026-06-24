@@ -43,7 +43,7 @@ def test_n_eff_single_slot_no_idx() -> None:
 
 def test_n_eff_single_slot_with_idx() -> None:
     t = Template("t", "{v}", slots={"v": S(_SMALL_POOL, idx=0.5)})
-    expected = len(_SMALL_POOL) * (1.0 + 0.5 * (_N_IDX - 1))
+    expected = len(_SMALL_POOL) * (1.0 + _N_IDX)
     assert abs(n_eff(t) - expected) < 1e-9
 
 

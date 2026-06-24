@@ -152,11 +152,11 @@ _N_IDX = len(_IDX_POOL)  # 8
 def _eff_mult(idx: float) -> float:
     """Effective pool size multiplier from _maybe_idx decoration.
 
-    A slot decorated with probability ``idx`` has an effective pool size of
-    ``|pool| * (1 + idx * (_N_IDX - 1))`` because each bare symbol can also
-    appear as one of ``_N_IDX`` subscripted variants.
+    A slot decorated with probability ``idx`` has a true distinct output count
+    of ``|pool| * (1 + _N_IDX)`` — each bare symbol plus each bare×subscript
+    combination. Returns 1.0 for undecorated slots (idx == 0).
     """
-    return 1.0 + idx * (_N_IDX - 1)
+    return (1.0 + _N_IDX) if idx > 0.0 else 1.0
 
 
 def _decorate(val: str, idx: float, rng: random.Random) -> str:

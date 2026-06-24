@@ -45,11 +45,37 @@ _TEX_TEMPLATE = r"""\documentclass{{article}}
 \usepackage{{amssymb}}
 \usepackage{{mathtools}}
 \usepackage{{textcomp}}
+\usepackage{{mhchem}}
 \pagestyle{{empty}}
 \begin{{document}}
 $\displaystyle {formula}$
 \end{{document}}
 """
+
+# Template for top-level display environments (align*, multline, gather*, etc.)
+# that cannot be nested inside $...$.
+_TEX_TEMPLATE_ENV = r"""\documentclass{{article}}
+\usepackage[margin=4pt,paperwidth=30cm,paperheight=6cm]{{geometry}}
+\usepackage{{amsmath}}
+\usepackage{{amssymb}}
+\usepackage{{mathtools}}
+\usepackage{{textcomp}}
+\usepackage{{mhchem}}
+\pagestyle{{empty}}
+\begin{{document}}
+{formula}
+\end{{document}}
+"""
+
+_DISPLAY_ENV_RE = re.compile(
+    r"\\begin\{"
+    r"(align\*?|alignat\*?|flalign\*?|gather\*?|multline\*?|equation\*?|split)"
+    r"\}"
+)
+
+
+def _is_display_env(formula: str) -> bool:
+    return bool(_DISPLAY_ENV_RE.match(formula.strip()))
 
 
 @dataclass
@@ -220,7 +246,11 @@ def _strip_display_delimiters(formula: str) -> str:
         (r"\begin{equation}", r"\end{equation}"),
     ]:
         if formula.startswith(start) and formula.endswith(end):
-            formula = formula[len(start) : len(formula) - len(end)].strip()
+            inner = formula[len(start) : len(formula) - len(end)].strip()
+            # Don't unwrap if inner content is itself a block environment —
+            # stripping would leave e.g. \begin{split} with no enclosing env.
+            if not _DISPLAY_ENV_RE.match(inner):
+                formula = inner
     if formula.startswith("$") and formula.endswith("$") and len(formula) > 1:
         formula = formula[1:-1].strip()
     # Remove \tag{...} that standalone can't handle in displaystyle
@@ -248,7 +278,10 @@ class _TexRenderer:
     def _render_one(self, formula: str, output_dir: Path) -> tuple[bool, Path | None, str | None]:
         """Compile one formula.  Returns (ok, png_path, error)."""
         raw = _strip_display_delimiters(formula)
-        tex_src = _TEX_TEMPLATE.format(formula=raw)
+        if _is_display_env(raw):
+            tex_src = _TEX_TEMPLATE_ENV.format(formula=raw)
+        else:
+            tex_src = _TEX_TEMPLATE.format(formula=raw)
         fhash = _formula_hash(formula)
 
         with tempfile.TemporaryDirectory(prefix="fcrender_") as tmpdir:
