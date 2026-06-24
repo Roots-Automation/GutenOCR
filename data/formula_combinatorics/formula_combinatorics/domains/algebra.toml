@@ -956,7 +956,6 @@ latex = ""
   [template.variants.slots.base]
   type = "S"
   pool = "LOG_BASES_POOL"
-  idx  = 0.35
 
   [[template.variants]]
   name  = "log_base_self"
@@ -965,7 +964,6 @@ latex = ""
   [template.variants.slots.base]
   type = "S"
   pool = "LOG_BASES_POOL"
-  idx  = 0.35
 
   [[template.variants]]
   name  = "log_exp_cancel"
@@ -974,7 +972,6 @@ latex = ""
   [template.variants.slots.base]
   type = "S"
   pool = "LOG_BASES_POOL"
-  idx  = 0.35
 
   [template.variants.slots.n]
   type = "S"
@@ -987,7 +984,6 @@ latex = ""
   [template.variants.slots.base]
   type = "S"
   pool = "LOG_BASES_POOL"
-  idx  = 0.35
 
   [template.variants.slots.arg]
   type = "E"
@@ -2498,10 +2494,6 @@ latex = ""
   n    = 50
 
 # ---------------------------------------------------------------------------
-# Substack templates
-# ---------------------------------------------------------------------------
-
-# ---------------------------------------------------------------------------
 # Linear equations
 # ---------------------------------------------------------------------------
 
@@ -2766,31 +2758,6 @@ latex = ""
   idx  = 0.35
 
   [template.variants.slots.c2]
-  type = "S"
-  pool = "SCALARS_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name     = "linear_system_substitution"
-  latex    = '{v1} = {m}{v0} + {b}'
-  distinct = [["v0", "v1", "m", "b"]]
-
-  [template.variants.slots.v0]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.v1]
-  type = "X"
-  pool = "VARS_POOL"
-  exclude_from = ["v0"]
-
-  [template.variants.slots.m]
-  type = "S"
-  pool = "SCALARS_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.b]
   type = "S"
   pool = "SCALARS_POOL"
   idx  = 0.35
