@@ -769,6 +769,40 @@ latex = ""
   exclude_from = ["c"]
   idx          = 0.35
 
+  [[template.variants]]
+  name  = "pythagorean_tan_rearranged"
+  latex = '{tn}^2({vv}) = {sn}^2({vv}) - 1'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "pythagorean_cot_rearranged"
+  latex = '{ctn}^2({vv}) = {cscn}^2({vv}) - 1'
+
+  [template.variants.slots.ctn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.cscn]
+  type = "S"
+  pool = "CSC_NAMES"
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
 # ── product_to_sum_sin_cos ────────────────────────────────────────────────────
 
 [[template]]
@@ -2503,90 +2537,6 @@ pool         = "TRIG_ARG_POOL"
 exclude_from = ["a"]
 idx          = 0.35
 
-# ── reciprocal_identities ─────────────────────────────────────────────────────
-
-[[template]]
-name  = "reciprocal_identities"
-latex = ""
-
-  [[template.variants]]
-  name  = "sec_reciprocal_bare"
-  latex = '{secn}\!\left({x}\right) = \frac{{1}}{{{cn}\!\left({x}\right)}}'
-
-  [template.variants.slots.secn]
-  type = "S"
-  pool = "SEC_NAMES"
-
-  [template.variants.slots.cn]
-  type = "S"
-  pool = "COS_NAMES"
-
-  [template.variants.slots.x]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name  = "csc_reciprocal_bare"
-  latex = '{cscn}\!\left({x}\right) = \frac{{1}}{{{sn}\!\left({x}\right)}}'
-
-  [template.variants.slots.cscn]
-  type = "S"
-  pool = "CSC_NAMES"
-
-  [template.variants.slots.sn]
-  type = "S"
-  pool = "SIN_NAMES"
-
-  [template.variants.slots.x]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name  = "sec_reciprocal_coeff"
-  latex = '{secn}\!\left({a} {x}\right) = \frac{{1}}{{{cn}\!\left({a} {x}\right)}}'
-
-  [template.variants.slots.secn]
-  type = "S"
-  pool = "SEC_NAMES"
-
-  [template.variants.slots.cn]
-  type = "S"
-  pool = "COS_NAMES"
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "TRIG_ARG_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.x]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name  = "csc_reciprocal_coeff"
-  latex = '{cscn}\!\left({a} {x}\right) = \frac{{1}}{{{sn}\!\left({a} {x}\right)}}'
-
-  [template.variants.slots.cscn]
-  type = "S"
-  pool = "CSC_NAMES"
-
-  [template.variants.slots.sn]
-  type = "S"
-  pool = "SIN_NAMES"
-
-  [template.variants.slots.a]
-  type = "S"
-  pool = "TRIG_ARG_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.x]
-  type = "S"
-  pool = "VARS_POOL"
-  idx  = 0.35
-
 # ── law_of_tangents ───────────────────────────────────────────────────────────
 
 [[template]]
@@ -2762,67 +2712,6 @@ latex = ""
   [template.variants.slots.cosn]
   type = "S"
   pool = "COS_NAMES"
-
-  [template.variants.slots.vv]
-  type = "S"
-  pool = "TRIG_ARG_POOL"
-  idx  = 0.35
-
-[[template]]
-name  = "sec_sq_pythagorean"
-latex = ""
-
-  [[template.variants]]
-  name  = "sec_sq_pythagorean_bare"
-  latex = '{sn}^2({vv}) = 1 + {tn}^2({vv})'
-
-  [template.variants.slots.sn]
-  type = "S"
-  pool = "SEC_NAMES"
-
-  [template.variants.slots.tn]
-  type = "S"
-  pool = "TAN_NAMES"
-
-  [template.variants.slots.vv]
-  type = "S"
-  pool = "TRIG_ARG_POOL"
-  idx  = 0.35
-
-  [[template.variants]]
-  name  = "sec_sq_pythagorean_coeff"
-  latex = '{sn}^2({c}\,{x}) = 1 + {tn}^2({c}\,{x})'
-
-  [template.variants.slots.sn]
-  type = "S"
-  pool = "SEC_NAMES"
-
-  [template.variants.slots.tn]
-  type = "S"
-  pool = "TAN_NAMES"
-
-  [template.variants.slots.c]
-  type = "S"
-  pool = "TRIG_ARG_POOL"
-  idx  = 0.35
-
-  [template.variants.slots.x]
-  type         = "X"
-  pool         = "TRIG_ARG_POOL"
-  exclude_from = ["c"]
-  idx          = 0.35
-
-  [[template.variants]]
-  name  = "sec_sq_pythagorean_rearranged"
-  latex = '{tn}^2({vv}) = {sn}^2({vv}) - 1'
-
-  [template.variants.slots.sn]
-  type = "S"
-  pool = "SEC_NAMES"
-
-  [template.variants.slots.tn]
-  type = "S"
-  pool = "TAN_NAMES"
 
   [template.variants.slots.vv]
   type = "S"

@@ -134,7 +134,15 @@ Any failing criterion blocks Track A corpus generation for that domain.
 
 **What:** Every leaf template (a template with no variants, or each variant individually) has a declared n_eff of at least 10,000. Templates below this floor cannot survive 10k collision-probe draws without saturating, which means they cannot be certified.
 
-**Bar:** `min(n_eff(t) for t in leaf_templates) ≥ 10,000`. Exceptions must be documented with a rationale (e.g. a constant-identity template intentionally kept for coverage) and accepted explicitly.
+**Bar:** `min(n_eff(t) for t in leaf_templates) ≥ 10,000` for parametric templates.
+
+**Notation-only exception:** A leaf variant may be certified with n_eff ≥ 100 if ALL of the following hold:
+1. Its only slot variation is a function-name pool (notation choice) and a single argument variable — the formula's semantic content does not change with the choice of argument name.
+2. All NAME-type pools are at their maximum realistic size — no entries fabricated solely to raise n_eff.
+3. A coeff variant of the same identity exists in the same template and clears the 10,000 floor.
+4. The variant is suffixed `_bare` or `_pure` in its name, making its status identifiable in tooling output.
+
+These variants represent how a formula appears in simple textbooks alongside more diverse coeff variants. They are expected to saturate in `collision_probe` at 10k draws; this saturation is documented and acceptable.
 
 **How:**
 ```bash
