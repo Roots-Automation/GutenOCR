@@ -6,6 +6,7 @@ accepts an RGBA uint8 numpy array and returns an RGBA uint8 numpy array.
 Computation is done in float32 internally.
 """
 
+import cv2
 import numpy as np
 from PIL import Image as PILImage
 from PIL import ImageDraw, ImageFont
@@ -22,24 +23,19 @@ def apply_if_enabled(cfg: dict, effect_fn, image: np.ndarray) -> np.ndarray:
     return image
 
 
-def _gaussian_blur_1d(arr: np.ndarray, sigma: float, axis: int) -> np.ndarray:
-    """Separable 1-D Gaussian blur along *axis*."""
+def _gaussian_blur_2d(arr: np.ndarray, sigma: float) -> np.ndarray:
+    """Separable 2-D Gaussian blur matching the original zero-pad boundary behaviour."""
     if sigma <= 0:
         return arr
     radius = int(np.ceil(3.0 * sigma))
-    x = np.arange(-radius, radius + 1, dtype=np.float32)
-    kernel = np.exp(-0.5 * (x / sigma) ** 2)
-    kernel /= kernel.sum()
-    return np.apply_along_axis(lambda v: np.convolve(v, kernel, mode="same"), axis=axis, arr=arr.astype(np.float32))
-
-
-def _gaussian_blur_2d(arr: np.ndarray, sigma: float) -> np.ndarray:
-    """Separable 2-D Gaussian blur."""
-    if sigma <= 0:
-        return arr
-    arr = _gaussian_blur_1d(arr, sigma, axis=1)
-    arr = _gaussian_blur_1d(arr, sigma, axis=0)
-    return arr
+    ksize = 2 * radius + 1
+    return cv2.GaussianBlur(
+        arr.astype(np.float32),
+        ksize=(ksize, ksize),
+        sigmaX=sigma,
+        sigmaY=sigma,
+        borderType=cv2.BORDER_CONSTANT,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -91,7 +87,16 @@ class BookSpineShadowEffect:
             gradient[W - width_px :] = intensity * t
 
         # Smooth the gradient
-        gradient = _gaussian_blur_1d(gradient[np.newaxis, :], sigma=width_px * 0.15, axis=1)[0]
+        sigma = width_px * 0.15
+        radius = int(np.ceil(3.0 * sigma))
+        ksize = 2 * radius + 1
+        gradient = cv2.GaussianBlur(
+            gradient[np.newaxis, :].astype(np.float32),
+            ksize=(ksize, 1),
+            sigmaX=sigma,
+            sigmaY=0,
+            borderType=cv2.BORDER_CONSTANT,
+        )[0]
 
         img = image.astype(np.float32)
         img[..., :3] = np.clip(img[..., :3] - gradient[np.newaxis, :, np.newaxis], 0, 255)
