@@ -57,6 +57,10 @@ def _patch_to_rgb():
     _gray_map.utils.to_rgb = _fast_to_rgb
 
 
+_getsize_cache: dict = {}  # (id(font), text, direction) -> (w, h)
+_getlength_cache: dict = {}  # (id(font), text, direction) -> float
+
+
 def register_pillow_compat():
     """
     Monkey-patches Pillow 10+ to restore removed methods ``getsize`` and
@@ -67,6 +71,11 @@ def register_pillow_compat():
     if not hasattr(ImageFont.FreeTypeFont, "getsize"):
 
         def getsize(self, text, direction=None, features=None, language=None):
+            key = (id(self), text, direction)
+            cached = _getsize_cache.get(key)
+            if cached is not None:
+                return cached
+
             # Width: prefer getlength (advance width) over getbbox (ink width)
             try:
                 w = int(math.ceil(self.getlength(text, direction=direction, features=features, language=language)))
@@ -84,9 +93,26 @@ def register_pillow_compat():
                 _, top, _, bottom = self.getbbox(text)
             h = bottom - top
 
-            return w, h
+            result = (w, h)
+            _getsize_cache[key] = result
+            return result
 
         setattr(ImageFont.FreeTypeFont, "getsize", getsize)
+
+    # Patch FreeTypeFont.getlength with a cache — it's called ~32k times per
+    # 10 samples, always for single characters which repeat constantly.
+    _original_getlength = ImageFont.FreeTypeFont.getlength
+
+    def getlength(self, text, mode="", direction=None, features=None, language=None):
+        key = (id(self), text, direction)
+        cached = _getlength_cache.get(key)
+        if cached is not None:
+            return cached
+        result = _original_getlength(self, text, mode=mode, direction=direction, features=features, language=language)
+        _getlength_cache[key] = result
+        return result
+
+    setattr(ImageFont.FreeTypeFont, "getlength", getlength)
 
     # Patch ImageFont.FreeTypeFont.getmask2 to handle missing libraqm.
     # We always patch this because even if it exists, it may raise KeyError
