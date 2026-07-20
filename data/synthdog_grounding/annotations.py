@@ -256,29 +256,23 @@ def compute_quality_metrics(
     # Pairwise intra/cross block line overlap (normalized bbox fractions)
     max_intra = 0.0
     max_cross = 0.0
-    for i in range(len(lines)):
-        bi = lines[i].bbox
-        area_i = (bi[2] - bi[0]) * (bi[3] - bi[1])
-        for j in range(i + 1, len(lines)):
-            bj = lines[j].bbox
-            area_j = (bj[2] - bj[0]) * (bj[3] - bj[1])
-            ix1 = max(bi[0], bj[0])
-            iy1 = max(bi[1], bj[1])
-            ix2 = min(bi[2], bj[2])
-            iy2 = min(bi[3], bj[3])
-            if ix2 <= ix1 or iy2 <= iy1:
-                continue
-            inter = (ix2 - ix1) * (iy2 - iy1)
-            min_area = min(area_i, area_j)
-            if min_area <= 0:
-                continue
-            frac = inter / min_area
-            if lines[i].block_id == lines[j].block_id:
-                if frac > max_intra:
-                    max_intra = frac
-            else:
-                if frac > max_cross:
-                    max_cross = frac
+    if len(lines) >= 2:
+        bboxes = np.array([ln.bbox for ln in lines], dtype=np.float32)
+        block_ids = np.array([ln.block_id for ln in lines], dtype=np.int32)
+        x1, y1, x2, y2 = bboxes[:, 0], bboxes[:, 1], bboxes[:, 2], bboxes[:, 3]
+        areas = (x2 - x1) * (y2 - y1)
+        i_idx, j_idx = np.triu_indices(len(lines), k=1)
+        iw = np.maximum(np.minimum(x2[i_idx], x2[j_idx]) - np.maximum(x1[i_idx], x1[j_idx]), 0)
+        ih = np.maximum(np.minimum(y2[i_idx], y2[j_idx]) - np.maximum(y1[i_idx], y1[j_idx]), 0)
+        inter = iw * ih
+        min_area = np.minimum(areas[i_idx], areas[j_idx])
+        valid = (inter > 0) & (min_area > 0)
+        frac = np.where(valid, inter / np.where(min_area > 0, min_area, 1.0), 0.0)
+        same_block = block_ids[i_idx] == block_ids[j_idx]
+        if same_block.any():
+            max_intra = float(frac[same_block].max())
+        if (~same_block).any():
+            max_cross = float(frac[~same_block].max())
 
     return {
         "min_line_contrast": round(min(line_contrasts), 3) if line_contrasts else None,
