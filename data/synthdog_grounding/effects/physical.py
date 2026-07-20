@@ -3,7 +3,6 @@ Tier 3 realistic document noise augmentation effects.
 
 All effect classes expose a static ``apply(image, args)`` method that
 accepts an RGBA uint8 numpy array and returns an RGBA uint8 numpy array.
-Computation is done in float32 internally.
 """
 
 import cv2
@@ -38,6 +37,20 @@ def _gaussian_blur_2d(arr: np.ndarray, sigma: float) -> np.ndarray:
     )
 
 
+# Module-level cache: (H, W) -> (Y_grid, X_grid) float32.
+# Avoids recreating large meshgrids on every effect call; image size is
+# constant within a run so this stays small (one entry per unique size).
+_meshgrid_cache: dict = {}
+
+
+def _get_meshgrid(H: int, W: int):
+    key = (H, W)
+    if key not in _meshgrid_cache:
+        Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+        _meshgrid_cache[key] = (Y, X)
+    return _meshgrid_cache[key]
+
+
 # ---------------------------------------------------------------------------
 # Effect classes
 # ---------------------------------------------------------------------------
@@ -52,16 +65,18 @@ class VignettingEffect:
         intensity = np.random.uniform(*args.get("intensity", [30, 80]))
         shape = np.random.uniform(*args.get("shape", [1.5, 3.0]))
 
-        Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+        Y, X = _get_meshgrid(H, W)
         Xn = (X - W / 2) / (W / 2)
         Yn = (Y - H / 2) / (H / 2)
         # Normalize so r==1 at image corners
         r = np.sqrt(Xn**2 + Yn**2) / np.sqrt(2)
 
-        mask = (r**shape * intensity).astype(np.float32)  # 0 at center
-        img = image.astype(np.float32)
-        img[..., :3] = np.clip(img[..., :3] - mask[..., np.newaxis], 0, 255)
-        return img.astype(np.uint8)
+        # Avoid float32 round-trip on the full image: cast mask to int16 and
+        # subtract directly from the uint8 channels via int16 arithmetic.
+        mask_i16 = np.clip(r**shape * intensity, 0, 255).astype(np.int16)
+        result = image.copy()
+        result[..., :3] = np.clip(image[..., :3].astype(np.int16) - mask_i16[..., np.newaxis], 0, 255).astype(np.uint8)
+        return result
 
 
 class BookSpineShadowEffect:
@@ -98,9 +113,13 @@ class BookSpineShadowEffect:
             borderType=cv2.BORDER_CONSTANT,
         )[0]
 
-        img = image.astype(np.float32)
-        img[..., :3] = np.clip(img[..., :3] - gradient[np.newaxis, :, np.newaxis], 0, 255)
-        return img.astype(np.uint8)
+        # gradient is 1D (W,); avoid float32 round-trip of the full image.
+        gradient_i16 = np.clip(gradient, 0, 255).astype(np.int16)  # (W,)
+        result = image.copy()
+        result[..., :3] = np.clip(
+            image[..., :3].astype(np.int16) - gradient_i16[np.newaxis, :, np.newaxis], 0, 255
+        ).astype(np.uint8)
+        return result
 
 
 class StainOverlayEffect:
@@ -118,9 +137,7 @@ class StainOverlayEffect:
 
         count = np.random.randint(count_range[0], count_range[1] + 1)
         min_dim = min(H, W)
-        img = image.astype(np.float32)
-
-        Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+        result = image.copy()
 
         for _ in range(count):
             cx = np.random.uniform(0.1, 0.9) * W
@@ -129,11 +146,29 @@ class StainOverlayEffect:
             rx = size * np.random.uniform(0.6, 1.6)
             ry = size * np.random.uniform(0.6, 1.6)
 
-            # Smooth paraboloid bump: 1 at center, 0 outside ellipse
-            bump = np.maximum(0.0, 1.0 - ((X - cx) / rx) ** 2 - ((Y - cy) / ry) ** 2).astype(np.float32)
-
-            # Feather the edge with a Gaussian blur
             sigma = max(1.0, size * 0.25)
+            blur_pad = int(np.ceil(3.0 * sigma))
+
+            # Bounding box of the ellipse extended by the blur radius, clamped
+            # to the image.  Doing the Gaussian blur on this small patch instead
+            # of the full H×W image is the dominant speedup (20–30× less data).
+            x0 = max(0, int(cx - rx) - blur_pad)
+            x1 = min(W, int(cx + rx) + blur_pad + 1)
+            y0 = max(0, int(cy - ry) - blur_pad)
+            y1 = min(H, int(cy + ry) + blur_pad + 1)
+            if x1 <= x0 or y1 <= y0:
+                continue
+
+            # Local coordinate vectors (absolute image pixel positions)
+            Xb = np.arange(x0, x1, dtype=np.float32)  # (patch_W,)
+            Yb = np.arange(y0, y1, dtype=np.float32)  # (patch_H,)
+
+            # Paraboloid bump: 1 at center, 0 outside ellipse
+            bump = np.maximum(
+                0.0,
+                1.0 - ((Xb[np.newaxis, :] - cx) / rx) ** 2 - ((Yb[:, np.newaxis] - cy) / ry) ** 2,
+            )
+
             bump = _gaussian_blur_2d(bump, sigma)
             peak = bump.max()
             if peak < 1e-8:
@@ -141,15 +176,23 @@ class StainOverlayEffect:
             bump /= peak  # renormalize to [0, 1]
 
             alpha = np.random.uniform(alpha_range[0], alpha_range[1])
-            cr = np.random.randint(cr_range[0], cr_range[1] + 1)
-            cg = np.random.randint(cg_range[0], cg_range[1] + 1)
-            cb = np.random.randint(cb_range[0], cb_range[1] + 1)
-            stain_color = np.array([cr, cg, cb], dtype=np.float32)
+            stain_color = np.array(
+                [
+                    np.random.randint(cr_range[0], cr_range[1] + 1),
+                    np.random.randint(cg_range[0], cg_range[1] + 1),
+                    np.random.randint(cb_range[0], cb_range[1] + 1),
+                ],
+                dtype=np.float32,
+            )
 
-            mask = bump[..., np.newaxis] * alpha
-            img[..., :3] = img[..., :3] * (1.0 - mask) + stain_color * mask
+            mask = bump[..., np.newaxis] * alpha  # (ph, pw, 1)
 
-        return np.clip(img, 0, 255).astype(np.uint8)
+            # Convert only the small local patch to float32
+            patch = result[y0:y1, x0:x1].astype(np.float32)
+            patch[..., :3] = patch[..., :3] * (1.0 - mask) + stain_color * mask
+            result[y0:y1, x0:x1] = np.clip(patch, 0, 255).astype(np.uint8)
+
+        return result
 
 
 class FoldCreaseEffect:
@@ -164,7 +207,7 @@ class FoldCreaseEffect:
         intensity_range = args.get("intensity", [10, 45])
 
         count = np.random.randint(count_range[0], count_range[1] + 1)
-        img = image.astype(np.float32)
+        result = image.copy()
 
         orientations = ["horizontal", "vertical", "diagonal"]
 
@@ -178,26 +221,27 @@ class FoldCreaseEffect:
                 pos = np.random.uniform(0.1, 0.9) * H
                 Y = np.arange(H, dtype=np.float32)
                 profile = np.exp(-0.5 * ((Y - pos) / half_w) ** 2) * intensity
-                mask = profile[:, np.newaxis, np.newaxis]
+                sub = np.clip(profile, 0, 255).astype(np.int16)[:, np.newaxis, np.newaxis]
             elif orientation == "vertical":
                 pos = np.random.uniform(0.1, 0.9) * W
                 X = np.arange(W, dtype=np.float32)
                 profile = np.exp(-0.5 * ((X - pos) / half_w) ** 2) * intensity
-                mask = profile[np.newaxis, :, np.newaxis]
-            else:  # diagonal
+                sub = np.clip(profile, 0, 255).astype(np.int16)[np.newaxis, :, np.newaxis]
+            else:  # diagonal — use cached meshgrid instead of allocating each call
                 angle = np.random.uniform(25, 65)
                 px = np.random.uniform(0.2, 0.8) * W
                 py = np.random.uniform(0.2, 0.8) * H
                 rad = np.radians(angle)
-                Yg, Xg = np.mgrid[0:H, 0:W].astype(np.float32)
+                Yg, Xg = _get_meshgrid(H, W)
                 # Perpendicular distance from a line through (px, py) at given angle
                 dist = -(Xg - px) * np.sin(rad) + (Yg - py) * np.cos(rad)
                 profile = np.exp(-0.5 * (dist / half_w) ** 2) * intensity
-                mask = profile[..., np.newaxis]
+                sub = np.clip(profile, 0, 255).astype(np.int16)[..., np.newaxis]
 
-            img[..., :3] = np.clip(img[..., :3] - mask, 0, 255)
+            # int16 arithmetic avoids float32 round-trip on the full image
+            result[..., :3] = np.clip(result[..., :3].astype(np.int16) - sub, 0, 255).astype(np.uint8)
 
-        return img.astype(np.uint8)
+        return result
 
 
 class LowTonerStreakEffect:
@@ -212,7 +256,7 @@ class LowTonerStreakEffect:
         intensity_range = args.get("intensity", [0.05, 0.20])
 
         count = np.random.randint(count_range[0], count_range[1] + 1)
-        img = image.astype(np.float32)
+        result = image.copy()
 
         for _ in range(count):
             width = np.random.uniform(width_range[0], width_range[1])
@@ -228,19 +272,42 @@ class LowTonerStreakEffect:
                 pos = np.random.uniform(0.05, 0.95) * H
                 Y = np.arange(H, dtype=np.float32)
                 profile = np.exp(-0.5 * ((Y - pos) / sigma) ** 2)
-                # Vary intensity along the streak length for a non-uniform look
+
+                # Only convert and process rows where the streak is non-negligible
+                # (>1% of peak).  Typically 6·sigma rows out of H — 3–7% of the image.
+                active = profile > 0.01
+                if not active.any():
+                    continue
+                rows = np.where(active)[0]
+                y0, y1 = int(rows[0]), int(rows[-1]) + 1
+
                 noise = np.random.uniform(0.75, 1.25, size=(W,)).astype(np.float32)
-                lighten = (profile[:, np.newaxis] * noise[np.newaxis, :] * intensity * 255)[..., np.newaxis]
+                lighten = (profile[y0:y1, np.newaxis] * noise[np.newaxis, :] * intensity * 255)[..., np.newaxis]
+
+                patch = result[y0:y1].astype(np.float32)
+                patch[..., :3] = np.clip(patch[..., :3] + lighten, 0, 255)
+                result[y0:y1] = patch.astype(np.uint8)
+
             else:  # vertical
                 pos = np.random.uniform(0.05, 0.95) * W
                 X = np.arange(W, dtype=np.float32)
                 profile = np.exp(-0.5 * ((X - pos) / sigma) ** 2)
+
+                active = profile > 0.01
+                if not active.any():
+                    continue
+                cols = np.where(active)[0]
+                x0, x1 = int(cols[0]), int(cols[-1]) + 1
+
                 noise = np.random.uniform(0.75, 1.25, size=(H,)).astype(np.float32)
-                lighten = (noise[:, np.newaxis] * profile[np.newaxis, :] * intensity * 255)[..., np.newaxis]
+                lighten = (noise[:, np.newaxis] * profile[np.newaxis, x0:x1] * intensity * 255)[..., np.newaxis]
 
-            img[..., :3] = np.clip(img[..., :3] + lighten, 0, 255)
+                # result[:, x0:x1] is non-contiguous; .copy() makes it contiguous
+                patch = result[:, x0:x1].copy().astype(np.float32)
+                patch[..., :3] = np.clip(patch[..., :3] + lighten, 0, 255)
+                result[:, x0:x1] = patch.astype(np.uint8)
 
-        return img.astype(np.uint8)
+        return result
 
 
 class MoireOverlayEffect:
@@ -253,16 +320,20 @@ class MoireOverlayEffect:
         alpha = np.random.uniform(*args.get("alpha", [0.05, 0.15]))
         angle = np.random.uniform(*args.get("angle", [0, 90]))
 
-        Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+        Y, X = _get_meshgrid(H, W)
         rad = np.radians(angle)
         Xr = X * np.cos(rad) + Y * np.sin(rad)
         Yr = -X * np.sin(rad) + Y * np.cos(rad)
 
         pattern = 0.5 + 0.5 * np.sin(2.0 * np.pi * freq * Xr) * np.sin(2.0 * np.pi * freq * Yr)
 
-        img = image.astype(np.float32)
-        img[..., :3] = np.clip(img[..., :3] - pattern[..., np.newaxis] * alpha * 255, 0, 255)
-        return img.astype(np.uint8)
+        # Avoid float32 round-trip on the full image.
+        subtract_i16 = np.clip(pattern * (alpha * 255), 0, 255).astype(np.int16)
+        result = image.copy()
+        result[..., :3] = np.clip(image[..., :3].astype(np.int16) - subtract_i16[..., np.newaxis], 0, 255).astype(
+            np.uint8
+        )
+        return result
 
 
 class WatermarkEffect:
