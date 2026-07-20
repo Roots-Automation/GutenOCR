@@ -1,7 +1,60 @@
 import math
 import warnings
+from functools import lru_cache
 
+import numpy as np
 from PIL import ImageFont
+
+
+@lru_cache(maxsize=128)
+def _cached_truetype(path: str, size: int):
+    return ImageFont.truetype(path, size=size)
+
+
+def _patch_font_cache():
+    """Cache ImageFont.truetype by (path, size) — SynthTiger loads the same
+    font hundreds of times per sample with no cache of its own."""
+    from synthtiger.layers import text_layer as _tl
+
+    _tl.TextLayer._read_font = staticmethod(lambda path, size: _cached_truetype(path, size))
+
+
+_to_rgb_rng = np.random.default_rng()
+
+
+def _fast_to_rgb(gray: int, colorize: bool = False):
+    """Drop-in for synthtiger.utils.image_util.to_rgb.
+
+    The original permutes all 65 536 (r, g) pairs to find a valid triple.
+    We generate a batch of 512 candidates at once and check vectorized —
+    3 numpy calls regardless of how many candidates are valid.
+    """
+    if not colorize:
+        return (gray, gray, gray)
+
+    r = _to_rgb_rng.integers(0, 256, size=512, dtype=np.int32)
+    g = _to_rgb_rng.integers(0, 256, size=512, dtype=np.int32)
+    b = np.rint((gray - r * 0.2989 - g * 0.5870) / 0.1140).astype(np.int32)
+    valid = (b >= 0) & (b < 256)
+    if valid.any():
+        idx = int(np.argmax(valid))
+        return (int(r[idx]), int(g[idx]), int(b[idx]))
+    return (gray, gray, gray)
+
+
+def _patch_to_rgb():
+    """Replace the permutation-based to_rgb in synthtiger with the fast version."""
+    import synthtiger.components.color.gray as _gray
+    import synthtiger.components.color.gray_map as _gray_map
+    import synthtiger.utils as _u
+    import synthtiger.utils.image_util as _iu
+
+    _iu.to_rgb = _fast_to_rgb
+    _u.to_rgb = _fast_to_rgb
+    # The color components import `utils` and call `utils.to_rgb` directly,
+    # so patch at the module level where they'll look it up.
+    _gray.utils.to_rgb = _fast_to_rgb
+    _gray_map.utils.to_rgb = _fast_to_rgb
 
 
 def register_pillow_compat():
@@ -59,3 +112,5 @@ def register_pillow_compat():
 
 # Apply patches immediately on import
 register_pillow_compat()
+_patch_font_cache()
+_patch_to_rgb()
