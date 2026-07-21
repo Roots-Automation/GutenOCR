@@ -43,3 +43,8 @@ include = ["elements*", "layouts*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.txt"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
