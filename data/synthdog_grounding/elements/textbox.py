@@ -119,30 +119,20 @@ class TextBox:
             chars.append(char)
             left = char_layer.right
 
-        # Snapshot before backtracking so we can fall back to a truncated token
-        # if no word boundary exists in the accumulated chars.
-        chars_at_overflow = list(chars)
-        char_layers_at_overflow = list(char_layers)
+        # Find the last space boundary so we don't split a word across cells.
+        # If no space exists, accept the truncated token as-is: the cursor is
+        # already at the overflow char (put back by the fill loop above), so
+        # the next textbox starts correctly without any extra repositioning.
+        last_space = next((i for i in range(len(chars) - 1, -1, -1) if chars[i].isspace()), None)
 
-        while len(chars) and not chars[-1].isspace():
-            chars.pop()
-            char_layers.pop()
-            text.prev()
-
-        if chars:
-            # Normal case: discard the trailing space; reader is already
-            # positioned after it, so the next textbox starts at the first
-            # real character.
-            chars.pop()
-            char_layers.pop()
-        elif chars_at_overflow:
-            # No space found — full backtrack would discard everything.
-            # Accept the truncated token instead so long tokens (URLs, code
-            # identifiers, compound words) don't silently drop the cell.
-            # The reader is already positioned at the overflow char from the
-            # text.prev() call in the fill loop above.
-            chars = chars_at_overflow
-            char_layers = char_layers_at_overflow
+        if last_space is not None:
+            # Put back everything from the space onward (inclusive) and trim.
+            n_restore = len(chars) - last_space
+            for _ in range(n_restore):
+                text.prev()
+            chars = chars[:last_space]
+            char_layers = char_layers[:last_space]
+        # else: no space — keep chars as-is, cursor already at overflow char.
 
         text = "".join(chars).strip()
         text_alpha_only = re.sub(r"[^\w]", "", text)

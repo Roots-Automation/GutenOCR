@@ -120,6 +120,30 @@ def test_generate_single_long_word_truncates_instead_of_dropping():
     assert "superlongwordwithoutanyspaces".startswith(text)
 
 
+def test_generate_long_word_does_not_poison_cursor():
+    """Consecutive generate() calls on the same cursor must not duplicate text.
+
+    The no-space backtrack previously walked the cursor back to the start of
+    the token before restoring the snapshot, so the next call re-read the same
+    characters.  The two returned texts must be disjoint prefixes of the source.
+    """
+    tb = _make_textbox()
+    source = "superlongwordwithoutanyspaces second"
+    cursor = _cursor(source)
+    narrow_box = (60, FONT_SIZE)
+
+    np.random.seed(0)
+    _, text1, _ = tb.generate(narrow_box, cursor, FONT_CFG)
+    np.random.seed(0)
+    _, text2, _ = tb.generate(narrow_box, cursor, FONT_CFG)
+
+    assert text1 is not None
+    assert text2 is not None
+    # The two texts must be different and together must not exceed the source length.
+    assert text1 != text2
+    assert len(text1) + len(text2) <= len(source.replace(" ", ""))
+
+
 def test_generate_only_punctuation_returns_none():
     """Lines that reduce to only non-alphanumeric chars fail the alpha check.
 
