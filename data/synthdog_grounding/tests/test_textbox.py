@@ -103,21 +103,21 @@ def test_generate_normal_sentence_returns_layer():
     assert len(words) > 0
 
 
-def test_generate_single_long_word_returns_none():
-    """A single token with no spaces that overflows the box returns None.
+def test_generate_single_long_word_truncates_instead_of_dropping():
+    """A long token with no spaces is now truncated at the overflow point.
 
-    This is the key fragility: any corpus entry that produces a run of
-    non-space characters longer than the cell width causes a silent empty box.
-    URLs, code identifiers, and very long German compound words all hit this.
-    The box is narrowed to 60px so the word is guaranteed to overflow.
+    Previously this returned (None, None, None), silently dropping the cell.
+    Now it returns whatever characters fit, so no cell is lost to a missing
+    space boundary.
     """
     tb = _make_textbox()
     np.random.seed(0)
     narrow_box = (60, FONT_SIZE)  # narrow enough that any multi-char word overflows
     layer, text, words = tb.generate(narrow_box, _cursor("superlongwordwithoutanyspaces"), FONT_CFG)
-    assert layer is None
-    assert text is None
-    assert words is None
+    assert layer is not None
+    assert len(text) > 0
+    # text is a prefix of the original token
+    assert "superlongwordwithoutanyspaces".startswith(text)
 
 
 def test_generate_only_punctuation_returns_none():

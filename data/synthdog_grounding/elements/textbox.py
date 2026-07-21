@@ -119,16 +119,30 @@ class TextBox:
             chars.append(char)
             left = char_layer.right
 
+        # Snapshot before backtracking so we can fall back to a truncated token
+        # if no word boundary exists in the accumulated chars.
+        chars_at_overflow = list(chars)
+        char_layers_at_overflow = list(char_layers)
+
         while len(chars) and not chars[-1].isspace():
             chars.pop()
             char_layers.pop()
             text.prev()
 
-        if len(chars):
-            # Discard the trailing space; reader is already positioned after it,
-            # so the next textbox starts at the first real character.
+        if chars:
+            # Normal case: discard the trailing space; reader is already
+            # positioned after it, so the next textbox starts at the first
+            # real character.
             chars.pop()
             char_layers.pop()
+        elif chars_at_overflow:
+            # No space found — full backtrack would discard everything.
+            # Accept the truncated token instead so long tokens (URLs, code
+            # identifiers, compound words) don't silently drop the cell.
+            # The reader is already positioned at the overflow char from the
+            # text.prev() call in the fill loop above.
+            chars = chars_at_overflow
+            char_layers = char_layers_at_overflow
 
         text = "".join(chars).strip()
         text_alpha_only = re.sub(r"[^\w]", "", text)
