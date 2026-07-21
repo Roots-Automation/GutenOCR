@@ -44,6 +44,10 @@ include = ["elements*", "layouts*"]
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.txt"]
 
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
+
 [dependency-groups]
 dev = [
     "pytest>=9.1.1",

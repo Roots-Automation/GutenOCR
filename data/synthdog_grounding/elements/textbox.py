@@ -20,34 +20,34 @@ def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float)
             ``text_layer.size[0]`` (the integer merged-layer canvas width) so that
             the denominator matches the span used during quad interpolation.
     """
+    inv_w = 1.0 / line_width if line_width > 0 else None
     words = []
-    cur_chars: list[str] = []
-    cur_x1: float | None = None
-    cur_x2: float = 0.0
+    word_chars: list[str] = []
+    x1 = x2 = 0.0
 
     for ch, layer in zip(chars, char_layers):
         if ch.isspace():
-            if cur_chars:
+            if word_chars:
                 words.append(
                     {
-                        "text": "".join(cur_chars),
-                        "x1_ratio": cur_x1 / line_width if line_width > 0 else 0.0,
-                        "x2_ratio": cur_x2 / line_width if line_width > 0 else 1.0,
+                        "text": "".join(word_chars),
+                        "x1_ratio": x1 * inv_w if inv_w else 0.0,
+                        "x2_ratio": x2 * inv_w if inv_w else 1.0,
                     }
                 )
-                cur_chars, cur_x1, cur_x2 = [], None, 0.0
+                word_chars.clear()
         else:
-            if cur_x1 is None:
-                cur_x1 = layer.left
-            cur_x2 = layer.right
-            cur_chars.append(ch)
+            if not word_chars:
+                x1 = layer.left
+            x2 = layer.right
+            word_chars.append(ch)
 
-    if cur_chars:
+    if word_chars:
         words.append(
             {
-                "text": "".join(cur_chars),
-                "x1_ratio": cur_x1 / line_width if line_width > 0 else 0.0,
-                "x2_ratio": cur_x2 / line_width if line_width > 0 else 1.0,
+                "text": "".join(word_chars),
+                "x1_ratio": x1 * inv_w if inv_w else 0.0,
+                "x2_ratio": x2 * inv_w if inv_w else 1.0,
             }
         )
 
