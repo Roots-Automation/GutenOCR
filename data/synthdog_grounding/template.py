@@ -15,6 +15,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pillow_compat  # noqa: E402, F401, I001
 
+# imgaug lazily initializes its GLOBAL_RNG on the first call to get_global_rng(),
+# drawing one value from np.random to seed it. If that happens inside
+# set_global_random_seed() (which has already set np.random to a deterministic
+# state), it advances the MT19937 position by 1 and breaks reproducibility on
+# the first generate(seed=N) call. Force initialization here at import time so
+# GLOBAL_RNG is never None when set_global_random_seed() runs.
+import imgaug.random as _imgaug_random  # noqa: E402
+
+_imgaug_random.get_global_rng()
+
 import copy  # noqa: E402
 import hashlib  # noqa: E402
 import json  # noqa: E402
@@ -25,9 +35,6 @@ from typing import Any  # noqa: E402
 
 import numpy as np  # noqa: E402
 import yaml  # noqa: E402
-from PIL import Image  # noqa: E402
-from synthtiger import components, layers, templates  # noqa: E402
-
 from annotations import build_annotations, compute_quality_metrics  # noqa: E402
 from effects.physical import (  # noqa: E402
     BookSpineShadowEffect,
@@ -38,7 +45,7 @@ from effects.physical import (  # noqa: E402
     WatermarkEffect,
     apply_if_enabled,
 )
-from elements import Background, Document  # noqa: E402
+from PIL import Image  # noqa: E402
 from serialization import (  # noqa: E402
     KEY_QUALITY_METRICS,
     KEY_TEXT_BLOCKS,
@@ -52,6 +59,9 @@ from serialization import (  # noqa: E402
     line_annotation_to_dict,
     word_annotation_to_dict,
 )
+from synthtiger import components, layers, templates  # noqa: E402
+
+from elements import Background, Document  # noqa: E402
 
 
 def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
@@ -300,7 +310,11 @@ class SynthDoG(templates.Template):
         result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
         return result
 
-    def generate(self):
+    def generate(self, seed: int | None = None):
+        if seed is not None:
+            import synthtiger as _st
+
+            _st.set_global_random_seed(seed)
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
         aspect_ratio = np.random.uniform(self.aspect_ratio[0], self.aspect_ratio[1])

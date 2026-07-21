@@ -19,21 +19,21 @@ def _patch_font_cache():
     _tl.TextLayer._read_font = staticmethod(lambda path, size: _cached_truetype(path, size))
 
 
-_to_rgb_rng = np.random.default_rng()
-
-
 def _fast_to_rgb(gray: int, colorize: bool = False):
     """Drop-in for synthtiger.utils.image_util.to_rgb.
 
     The original permutes all 65 536 (r, g) pairs to find a valid triple.
     We generate a batch of 512 candidates at once and check vectorized —
     3 numpy calls regardless of how many candidates are valid.
+
+    Uses the global np.random state (seeded by set_global_random_seed) so that
+    generate(seed=N) is fully deterministic.
     """
     if not colorize:
         return (gray, gray, gray)
 
-    r = _to_rgb_rng.integers(0, 256, size=512, dtype=np.int32)
-    g = _to_rgb_rng.integers(0, 256, size=512, dtype=np.int32)
+    r = np.random.randint(0, 256, size=512, dtype=np.int32)
+    g = np.random.randint(0, 256, size=512, dtype=np.int32)
     b = np.rint((gray - r * 0.2989 - g * 0.5870) / 0.1140).astype(np.int32)
     valid = (b >= 0) & (b < 256)
     if valid.any():
