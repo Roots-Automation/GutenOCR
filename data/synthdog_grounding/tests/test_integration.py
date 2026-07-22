@@ -253,6 +253,119 @@ def test_generate_null_frac_in_range(sample_42):
 
 
 # ---------------------------------------------------------------------------
+# Semantic correctness — annotations must match the rendered image and each other
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.slow
+def test_word_texts_reconstruct_line_text(sample_42):
+    """Words of each line, space-joined and whitespace-normalized, must equal line.text.
+
+    This verifies the text→annotation mapping: if word segmentation is wrong,
+    this fails even when the bboxes look plausible.
+    """
+    import re
+
+    words_by_line: dict[int, list] = {}
+    for wd in sample_42["words"]:
+        words_by_line.setdefault(wd.line_id, []).append(wd)
+
+    for ln in sample_42["lines"]:
+        line_words = sorted(words_by_line.get(ln.line_id, []), key=lambda w: w.word_id)
+        reconstructed = " ".join(w.text for w in line_words)
+        expected = re.sub(r"\s+", " ", ln.text).strip()
+        assert reconstructed == expected, f"line {ln.line_id}: joined words {reconstructed!r} != line text {expected!r}"
+
+
+@pytest.mark.slow
+def test_word_bboxes_contained_in_line_bboxes(sample_42):
+    """Each word's bbox must lie within its parent line's bbox.
+
+    Word bboxes are derived by interpolating the line's quad corners, so they
+    must be a geometric subset — not just "nearby".
+    """
+    TOL = 2e-3  # ~1 pixel on a 500 px image
+    line_map = {ln.line_id: ln for ln in sample_42["lines"]}
+    for wd in sample_42["words"]:
+        lb = line_map[wd.line_id].bbox
+        wb = wd.bbox
+        assert wb[0] >= lb[0] - TOL, f"word {wd.word_id} x1 {wb[0]:.4f} < line x1 {lb[0]:.4f}"
+        assert wb[1] >= lb[1] - TOL, f"word {wd.word_id} y1 {wb[1]:.4f} < line y1 {lb[1]:.4f}"
+        assert wb[2] <= lb[2] + TOL, f"word {wd.word_id} x2 {wb[2]:.4f} > line x2 {lb[2]:.4f}"
+        assert wb[3] <= lb[3] + TOL, f"word {wd.word_id} y2 {wb[3]:.4f} > line y2 {lb[3]:.4f}"
+
+
+@pytest.mark.slow
+def test_block_bbox_equals_union_of_member_line_bboxes(sample_42):
+    """Block bbox must be exactly the union of its member lines' bboxes.
+
+    build_block_annotations computes this union and rounds to 3 dp.  Any
+    mismatch means the block grouping or bbox computation is wrong.
+    """
+    TOL = 5e-4  # half of one rounding unit (1e-3)
+    line_map = {ln.line_id: ln for ln in sample_42["lines"]}
+    for blk in sample_42["blocks"]:
+        member_bboxes = [line_map[lid].bbox for lid in blk.line_ids]
+        ex1 = min(b[0] for b in member_bboxes)
+        ey1 = min(b[1] for b in member_bboxes)
+        ex2 = max(b[2] for b in member_bboxes)
+        ey2 = max(b[3] for b in member_bboxes)
+        assert abs(blk.bbox[0] - ex1) <= TOL, f"block {blk.block_id} x1 {blk.bbox[0]} != union {ex1}"
+        assert abs(blk.bbox[1] - ey1) <= TOL, f"block {blk.block_id} y1 {blk.bbox[1]} != union {ey1}"
+        assert abs(blk.bbox[2] - ex2) <= TOL, f"block {blk.block_id} x2 {blk.bbox[2]} != union {ex2}"
+        assert abs(blk.bbox[3] - ey2) <= TOL, f"block {blk.block_id} y2 {blk.bbox[3]} != union {ey2}"
+
+
+@pytest.mark.slow
+def test_line_bbox_regions_contain_text_pixels(sample_42):
+    """Each line bbox region in the rendered image must have nonzero pixel contrast.
+
+    If bboxes are misaligned (e.g., pointing at blank paper instead of text),
+    the std would be near zero.  Text on a white background always has std > 1
+    in the [0, 255] range — we use a conservative floor of 2.0.
+    """
+    img = sample_42["image"]
+    h, w = img.shape[:2]
+    gray = (0.2989 * img[..., 0] + 0.5870 * img[..., 1] + 0.1140 * img[..., 2]).astype(np.float32)
+    for ln in sample_42["lines"]:
+        x1, y1, x2, y2 = ln.bbox
+        px1, py1 = int(round(x1 * w)), int(round(y1 * h))
+        px2, py2 = int(round(x2 * w)), int(round(y2 * h))
+        if px2 <= px1 or py2 <= py1:
+            continue
+        region = gray[py1:py2, px1:px2]
+        std = float(np.std(region))
+        assert std > 2.0, (
+            f"line {ln.line_id} bbox {ln.bbox} has pixel std={std:.2f}: region looks blank — bbox may be misaligned"
+        )
+
+
+@pytest.mark.slow
+def test_label_equals_whitespace_normalized_join_of_line_texts(sample_42):
+    """The top-level label must equal the whitespace-normalized space-join of line texts.
+
+    template.py line 371: label = re.sub(r'\\s+', ' ', ' '.join(ln.text ...)).strip()
+    """
+    import re
+
+    raw = " ".join(ln.text for ln in sample_42["lines"])
+    expected = re.sub(r"\s+", " ", raw).strip()
+    assert sample_42["label"] == expected
+
+
+@pytest.mark.slow
+def test_rendered_text_contrast_ratio_above_one(sample_42):
+    """Text on paper must produce a WCAG contrast ratio > 1.
+
+    A ratio of exactly 1 means text and background are identical — the image
+    is blank or the bbox captures no text.  Any real render must exceed this.
+    """
+    ratio = sample_42["quality_metrics"]["min_line_contrast_ratio"]
+    assert ratio is not None
+    assert ratio > 1.0, f"min_line_contrast_ratio={ratio} — text and background are indistinguishable"
+
+
+# ---------------------------------------------------------------------------
 # Reproducibility
 # ---------------------------------------------------------------------------
 
