@@ -540,6 +540,114 @@ def test_compute_quality_metrics_no_lines_has_none_contrast():
     assert metrics["word_count"] == 0
 
 
+def test_build_word_annotations_empty_words_for_one_line():
+    """A line with zero words must produce no WordAnnotations — not crash."""
+    layer = _axis_layer(0, 0, 100, 50)
+    words_per_line = [
+        [],  # first line: no words
+        [{"text": "hello", "x1_ratio": 0.0, "x2_ratio": 1.0}],  # second line: one word
+    ]
+    words = build_word_annotations([layer, layer], words_per_line, w=100, h=50, emit_quads=False)
+    assert len(words) == 1
+    assert words[0].text == "hello"
+    assert words[0].line_id == 1
+    assert words[0].word_id == 0
+
+
+def test_build_word_annotations_tilted_quad_word_bbox_valid():
+    """Word bboxes from a rotated quad must still satisfy x1<=x2 and y1<=y2.
+
+    A parallelogram quad (sheared horizontally) produces word corner points
+    whose x and y values may be out of sorted order — the AABB min/max in
+    build_word_annotations must handle this correctly.
+    """
+    # Tilted quad: tl=(10,0), tr=(110,0), br=(120,50), bl=(20,50)
+    layer = _mock_layer([[10, 0], [110, 0], [120, 50], [20, 50]])
+    words_per_line = [[{"text": "word", "x1_ratio": 0.0, "x2_ratio": 1.0}]]
+    words = build_word_annotations([layer], words_per_line, w=200, h=100, emit_quads=False)
+    assert len(words) == 1
+    wx1, wy1, wx2, wy2 = words[0].bbox
+    assert wx1 <= wx2, f"word bbox x-inverted: x1={wx1} > x2={wx2}"
+    assert wy1 <= wy2, f"word bbox y-inverted: y1={wy1} > y2={wy2}"
+
+
+def test_build_word_annotations_partial_span_tilted_quad_bbox_valid():
+    """A word at x1_ratio=0.25, x2_ratio=0.75 on a tilted quad must still
+    produce a valid (non-inverted) bbox.
+    """
+    # Strongly tilted: tl=(0,0) tr=(100,50) br=(100,100) bl=(0,50)
+    layer = _mock_layer([[0, 0], [100, 50], [100, 100], [0, 50]])
+    words_per_line = [[{"text": "mid", "x1_ratio": 0.25, "x2_ratio": 0.75}]]
+    words = build_word_annotations([layer], words_per_line, w=200, h=200, emit_quads=False)
+    wx1, wy1, wx2, wy2 = words[0].bbox
+    assert wx1 <= wx2, f"x-inverted: {wx1} > {wx2}"
+    assert wy1 <= wy2, f"y-inverted: {wy1} > {wy2}"
+
+
+def test_compute_quality_metrics_zero_pixel_bbox_region_skipped():
+    """A line bbox that collapses to 0 pixels at the image resolution must be
+    silently skipped — the function must not crash and min_line_contrast must
+    be None (no valid line region measured).
+
+    bbox [0.49, 0.0, 0.51, 1.0] on w=10: x1_px=round(4.9)=5, x2_px=round(5.1)=5
+    → x2_px <= x1_px → region skipped → line_contrasts stays empty → None.
+    """
+    image = np.full((100, 10, 4), 200, dtype=np.uint8)
+    lines = [_make_line(0, 0, [0.49, 0.0, 0.51, 1.0])]
+    metrics = compute_quality_metrics(image, lines, [], w=10, h=100, deg_lines=0, deg_words=0, null_ct=0, total_ct=1)
+    assert metrics["min_line_contrast"] is None, "zero-pixel bbox should be skipped, leaving min_line_contrast as None"
+
+
+def test_laplacian_variance_3x3_returns_float():
+    """A 3×3 array is the minimum valid input for _laplacian_variance — it must
+    return a float, not crash or produce NaN.
+
+    With a uniform 3×3 array the Laplacian is identically 0 everywhere, so
+    the variance must be 0.0.
+    """
+    gray = np.full((3, 3), 128.0, dtype=np.float32)
+    result = _laplacian_variance(gray)
+    assert isinstance(result, float)
+    assert result == pytest.approx(0.0)
+
+
+def test_contrast_ratio_equal_zero_luminances_is_one():
+    """Two identical black surfaces (luminance=0) must yield contrast ratio 1.0,
+    not a ZeroDivisionError.  Formula: (0+0.05)/(0+0.05) = 1.0.
+    """
+    assert _contrast_ratio(0.0, 0.0) == pytest.approx(1.0)
+
+
+def test_filter_degenerate_mixed_lines_exact_counts():
+    """With 3 lines (degen, survive, degen) and 4 words, filter_degenerate must
+    reassign IDs densely and return exactly the right degenerate counts.
+
+    Expected: 1 surviving line (new line_id=0, block_id preserved), 2 surviving
+    words (new word_ids=0,1, line_id=0), deg_line_ct=2, deg_word_ct=2.
+    """
+    lines = [
+        _make_line(0, 10, [0.0, 0.0, 0.0, 0.0]),  # degen (block 10)
+        _make_line(1, 20, [0.1, 0.1, 0.9, 0.5]),  # survives (block 20)
+        _make_line(2, 30, [0.0, 0.0, 0.0, 0.0]),  # degen (block 30)
+    ]
+    words = [
+        _make_word(0, 0, [0.0, 0.0, 0.1, 0.1]),  # degen line → dropped
+        _make_word(1, 1, [0.1, 0.1, 0.5, 0.5]),  # survives → new id 0
+        _make_word(2, 1, [0.5, 0.1, 0.9, 0.5]),  # survives → new id 1
+        _make_word(3, 2, [0.0, 0.0, 0.1, 0.1]),  # degen line → dropped
+    ]
+    out_lines, out_words, dl, dw = filter_degenerate(lines, words, min_area=1.0, w=100, h=100)
+
+    assert dl == 2
+    assert dw == 2
+    assert len(out_lines) == 1
+    assert out_lines[0].line_id == 0
+    assert out_lines[0].block_id == 20  # block_id must NOT be remapped
+    assert len(out_words) == 2
+    assert [w.word_id for w in out_words] == [0, 1]
+    assert all(w.line_id == 0 for w in out_words)
+
+
 def test_compute_quality_metrics_single_line_overlap_is_zero():
     """A single line has no pairs to compare; both overlap metrics must be 0.0."""
     image = np.full((100, 100, 4), 200, dtype=np.uint8)

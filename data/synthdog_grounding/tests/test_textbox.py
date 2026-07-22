@@ -493,6 +493,104 @@ def test_generate_cursor_exhausted_no_overflow_returns_valid():
     assert words[0]["text"] == "A"
 
 
+def test_walkback_crlf_each_char_counts_as_one_step():
+    """\\r and \\n in a CRLF sequence must each add 1 to skipped, totalling 2.
+
+    Source: "ab \\r\\ncd"  (indices: a=0 b=1 sp=2 \\r=3 \\n=4 c=5 d=6)
+    Box: fits "ab " but not "ab c".
+
+    After rendering 'a','b',' ' (last_space=2, cursor_costs=[1,1,1], skipped=0):
+      '\\r'(3→4): skipped=1
+      '\\n'(4→5): skipped=2
+      'c'(5→6): overflow → cursor.prev() → _i=5
+
+    n_restore = cursor_costs[2] + skipped = 1+2 = 3
+    cursor.prev() ×3: 5→4→3→2 → cursor._i=2 (the space) ✓
+
+    Without the fix (neither \\r nor \\n increments skipped), skipped=0 so
+    n_restore=1, cursor.prev()×1: 5→4 → _i=4 (the \\n) — off by 2.
+    """
+    from pillow_compat import _cached_truetype
+
+    tb = _make_textbox()
+    np.random.seed(0)
+    font_obj = _cached_truetype(FONT_PATH, FONT_SIZE)
+    ascent, descent = font_obj.getmetrics()
+    char_scale = FONT_SIZE / (ascent + descent)
+    w_fits = font_obj.getlength("ab ") * char_scale
+    w_overflow = font_obj.getlength("ab c") * char_scale
+    box_width = (w_fits + w_overflow) / 2
+
+    cursor = _BufCursor("ab \r\ncd")
+    tb.generate((box_width, FONT_SIZE), cursor, FONT_CFG)
+
+    assert cursor._i == 2, (
+        f"cursor should be at pos 2 (the space) after CRLF walkback, got {cursor._i}; "
+        "\\r and/or \\n were not counted in cursor restore steps"
+    )
+
+
+def test_walkback_double_newline_both_counted():
+    """Two consecutive \\n chars must each increment skipped, giving n_restore=3.
+
+    Source: "ab \\n\\ncd"  (a=0 b=1 sp=2 \\n=3 \\n=4 c=5 d=6)
+    Box: fits "ab " but not "ab c".
+
+    After ' '(2): last_space=2, cursor_costs=[1,1,1], skipped=0.
+    '\\n'(3→4): skipped=1.  '\\n'(4→5): skipped=2.
+    'c'(5→6): overflow → cursor.prev() → _i=5.
+    n_restore = 1+2 = 3 → prev()×3: 5→4→3→2 → _i=2 ✓
+
+    With only one \\n counted (partial fix), n_restore=2: _i=3 — still wrong.
+    With neither counted (old code), n_restore=1: _i=4 — wrong by 2.
+    """
+    from pillow_compat import _cached_truetype
+
+    tb = _make_textbox()
+    np.random.seed(0)
+    font_obj = _cached_truetype(FONT_PATH, FONT_SIZE)
+    ascent, descent = font_obj.getmetrics()
+    char_scale = FONT_SIZE / (ascent + descent)
+    w_fits = font_obj.getlength("ab ") * char_scale
+    w_overflow = font_obj.getlength("ab c") * char_scale
+    box_width = (w_fits + w_overflow) / 2
+
+    cursor = _BufCursor("ab \n\ncd")
+    tb.generate((box_width, FONT_SIZE), cursor, FONT_CFG)
+
+    assert cursor._i == 2, (
+        f"cursor should be at pos 2 (the space) after double-\\n walkback, got {cursor._i}; "
+        "one or both \\n chars were not counted in cursor restore steps"
+    )
+
+
+def test_walkback_trailing_unrenderable_restores_cursor_to_space():
+    """Unrenderable chars at the END of the buffer (before StopIteration) must
+    be included in n_restore so the cursor lands on the last-space, not past it.
+
+    Source: "foo 中" — '中' is not renderable by the English test font.
+    Box: wide enough to fit all visible content ("foo ").
+
+    After rendering 'f','o','o',' ' (last_space=3, cursor_costs=[1,1,1,1]):
+      '中'(4→5): unrenderable → skipped=1.
+      StopIteration. cursor._i=5.
+
+    n_restore = cursor_costs[3] + skipped = 1+1 = 2
+    cursor.prev()×2: 5→4→3 → cursor._i=3 (the space) ✓
+
+    Without trailing skipped in n_restore: n_restore=1, cursor._i=4 ('中').
+    """
+    tb = _make_textbox()
+    np.random.seed(0)
+    cursor = _BufCursor("foo 中")  # U+4E2D = '中', unrenderable in CourierPrime
+    tb.generate(BOX_SIZE, cursor, FONT_CFG)
+
+    assert cursor._i == 3, (
+        f"cursor should be at pos 3 (the space) after trailing-unrenderable walkback, "
+        f"got {cursor._i}; the unrenderable '\\u4e2d' was not counted in n_restore"
+    )
+
+
 def test_walkback_restores_cursor_past_skipped_chars_before_overflow():
     """Skipped chars between the last rendered char and the overflow must be
     included in the walkback step count, or the following renderable word is

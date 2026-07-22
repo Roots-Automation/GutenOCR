@@ -157,6 +157,54 @@ def test_pick_grid_dimensions_rejects_narrow_columns():
     assert found_layout, "no valid layout returned across 60 seeds; bbox may be too small"
 
 
+def test_col_width_boundary_exactly_4x_text_size_is_accepted():
+    """col_width = EXACTLY 4*text_size must be accepted (condition uses >=, not >).
+
+    With bbox=(0,0,90,100), text_scale=[0.1,0.1]:
+      text_size = min(90,100) * 0.1 = 10
+      col=1: col_width = 90/1 = 90 >= 40 ✓ (always accepted)
+      col=2: col_width = (90-10)/2 = 40 = 4*10 → must be accepted
+
+    At least one layout with col_idx=1 (col=2) must be produced.
+    If the condition were col_width > 4*text_size (strict), col=2 would be
+    rejected at this boundary and only col=1 layouts would appear.
+    """
+    grid = Grid({"max_row": 5, "max_col": 2, "text_scale": [0.1, 0.1]})
+    boundary_bbox = [0.0, 0.0, 90.0, 100.0]
+    found_col2 = False
+    for seed in range(40):
+        np.random.seed(seed)
+        layout = grid.generate(boundary_bbox)
+        if layout is None:
+            continue
+        for _, _, col_idx in layout:
+            if col_idx == 1:
+                found_col2 = True
+                break
+        if found_col2:
+            break
+    assert found_col2, (
+        "no layout with col=2 produced; col_width=4*text_size at the boundary was "
+        "incorrectly rejected — check that the condition uses >= not >"
+    )
+
+
+def test_grid_col_idx_bounded_with_large_max_col():
+    """col_idx must stay in [0, max_col) regardless of how large max_col is."""
+    max_col = 10
+    grid = Grid({"max_row": 3, "max_col": max_col})
+    found_any = False
+    for seed in range(30):
+        np.random.seed(seed)
+        layout = grid.generate([0.0, 0.0, 2000.0, 600.0])
+        if layout is None:
+            continue
+        found_any = True
+        for _, _, col_idx in layout:
+            assert 0 <= col_idx < max_col, f"seed={seed}: col_idx={col_idx} out of [0, {max_col})"
+    assert found_any, "no valid layout produced in 30 seeds; bbox may be too small"
+
+
 def test_grid_generate_impossibly_tiny_bbox_returns_none():
     """A 1×1 bbox with default text_scale [0.05, 0.1] → text_size ≥ 0.05, which
     can't satisfy text_size*(2*col-1) ≤ 1 for any col ≥ 1 at scale ≥ 0.05."""
