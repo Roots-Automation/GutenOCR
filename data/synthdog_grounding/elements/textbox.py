@@ -5,10 +5,16 @@ MIT License
 """
 
 import re
+import sys
+from pathlib import Path
 
 import numpy as np
-from PIL import ImageFont as PILImageFont
 from synthtiger import layers
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from pillow_compat import _cached_truetype
+
+_NON_WORD_RE = re.compile(r"[^\w]")
 
 
 def _extract_word_ratios(
@@ -66,7 +72,7 @@ class TextBox:
         width = np.clip(width * fill, height, width)
         font = {**font, "size": int(height)}
 
-        font_obj = PILImageFont.truetype(font["path"], size=int(height))
+        font_obj = _cached_truetype(font["path"], int(height))
 
         ascent, descent = font_obj.getmetrics()
         pil_height = ascent + descent
@@ -99,7 +105,7 @@ class TextBox:
             positions = positions[:last_space]
 
         text_str = "".join(chars).strip()
-        text_alpha_only = re.sub(r"[^\w]", "", text_str)
+        text_alpha_only = _NON_WORD_RE.sub("", text_str)
         if not chars or not text_str or not text_alpha_only:
             return None, None, None
 
