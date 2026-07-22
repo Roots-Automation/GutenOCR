@@ -57,8 +57,8 @@ def _patch_to_rgb():
     _gray_map.utils.to_rgb = _fast_to_rgb
 
 
-_getsize_cache: dict = {}  # (id(font), text, direction) -> (w, h)
-_getlength_cache: dict = {}  # (id(font), text, direction) -> float
+_getsize_cache: dict = {}  # (path, size, text, direction) -> (w, h)
+_getlength_cache: dict = {}  # (path, size, text, direction) -> float
 
 
 def register_pillow_compat():
@@ -71,7 +71,7 @@ def register_pillow_compat():
     if not hasattr(ImageFont.FreeTypeFont, "getsize"):
 
         def getsize(self, text, direction=None, features=None, language=None):
-            key = (id(self), text, direction)
+            key = (self.path, self.size, text, direction)
             cached = _getsize_cache.get(key)
             if cached is not None:
                 return cached
@@ -104,7 +104,7 @@ def register_pillow_compat():
     _original_getlength = ImageFont.FreeTypeFont.getlength
 
     def getlength(self, text, mode="", direction=None, features=None, language=None):
-        key = (id(self), text, direction)
+        key = (self.path, self.size, text, direction)
         cached = _getlength_cache.get(key)
         if cached is not None:
             return cached
