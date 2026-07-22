@@ -42,6 +42,7 @@ def build_block_annotations(
     block_ids: list[int],
     line_bboxes: list[list[float]],
     block_region_types: dict[int, str] | None = None,
+    line_quads: list[list[list[float]]] | None = None,
 ) -> list[BlockAnnotation]:
     """Build block-level annotations by grouping lines that share a block_id."""
     block_to_lines: dict[int, list[int]] = defaultdict(list)
@@ -56,12 +57,26 @@ def build_block_annotations(
         bx2 = _clamp01(max(b[2] for b in bboxes))
         by2 = _clamp01(max(b[3] for b in bboxes))
         region_type = (block_region_types or {}).get(bid, "body")
+
+        quad = None
+        if line_quads is not None:
+            # Derive block quad from all corner points of constituent line quads.
+            all_pts = [pt for i in line_indices for pt in line_quads[i]]
+            qx = [p[0] for p in all_pts]
+            qy = [p[1] for p in all_pts]
+            qx1 = round(_clamp01(min(qx)), 3)
+            qy1 = round(_clamp01(min(qy)), 3)
+            qx2 = round(_clamp01(max(qx)), 3)
+            qy2 = round(_clamp01(max(qy)), 3)
+            quad = [[qx1, qy1], [qx2, qy1], [qx2, qy2], [qx1, qy2]]
+
         blocks.append(
             BlockAnnotation(
                 block_id=bid,
                 bbox=[round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
                 line_ids=line_indices,
                 region_type=region_type,
+                quad=quad,
             )
         )
     return blocks
@@ -321,6 +336,9 @@ def build_annotations(
 
     surviving_block_ids = [ln.block_id for ln in lines]
     surviving_line_bboxes = [ln.bbox for ln in lines]
-    blocks = build_block_annotations(surviving_block_ids, surviving_line_bboxes, block_region_types)
+    surviving_line_quads = [ln.quad for ln in lines] if emit_quads else None
+    blocks = build_block_annotations(
+        surviving_block_ids, surviving_line_bboxes, block_region_types, surviving_line_quads
+    )
 
     return lines, words, blocks, deg_line_ct, deg_word_ct

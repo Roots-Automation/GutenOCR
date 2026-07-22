@@ -655,3 +655,95 @@ def test_compute_quality_metrics_single_line_overlap_is_zero():
     metrics = compute_quality_metrics(image, lines, [], w=100, h=100, deg_lines=0, deg_words=0, null_ct=0, total_ct=1)
     assert metrics["max_intra_block_line_overlap"] == 0.0
     assert metrics["max_cross_block_line_overlap"] == 0.0
+
+
+# ---------------------------------------------------------------------------
+# Block quad emission
+# ---------------------------------------------------------------------------
+
+
+def test_build_block_annotations_no_quads_when_line_quads_none():
+    """When line_quads is None (emit_quads=False) block.quad must be None."""
+    blocks = build_block_annotations(
+        [0],
+        [[0.1, 0.1, 0.5, 0.5]],
+        line_quads=None,
+    )
+    assert blocks[0].quad is None
+
+
+def test_build_block_annotations_quad_is_4_corners_when_emit():
+    """When line_quads provided, block.quad must be [[x1,y1],[x2,y1],[x2,y2],[x1,y2]]."""
+    line_quads = [[[0.1, 0.1], [0.5, 0.1], [0.5, 0.3], [0.1, 0.3]]]
+    blocks = build_block_annotations(
+        [0],
+        [[0.1, 0.1, 0.5, 0.3]],
+        line_quads=line_quads,
+    )
+    q = blocks[0].quad
+    assert q is not None
+    assert len(q) == 4
+    # Rectangular: TL→TR→BR→BL order
+    assert q[0][0] == pytest.approx(0.1, abs=1e-3)  # TL x
+    assert q[0][1] == pytest.approx(0.1, abs=1e-3)  # TL y
+    assert q[2][0] == pytest.approx(0.5, abs=1e-3)  # BR x
+    assert q[2][1] == pytest.approx(0.3, abs=1e-3)  # BR y
+
+
+def test_build_block_annotations_quad_spans_all_line_quads():
+    """Block quad must be the union AABB of all constituent line quads."""
+    line_quads = [
+        [[0.1, 0.1], [0.4, 0.1], [0.4, 0.3], [0.1, 0.3]],
+        [[0.2, 0.35], [0.7, 0.35], [0.7, 0.5], [0.2, 0.5]],
+    ]
+    blocks = build_block_annotations(
+        [0, 0],
+        [[0.1, 0.1, 0.4, 0.3], [0.2, 0.35, 0.7, 0.5]],
+        line_quads=line_quads,
+    )
+    q = blocks[0].quad
+    assert q is not None
+    assert q[0][0] == pytest.approx(0.1, abs=1e-3)  # min x across all corners
+    assert q[0][1] == pytest.approx(0.1, abs=1e-3)  # min y
+    assert q[2][0] == pytest.approx(0.7, abs=1e-3)  # max x
+    assert q[2][1] == pytest.approx(0.5, abs=1e-3)  # max y
+
+
+def test_build_block_annotations_quad_clamped_to_0_1():
+    """Block quad corners must be clamped to [0, 1] even when line quads overflow."""
+    line_quads = [[[-0.5, -0.1], [1.5, -0.1], [1.5, 1.2], [-0.5, 1.2]]]
+    blocks = build_block_annotations(
+        [0],
+        [[0.0, 0.0, 1.0, 1.0]],
+        line_quads=line_quads,
+    )
+    q = blocks[0].quad
+    assert q is not None
+    for pt in q:
+        assert 0.0 <= pt[0] <= 1.0, f"x={pt[0]} out of [0,1]"
+        assert 0.0 <= pt[1] <= 1.0, f"y={pt[1]} out of [0,1]"
+
+
+def test_block_annotation_to_dict_includes_quad_when_present():
+    """block_annotation_to_dict must include 'quad' key when block.quad is set."""
+    from serialization import BlockAnnotation, block_annotation_to_dict
+
+    blk = BlockAnnotation(
+        block_id=0,
+        bbox=[0.1, 0.1, 0.5, 0.5],
+        line_ids=[0],
+        region_type="body",
+        quad=[[0.1, 0.1], [0.5, 0.1], [0.5, 0.5], [0.1, 0.5]],
+    )
+    d = block_annotation_to_dict(blk)
+    assert "quad" in d
+    assert len(d["quad"]) == 4
+
+
+def test_block_annotation_to_dict_omits_quad_when_none():
+    """block_annotation_to_dict must NOT include 'quad' key when block.quad is None."""
+    from serialization import BlockAnnotation, block_annotation_to_dict
+
+    blk = BlockAnnotation(block_id=0, bbox=[0.1, 0.1, 0.5, 0.5], line_ids=[0])
+    d = block_annotation_to_dict(blk)
+    assert "quad" not in d
