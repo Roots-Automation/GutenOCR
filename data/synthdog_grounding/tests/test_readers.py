@@ -3,12 +3,13 @@
 import sys
 import tempfile
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from elements.readers import LiteralTextCursor, TextReader
+from elements.readers import HuggingFaceTextReader, LiteralTextCursor, TextReader
 
 # ---------------------------------------------------------------------------
 # LiteralTextCursor
@@ -142,3 +143,101 @@ def test_text_reader_context_manager_closes_file():
     with TextReader(tmp.name) as reader:
         assert reader.get() == "t"
     assert reader.fp.closed
+
+
+# ---------------------------------------------------------------------------
+# HuggingFaceTextReader
+# ---------------------------------------------------------------------------
+
+
+class _FakeDataset:
+    """Minimal iterable that mimics a HuggingFace streaming dataset."""
+
+    def __init__(self, samples):
+        self._samples = samples
+
+    def __iter__(self):
+        return iter(self._samples)
+
+
+def _make_hf_reader(texts=None, **kwargs):
+    """Instantiate HuggingFaceTextReader backed by a fake dataset."""
+    if texts is None:
+        # 30 identical docs → long joined text for threshold tests
+        texts = ["The quick brown fox jumps over the lazy dog"] * 30
+    samples = [{"text": t} for t in texts]
+    fake_dataset = _FakeDataset(samples)
+    mock_ds_mod = MagicMock()
+    mock_ds_mod.load_dataset = MagicMock(return_value=fake_dataset)
+
+    buf = kwargs.pop("buffer_size", len(texts))
+    with patch.dict(sys.modules, {"datasets": mock_ds_mod}):
+        reader = HuggingFaceTextReader(buffer_size=buf, **kwargs)
+    return reader
+
+
+def test_hf_reader_get_returns_a_character():
+    reader = _make_hf_reader()
+    char = reader.get()
+    assert isinstance(char, str) and len(char) == 1
+
+
+def test_hf_reader_next_advances_position():
+    reader = _make_hf_reader()
+    reader.next()
+    assert reader.idx == 1
+
+
+def test_hf_reader_prev_backtracks_position():
+    reader = _make_hf_reader()
+    reader.next()
+    reader.next()
+    reader.prev()
+    assert reader.idx == 1
+
+
+def test_hf_reader_move_jumps_to_position():
+    reader = _make_hf_reader()
+    reader.move(5)
+    assert reader.idx == 5
+    assert reader.get() == reader._get_current_text()[5]
+
+
+def test_hf_reader_next_sets_needs_refresh_above_threshold():
+    """next() must set _needs_refresh when idx crosses the 80% watermark."""
+    reader = _make_hf_reader()
+    text = reader._get_current_text()
+    n = len(text)
+    threshold = int(n * 0.8)
+
+    reader.move(threshold)  # land just at the threshold
+    reader._needs_refresh = False  # ensure clean slate
+    reader.next()  # crosses into the >80% zone
+
+    assert reader._needs_refresh
+
+
+def test_hf_reader_prev_clears_needs_refresh_below_threshold():
+    """The prev() fix: backtracking below 80% must clear _needs_refresh.
+
+    Without the fix, prev() left a stale True flag that caused the next
+    move() to spuriously refresh the buffer and corrupt the read position.
+    """
+    reader = _make_hf_reader()
+    text = reader._get_current_text()
+    n = len(text)
+    # Start above the threshold with the flag set (as if next() got us here).
+    reader.idx = int(n * 0.8) + 2
+    reader._needs_refresh = True
+
+    reader.prev()  # moves back to int(n*0.8)+1, which is still >80% → flag stays
+    reader.prev()  # moves back to int(n*0.8), which is ≤80% → flag must clear
+
+    assert not reader._needs_refresh
+
+
+def test_hf_reader_charset_strips_non_ascii():
+    """charset='ascii' must filter out non-ASCII characters."""
+    reader = _make_hf_reader(texts=["café résumé"] * 5, charset="ascii")
+    text = reader._get_current_text()
+    assert all(ord(c) < 128 for c in text)

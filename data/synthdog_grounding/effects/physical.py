@@ -37,6 +37,21 @@ def _gaussian_blur_2d(arr: np.ndarray, sigma: float) -> np.ndarray:
     )
 
 
+def _gaussian_blur_1d(arr: np.ndarray, sigma: float) -> np.ndarray:
+    """1-D Gaussian blur along the column axis of a (1, N) float32 array."""
+    if sigma <= 0:
+        return arr
+    radius = int(np.ceil(3.0 * sigma))
+    ksize = 2 * radius + 1
+    return cv2.GaussianBlur(
+        arr.astype(np.float32),
+        ksize=(ksize, 1),
+        sigmaX=sigma,
+        sigmaY=0,
+        borderType=cv2.BORDER_CONSTANT,
+    )
+
+
 # Module-level cache: (H, W) -> (Y_grid, X_grid) float32.
 # Avoids recreating large meshgrids on every effect call; image size is
 # constant within a run so this stays small (one entry per unique size).
@@ -101,17 +116,8 @@ class BookSpineShadowEffect:
             t = np.linspace(0.0, 1.0, width_px, dtype=np.float32)
             gradient[W - width_px :] = intensity * t
 
-        # Smooth the gradient
         sigma = width_px * 0.15
-        radius = int(np.ceil(3.0 * sigma))
-        ksize = 2 * radius + 1
-        gradient = cv2.GaussianBlur(
-            gradient[np.newaxis, :].astype(np.float32),
-            ksize=(ksize, 1),
-            sigmaX=sigma,
-            sigmaY=0,
-            borderType=cv2.BORDER_CONSTANT,
-        )[0]
+        gradient = _gaussian_blur_1d(gradient[np.newaxis, :], sigma)[0]
 
         # gradient is 1D (W,); avoid float32 round-trip of the full image.
         gradient_i16 = np.clip(gradient, 0, 255).astype(np.int16)  # (W,)
@@ -302,8 +308,7 @@ class LowTonerStreakEffect:
                 noise = np.random.uniform(0.75, 1.25, size=(H,)).astype(np.float32)
                 lighten = (noise[:, np.newaxis] * profile[np.newaxis, x0:x1] * intensity * 255)[..., np.newaxis]
 
-                # result[:, x0:x1] is non-contiguous; .copy() makes it contiguous
-                patch = result[:, x0:x1].copy().astype(np.float32)
+                patch = result[:, x0:x1].astype(np.float32)
                 patch[..., :3] = np.clip(patch[..., :3] + lighten, 0, 255)
                 result[:, x0:x1] = patch.astype(np.uint8)
 
