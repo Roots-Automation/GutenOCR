@@ -39,6 +39,6 @@ document:
       text_scale: [0.025, 0.045]
       max_col: 5
     section_heading:
-      text_scale: [0.035, 0.065]
+      text_scale: [0.025, 0.045]
     footnote:
       text_scale: [0.018, 0.038]
