@@ -26,10 +26,7 @@ def _make_adaptive_color(color_config: dict, gray_range: list[int], lum: float) 
     """Build a Switch(Gray) component whose prob is forced to 1.0 on dark backgrounds."""
     args = {**color_config.get("args", {}), "gray": gray_range}
     prob = color_config.get("prob", 0)
-    # 0.179 is the WCAG crossover: (L+0.05)² = 0.0525 → L ≈ 0.179.
-    # Below this, dark text [0,64] achieves lower contrast than light text [191,255];
-    # above it, dark text wins. Using 0.5 here was wrong — see SYNTHDOG-VALIDATION.md Thread 1.
-    if lum < 0.179:
+    if lum < 0.179:  # force light text on dark backgrounds (see crossover derivation above)
         prob = 1.0
     return components.Switch(components.Gray(), prob=prob, args=args)
 
@@ -197,9 +194,8 @@ class Content:
         width, height = size
 
         lum = _relative_luminance(*bg_color)
-        # WCAG crossover is ≈ 0.179, not 0.5 — see SYNTHDOG-VALIDATION.md Thread 1.
-        # Empirical analysis showed 21% of samples fell in the wrong zone under the old threshold,
-        # with worst-case contrast of 1.04:1 (near-invisible text).
+        # 0.179 = WCAG black-vs-white crossover: √(1.05×0.05) − 0.05.
+        # Below it, light text has better contrast; above it, dark text wins.
         gray_range = [0, 64] if lum > 0.179 else [191, 255]
 
         textbox_color = _make_adaptive_color(self.textbox_color_config, gray_range, lum)
