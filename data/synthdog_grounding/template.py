@@ -415,20 +415,19 @@ class SynthDoG(templates.Template):
             return f"cross_overlap {cross:.3f} > {self.max_cross_block_line_overlap}"
         return None
 
-    _SAVE_MAX_RETRIES: int = 20
+    _SAVE_MAX_RETRIES: int = 100
 
     def save(self, root, data, idx):
         # Retry with deterministic sub-seeds until the sample passes all quality
         # filters, so that requesting N samples always yields exactly N on disk.
-        # Retry seeds are spaced far from the primary seed space: idx * 100_000 + attempt.
+        # Retry seeds are spaced far from the primary seed space: (idx+1) * 100_000 + attempt.
+        retry_base = (idx + 1) * 100_000
+        failure = self._quality_failure(data)
         for attempt in range(self._SAVE_MAX_RETRIES):
-            failure = self._quality_failure(data)
             if failure is None:
                 break
-            if attempt == 0:
-                retry_base = (idx + 1) * 100_000
-            retry_seed = retry_base + attempt
-            data = self.generate(seed=retry_seed)
+            data = self.generate(seed=retry_base + attempt)
+            failure = self._quality_failure(data)
         else:
             # All retries exhausted — log and skip rather than write a bad sample.
             import warnings
