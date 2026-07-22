@@ -7,25 +7,22 @@ MIT License
 import re
 
 import numpy as np
+from PIL import ImageFont as PILImageFont
 from synthtiger import layers
 
 
-def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float) -> list[dict]:
-    """Compute per-word x-ratio dicts from character layers.
-
-    Args:
-        chars: List of character strings matching char_layers.
-        char_layers: List of rendered character layers with .left/.right attributes.
-        line_width: The width (in pixels) to use as the ratio denominator.  Pass
-            ``text_layer.size[0]`` (the integer merged-layer canvas width) so that
-            the denominator matches the span used during quad interpolation.
-    """
+def _extract_word_ratios(
+    chars: list[str],
+    positions: list[tuple[float, float]],
+    line_width: float,
+) -> list[dict]:
+    """Return per-word x-ratio dicts from per-character (left, right) positions."""
     inv_w = 1.0 / line_width if line_width > 0 else None
     words = []
     word_chars: list[str] = []
     x1 = x2 = 0.0
 
-    for ch, layer in zip(chars, char_layers):
+    for ch, (left, right) in zip(chars, positions):
         if ch.isspace():
             if word_chars:
                 words.append(
@@ -38,8 +35,8 @@ def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float)
                 word_chars.clear()
         else:
             if not word_chars:
-                x1 = layer.left
-            x2 = layer.right
+                x1 = left
+            x2 = right
             word_chars.append(ch)
 
     if word_chars:
@@ -55,92 +52,61 @@ def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float)
 
 
 class TextBox:
-    """
-    Generates a single line of text rendered as an image layer.
-
-    The TextBox handles character-by-character rendering with proper spacing,
-    ensuring words are not split across lines (coherent text generation).
-
-    Attributes:
-        fill: Tuple of [min, max] fill ratios controlling how much of the
-              available width the text should occupy.
-
-    Example:
-        >>> textbox = TextBox({"fill": [0.8, 1.0]})
-        >>> layer, text = textbox.generate((400, 50), corpus_reader, font_config)
-    """
+    """Renders a line of text from a cursor into a synthtiger Layer with word-level x-ratio annotations."""
 
     def __init__(self, config):
-        """
-        Initialize a TextBox with the given configuration.
-
-        Args:
-            config: Dictionary with optional keys:
-                - fill: [min, max] fill ratio range (default: [1, 1])
-        """
         self.fill = config.get("fill", [1, 1])
 
     def generate(self, size, text, font):
-        """
-        Generate a text layer for a single line.
-
-        Args:
-            size: Tuple of (width, height) for the text box area
-            text: Text iterator/reader that provides characters
-            font: Font configuration dictionary with keys like 'path', 'size', etc.
-
-        Returns:
-            Tuple of (text_layer, text_string, word_local_data) where:
-                - text_layer: A merged synthtiger Layer containing the rendered text
-                - text_string: The actual text that was rendered
-                - word_local_data: Per-word x-ratio dicts from character layers
-            Returns (None, None, None) if no valid text could be generated.
-        """
+        """Fit one line of text into size, returning (layer, text_str, word_ratios) or (None, None, None)."""
         width, height = size
 
-        char_layers, chars = [], []
+        chars = []
         fill = np.random.uniform(self.fill[0], self.fill[1])
         width = np.clip(width * fill, height, width)
         font = {**font, "size": int(height)}
-        left, top = 0, 0
+
+        font_obj = PILImageFont.truetype(font["path"], size=int(height))
+
+        ascent, descent = font_obj.getmetrics()
+        pil_height = ascent + descent
+        char_scale = height / pil_height if pil_height > 0 else 1.0
+
+        positions: list[tuple[float, float]] = []
+        prefix = ""
+        x = 0.0
 
         for char in text:
             if char in "\r\n":
                 continue
-
-            char_layer = layers.TextLayer(char, **font)
-            char_scale = height / char_layer.height if char_layer.height > 0 else 1.0
-            char_layer.bbox = [left, top, *(char_layer.size * char_scale)]
-            if char_layer.right > width:
-                text.prev()  # undo consumption of the character that didn't fit
+            next_prefix = prefix + char
+            x_right = font_obj.getlength(next_prefix) * char_scale
+            if x_right > width:
+                text.prev()
                 break
-
-            char_layers.append(char_layer)
+            positions.append((x, x_right))
             chars.append(char)
-            left = char_layer.right
+            prefix = next_prefix
+            x = x_right
 
-        # Find the last space boundary so we don't split a word across cells.
-        # If no space exists, accept the truncated token as-is: the cursor is
-        # already at the overflow char (put back by the fill loop above), so
-        # the next textbox starts correctly without any extra repositioning.
         last_space = next((i for i in range(len(chars) - 1, -1, -1) if chars[i].isspace()), None)
 
         if last_space is not None:
-            # Put back everything from the space onward (inclusive) and trim.
             n_restore = len(chars) - last_space
             for _ in range(n_restore):
                 text.prev()
             chars = chars[:last_space]
-            char_layers = char_layers[:last_space]
-        # else: no space — keep chars as-is, cursor already at overflow char.
+            positions = positions[:last_space]
 
-        text = "".join(chars).strip()
-        text_alpha_only = re.sub(r"[^\w]", "", text)
-        if len(char_layers) == 0 or len(text) == 0 or len(text_alpha_only) == 0:
+        text_str = "".join(chars).strip()
+        text_alpha_only = re.sub(r"[^\w]", "", text_str)
+        if not chars or not text_str or not text_alpha_only:
             return None, None, None
 
-        text_layer = layers.Group(char_layers).merge()
+        text_layer = layers.TextLayer(text_str, **font)
+        text_layer.bbox = [0, 0, *(text_layer.size * char_scale)]
+        # Use advance width, not ink width, so ratios stay in [0, 1].
+        line_width = positions[-1][1] if positions else 0.0
+        word_local_data = _extract_word_ratios(chars, positions, line_width=line_width)
 
-        word_local_data = _extract_word_ratios(chars, char_layers, line_width=text_layer.size[0])
-
-        return text_layer, text, word_local_data
+        return text_layer, text_str, word_local_data
