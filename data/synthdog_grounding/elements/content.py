@@ -348,13 +348,35 @@ class Content:
         # textbox_color applies per-line variation instead. The two modes are mutually
         # exclusive so neither silently discards the other's work.
         content_meta = content_color.sample()
+        text_color_rgbs: list[list[int]] = []
         if content_meta["state"]:
             text_color_mode = "uniform"
             content_color.apply(text_layers, meta=content_meta)
+            try:
+                c = content_meta["args"]["color"]
+                text_color_rgbs = [[int(c[0]), int(c[1]), int(c[2])]] * len(text_layers)
+            except Exception:
+                pass
         else:
             text_color_mode = "per_line"
             for text_layer in text_layers:
-                textbox_color.apply([text_layer])
+                layer_meta = textbox_color.sample()
+                textbox_color.apply([text_layer], meta=layer_meta)
+                try:
+                    c = layer_meta["args"]["color"]
+                    text_color_rgbs.append([int(c[0]), int(c[1]), int(c[2])])
+                except Exception:
+                    pass
+
+        # Summarise text colors as median RGB (avoids storing N-line arrays).
+        if text_color_rgbs:
+            text_color_median_rgb = [
+                int(np.median([c[0] for c in text_color_rgbs])),
+                int(np.median([c[1] for c in text_color_rgbs])),
+                int(np.median([c[2] for c in text_color_rgbs])),
+            ]
+        else:
+            text_color_median_rgb = None
 
         for text_layer in text_layers:
             self.text_sprinkle.apply([text_layer])
@@ -362,6 +384,7 @@ class Content:
         provenance = {
             "paper_luminance": round(float(lum), 4),
             "text_color_mode": text_color_mode,
+            "text_color_median_rgb": text_color_median_rgb,
             "zones_rendered": zones_rendered,
             "body_grid_count": len(layouts),
             "body_col_counts": body_col_counts,
