@@ -143,7 +143,10 @@ class Grid:
         """
         max_fill = max(1 - text_size / width * (col - 1), 0)
         fill = sample_fill(fill_range, self.full)
-        fill = np.clip(fill, 0, max_fill)
+        # Lower bound: text columns need at least col*text_size/width of total
+        # width. Without this, sum(weights) > 1 and cells overflow the bbox.
+        min_fill = col * text_size / width
+        fill = np.clip(fill, min_fill, max_fill)
 
         # 2-bit encoding of (left_pad, right_pad): bit1=left, bit0=right.
         # Single column excludes 0 to guarantee at least one side has padding.
