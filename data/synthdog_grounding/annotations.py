@@ -247,8 +247,9 @@ def compute_quality_metrics(
         line_contrasts.append(float(np.std(region)))
         line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
         line_heights_px.append(float(y2_px - y1_px))
-        p10 = _linearize_channel(float(np.percentile(region, 10)))
-        p90 = _linearize_channel(float(np.percentile(region, 90)))
+        p10_raw, p90_raw = np.percentile(region, [10, 90])
+        p10 = _linearize_channel(float(p10_raw))
+        p90 = _linearize_channel(float(p90_raw))
         line_contrast_ratios.append(_contrast_ratio(p10, p90))
 
     word_bbox_areas_px = []
