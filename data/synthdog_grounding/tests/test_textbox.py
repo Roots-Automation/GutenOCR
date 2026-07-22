@@ -365,3 +365,31 @@ def test_generate_mixed_line_has_correct_word_count():
     assert words is not None
     word_texts = [w["text"] for w in words]
     assert word_texts == ["foo", "bar", "baz"]
+
+
+def test_walkback_restores_cursor_past_skipped_chars_before_overflow():
+    """Skipped chars between the last rendered char and the overflow must be
+    included in the walkback step count, or the following renderable word is
+    lost mid-character.
+
+    Setup: box fits 'foo bar' but not 'foo barx'.  The cursor holds
+    'foo bar中中x' — the two CJK chars are skipped, so 'x' is the char that
+    triggers overflow.  After line 1 ('foo'), line 2 must start at 'bar' (the
+    word right after the space), not in the middle of 'bar' or 'arx'.
+    """
+    # Box width: fits 'foo bar' (73 px) but not 'foo barx' (83 px).
+    # Computed from CourierPrime at 32 px; 78 px sits between them.
+    NARROW = (78, FONT_SIZE)
+    tb = _make_textbox()
+
+    cursor = _cursor("foo bar中中x next")
+    np.random.seed(0)
+    _, line1, _ = tb.generate(NARROW, cursor, FONT_CFG)
+    np.random.seed(0)
+    _, line2, words2 = tb.generate(NARROW, cursor, FONT_CFG)
+
+    assert line1 == "foo", f"expected line1='foo', got {line1!r}"
+    # 'bar' must be the first word on line 2 — not 'ar', 'r', or 'arx'
+    assert words2 is not None and words2[0]["text"].startswith("bar"), (
+        f"expected line2 to start with 'bar', got words={[w['text'] for w in words2]!r}"
+    )

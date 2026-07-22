@@ -79,13 +79,18 @@ class TextBox:
         char_scale = height / pil_height if pil_height > 0 else 1.0
 
         positions: list[tuple[float, float]] = []
+        # cursor_costs[i] = total cursor steps consumed to add chars[i],
+        # including any unrenderable chars skipped immediately before it.
+        cursor_costs: list[int] = []
         prefix = ""
         x = 0.0
+        skipped = 0  # unrenderable chars consumed since the last chars append
 
         for char in cursor:
             if char in "\r\n":
                 continue
             if not char.isspace() and not _is_renderable(font_obj, char):
+                skipped += 1
                 continue
             next_prefix = prefix + char
             x_right = font_obj.getlength(next_prefix) * char_scale
@@ -94,13 +99,19 @@ class TextBox:
                 break
             positions.append((x, x_right))
             chars.append(char)
+            cursor_costs.append(1 + skipped)
+            skipped = 0
             prefix = next_prefix
             x = x_right
 
         last_space = next((i for i in range(len(chars) - 1, -1, -1) if chars[i].isspace()), None)
 
         if last_space is not None:
-            n_restore = len(chars) - last_space
+            # Restore exactly the cursor steps consumed by chars[last_space:]
+            # plus any unrenderable chars consumed after the last appended char.
+            # Without the skipped adjustment the cursor lands too far forward,
+            # losing the renderable word that follows a cluster of skipped chars.
+            n_restore = sum(cursor_costs[last_space:]) + skipped
             for _ in range(n_restore):
                 cursor.prev()
             chars = chars[:last_space]
