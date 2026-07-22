@@ -209,6 +209,7 @@ def test_package_data_keys_without_quads():
         words=[],
         blocks=[],
         quality_metrics={},
+        generation_params={},
         emit_quads=False,
     )
     assert "image" in data
@@ -216,6 +217,7 @@ def test_package_data_keys_without_quads():
     assert "quality" in data
     assert "roi" in data
     assert "text_quads" not in data
+    assert "generation_params" in data
 
 
 def test_package_data_includes_text_quads_when_emit_quads():
@@ -230,6 +232,7 @@ def test_package_data_includes_text_quads_when_emit_quads():
         words=[],
         blocks=[],
         quality_metrics={},
+        generation_params={},
         emit_quads=True,
     )
     assert "text_quads" in data

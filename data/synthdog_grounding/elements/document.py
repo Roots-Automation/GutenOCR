@@ -128,7 +128,8 @@ class Document:
 
         Returns:
             Tuple of (paper_layer, text_layers, texts, block_ids,
-            words_per_line, block_region_types, textbox_null_count, textbox_total_count) where:
+            words_per_line, block_region_types, textbox_null_count, textbox_total_count,
+            doc_provenance) where:
                 - paper_layer: A Layer containing the paper texture
                 - text_layers: List of Layers, one per text line
                 - texts: List of strings corresponding to each text layer
@@ -137,22 +138,36 @@ class Document:
                 - block_region_types: Dict mapping block_id → region_type string
                 - textbox_null_count: Number of textbox slots that produced no text
                 - textbox_total_count: Total textbox slots attempted
+                - doc_provenance: Dict of generation parameters for traceability
         """
         size = self._compute_document_size(size)
-        paper_layer, _ = self.paper.generate(size)
+        paper_layer, paper_rgb_sampled = self.paper.generate(size)
         # Sample the median RGB of the rendered paper (after texture + stain) so
         # that content.generate() sees the actual paper brightness rather than the
         # base color before those effects.  Median is robust to small stain spots.
-        paper_rgb = np.clip(paper_layer.image[..., :3], 0, 255)
+        paper_arr = np.clip(paper_layer.image[..., :3], 0, 255)
         bg_color = (
-            int(np.median(paper_rgb[..., 0])),
-            int(np.median(paper_rgb[..., 1])),
-            int(np.median(paper_rgb[..., 2])),
+            int(np.median(paper_arr[..., 0])),
+            int(np.median(paper_arr[..., 1])),
+            int(np.median(paper_arr[..., 2])),
         )
-        text_layers, texts, block_ids, words_per_line, block_region_types, textbox_null_count, textbox_total_count = (
-            self.content.generate(size, bg_color)
-        )
+        (
+            text_layers,
+            texts,
+            block_ids,
+            words_per_line,
+            block_region_types,
+            textbox_null_count,
+            textbox_total_count,
+            content_provenance,
+        ) = self.content.generate(size, bg_color)
         self.effect.apply([*text_layers, paper_layer])
+
+        doc_provenance = {
+            "paper_rgb_sampled": list(paper_rgb_sampled),
+            "paper_rgb_rendered": list(bg_color),
+            **content_provenance,
+        }
 
         return (
             paper_layer,
@@ -163,4 +178,5 @@ class Document:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            doc_provenance,
         )

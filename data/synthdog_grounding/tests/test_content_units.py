@@ -190,11 +190,11 @@ def test_render_zone_grid_failure_returns_zero_counts():
 # ---------------------------------------------------------------------------
 
 
-def test_content_generate_returns_seven_tuple():
+def test_content_generate_returns_eight_tuple():
     np.random.seed(0)
     content = Content(_content_cfg())
     result = content.generate((800, 600))
-    assert len(result) == 7
+    assert len(result) == 8
 
 
 def test_content_generate_parallel_lists_same_length():
@@ -209,7 +209,7 @@ def test_content_generate_null_accounting():
     """null_count + len(text_layers) must equal total_count exactly."""
     np.random.seed(2)
     content = Content(_content_cfg())
-    text_layers, _, _, _, _, null_ct, total_ct = content.generate((800, 600))
+    text_layers, _, _, _, _, null_ct, total_ct, _ = content.generate((800, 600))
     assert null_ct + len(text_layers) == total_ct
 
 
@@ -217,7 +217,7 @@ def test_content_generate_block_ids_have_region_types():
     """Every block_id in block_ids must appear in block_region_types."""
     np.random.seed(3)
     content = Content(_content_cfg())
-    _, _, block_ids, _, block_region_types, _, _ = content.generate((800, 600))
+    _, _, block_ids, _, block_region_types, _, _, _ = content.generate((800, 600))
     for bid in block_ids:
         assert bid in block_region_types
 

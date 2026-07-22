@@ -47,6 +47,7 @@ from effects.physical import (  # noqa: E402
 )
 from PIL import Image  # noqa: E402
 from serialization import (  # noqa: E402
+    KEY_GENERATION_PARAMS,
     KEY_QUALITY_METRICS,
     KEY_TEXT_BLOCKS,
     KEY_TEXT_LINES,
@@ -120,6 +121,7 @@ def _package_data(
     words: list,
     blocks: list,
     quality_metrics: dict,
+    generation_params: dict,
     emit_quads: bool,
 ) -> dict[str, Any]:
     """Assemble the final data dict returned by generate()."""
@@ -132,6 +134,7 @@ def _package_data(
         "words": words,
         "blocks": blocks,
         "quality_metrics": quality_metrics,
+        "generation_params": generation_params,
     }
 
     if emit_quads:
@@ -323,6 +326,7 @@ class SynthDoG(templates.Template):
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            doc_provenance,
         ) = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
@@ -371,6 +375,14 @@ class SynthDoG(templates.Template):
         label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
 
+        generation_params = {
+            "landscape": bool(landscape),
+            "canvas_size": list(size),
+            "jpeg_quality": int(quality),
+            "skew_angle": round(skew_angle, 3),
+            **doc_provenance,
+        }
+
         return _package_data(
             image=image,
             label=label,
@@ -380,6 +392,7 @@ class SynthDoG(templates.Template):
             words=words,
             blocks=blocks,
             quality_metrics=quality_metrics,
+            generation_params=generation_params,
             emit_quads=self.emit_quads,
         )
 
@@ -447,6 +460,7 @@ class SynthDoG(templates.Template):
 
         lines: list[LineAnnotation] = data.get("lines", [])
         quality_metrics = data.get("quality_metrics", {})
+        generation_params = data.get("generation_params", {})
         image = data["image"]
         quality = data["quality"]
         words = data.get("words", [])
@@ -476,8 +490,8 @@ class SynthDoG(templates.Template):
         text_words_data = [word_annotation_to_dict(wd) for wd in words]
         text_blocks_data = [block_annotation_to_dict(b) for b in blocks]
 
-        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
-        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics]
+        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS, KEY_GENERATION_PARAMS]
+        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics, generation_params]
 
         metadata = self.format_metadata(
             image_filename=image_filename,

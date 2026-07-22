@@ -62,6 +62,7 @@ KEY_TEXT_LINES = "text_lines"
 KEY_TEXT_BLOCKS = "text_blocks"
 KEY_TEXT_WORDS = "text_words"
 KEY_QUALITY_METRICS = "quality_metrics"
+KEY_GENERATION_PARAMS = "generation_params"
 
 
 # ── Annotation → dict helpers ─────────────────────────────────────────

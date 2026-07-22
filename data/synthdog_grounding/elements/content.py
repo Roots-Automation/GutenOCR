@@ -205,6 +205,7 @@ class Content:
         textbox_total_count = 0
         textbox_null_count = 0
         next_block_id = 0
+        zones_rendered: list[str] = []
 
         canvas_ref = float(min(width, height))
 
@@ -225,6 +226,7 @@ class Content:
             h_frac = np.random.uniform(*self.page_header_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("header")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
                 next_block_id, znull, ztot = self._render_zone(
                     self.page_header_cfg,
@@ -248,6 +250,7 @@ class Content:
             h_frac = np.random.uniform(*self.page_footer_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("footer")
                 footer_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footer_top, layout_bbox[2], zone_h]
                 pn_cfg = self.page_footer_cfg.get("page_number", {})
@@ -274,6 +277,7 @@ class Content:
             h_frac = np.random.uniform(*self.footnote_cfg.get("height", [0.05, 0.12]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("footnote")
                 footnote_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footnote_top, layout_bbox[2], zone_h]
                 next_block_id, znull, ztot = self._render_zone(
@@ -297,6 +301,7 @@ class Content:
             h_frac = np.random.uniform(*self.section_heading_cfg.get("height", [0.06, 0.14]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("heading")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
                 next_block_id, znull, ztot = self._render_zone(
                     self.section_heading_cfg,
@@ -319,9 +324,11 @@ class Content:
         # ── Body GridStack ────────────────────────────────────────────────────
         layouts = self.layout.generate(layout_bbox)
 
+        body_col_counts = []
         for grid_idx, layout in enumerate(layouts):
             font = self.font.sample()
             cells = [(bbox, align, (grid_idx, col_idx)) for bbox, align, col_idx in layout]
+            body_col_counts.append(len({col_idx for _, _, col_idx in layout}))
             next_block_id, gnull, gtot = self._render_cells(
                 cells,
                 self.reader,
@@ -342,13 +349,23 @@ class Content:
         # exclusive so neither silently discards the other's work.
         content_meta = content_color.sample()
         if content_meta["state"]:
+            text_color_mode = "uniform"
             content_color.apply(text_layers, meta=content_meta)
         else:
+            text_color_mode = "per_line"
             for text_layer in text_layers:
                 textbox_color.apply([text_layer])
 
         for text_layer in text_layers:
             self.text_sprinkle.apply([text_layer])
+
+        provenance = {
+            "paper_luminance": round(float(lum), 4),
+            "text_color_mode": text_color_mode,
+            "zones_rendered": zones_rendered,
+            "body_grid_count": len(layouts),
+            "body_col_counts": body_col_counts,
+        }
 
         return (
             text_layers,
@@ -358,4 +375,5 @@ class Content:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            provenance,
         )
