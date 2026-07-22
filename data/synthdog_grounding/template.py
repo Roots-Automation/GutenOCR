@@ -290,16 +290,8 @@ class SynthDoG(templates.Template):
         layer = layers.Group([doc_layer, bg_layer]).merge()
         # Apply elastic distortion to the composited image. This runs *after*
         # annotations are captured from per-layer quads, so saved bboxes reflect
-        # the pre-distortion geometry.
-        #
-        # Empirical analysis (SYNTHDOG-VALIDATION.md Thread 11, n=50) confirmed this
-        # misalignment is negligible with config params alpha=[0,1], sigma=[0,0.5]:
-        #   mean pixel delta   1.4  (vs motion blur 2.6,  Gaussian blur 2.1)
-        #   p95 pixel delta   10.1  (vs motion blur 24.1, Gaussian blur 27.5)
-        #   centroid drift     2.3px (vs motion blur 2.6px, Gaussian blur 2.2px)
-        #   text coverage      0.90  (vs motion blur 0.92, Gaussian blur 0.93)
-        # Elastic distortion is at or below the level of the blur effects that are
-        # also applied post-annotation, so no fix is warranted.
+        # pre-distortion geometry. Misalignment is at or below the level of the
+        # blur effects also applied post-annotation, so no correction is warranted.
         self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
         result = layer.output(bbox=[0, 0, *size])
@@ -435,7 +427,10 @@ class SynthDoG(templates.Template):
         # Content-based split: hash the label so the same text always lands
         # in the same split regardless of generation order or worker count.
         label_hash = int(hashlib.sha256(data["label"].encode()).hexdigest()[:16], 16)
-        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random()))
+        split_idx = min(
+            int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random())),
+            len(self.splits) - 1,
+        )
         output_dirpath = os.path.join(root, self.splits[split_idx])
 
         # save image
