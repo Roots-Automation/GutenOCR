@@ -254,6 +254,9 @@ def _make_stub_synthdog():
             "max_cross_block_line_overlap",
             "splits",
             "_split_thresholds",
+            "_SAVE_MAX_RETRIES",
+            "_quality_failure",
+            "generate",
             "save",
             "format_metadata",
         ]
@@ -267,11 +270,24 @@ def _make_stub_synthdog():
     stub.max_cross_block_line_overlap = 0.05
     stub.splits = ["train", "val", "test"]
     stub._split_thresholds = np.array([0.8, 0.9, 1.0])
-    # Bind the real save() method to the stub.
+    stub._SAVE_MAX_RETRIES = 20
+    # Bind the real save() and _quality_failure() methods to the stub.
     from template import SynthDoG
 
+    stub._quality_failure = lambda data: SynthDoG._quality_failure(stub, data)
     stub.save = lambda root, data, idx: SynthDoG.save(stub, root, data, idx)
     stub.format_metadata = MagicMock(return_value={})
+    # generate() returns no-lines data so retry attempts also fail cleanly.
+    _empty = {
+        "lines": [],
+        "words": [],
+        "blocks": [],
+        "label": "",
+        "quality": 85,
+        "image": np.zeros((4, 4, 4), dtype=np.float32),
+        "quality_metrics": {"word_count": 0, "textbox_null_frac": 0.0},
+    }
+    stub.generate = MagicMock(return_value=_empty)
     return stub
 
 

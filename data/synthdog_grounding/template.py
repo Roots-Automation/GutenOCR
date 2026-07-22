@@ -386,39 +386,61 @@ class SynthDoG(templates.Template):
     def init_save(self, root):
         os.makedirs(root, exist_ok=True)
 
-    def save(self, root, data, idx):
-        lines: list[LineAnnotation] = data.get("lines", [])
+    def _quality_failure(self, data: dict) -> str | None:
+        """Return a human-readable failure reason, or None if the sample passes all filters."""
+        lines = data.get("lines", [])
         if not lines:
-            return
-
-        quality_metrics = data.get("quality_metrics", {})
-        min_contrast = quality_metrics.get("min_line_contrast_ratio")
-        if min_contrast is not None and min_contrast < self.min_contrast_ratio:
-            return
-
-        if quality_metrics.get("word_count", 0) < self.min_word_count:
-            return
-
-        null_frac = quality_metrics.get("textbox_null_frac", 0.0) or 0.0
+            return "no lines"
+        qm = data.get("quality_metrics", {})
+        contrast = qm.get("min_line_contrast_ratio")
+        if contrast is not None and contrast < self.min_contrast_ratio:
+            return f"contrast {contrast:.3f} < {self.min_contrast_ratio}"
+        words = qm.get("word_count", 0)
+        if words < self.min_word_count:
+            return f"words {words} < {self.min_word_count}"
+        null_frac = qm.get("textbox_null_frac", 0.0) or 0.0
         if null_frac > self.max_textbox_null_frac:
-            return
-
-        min_h = quality_metrics.get("min_line_height_px")
+            return f"null_frac {null_frac:.3f} > {self.max_textbox_null_frac}"
+        min_h = qm.get("min_line_height_px")
         if min_h is not None and min_h < self.min_line_height_px:
-            return
-
-        sharpness = quality_metrics.get("sharpness")
+            return f"min_line_height {min_h:.1f} < {self.min_line_height_px}"
+        sharpness = qm.get("sharpness")
         if sharpness is not None and sharpness < self.min_sharpness:
+            return f"sharpness {sharpness:.1f} < {self.min_sharpness}"
+        intra = qm.get("max_intra_block_line_overlap")
+        if intra is not None and intra > self.max_intra_block_line_overlap:
+            return f"intra_overlap {intra:.3f} > {self.max_intra_block_line_overlap}"
+        cross = qm.get("max_cross_block_line_overlap")
+        if cross is not None and cross > self.max_cross_block_line_overlap:
+            return f"cross_overlap {cross:.3f} > {self.max_cross_block_line_overlap}"
+        return None
+
+    _SAVE_MAX_RETRIES: int = 20
+
+    def save(self, root, data, idx):
+        # Retry with deterministic sub-seeds until the sample passes all quality
+        # filters, so that requesting N samples always yields exactly N on disk.
+        # Retry seeds are spaced far from the primary seed space: idx * 100_000 + attempt.
+        for attempt in range(self._SAVE_MAX_RETRIES):
+            failure = self._quality_failure(data)
+            if failure is None:
+                break
+            if attempt == 0:
+                retry_base = (idx + 1) * 100_000
+            retry_seed = retry_base + attempt
+            data = self.generate(seed=retry_seed)
+        else:
+            # All retries exhausted — log and skip rather than write a bad sample.
+            import warnings
+
+            warnings.warn(
+                f"save idx={idx}: could not produce a passing sample after {self._SAVE_MAX_RETRIES} retries; skipping.",
+                stacklevel=2,
+            )
             return
 
-        max_overlap = quality_metrics.get("max_intra_block_line_overlap")
-        if max_overlap is not None and max_overlap > self.max_intra_block_line_overlap:
-            return
-
-        cross_overlap = quality_metrics.get("max_cross_block_line_overlap")
-        if cross_overlap is not None and cross_overlap > self.max_cross_block_line_overlap:
-            return
-
+        lines: list[LineAnnotation] = data.get("lines", [])
+        quality_metrics = data.get("quality_metrics", {})
         image = data["image"]
         quality = data["quality"]
         words = data.get("words", [])

@@ -139,7 +139,16 @@ class Document:
                 - textbox_total_count: Total textbox slots attempted
         """
         size = self._compute_document_size(size)
-        paper_layer, bg_color = self.paper.generate(size)
+        paper_layer, _ = self.paper.generate(size)
+        # Sample the median RGB of the rendered paper (after texture + stain) so
+        # that content.generate() sees the actual paper brightness rather than the
+        # base color before those effects.  Median is robust to small stain spots.
+        paper_rgb = np.clip(paper_layer.image[..., :3], 0, 255)
+        bg_color = (
+            int(np.median(paper_rgb[..., 0])),
+            int(np.median(paper_rgb[..., 1])),
+            int(np.median(paper_rgb[..., 2])),
+        )
         text_layers, texts, block_ids, words_per_line, block_region_types, textbox_null_count, textbox_total_count = (
             self.content.generate(size, bg_color)
         )

@@ -192,7 +192,9 @@ class Content:
         lum = _relative_luminance(*bg_color)
         # 0.179 = WCAG black-vs-white crossover: √(1.05×0.05) − 0.05.
         # Below it, light text has better contrast; above it, dark text wins.
-        gray_range = [0, 64] if lum > 0.179 else [191, 255]
+        # Ranges are kept away from mid-gray to preserve contrast headroom after
+        # perspective warp, elastic distortion, and blur degrade rendered contrast.
+        gray_range = [0, 40] if lum > 0.179 else [215, 255]
 
         textbox_color = _make_adaptive_color(self.textbox_color_config, gray_range, lum)
         content_color = _make_adaptive_color(self.content_color_config, gray_range, lum)
