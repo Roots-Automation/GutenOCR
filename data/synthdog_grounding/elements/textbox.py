@@ -12,7 +12,7 @@ import numpy as np
 from synthtiger import layers
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from pillow_compat import _cached_truetype
+from pillow_compat import _cached_truetype, _is_renderable
 
 _NON_WORD_RE = re.compile(r"[^\w]")
 
@@ -84,6 +84,8 @@ class TextBox:
 
         for char in cursor:
             if char in "\r\n":
+                continue
+            if not char.isspace() and not _is_renderable(font_obj, char):
                 continue
             next_prefix = prefix + char
             x_right = font_obj.getlength(next_prefix) * char_scale

@@ -60,6 +60,29 @@ def _patch_to_rgb():
 _getsize_cache: dict = {}  # (path, size, text, direction) -> (w, h)
 _getlength_cache: dict = {}  # (path, size, text, direction) -> float
 
+# Glyph-presence detection caches.
+# Reference mask: U+E000 (Private Use Area) is never mapped by any text font,
+# so its rendered mask is always the .notdef fallback glyph.
+_notdef_mask_cache: dict = {}  # (path, size) -> np.ndarray
+_renderable_cache: dict = {}  # (path, size, codepoint) -> bool
+
+
+def _is_renderable(font_obj, char: str) -> bool:
+    """Return True if font_obj has a real glyph for char.
+
+    Compares the rendered mask of char against the .notdef fallback (obtained
+    via U+E000, which no text font maps).  Results are cached per (font, size,
+    codepoint) so the cost is one getmask call per unique character seen.
+    """
+    key = (font_obj.path, font_obj.size)
+    if key not in _notdef_mask_cache:
+        _notdef_mask_cache[key] = np.array(font_obj.getmask(""))
+    cp = ord(char)
+    cache_key = (*key, cp)
+    if cache_key not in _renderable_cache:
+        _renderable_cache[cache_key] = not np.array_equal(np.array(font_obj.getmask(char)), _notdef_mask_cache[key])
+    return _renderable_cache[cache_key]
+
 
 def register_pillow_compat():
     """

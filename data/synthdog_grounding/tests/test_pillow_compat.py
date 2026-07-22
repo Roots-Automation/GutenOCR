@@ -8,7 +8,7 @@ from PIL import ImageFont
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from pillow_compat import _cached_truetype, _fast_to_rgb
+from pillow_compat import _cached_truetype, _fast_to_rgb, _is_renderable
 
 # A real font shipped with the project — required for getsize/getlength tests.
 _FONT_PATH = str(Path(__file__).resolve().parents[1] / "resources/font/en/CourierPrime-BoldItalic.ttf")
@@ -167,6 +167,47 @@ def test_getlength_returns_positive_float():
 # ---------------------------------------------------------------------------
 # _patch_to_rgb — synthtiger.utils.to_rgb replaced
 # ---------------------------------------------------------------------------
+
+
+# ---------------------------------------------------------------------------
+# _is_renderable
+# ---------------------------------------------------------------------------
+
+
+def test_is_renderable_returns_true_for_ascii_on_latin_font():
+    font = _cached_truetype(_FONT_PATH, _FONT_SIZE)
+    for ch in "ABCabc0123!":
+        assert _is_renderable(font, ch), f"{ch!r} should be renderable by a Latin font"
+
+
+def test_is_renderable_returns_false_for_cjk_on_latin_font():
+    font = _cached_truetype(_FONT_PATH, _FONT_SIZE)
+    for ch in "中文한":
+        assert not _is_renderable(font, ch), f"{ch!r} should not be renderable by a Latin font"
+
+
+def test_is_renderable_returns_false_for_pua_reference_char():
+    # U+E000 is the reference character used to detect .notdef — it must itself
+    # be unrenderable so the baseline is reliable.
+    font = _cached_truetype(_FONT_PATH, _FONT_SIZE)
+    assert not _is_renderable(font, "")
+
+
+def test_is_renderable_result_is_cached():
+    from pillow_compat import _renderable_cache
+
+    font = _cached_truetype(_FONT_PATH, _FONT_SIZE)
+    char = "Z"
+    cache_key = (font.path, font.size, ord(char))
+    _renderable_cache.pop(cache_key, None)
+    _is_renderable(font, char)
+    assert cache_key in _renderable_cache
+
+
+def test_is_renderable_consistent_across_calls():
+    font = _cached_truetype(_FONT_PATH, _FONT_SIZE)
+    assert _is_renderable(font, "A") == _is_renderable(font, "A")
+    assert not _is_renderable(font, "中") == _is_renderable(font, "A")
 
 
 def test_patch_to_rgb_replaces_synthtiger_utils():

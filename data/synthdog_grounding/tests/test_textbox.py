@@ -317,3 +317,51 @@ def test_render_cells_null_frac_zero_on_success():
     assert total_count == 1
     assert null_count == 0
     assert len(text_layers) == 1
+
+
+# ---------------------------------------------------------------------------
+# Unrenderable character skipping
+# ---------------------------------------------------------------------------
+
+
+def test_generate_skips_unrenderable_chars_in_text():
+    """Characters the font cannot render must be absent from the returned text."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    # CourierPrime cannot render CJK — the characters must be dropped silently.
+    _, text, _ = tb.generate(BOX_SIZE, _cursor("Hello 中文 world"), FONT_CFG)
+    assert text is not None
+    assert "中" not in text
+    assert "文" not in text
+    assert "Hello" in text
+    assert "world" in text
+
+
+def test_generate_unrenderable_chars_absent_from_word_annotations():
+    """Word annotations must not contain characters the font cannot render."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    _, _, words = tb.generate(BOX_SIZE, _cursor("Hello 中文 world"), FONT_CFG)
+    all_word_text = " ".join(w["text"] for w in words)
+    assert "中" not in all_word_text
+    assert "文" not in all_word_text
+
+
+def test_generate_all_unrenderable_returns_none():
+    """A line composed entirely of unrenderable characters must return (None, None, None)."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    layer, text, words = tb.generate(BOX_SIZE, _cursor("中文한국어"), FONT_CFG)
+    assert layer is None
+    assert text is None
+    assert words is None
+
+
+def test_generate_mixed_line_has_correct_word_count():
+    """After dropping unrenderable chars the remaining words must be annotated correctly."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    _, _, words = tb.generate(BOX_SIZE, _cursor("foo 中 bar 文 baz"), FONT_CFG)
+    assert words is not None
+    word_texts = [w["text"] for w in words]
+    assert word_texts == ["foo", "bar", "baz"]
