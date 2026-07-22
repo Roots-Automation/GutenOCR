@@ -218,6 +218,7 @@ class HuggingFaceTextReader:
         current_text = self._get_current_text()
         if current_text:
             self.idx = (self.idx - 1) % len(current_text)
+            self._needs_refresh = self.idx > len(current_text) * 0.8
 
     def get(self):
         """Get current character"""
@@ -257,7 +258,7 @@ class LiteralTextCursor:
     """
 
     def __init__(self, text: str) -> None:
-        self._buf = text + " "  # trailing space = word boundary
+        self._buf = text.replace("\r", "").replace("\n", "") + " "  # trailing space = word boundary
         self._idx = 0
         self._consumed = 0
 
@@ -277,6 +278,7 @@ class LiteralTextCursor:
 
     def move(self, idx: int) -> None:
         self._idx = idx % len(self._buf)
+        self._consumed = self._idx
 
     def next(self) -> None:
         self._idx = (self._idx + 1) % len(self._buf)
