@@ -430,8 +430,15 @@ class SynthDoG(templates.Template):
             failure = self._quality_failure(data)
         else:
             # All retries exhausted — log and skip rather than write a bad sample.
+            import logging
             import warnings
 
+            logging.getLogger(__name__).warning(
+                "save idx=%d: exhausted %d retries; last failure: %s",
+                idx,
+                self._SAVE_MAX_RETRIES,
+                failure,
+            )
             warnings.warn(
                 f"save idx={idx}: could not produce a passing sample after {self._SAVE_MAX_RETRIES} retries; skipping.",
                 stacklevel=2,
