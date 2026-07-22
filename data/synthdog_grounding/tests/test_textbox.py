@@ -168,6 +168,23 @@ def test_generate_word_ratios_bounded():
         assert 0.0 <= w["x1_ratio"] <= w["x2_ratio"] <= 1.0, w["text"]
 
 
+def test_generate_first_word_x1_ratio_is_zero_after_backtrack():
+    """After a last_space backtrack, the next line's first word must start at x1_ratio=0."""
+    tb = _make_textbox()
+    source = "hello world foo bar baz"
+    cursor = _cursor(source)
+    half_box = (150, FONT_SIZE)
+
+    np.random.seed(0)
+    tb.generate(half_box, cursor, FONT_CFG)  # consume first line, triggers backtrack
+    _, _, words = tb.generate(half_box, cursor, FONT_CFG)  # second line has leading space
+
+    assert words is not None and len(words) > 0
+    assert words[0]["x1_ratio"] == pytest.approx(0.0, abs=1e-6), (
+        f"First word '{words[0]['text']}' x1_ratio={words[0]['x1_ratio']:.4f}, expected 0.0"
+    )
+
+
 def test_generate_deterministic():
     """Same seed must produce identical text and word dicts."""
     tb = _make_textbox()

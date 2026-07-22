@@ -63,7 +63,7 @@ class TextBox:
     def __init__(self, config):
         self.fill = config.get("fill", [1, 1])
 
-    def generate(self, size, text, font):
+    def generate(self, size, cursor, font):
         """Fit one line of text into size, returning (layer, text_str, word_ratios) or (None, None, None)."""
         width, height = size
 
@@ -82,13 +82,13 @@ class TextBox:
         prefix = ""
         x = 0.0
 
-        for char in text:
+        for char in cursor:
             if char in "\r\n":
                 continue
             next_prefix = prefix + char
             x_right = font_obj.getlength(next_prefix) * char_scale
             if x_right > width:
-                text.prev()
+                cursor.prev()
                 break
             positions.append((x, x_right))
             chars.append(char)
@@ -100,7 +100,7 @@ class TextBox:
         if last_space is not None:
             n_restore = len(chars) - last_space
             for _ in range(n_restore):
-                text.prev()
+                cursor.prev()
             chars = chars[:last_space]
             positions = positions[:last_space]
 
@@ -108,6 +108,16 @@ class TextBox:
         text_alpha_only = _NON_WORD_RE.sub("", text_str)
         if not chars or not text_str or not text_alpha_only:
             return None, None, None
+
+        # Strip leading spaces left by the previous call's backtrack; rebase
+        # positions so the first visible character starts at x=0. Without this,
+        # line_width includes the leading-space advance and x1_ratio for the
+        # first word is non-zero even though it visually starts at the left edge.
+        lead = next(i for i, ch in enumerate(chars) if not ch.isspace())
+        if lead:
+            x_off = positions[lead][0]
+            chars = chars[lead:]
+            positions = [(lo - x_off, ro - x_off) for lo, ro in positions[lead:]]
 
         text_layer = layers.TextLayer(text_str, **font)
         text_layer.bbox = [0, 0, *(text_layer.size * char_scale)]

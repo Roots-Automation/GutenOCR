@@ -12,8 +12,8 @@ def _clamp01(v: float) -> float:
     return max(0.0, min(1.0, v))
 
 
-def _gray_lum(v: float) -> float:
-    """WCAG relative luminance of a single grayscale value in [0, 255]."""
+def _linearize_channel(v: float) -> float:
+    """WCAG sRGB linearization for a single channel value in [0, 255]."""
     c = v / 255.0
     return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
@@ -74,15 +74,8 @@ def capture_line_bboxes(text_layers, w: int, h: int) -> list[list[float]]:
     and skew transforms (which update layer.quad but not layer.left/top/width/height)
     are reflected in the bounding box.
 
-    For the y-axis we average the top-edge y-values and the bottom-edge y-values
-    rather than taking the global min/max of all four corners.  Under perspective
-    warp, long text lines become slightly tilted: the left and right ends sit at
-    different image-space y-coordinates.  Taking global min/max inflates the bbox
-    height to cover the full tilt range (e.g. 42 px for a 20 px-tall line), which
-    causes adjacent lines' bboxes to overlap by up to 57 % even when the text
-    itself does not overlap.  Averaging the top-edge and bottom-edge y-values
-    collapses that inflation, giving a tight strip around the text and eliminating
-    the false overlap between consecutive lines.
+    Uses true AABB (min/max of all four corners) so the box always contains
+    every pixel of the text region, even under strong perspective warp.
 
     Quad corner order (synthtiger convention): [tl, tr, br, bl].
     """
@@ -90,14 +83,12 @@ def capture_line_bboxes(text_layers, w: int, h: int) -> list[list[float]]:
     for text_layer in text_layers:
         quad = text_layer.quad
         xs = [float(pt[0]) for pt in quad]
-        # Average top-edge y (corners 0,1) and bottom-edge y (corners 3,2)
-        y_top = (float(quad[0][1]) + float(quad[1][1])) / 2
-        y_bottom = (float(quad[3][1]) + float(quad[2][1])) / 2
+        ys = [float(pt[1]) for pt in quad]
         bbox = [
             _norm(min(xs), w),
-            _norm(min(y_top, y_bottom), h),
+            _norm(min(ys), h),
             _norm(max(xs), w),
-            _norm(max(y_top, y_bottom), h),
+            _norm(max(ys), h),
         ]
         bboxes.append(bbox)
     return bboxes
@@ -241,8 +232,8 @@ def compute_quality_metrics(
         line_contrasts.append(float(np.std(region)))
         line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
         line_heights_px.append(float(y2_px - y1_px))
-        p10 = _gray_lum(float(np.percentile(region, 10)))
-        p90 = _gray_lum(float(np.percentile(region, 90)))
+        p10 = _linearize_channel(float(np.percentile(region, 10)))
+        p90 = _linearize_channel(float(np.percentile(region, 90)))
         line_contrast_ratios.append(_contrast_ratio(p10, p90))
 
     word_bbox_areas_px = []

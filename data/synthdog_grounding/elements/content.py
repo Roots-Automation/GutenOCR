@@ -5,17 +5,13 @@ MIT License
 """
 
 import numpy as np
+from annotations import _linearize_channel
 from synthtiger import components
 
 from layouts import Grid, GridStack, Layout
 
 from .readers import _READER_TYPES, LiteralTextCursor, TextCursor
 from .textbox import TextBox
-
-
-def _linearize_channel(c: float) -> float:
-    c /= 255.0
-    return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
 
 def _relative_luminance(r, g, b):
@@ -172,7 +168,7 @@ class Content:
         grid = Grid({"max_row": 1, "max_col": max_col, "align": cfg.get("align", ["left", "right", "center"])})
         layout = grid.generate(zone_bbox, fill_range=(0.5, 1.0), text_scale_range=(zone_text_scale, zone_text_scale))
         if layout is None:
-            return next_block_id, 0, 1
+            return next_block_id, 0, 0
 
         cursor: TextCursor = LiteralTextCursor(str(np.random.randint(1, 500))) if use_page_number else self.reader
         font = (font_override if font_override is not None else self.font).sample()
