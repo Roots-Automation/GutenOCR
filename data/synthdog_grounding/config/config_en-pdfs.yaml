@@ -15,12 +15,8 @@ document:
 
   content:
     text:
-      type: huggingface
-      dataset_name: "HuggingFaceFW/finepdfs"
-      split: "train"
-      streaming: true
-      buffer_size: 1000
-      charset: ascii
+      type: file
+      path: resources/corpus/finepdfs_en.txt
     font:
       paths: [resources/font/en]
     layout:
