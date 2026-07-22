@@ -61,8 +61,37 @@ from serialization import (  # noqa: E402
     word_annotation_to_dict,
 )
 from synthtiger import components, layers, templates  # noqa: E402
+from synthtiger.components.image_effect.brightness import Brightness as _Brightness  # noqa: E402
+from synthtiger.components.image_effect.contrast import Contrast as _Contrast  # noqa: E402
 
 from elements import Background, Document  # noqa: E402
+
+
+# Replace synthtiger's float32 brightness/contrast ops with cv2 LUT lookups.
+# Original: img += beta; np.clip(img, 0, 255)  — forces float promotion + full-image clip.
+# LUT: build 256-entry table once, apply with cv2.LUT — no dtype conversion, cache-friendly.
+def _brightness_apply_cv2(self, layers, meta=None):
+    meta = self.sample(meta)
+    beta = meta["beta"]
+    lut = np.clip(np.arange(256, dtype=np.int16) + beta, 0, 255).astype(np.uint8)
+    for layer in layers:
+        idx = layer.image[..., :3].astype(np.uint8)
+        layer.image[..., :3] = lut[idx]
+    return meta
+
+
+def _contrast_apply_cv2(self, layers, meta=None):
+    meta = self.sample(meta)
+    alpha = meta["alpha"]
+    lut = np.clip(alpha * np.arange(256) - 128.0 * (alpha - 1.0), 0, 255).astype(np.uint8)
+    for layer in layers:
+        idx = layer.image[..., :3].astype(np.uint8)
+        layer.image[..., :3] = lut[idx]
+    return meta
+
+
+_Brightness.apply = _brightness_apply_cv2
+_Contrast.apply = _contrast_apply_cv2
 
 
 def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
