@@ -451,3 +451,99 @@ def test_compute_quality_metrics_intra_block_overlap_nonzero_for_same_block():
     metrics = compute_quality_metrics(image, lines, [], w=100, h=100, deg_lines=0, deg_words=0, null_ct=0, total_ct=2)
     assert metrics["max_intra_block_line_overlap"] > 0.0
     assert metrics["max_cross_block_line_overlap"] == 0.0
+
+
+# ---------------------------------------------------------------------------
+# Adversarial edge cases
+# ---------------------------------------------------------------------------
+
+
+def test_filter_degenerate_all_lines_degenerate_returns_empty():
+    """When every line is degenerate the function must return empty lists, not crash."""
+    lines = [
+        _make_line(0, 0, [0.0, 0.0, 0.0, 0.0]),
+        _make_line(1, 1, [0.0, 0.0, 0.0, 0.0]),
+    ]
+    words = [
+        _make_word(0, 0, [0.0, 0.0, 0.1, 0.1]),
+        _make_word(1, 1, [0.0, 0.0, 0.1, 0.1]),
+    ]
+    out_lines, out_words, dl, dw = filter_degenerate(lines, words, min_area=1.0, w=100, h=100)
+    assert out_lines == []
+    assert out_words == []
+    assert dl == 2
+    assert dw == 2
+
+
+def test_filter_degenerate_block_ids_unchanged_on_surviving_lines():
+    """filter_degenerate only reassigns line_id; block_id must stay intact.
+
+    Incorrect implementation could remap block_id along with line_id, breaking
+    the block grouping step in build_annotations.
+    """
+    lines = [
+        _make_line(0, 7, [0.0, 0.0, 0.0, 0.0]),  # degenerate, block 7
+        _make_line(1, 3, [0.0, 0.0, 0.5, 0.5]),  # survives, block 3
+    ]
+    words = [_make_word(0, 1, [0.0, 0.0, 0.3, 0.3])]
+    out_lines, _, _, _ = filter_degenerate(lines, words, min_area=1.0, w=100, h=100)
+    assert len(out_lines) == 1
+    assert out_lines[0].block_id == 3  # unchanged, NOT remapped to 0
+    assert out_lines[0].line_id == 0  # line_id IS remapped
+
+
+def test_filter_degenerate_surviving_words_ids_start_from_zero():
+    """Word IDs must be dense starting from 0 after filtering."""
+    lines = [
+        _make_line(0, 0, [0.0, 0.0, 0.0, 0.0]),  # degenerate
+        _make_line(1, 0, [0.0, 0.0, 0.5, 0.5]),  # survives
+    ]
+    words = [
+        _make_word(0, 0, [0.0, 0.0, 0.1, 0.1]),  # dropped
+        _make_word(1, 1, [0.0, 0.0, 0.3, 0.3]),  # new id 0
+        _make_word(2, 1, [0.3, 0.0, 0.5, 0.3]),  # new id 1
+    ]
+    _, out_words, _, _ = filter_degenerate(lines, words, min_area=1.0, w=100, h=100)
+    assert [w.word_id for w in out_words] == [0, 1]
+
+
+def test_build_block_annotations_empty_input_returns_empty_list():
+    """Empty block_ids / line_bboxes must produce an empty block list, not crash."""
+    blocks = build_block_annotations([], [])
+    assert blocks == []
+
+
+def test_build_block_annotations_non_contiguous_block_ids():
+    """Block IDs need not be 0-based; each unique id becomes exactly one block."""
+    blocks = build_block_annotations(
+        [5, 5, 12],
+        [
+            [0.0, 0.0, 0.3, 0.3],
+            [0.1, 0.1, 0.4, 0.4],
+            [0.6, 0.6, 0.9, 0.9],
+        ],
+    )
+    block_map = {b.block_id: b for b in blocks}
+    assert set(block_map) == {5, 12}
+    assert sorted(block_map[5].line_ids) == [0, 1]
+    assert block_map[12].line_ids == [2]
+
+
+def test_compute_quality_metrics_no_lines_has_none_contrast():
+    """When there are no surviving lines, min_line_contrast_ratio must be None — not a crash."""
+    image = np.full((50, 100, 4), 200, dtype=np.uint8)
+    metrics = compute_quality_metrics(image, [], [], w=100, h=50, deg_lines=0, deg_words=0, null_ct=0, total_ct=0)
+    assert metrics["min_line_contrast"] is None
+    assert metrics["min_line_contrast_ratio"] is None
+    assert metrics["min_line_height_px"] is None
+    assert metrics["line_count"] == 0
+    assert metrics["word_count"] == 0
+
+
+def test_compute_quality_metrics_single_line_overlap_is_zero():
+    """A single line has no pairs to compare; both overlap metrics must be 0.0."""
+    image = np.full((100, 100, 4), 200, dtype=np.uint8)
+    lines = [_make_line(0, 0, [0.1, 0.1, 0.9, 0.5])]
+    metrics = compute_quality_metrics(image, lines, [], w=100, h=100, deg_lines=0, deg_words=0, null_ct=0, total_ct=1)
+    assert metrics["max_intra_block_line_overlap"] == 0.0
+    assert metrics["max_cross_block_line_overlap"] == 0.0

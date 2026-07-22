@@ -367,6 +367,63 @@ def test_generate_mixed_line_has_correct_word_count():
     assert word_texts == ["foo", "bar", "baz"]
 
 
+def test_extract_word_ratios_all_spaces_returns_empty():
+    """A char list of only spaces must yield zero words — not crash or return empty-text words."""
+    chars = list("   ")
+    positions = [(i * 5, i * 5 + 4) for i in range(3)]
+    assert _extract_word_ratios(chars, positions, line_width=15.0) == []
+
+
+def test_extract_word_ratios_consecutive_spaces_still_yields_two_words():
+    """Multiple consecutive spaces between words must not cause duplication or merging."""
+    chars = list("hi  there")
+    positions = [(i * 6, i * 6 + 5) for i in range(len(chars))]
+    result = _extract_word_ratios(chars, positions, line_width=float(len(chars) * 6))
+    assert len(result) == 2
+    assert result[0]["text"] == "hi"
+    assert result[1]["text"] == "there"
+
+
+def test_extract_word_ratios_adjacent_words_non_overlapping():
+    """For every adjacent word pair, word[i].x2_ratio must be ≤ word[i+1].x1_ratio.
+
+    Overlapping word bboxes would break downstream geometry checks.
+    """
+    chars = list("foo bar baz")
+    positions = [(i * 8, i * 8 + 7) for i in range(len(chars))]
+    words = _extract_word_ratios(chars, positions, line_width=float(len(chars) * 8))
+    assert len(words) == 3
+    for i in range(len(words) - 1):
+        assert words[i]["x2_ratio"] <= words[i + 1]["x1_ratio"], (
+            f"word {i} x2={words[i]['x2_ratio']:.4f} overlaps word {i + 1} x1={words[i + 1]['x1_ratio']:.4f}"
+        )
+
+
+def test_generate_leading_unrenderable_char_not_in_output():
+    """When the cursor starts with an unrenderable char, the char must not appear in
+    the returned text or word annotations, and the line must still render normally."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    _, text, words = tb.generate(BOX_SIZE, _cursor("中foo bar"), FONT_CFG)
+    assert text is not None
+    assert "中" not in text
+    assert text.startswith("foo")
+    assert words is not None
+    assert words[0]["text"] == "foo"
+
+
+def test_generate_cursor_exhausted_no_overflow_returns_valid():
+    """When the cursor is exhausted before the box is full (no overflow char),
+    generate() must return a valid result — not (None, None, None)."""
+    tb = _make_textbox()
+    np.random.seed(0)
+    # "A" fits easily in BOX_SIZE; cursor exhausts after 'A' + trailing space.
+    _, text, words = tb.generate(BOX_SIZE, _cursor("A"), FONT_CFG)
+    assert text == "A"
+    assert words is not None and len(words) == 1
+    assert words[0]["text"] == "A"
+
+
 def test_walkback_restores_cursor_past_skipped_chars_before_overflow():
     """Skipped chars between the last rendered char and the overflow must be
     included in the walkback step count, or the following renderable word is

@@ -380,6 +380,64 @@ def test_save_writes_when_all_filters_pass():
     stub.format_metadata.assert_called_once()
 
 
+def test_save_contrast_at_exact_threshold_passes():
+    """A sample at exactly min_contrast_ratio must pass the filter.
+
+    The condition is ``< self.min_contrast_ratio`` (strict less-than), so a
+    value equal to the threshold must NOT be rejected.
+    """
+    stub = _make_stub_synthdog()
+    data = _good_data()
+    # Set contrast equal to the configured threshold (3.0).
+    data["quality_metrics"]["min_line_contrast_ratio"] = stub.min_contrast_ratio
+    with tempfile.TemporaryDirectory() as root:
+        stub.save(root, data, 0)
+    stub.format_metadata.assert_called_once()
+
+
+def test_save_null_frac_none_treated_as_zero():
+    """If quality_metrics['textbox_null_frac'] is None (no textboxes rendered),
+    save() must treat it as 0.0 — not reject the sample or crash."""
+    stub = _make_stub_synthdog()
+    data = _good_data()
+    data["quality_metrics"]["textbox_null_frac"] = None
+    with tempfile.TemporaryDirectory() as root:
+        stub.save(root, data, 0)
+    stub.format_metadata.assert_called_once()
+
+
+def test_synthdog_negative_split_ratio_raises():
+    """Negative split_ratio components must raise ValueError before any I/O."""
+    from unittest.mock import patch
+
+    from template import SynthDoG
+
+    with (
+        patch("template._check_font_dirs"),
+        patch("template.Background"),
+        patch("template.Document"),
+        patch("template.components"),
+    ):
+        with pytest.raises(ValueError, match="non-negative"):
+            SynthDoG({}, split_ratio=[-0.1, 0.6, 0.5])
+
+
+def test_synthdog_split_ratio_not_summing_to_one_raises():
+    """A split_ratio whose sum deviates from 1.0 by more than ±1 % must raise ValueError."""
+    from unittest.mock import patch
+
+    from template import SynthDoG
+
+    with (
+        patch("template._check_font_dirs"),
+        patch("template.Background"),
+        patch("template.Document"),
+        patch("template.components"),
+    ):
+        with pytest.raises(ValueError, match="sum"):
+            SynthDoG({}, split_ratio=[0.3, 0.3, 0.1])
+
+
 def test_save_split_idx_clamped_when_threshold_below_one():
     """Regression: if _split_thresholds[-1] < 1.0 due to float arithmetic,
     searchsorted can return len(splits), causing an IndexError. The fix clamps
