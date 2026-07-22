@@ -88,6 +88,7 @@ class TextBox:
 
         for char in cursor:
             if char in "\r\n":
+                skipped += 1
                 continue
             if not char.isspace() and not _is_renderable(font_obj, char):
                 skipped += 1

@@ -131,6 +131,32 @@ def test_grid_generate_respects_max_row():
     assert len(layout) <= max_row
 
 
+def test_pick_grid_dimensions_rejects_narrow_columns():
+    """col=3 must be rejected when col_width < 4*text_size.
+
+    With width=100, text_size=10:
+      old condition: text_size*(2*col-1)=50 <= 100  → col=3 accepted
+      new condition: col_width=(100-20)/3≈26.7 < 4*10=40 → col=3 rejected
+                     col_width=(100-10)/2=45  >= 40         → col=2 accepted
+    Every layout returned must have col ≤ 2 (col_idx < 2).
+    """
+    grid = Grid({"max_row": 5, "max_col": 3, "text_scale": [0.1, 0.1]})
+    narrow_bbox = [0.0, 0.0, 100.0, 200.0]
+    found_layout = False
+    for seed in range(60):
+        np.random.seed(seed)
+        layout = grid.generate(narrow_bbox)
+        if layout is None:
+            continue
+        found_layout = True
+        for _, _, col_idx in layout:
+            assert col_idx < 2, (
+                f"seed={seed}: col_idx={col_idx} (col={col_idx + 1}) was selected "
+                "but col=3 violates the minimum 4× column-width constraint"
+            )
+    assert found_layout, "no valid layout returned across 60 seeds; bbox may be too small"
+
+
 def test_grid_generate_impossibly_tiny_bbox_returns_none():
     """A 1×1 bbox with default text_scale [0.05, 0.1] → text_size ≥ 0.05, which
     can't satisfy text_size*(2*col-1) ≤ 1 for any col ≥ 1 at scale ≥ 0.05."""

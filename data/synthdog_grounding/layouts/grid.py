@@ -117,7 +117,11 @@ class Grid:
             # Each of `col` columns needs `text_size` width, and the (col-1)
             # gaps between them each need another `text_size`, giving
             # text_size * (col * 2 - 1) total. Rows just stack vertically.
-            if text_size * (col * 2 - 1) <= width and text_size * row <= height:
+            # Require each column to be at least 4× the font height wide so
+            # that textboxes fit a minimum of ~4 characters per line; narrower
+            # columns produce unreadable 1-2-char-per-line character soup.
+            col_width = (width - text_size * (col - 1)) / col
+            if col_width >= text_size * 4 and text_size * row <= height:
                 return row, col, text_size
 
         return None

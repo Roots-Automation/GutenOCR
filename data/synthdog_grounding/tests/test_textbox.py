@@ -202,6 +202,75 @@ def test_generate_deterministic():
         assert wa == wb
 
 
+class _BufCursor:
+    """Minimal cursor over a fixed string that preserves '\\n', for testing."""
+
+    def __init__(self, s: str) -> None:
+        self._s = s
+        self._i = 0
+
+    def __len__(self) -> int:
+        return len(self._s)
+
+    def __iter__(self) -> "_BufCursor":
+        return self
+
+    def __next__(self) -> str:
+        if self._i >= len(self._s):
+            raise StopIteration
+        ch = self._s[self._i]
+        self._i += 1
+        return ch
+
+    def move(self, i: int) -> None:
+        self._i = i
+
+    def next(self) -> None:
+        self._i += 1
+
+    def prev(self) -> None:
+        self._i = max(0, self._i - 1)
+
+    def get(self) -> str:
+        return self._s[self._i % len(self._s)]
+
+
+def test_walkback_accounts_for_newline_cursor_cost():
+    """A newline consumed before an overflowing char must count as a cursor step.
+
+    Without the fix, skipped=0 when overflow fires (\\n not counted), so
+    n_restore undershoots by 1 and the cursor lands on '\\n' (pos 3) instead
+    of ' ' (pos 2), causing the next generate() to start 1 char too late.
+    """
+    from pillow_compat import _cached_truetype
+
+    tb = _make_textbox()  # fill=[1.0, 1.0]
+    np.random.seed(0)
+
+    font_obj = _cached_truetype(FONT_PATH, FONT_SIZE)
+    ascent, descent = font_obj.getmetrics()
+    char_scale = FONT_SIZE / (ascent + descent)
+
+    # Compute a box width that fits "ab " but NOT "ab c"
+    w_fits = font_obj.getlength("ab ") * char_scale
+    w_overflow = font_obj.getlength("ab c") * char_scale
+    box_width = (w_fits + w_overflow) / 2
+
+    # Source positions: a=0  b=1  ' '=2  '\n'=3  c=4  d=5
+    # Trace: 'a','b',' ' appended (last_space=2, cursor_costs=[1,1,1]);
+    #        '\n'(3) consumed → fix: skipped=1, old: skipped=0;
+    #        'c'(4) overflows → cursor.prev() (_i: 5→4); break (trailing skipped).
+    # n_restore = cursor_costs[2] + skipped = 1 + 1(fix) = 2  →  _i: 4→3→2
+    # n_restore = cursor_costs[2] + skipped = 1 + 0(old) = 1  →  _i: 4→3  (off by 1)
+    cursor = _BufCursor("ab \ncd")
+    tb.generate((box_width, FONT_SIZE), cursor, FONT_CFG)
+
+    assert cursor._i == 2, (
+        f"cursor should be at pos 2 (' ') after walkback, got {cursor._i}; "
+        "the consumed '\\n' was not counted in cursor restore steps"
+    )
+
+
 def test_generate_skips_crlf():
     """CR and LF characters must be silently skipped."""
     tb = _make_textbox()
