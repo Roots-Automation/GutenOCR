@@ -428,35 +428,26 @@ class SynthDoG(templates.Template):
             return f"cross_overlap {cross:.3f} > {self.max_cross_block_line_overlap}"
         return None
 
-    _SAVE_MAX_RETRIES: int = 100
-
     def save(self, root, data, idx):
+        import logging
+
         # Retry with deterministic sub-seeds until the sample passes all quality
-        # filters, so that requesting N samples always yields exactly N on disk.
+        # filters. Never give up — requesting N samples must yield exactly N on disk.
         # Retry seeds are spaced far from the primary seed space: (idx+1) * 100_000 + attempt.
         retry_base = (idx + 1) * 100_000
         failure = self._quality_failure(data)
-        for attempt in range(self._SAVE_MAX_RETRIES):
-            if failure is None:
-                break
+        attempt = 0
+        while failure is not None:
+            if attempt > 0 and attempt % 100 == 0:
+                logging.getLogger(__name__).warning(
+                    "save idx=%d: still failing after %d retries; last failure: %s",
+                    idx,
+                    attempt,
+                    failure,
+                )
             data = self.generate(seed=retry_base + attempt)
             failure = self._quality_failure(data)
-        else:
-            # All retries exhausted — log and skip rather than write a bad sample.
-            import logging
-            import warnings
-
-            logging.getLogger(__name__).warning(
-                "save idx=%d: exhausted %d retries; last failure: %s",
-                idx,
-                self._SAVE_MAX_RETRIES,
-                failure,
-            )
-            warnings.warn(
-                f"save idx={idx}: could not produce a passing sample after {self._SAVE_MAX_RETRIES} retries; skipping.",
-                stacklevel=2,
-            )
-            return
+            attempt += 1
 
         lines: list[LineAnnotation] = data.get("lines", [])
         quality_metrics = data.get("quality_metrics", {})
