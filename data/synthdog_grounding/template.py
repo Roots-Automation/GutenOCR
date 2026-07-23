@@ -67,31 +67,32 @@ from synthtiger.components.image_effect.contrast import Contrast as _Contrast  #
 from elements import Background, Document  # noqa: E402
 
 
-# Replace synthtiger's float32 brightness/contrast ops with cv2 LUT lookups.
-# Original: img += beta; np.clip(img, 0, 255)  — forces float promotion + full-image clip.
-# LUT: build 256-entry table once, apply with cv2.LUT — no dtype conversion, cache-friendly.
-def _brightness_apply_cv2(self, layers, meta=None):
+# Replace synthtiger's brightness/contrast with in-place float32 ops.
+# Original allocates a temporary array for np.clip; in-place avoids the allocation.
+def _brightness_apply_f32(self, layers, meta=None):
     meta = self.sample(meta)
-    beta = meta["beta"]
-    lut = np.clip(np.arange(256, dtype=np.int16) + beta, 0, 255).astype(np.uint8)
+    beta = float(meta["beta"])
     for layer in layers:
-        idx = layer.image[..., :3].astype(np.uint8)
-        layer.image[..., :3] = lut[idx]
+        rgb = layer.image[..., :3]
+        rgb += beta
+        np.clip(rgb, 0, 255, out=rgb)
     return meta
 
 
-def _contrast_apply_cv2(self, layers, meta=None):
+def _contrast_apply_f32(self, layers, meta=None):
     meta = self.sample(meta)
-    alpha = meta["alpha"]
-    lut = np.clip(alpha * np.arange(256) - 128.0 * (alpha - 1.0), 0, 255).astype(np.uint8)
+    alpha = float(meta["alpha"])
+    bias = 128.0 * (1.0 - alpha)
     for layer in layers:
-        idx = layer.image[..., :3].astype(np.uint8)
-        layer.image[..., :3] = lut[idx]
+        rgb = layer.image[..., :3]
+        rgb *= alpha
+        rgb += bias
+        np.clip(rgb, 0, 255, out=rgb)
     return meta
 
 
-_Brightness.apply = _brightness_apply_cv2
-_Contrast.apply = _contrast_apply_cv2
+_Brightness.apply = _brightness_apply_f32
+_Contrast.apply = _contrast_apply_f32
 
 
 def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
@@ -305,29 +306,26 @@ class SynthDoG(templates.Template):
         bg_layer,
         size: tuple[int, int],
     ) -> np.ndarray:
-        """Merge layers, apply effects, and rasterize to a numpy array."""
-        # Apply shadow to background only.
+        """Merge layers, apply effects, and rasterize to a numpy array.
+
+        All synthtiger compositing runs in float32.  A single clip+cast to uint8
+        happens after layer.output(); every physical effect then operates in uint8
+        so the pipeline never converts dtype more than once.
+        """
+        # float32 compositing phase ──────────────────────────────────────────
         self.bg_effect.apply([bg_layer])
-        # Merge paper + text into a single doc layer, then apply a weaker shadow
-        # for page-level depth. This partially affects text-vs-paper contrast but
-        # at reduced intensity; the backstop in save() catches any failures.
         doc_layer = document_group.merge()
         self.doc_effect.apply([doc_layer])
-        # Apply doc-layer physical effects (operate on the paper+text composite,
-        # before compositing with the background).
-        doc_img = np.clip(doc_layer.image, 0, 255).astype(np.uint8)
-        doc_img = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, doc_img)
-        doc_img = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, doc_img)
-        doc_layer.image = doc_img.astype(np.float32)
         layer = layers.Group([doc_layer, bg_layer]).merge()
-        # Apply elastic distortion to the composited image. This runs *after*
-        # annotations are captured from per-layer quads, so saved bboxes reflect
-        # pre-distortion geometry. Misalignment is at or below the level of the
-        # blur effects also applied post-annotation, so no correction is warranted.
         self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
-        result = layer.output(bbox=[0, 0, *size])
-        # Global physical effects applied to the final composite: moiré → streaks → watermark → vignetting
+
+        # Single float32 → uint8 conversion ──────────────────────────────────
+        result = np.clip(layer.output(bbox=[0, 0, *size]), 0, 255).astype(np.uint8)
+
+        # uint8 physical effects phase ────────────────────────────────────────
+        result = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, result)
+        result = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, result)
         result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
         result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
         result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
@@ -499,7 +497,7 @@ class SynthDoG(templates.Template):
         image_filename = f"image_{idx}.jpg"
         image_filepath = os.path.join(output_dirpath, image_filename)
         os.makedirs(os.path.dirname(image_filepath), exist_ok=True)
-        image = Image.fromarray(np.clip(image[..., :3], 0, 255).astype(np.uint8))
+        image = Image.fromarray(image[..., :3])
         image.save(image_filepath, quality=quality)
 
         # save metadata
