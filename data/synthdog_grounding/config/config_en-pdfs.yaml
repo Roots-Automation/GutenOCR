@@ -22,7 +22,7 @@ document:
     layout:
       # Smaller text → denser pages (targeting ~150-300 words/sample)
       # Wide (landscape) pages get more columns; tall (portrait) pages get more rows
-      text_scale: [0.015, 0.040]
+      text_scale: [0.022, 0.040]
       max_row: 30   # tall portrait pages can pack many rows
       max_col: 5    # wide landscape pages can fit more columns
       fill: [0.7, 1.0]
@@ -37,4 +37,4 @@ document:
     section_heading:
       text_scale: [0.025, 0.045]
     footnote:
-      text_scale: [0.018, 0.038]
+      text_scale: [0.022, 0.038]
