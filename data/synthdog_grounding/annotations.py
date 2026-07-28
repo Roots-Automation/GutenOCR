@@ -41,6 +41,7 @@ def _bbox_area_px(bbox: list[float], image_width: int, image_height: int) -> flo
 def build_block_annotations(
     block_ids: list[int],
     line_bboxes: list[list[float]],
+    line_texts: list[str],
     block_region_types: dict[int, str] | None = None,
     line_quads: list[list[list[float]]] | None = None,
 ) -> list[BlockAnnotation]:
@@ -57,6 +58,7 @@ def build_block_annotations(
         bx2 = _clamp01(max(b[2] for b in bboxes))
         by2 = _clamp01(max(b[3] for b in bboxes))
         region_type = (block_region_types or {}).get(bid, "body")
+        text = " ".join(line_texts[i] for i in line_indices)
 
         quad = None
         if line_quads is not None:
@@ -72,6 +74,7 @@ def build_block_annotations(
 
         blocks.append(
             BlockAnnotation(
+                text=text,
                 block_id=bid,
                 bbox=[round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
                 line_ids=line_indices,
@@ -337,9 +340,10 @@ def build_annotations(
 
     surviving_block_ids = [ln.block_id for ln in lines]
     surviving_line_bboxes = [ln.bbox for ln in lines]
+    surviving_line_texts = [ln.text for ln in lines]
     surviving_line_quads = [ln.quad for ln in lines] if emit_quads else None
     blocks = build_block_annotations(
-        surviving_block_ids, surviving_line_bboxes, block_region_types, surviving_line_quads
+        surviving_block_ids, surviving_line_bboxes, surviving_line_texts, block_region_types, surviving_line_quads
     )
 
     return lines, words, blocks, deg_line_ct, deg_word_ct

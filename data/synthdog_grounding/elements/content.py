@@ -200,7 +200,18 @@ class Content:
         content_color = _make_adaptive_color(self.content_color_config, gray_range, lum)
         layout_bbox = list(_compute_layout_bbox(width, height, self.margin))
 
-        text_layers, texts, block_ids, words_per_line = [], [], [], []
+        # Each zone collects into its own bucket so we can merge in reading order
+        # (header → heading → body → footnote → footer) at the end, independent
+        # of the space-allocation order required for correct layout_bbox arithmetic.
+        def _bucket():
+            return [], [], [], []
+
+        h_tl, h_tx, h_bi, h_wpl = _bucket()  # header
+        ft_tl, ft_tx, ft_bi, ft_wpl = _bucket()  # footer
+        fn_tl, fn_tx, fn_bi, fn_wpl = _bucket()  # footnote
+        hd_tl, hd_tx, hd_bi, hd_wpl = _bucket()  # heading
+        bd_tl, bd_tx, bd_bi, bd_wpl = _bucket()  # body
+
         block_region_types: dict[int, str] = {}
         textbox_total_count = 0
         textbox_null_count = 0
@@ -235,10 +246,10 @@ class Content:
                     canvas_ref,
                     next_block_id,
                     block_region_types,
-                    text_layers,
-                    texts,
-                    block_ids,
-                    words_per_line,
+                    h_tl,
+                    h_tx,
+                    h_bi,
+                    h_wpl,
                 )
                 textbox_null_count += znull
                 textbox_total_count += ztot
@@ -246,6 +257,8 @@ class Content:
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
 
         # ── Page footer ───────────────────────────────────────────────────────
+        # Space allocated now (before body) so layout_bbox height is correct,
+        # but annotations are merged after body in reading order.
         if np.random.rand() < self.page_footer_cfg.get("prob", 0.0):
             h_frac = np.random.uniform(*self.page_footer_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
@@ -262,10 +275,10 @@ class Content:
                     canvas_ref,
                     next_block_id,
                     block_region_types,
-                    text_layers,
-                    texts,
-                    block_ids,
-                    words_per_line,
+                    ft_tl,
+                    ft_tx,
+                    ft_bi,
+                    ft_wpl,
                     use_page_number=use_pn,
                 )
                 textbox_null_count += znull
@@ -273,6 +286,7 @@ class Content:
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
 
         # ── Footnote ─────────────────────────────────────────────────────────
+        # Space allocated now (before body), annotations merged after body.
         if np.random.rand() < self.footnote_cfg.get("prob", 0.0):
             h_frac = np.random.uniform(*self.footnote_cfg.get("height", [0.05, 0.12]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
@@ -287,10 +301,10 @@ class Content:
                     canvas_ref,
                     next_block_id,
                     block_region_types,
-                    text_layers,
-                    texts,
-                    block_ids,
-                    words_per_line,
+                    fn_tl,
+                    fn_tx,
+                    fn_bi,
+                    fn_wpl,
                 )
                 textbox_null_count += znull
                 textbox_total_count += ztot
@@ -310,10 +324,10 @@ class Content:
                     canvas_ref,
                     next_block_id,
                     block_region_types,
-                    text_layers,
-                    texts,
-                    block_ids,
-                    words_per_line,
+                    hd_tl,
+                    hd_tx,
+                    hd_bi,
+                    hd_wpl,
                     font_override=self.heading_font,
                 )
                 textbox_null_count += znull
@@ -336,13 +350,27 @@ class Content:
                 "body",
                 next_block_id,
                 block_region_types,
-                text_layers,
-                texts,
-                block_ids,
-                words_per_line,
+                bd_tl,
+                bd_tx,
+                bd_bi,
+                bd_wpl,
             )
             textbox_null_count += gnull
             textbox_total_count += gtot
+
+        # ── Merge buckets in reading order: header → heading → body → footnote → footer ──
+        text_layers, texts, block_ids, words_per_line = [], [], [], []
+        for tl, tx, bi, wpl in (
+            (h_tl, h_tx, h_bi, h_wpl),
+            (hd_tl, hd_tx, hd_bi, hd_wpl),
+            (bd_tl, bd_tx, bd_bi, bd_wpl),
+            (fn_tl, fn_tx, fn_bi, fn_wpl),
+            (ft_tl, ft_tx, ft_bi, ft_wpl),
+        ):
+            text_layers.extend(tl)
+            texts.extend(tx)
+            block_ids.extend(bi)
+            words_per_line.extend(wpl)
 
         # Apply color: content_color (uniform) takes priority; if it does not fire,
         # textbox_color applies per-line variation instead. The two modes are mutually

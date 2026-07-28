@@ -47,6 +47,7 @@ class LineAnnotation:
 
 @dataclass
 class BlockAnnotation:
+    text: str
     block_id: int
     bbox: list[float]
     line_ids: list[int]
@@ -87,6 +88,7 @@ def word_annotation_to_dict(wd: WordAnnotation) -> dict[str, Any]:
 def block_annotation_to_dict(blk: BlockAnnotation) -> dict[str, Any]:
     """Convert a BlockAnnotation to a JSON-serializable dict."""
     entry: dict[str, Any] = {
+        "text": blk.text,
         "block_id": blk.block_id,
         "bbox": blk.bbox,
         "line_ids": blk.line_ids,
