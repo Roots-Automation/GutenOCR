@@ -14,3 +14,17 @@ repos:
       - id: check-added-large-files
         args: ['--maxkb=1000']
       - id: check-merge-conflict
+  - repo: local
+    hooks:
+      - id: ruff-check-all
+        name: ruff check (whole repo)
+        stages: [pre-push]
+        language: system
+        entry: uv tool run ruff check .
+        pass_filenames: false
+      - id: ruff-format-all
+        name: ruff format --check (whole repo)
+        stages: [pre-push]
+        language: system
+        entry: uv tool run ruff format --check .
+        pass_filenames: false
