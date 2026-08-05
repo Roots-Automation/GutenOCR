@@ -43,6 +43,9 @@ class LineAnnotation:
     block_id: int
     line_id: int
     quad: list[list[float]] | None = None
+    font_family: str | None = None
+    font_size_px: int | None = None
+    text_color_rgb: list[int] | None = None
 
 
 @dataclass
@@ -74,6 +77,12 @@ def line_annotation_to_dict(ln: LineAnnotation) -> dict[str, Any]:
     entry: dict[str, Any] = {"text": ln.text, "bbox": ln.bbox, "line_id": ln.line_id, "block_id": ln.block_id}
     if ln.quad is not None:
         entry["quad"] = ln.quad
+    if ln.font_family is not None:
+        entry["font_family"] = ln.font_family
+    if ln.font_size_px is not None:
+        entry["font_size_px"] = ln.font_size_px
+    if ln.text_color_rgb is not None:
+        entry["text_color_rgb"] = ln.text_color_rgb
     return entry
 
 

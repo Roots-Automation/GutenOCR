@@ -149,7 +149,7 @@ def test_word_annotation_to_dict_no_quad_when_none():
 
 
 def test_block_annotation_to_dict_has_required_keys():
-    blk = BlockAnnotation(block_id=0, bbox=[0.0, 0.0, 1.0, 1.0], line_ids=[0, 1])
+    blk = BlockAnnotation(text="foo", block_id=0, bbox=[0.0, 0.0, 1.0, 1.0], line_ids=[0, 1])
     d = block_annotation_to_dict(blk)
     assert "block_id" in d
     assert "bbox" in d
@@ -158,5 +158,5 @@ def test_block_annotation_to_dict_has_required_keys():
 
 
 def test_block_annotation_to_dict_default_region_type():
-    blk = BlockAnnotation(block_id=0, bbox=[0.0, 0.0, 1.0, 1.0], line_ids=[0])
+    blk = BlockAnnotation(text="foo", block_id=0, bbox=[0.0, 0.0, 1.0, 1.0], line_ids=[0])
     assert block_annotation_to_dict(blk)["region_type"] == "body"

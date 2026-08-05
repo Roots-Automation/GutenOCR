@@ -347,11 +347,11 @@ def test_render_cells_counts_nulls():
         ([0.0, 0.0, 1.0, 32.0], "left", 1),
         ([0.0, 0.0, 1.0, 32.0], "left", 2),
     ]
-    text_layers, texts, block_ids, wpl = [], [], [], []
+    text_layers, texts, block_ids, wpl, font_info = [], [], [], [], []
 
     np.random.seed(0)
     _, null_count, total_count = content._render_cells(
-        cells, content.reader, content.font.sample(), "body", 0, {}, text_layers, texts, block_ids, wpl
+        cells, content.reader, content.font.sample(), "body", 0, {}, text_layers, texts, block_ids, wpl, font_info
     )
 
     assert total_count == 3
@@ -376,11 +376,11 @@ def test_render_cells_null_frac_zero_on_success():
     content = Content(cfg)
 
     cells = [([0.0, 0.0, 600.0, 32.0], "left", 0)]
-    text_layers, texts, block_ids, wpl = [], [], [], []
+    text_layers, texts, block_ids, wpl, font_info = [], [], [], [], []
 
     np.random.seed(1)
     _, null_count, total_count = content._render_cells(
-        cells, content.reader, content.font.sample(), "body", 0, {}, text_layers, texts, block_ids, wpl
+        cells, content.reader, content.font.sample(), "body", 0, {}, text_layers, texts, block_ids, wpl, font_info
     )
 
     assert total_count == 1

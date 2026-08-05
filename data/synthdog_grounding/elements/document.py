@@ -90,6 +90,33 @@ class Document:
             args=remaining_args if remaining_args else None,
         )
 
+    @staticmethod
+    def _summarize_geometric_effects(meta: dict) -> dict:
+        """Flatten the synthtiger Iterator/Switch/Selector meta tree from ``self.effect``
+        into JSON-safe per-effect provenance, keyed by effect name in application order.
+        """
+        names = ["noise", "erode", "dilate", "coarse_dropout", "perspective"]
+        summary: dict = {}
+        for name, switch_meta in zip(names, meta["metas"]):
+            entry: dict = {"applied": bool(switch_meta["state"])}
+            sub = switch_meta.get("meta")
+            if entry["applied"] and sub is not None:
+                if name == "noise":
+                    entry["scale"] = round(float(sub["scale"]), 3)
+                elif name in ("erode", "dilate"):
+                    entry["k"] = int(sub["k"])
+                elif name == "coarse_dropout":
+                    entry["p"] = round(float(sub["p"]), 3)
+                elif name == "perspective":
+                    persp = sub["meta"]
+                    entry["variant_idx"] = int(sub["idx"])
+                    if persp.get("percents") is not None:
+                        entry["percents"] = [round(float(p), 3) for p in persp["percents"]]
+                    if persp.get("pxs") is not None:
+                        entry["pxs"] = [int(p) for p in persp["pxs"]]
+            summary[name] = entry
+        return summary
+
     def close(self):
         self.content.close()
 
@@ -129,7 +156,7 @@ class Document:
         Returns:
             Tuple of (paper_layer, text_layers, texts, block_ids,
             words_per_line, block_region_types, textbox_null_count, textbox_total_count,
-            doc_provenance) where:
+            line_font_info, line_colors, doc_provenance) where:
                 - paper_layer: A Layer containing the paper texture
                 - text_layers: List of Layers, one per text line
                 - texts: List of strings corresponding to each text layer
@@ -138,10 +165,12 @@ class Document:
                 - block_region_types: Dict mapping block_id → region_type string
                 - textbox_null_count: Number of textbox slots that produced no text
                 - textbox_total_count: Total textbox slots attempted
+                - line_font_info: List of {"font_family", "font_size_px"} dicts, one per text line
+                - line_colors: List of [r, g, b] (or None), one per text line
                 - doc_provenance: Dict of generation parameters for traceability
         """
         size = self._compute_document_size(size)
-        paper_layer, paper_rgb_sampled = self.paper.generate(size)
+        paper_layer, paper_rgb_sampled, stain_applied = self.paper.generate(size)
         # Sample the median RGB of the rendered paper (after texture + stain) so
         # that content.generate() sees the actual paper brightness rather than the
         # base color before those effects.  Median is robust to small stain spots.
@@ -159,13 +188,17 @@ class Document:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            line_font_info,
+            line_colors,
             content_provenance,
         ) = self.content.generate(size, bg_color)
-        self.effect.apply([*text_layers, paper_layer])
+        effect_meta = self.effect.apply([*text_layers, paper_layer])
 
         doc_provenance = {
             "paper_rgb_sampled": list(paper_rgb_sampled),
             "paper_rgb_rendered": list(bg_color),
+            "stain_applied": bool(stain_applied),
+            "effects": self._summarize_geometric_effects(effect_meta),
             **content_provenance,
         }
 
@@ -178,5 +211,7 @@ class Document:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            line_font_info,
+            line_colors,
             doc_provenance,
         )

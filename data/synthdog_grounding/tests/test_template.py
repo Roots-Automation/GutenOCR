@@ -257,7 +257,6 @@ def _make_stub_synthdog():
             "max_cross_block_line_overlap",
             "splits",
             "_split_thresholds",
-            "_SAVE_MAX_RETRIES",
             "_quality_failure",
             "generate",
             "save",
@@ -273,24 +272,17 @@ def _make_stub_synthdog():
     stub.max_cross_block_line_overlap = 0.05
     stub.splits = ["train", "val", "test"]
     stub._split_thresholds = np.array([0.8, 0.9, 1.0])
-    stub._SAVE_MAX_RETRIES = 20
     # Bind the real save() and _quality_failure() methods to the stub.
     from template import SynthDoG
 
     stub._quality_failure = lambda data: SynthDoG._quality_failure(stub, data)
     stub.save = lambda root, data, idx: SynthDoG.save(stub, root, data, idx)
     stub.format_metadata = MagicMock(return_value={})
-    # generate() returns no-lines data so retry attempts also fail cleanly.
-    _empty = {
-        "lines": [],
-        "words": [],
-        "blocks": [],
-        "label": "",
-        "quality": 85,
-        "image": np.zeros((4, 4, 4), dtype=np.float32),
-        "quality_metrics": {"word_count": 0, "textbox_null_frac": 0.0},
-    }
-    stub.generate = MagicMock(return_value=_empty)
+    # save() has no retry cap — it regenerates until a sample passes (see
+    # "guarantee exactly N samples on disk" in save()'s docstring). Default
+    # regenerate always succeeds so a failing initial `data` triggers exactly
+    # one call to generate() before the retry loop exits.
+    stub.generate = MagicMock(return_value=_good_data())
     return stub
 
 
@@ -320,82 +312,116 @@ def _good_data(label="hello world foo bar baz"):
     }
 
 
-def test_save_skips_when_no_lines():
+def test_save_retries_when_no_lines_then_succeeds():
+    """save() has no retry cap (see its docstring: "Never give up — requesting
+    N samples must yield exactly N on disk"). A failing initial sample must
+    trigger exactly one regenerate call and the resulting good sample must be
+    written — it must never be silently skipped."""
     stub = _make_stub_synthdog()
     data = _good_data()
     data["lines"] = []
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_low_contrast():
+def test_save_retries_low_contrast_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["min_line_contrast_ratio"] = 1.5  # below 3.0
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_low_word_count():
+def test_save_retries_low_word_count_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["word_count"] = 3  # below 5
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_high_null_frac():
+def test_save_retries_high_null_frac_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["textbox_null_frac"] = 0.8  # above 0.5
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_low_line_height():
+def test_save_retries_low_line_height_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["min_line_height_px"] = 4.0  # below 8.0
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_low_sharpness():
+def test_save_retries_low_sharpness_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["sharpness"] = 5.0  # below 10.0
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_high_intra_overlap():
+def test_save_retries_high_intra_overlap_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["max_intra_block_line_overlap"] = 0.2  # above 0.1
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
 
 
-def test_save_skips_high_cross_overlap():
+def test_save_retries_high_cross_overlap_then_succeeds():
     stub = _make_stub_synthdog()
     data = _good_data()
     data["quality_metrics"]["max_cross_block_line_overlap"] = 0.1  # above 0.05
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
-    stub.format_metadata.assert_not_called()
+    stub.generate.assert_called_once()
+    stub.format_metadata.assert_called_once()
+
+
+def test_save_retries_until_success_no_cap():
+    """save() must keep regenerating past a small number of attempts — there
+    is deliberately no retry cap (commit 0bd6f42 removed it so that requesting
+    N samples always yields exactly N on disk, regardless of how many
+    generations it takes to clear the quality gate)."""
+    stub = _make_stub_synthdog()
+    initial = _good_data()
+    initial["lines"] = []  # fails the gate
+
+    failing_retry = _good_data()
+    failing_retry["lines"] = []
+
+    stub.generate = MagicMock(side_effect=[failing_retry, failing_retry, _good_data()])
+
+    with tempfile.TemporaryDirectory() as root:
+        stub.save(root, initial, 0)
+
+    assert stub.generate.call_count == 3
+    stub.format_metadata.assert_called_once()
 
 
 def test_save_writes_when_all_filters_pass():
     stub = _make_stub_synthdog()
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, _good_data(), 0)
+    stub.generate.assert_not_called()
     stub.format_metadata.assert_called_once()
 
 
@@ -411,6 +437,7 @@ def test_save_contrast_at_exact_threshold_passes():
     data["quality_metrics"]["min_line_contrast_ratio"] = stub.min_contrast_ratio
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
+    stub.generate.assert_not_called()
     stub.format_metadata.assert_called_once()
 
 
@@ -422,6 +449,7 @@ def test_save_null_frac_none_treated_as_zero():
     data["quality_metrics"]["textbox_null_frac"] = None
     with tempfile.TemporaryDirectory() as root:
         stub.save(root, data, 0)
+    stub.generate.assert_not_called()
     stub.format_metadata.assert_called_once()
 
 

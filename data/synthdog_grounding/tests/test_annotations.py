@@ -157,6 +157,7 @@ def test_build_block_annotations_hull_over_two_lines():
     blocks = build_block_annotations(
         [0, 0],
         [[0.1, 0.1, 0.4, 0.3], [0.2, 0.2, 0.6, 0.5]],
+        ["foo", "bar"],
     )
     assert len(blocks) == 1
     b = blocks[0]
@@ -167,17 +168,18 @@ def test_build_block_annotations_two_separate_blocks():
     blocks = build_block_annotations(
         [0, 1],
         [[0.0, 0.0, 0.5, 0.5], [0.5, 0.5, 1.0, 1.0]],
+        ["foo", "bar"],
     )
     assert len(blocks) == 2
 
 
 def test_build_block_annotations_default_region_type_is_body():
-    blocks = build_block_annotations([0], [[0.0, 0.0, 0.5, 0.5]])
+    blocks = build_block_annotations([0], [[0.0, 0.0, 0.5, 0.5]], ["foo"])
     assert blocks[0].region_type == "body"
 
 
 def test_build_block_annotations_custom_region_type():
-    blocks = build_block_annotations([0], [[0.0, 0.0, 0.5, 0.5]], block_region_types={0: "header"})
+    blocks = build_block_annotations([0], [[0.0, 0.0, 0.5, 0.5]], ["foo"], block_region_types={0: "header"})
     assert blocks[0].region_type == "header"
 
 
@@ -186,6 +188,7 @@ def test_build_block_annotations_line_ids_grouped_correctly():
     blocks = build_block_annotations(
         [1, 1, 0],
         [[0.0, 0.0, 0.1, 0.1], [0.1, 0.0, 0.2, 0.1], [0.2, 0.0, 0.3, 0.1]],
+        ["foo", "bar", "baz"],
     )
     block_map = {b.block_id: b for b in blocks}
     assert sorted(block_map[1].line_ids) == [0, 1]
@@ -509,7 +512,7 @@ def test_filter_degenerate_surviving_words_ids_start_from_zero():
 
 def test_build_block_annotations_empty_input_returns_empty_list():
     """Empty block_ids / line_bboxes must produce an empty block list, not crash."""
-    blocks = build_block_annotations([], [])
+    blocks = build_block_annotations([], [], [])
     assert blocks == []
 
 
@@ -522,6 +525,7 @@ def test_build_block_annotations_non_contiguous_block_ids():
             [0.1, 0.1, 0.4, 0.4],
             [0.6, 0.6, 0.9, 0.9],
         ],
+        ["foo", "bar", "baz"],
     )
     block_map = {b.block_id: b for b in blocks}
     assert set(block_map) == {5, 12}
@@ -667,6 +671,7 @@ def test_build_block_annotations_no_quads_when_line_quads_none():
     blocks = build_block_annotations(
         [0],
         [[0.1, 0.1, 0.5, 0.5]],
+        ["foo"],
         line_quads=None,
     )
     assert blocks[0].quad is None
@@ -678,6 +683,7 @@ def test_build_block_annotations_quad_is_4_corners_when_emit():
     blocks = build_block_annotations(
         [0],
         [[0.1, 0.1, 0.5, 0.3]],
+        ["foo"],
         line_quads=line_quads,
     )
     q = blocks[0].quad
@@ -699,6 +705,7 @@ def test_build_block_annotations_quad_spans_all_line_quads():
     blocks = build_block_annotations(
         [0, 0],
         [[0.1, 0.1, 0.4, 0.3], [0.2, 0.35, 0.7, 0.5]],
+        ["foo", "bar"],
         line_quads=line_quads,
     )
     q = blocks[0].quad
@@ -715,6 +722,7 @@ def test_build_block_annotations_quad_clamped_to_0_1():
     blocks = build_block_annotations(
         [0],
         [[0.0, 0.0, 1.0, 1.0]],
+        ["foo"],
         line_quads=line_quads,
     )
     q = blocks[0].quad
@@ -729,6 +737,7 @@ def test_block_annotation_to_dict_includes_quad_when_present():
     from serialization import BlockAnnotation, block_annotation_to_dict
 
     blk = BlockAnnotation(
+        text="foo",
         block_id=0,
         bbox=[0.1, 0.1, 0.5, 0.5],
         line_ids=[0],
@@ -744,6 +753,6 @@ def test_block_annotation_to_dict_omits_quad_when_none():
     """block_annotation_to_dict must NOT include 'quad' key when block.quad is None."""
     from serialization import BlockAnnotation, block_annotation_to_dict
 
-    blk = BlockAnnotation(block_id=0, bbox=[0.1, 0.1, 0.5, 0.5], line_ids=[0])
+    blk = BlockAnnotation(text="foo", block_id=0, bbox=[0.1, 0.1, 0.5, 0.5], line_ids=[0])
     d = block_annotation_to_dict(blk)
     assert "quad" not in d
