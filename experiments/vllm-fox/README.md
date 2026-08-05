@@ -102,11 +102,14 @@ from tqdm import tqdm
 import json
 from PIL import Image
 
+
 def load_image(image_file):
-    image = Image.open(image_file).convert('RGB')
+    image = Image.open(image_file).convert("RGB")
     return image
 
+
 output_list = []
+
 
 def eval_model(args):
 
@@ -128,15 +131,16 @@ def eval_model(args):
         # Generate model output
         outputs = model.generate(image, prompt)
 
-        output_json['image'] = ann["image"]
-        output_json['question'] = prompt
-        output_json['label'] = ann["conversations"][1]["value"]
-        output_json['answer'] = outputs
+        output_json["image"] = ann["image"]
+        output_json["question"] = prompt
+        output_json["label"] = ann["conversations"][1]["value"]
+        output_json["answer"] = outputs
         output_list.append(output_json)
 
     filename = args.out_file
-    with open(filename, 'w', encoding="utf-8") as file_obj:
+    with open(filename, "w", encoding="utf-8") as file_obj:
         json.dump(output_list, file_obj, ensure_ascii=False, indent=1)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

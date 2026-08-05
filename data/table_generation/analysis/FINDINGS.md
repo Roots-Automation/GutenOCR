@@ -82,12 +82,14 @@ The synthetic generator's token distribution is dominated by span extension toke
 
 ```python
 generate_table_structure(
-    min_rows=2,       max_rows=30,      # was max_rows=12
-    min_cols=2,       max_cols=10,      # was max_cols=8
-    span_prob=0.08,                     # was 0.20
-    header_prob=0.85,                   # was 0.70
-    row_header_prob=0.0,                # was 0.35 — no dataset evidence
-    section_row_prob=0.20,              # was 0.25, minor adjustment
+    min_rows=2,
+    max_rows=30,  # was max_rows=12
+    min_cols=2,
+    max_cols=10,  # was max_cols=8
+    span_prob=0.08,  # was 0.20
+    header_prob=0.85,  # was 0.70
+    row_header_prob=0.0,  # was 0.35 — no dataset evidence
+    section_row_prob=0.20,  # was 0.25, minor adjustment
     # + suppress 2D spans (to implement in generate_table_structure)
 )
 ```
