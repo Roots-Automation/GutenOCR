@@ -1,8 +1,4 @@
-"""Package raw generated samples into train-NNNNN.tar shards.
-
-Follows the streaming-write pattern from tabmepp/standardize.py:
-no global index is built — samples are written directly into the
-current shard tar as they are processed.
+"""Package raw generated samples into WebDataset train-NNNNN.tar shards.
 
 Input layout:
     raw_dir/

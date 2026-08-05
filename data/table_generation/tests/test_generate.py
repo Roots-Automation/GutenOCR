@@ -19,7 +19,7 @@ from content_distribution import ContentDistribution
 from generate import generate_sample
 from otsl import NL, OTSL_VOCAB, validate_otsl
 
-OTSL_CELL_TOKENS = OTSL_VOCAB - {NL}
+OTSL_CELL_TOKENS = OTSL_VOCAB - {NL}  # fcel, ecel, lcel, ucel, xcel
 
 
 def _make_sample(tmp_path: Path, seed: int, sample_id: int = 0) -> tuple[Path, Path]:
