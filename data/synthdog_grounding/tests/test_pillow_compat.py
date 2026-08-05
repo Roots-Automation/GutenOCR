@@ -220,3 +220,102 @@ def test_patch_to_rgb_replaces_image_util():
     import synthtiger.utils.image_util as _iu
 
     assert _iu.to_rgb is _fast_to_rgb
+
+
+# ---------------------------------------------------------------------------
+# _patch_layer_init — Layer.__init__ / Layer.copy()
+# ---------------------------------------------------------------------------
+
+
+def test_layer_init_avoids_copy_for_matching_float32_rgba():
+    """Group.output()/.merge() feed already-float32 RGBA arrays into Layer();
+    those must not be copied again."""
+    from synthtiger.layers.layer import Layer
+
+    image = np.zeros((5, 5, 4), dtype=np.float32)
+    layer = Layer(image)
+    assert layer.image is image
+
+
+def test_layer_init_still_converts_non_float32_input():
+    from synthtiger.layers.layer import Layer
+
+    image = np.zeros((5, 5, 4), dtype=np.uint8)
+    layer = Layer(image)
+    assert layer.image.dtype == np.float32
+    assert layer.image is not image
+
+
+def test_layer_init_adds_alpha_channel_for_rgb_input():
+    from synthtiger.layers.layer import Layer
+
+    image = np.zeros((5, 5, 3), dtype=np.float32)
+    layer = Layer(image)
+    assert layer.image.shape[-1] == 4
+    assert np.all(layer.image[..., 3] == 255)
+
+
+def test_layer_copy_produces_independent_array():
+    """Layer.copy() must not alias the original — text_extrusion.py and
+    text_shadow.py mutate the copy separately from the source layer."""
+    from synthtiger.layers.layer import Layer
+
+    original = Layer(np.full((4, 4, 4), 10.0, dtype=np.float32))
+    duplicate = original.copy()
+    duplicate.image[..., :] = 200.0
+    assert np.all(original.image == 10.0)
+    assert np.all(duplicate.image == 200.0)
+
+
+def test_layer_copy_preserves_quad():
+    from synthtiger.layers.layer import Layer
+
+    original = Layer(np.zeros((4, 4, 4), dtype=np.float32))
+    original.quad = original.quad + 3.0
+    duplicate = original.copy()
+    assert np.array_equal(duplicate.quad, original.quad)
+
+
+# ---------------------------------------------------------------------------
+# _patch_texture_downscale — BaseTexture._get_size / _read_texture
+# ---------------------------------------------------------------------------
+
+_LARGE_TEXTURE = str(Path(__file__).resolve().parents[1] / "resources/paper/paper_4.jpg")  # native 3024x4032
+_SMALL_TEXTURE = str(
+    Path(__file__).resolve().parents[1] / "resources/paper/lined_paper_1941.jpg"
+)  # native 1920x1394, short side < draft threshold
+
+
+def test_get_size_and_read_texture_agree_on_dims_for_large_texture():
+    """sample()'s crop x/y/w/h are computed from _get_size and later indexed
+    against _read_texture's output — they must always agree, drafted or not."""
+    from synthtiger.components.texture.base_texture import BaseTexture
+
+    width, height = BaseTexture._get_size(None, _LARGE_TEXTURE)
+    texture = BaseTexture._read_texture(None, _LARGE_TEXTURE)
+    assert (texture.shape[1], texture.shape[0]) == (width, height)
+
+
+def test_get_size_downscales_large_texture():
+    from synthtiger.components.texture.base_texture import BaseTexture
+
+    width, height = BaseTexture._get_size(None, _LARGE_TEXTURE)
+    assert max(width, height) < 4032  # native long side — must be drafted down
+
+
+def test_get_size_unchanged_for_small_texture():
+    """Short side (1394) halved (697) is below the 1024 draft target, so PIL's
+    draft() must reject the reduction and this stays at native resolution —
+    zero behaviour change for textures too small to benefit."""
+    from synthtiger.components.texture.base_texture import BaseTexture
+
+    width, height = BaseTexture._get_size(None, _SMALL_TEXTURE)
+    assert (width, height) == (1920, 1394)
+
+
+def test_read_texture_returns_rgba_float32():
+    from synthtiger.components.texture.base_texture import BaseTexture
+
+    texture = BaseTexture._read_texture(None, _SMALL_TEXTURE)
+    assert texture.dtype == np.float32
+    assert texture.shape[-1] == 4

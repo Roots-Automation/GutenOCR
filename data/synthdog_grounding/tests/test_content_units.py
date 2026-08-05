@@ -128,7 +128,7 @@ def test_compute_layout_bbox_returns_four_values():
 
 
 def _zone_call(content, zone_bbox, next_block_id=7, region_type="header"):
-    text_layers, texts, block_ids, wpl = [], [], [], []
+    text_layers, texts, block_ids, wpl, font_info = [], [], [], [], []
     return content._render_zone(
         cfg={},
         zone_bbox=zone_bbox,
@@ -140,6 +140,7 @@ def _zone_call(content, zone_bbox, next_block_id=7, region_type="header"):
         texts=texts,
         block_ids=block_ids,
         words_per_line=wpl,
+        line_font_info=font_info,
     )
 
 
@@ -190,11 +191,11 @@ def test_render_zone_grid_failure_returns_zero_counts():
 # ---------------------------------------------------------------------------
 
 
-def test_content_generate_returns_eight_tuple():
+def test_content_generate_returns_ten_tuple():
     np.random.seed(0)
     content = Content(_content_cfg())
     result = content.generate((800, 600))
-    assert len(result) == 8
+    assert len(result) == 10
 
 
 def test_content_generate_parallel_lists_same_length():
@@ -209,7 +210,7 @@ def test_content_generate_null_accounting():
     """null_count + len(text_layers) must equal total_count exactly."""
     np.random.seed(2)
     content = Content(_content_cfg())
-    text_layers, _, _, _, _, null_ct, total_ct, _ = content.generate((800, 600))
+    text_layers, _, _, _, _, null_ct, total_ct, *_ = content.generate((800, 600))
     assert null_ct + len(text_layers) == total_ct
 
 
@@ -217,7 +218,7 @@ def test_content_generate_block_ids_have_region_types():
     """Every block_id in block_ids must appear in block_region_types."""
     np.random.seed(3)
     content = Content(_content_cfg())
-    _, _, block_ids, _, block_region_types, _, _, _ = content.generate((800, 600))
+    _, _, block_ids, _, block_region_types, _, _, *_ = content.generate((800, 600))
     for bid in block_ids:
         assert bid in block_region_types
 

@@ -305,32 +305,53 @@ class SynthDoG(templates.Template):
         document_group,
         bg_layer,
         size: tuple[int, int],
-    ) -> np.ndarray:
+    ) -> tuple[np.ndarray, dict]:
         """Merge layers, apply effects, and rasterize to a numpy array.
 
         All synthtiger compositing runs in float32.  A single clip+cast to uint8
         happens after layer.output(); every physical effect then operates in uint8
         so the pipeline never converts dtype more than once.
+
+        Returns (image, render_provenance) — render_provenance records whether
+        each pixel-level effect fired this sample, for error-analysis metadata.
         """
         # float32 compositing phase ──────────────────────────────────────────
         self.bg_effect.apply([bg_layer])
         doc_layer = document_group.merge()
         self.doc_effect.apply([doc_layer])
         layer = layers.Group([doc_layer, bg_layer]).merge()
-        self.document.elastic_distortion.apply([layer])
+        elastic_meta = self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
 
         # Single float32 → uint8 conversion ──────────────────────────────────
         result = np.clip(layer.output(bbox=[0, 0, *size]), 0, 255).astype(np.uint8)
 
         # uint8 physical effects phase ────────────────────────────────────────
-        result = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, result)
-        result = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, result)
-        result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
-        result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
-        result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
-        result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
-        return result
+        result, book_spine_applied = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, result)
+        result, fold_crease_applied = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, result)
+        result, moire_applied = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
+        result, low_toner_applied = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
+        result, watermark_applied = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
+        result, vignetting_applied = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
+
+        elastic_entry = {"applied": bool(elastic_meta["state"])}
+        if elastic_entry["applied"]:
+            sub = elastic_meta["meta"]
+            elastic_entry["alpha"] = round(float(sub["alpha"]), 3)
+            elastic_entry["sigma"] = round(float(sub["sigma"]), 3)
+
+        render_provenance = {
+            "effects": {
+                "elastic_distortion": elastic_entry,
+                "book_spine_shadow": {"applied": bool(book_spine_applied)},
+                "fold_crease": {"applied": bool(fold_crease_applied)},
+                "moire": {"applied": bool(moire_applied)},
+                "low_toner_streaks": {"applied": bool(low_toner_applied)},
+                "watermark": {"applied": bool(watermark_applied)},
+                "vignetting": {"applied": bool(vignetting_applied)},
+            }
+        }
+        return result, render_provenance
 
     def generate(self, seed: int | None = None):
         if seed is not None:
@@ -353,6 +374,8 @@ class SynthDoG(templates.Template):
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            line_font_info,
+            line_colors,
             doc_provenance,
         ) = self.document.generate(size)
 
@@ -382,9 +405,11 @@ class SynthDoG(templates.Template):
             self.emit_quads,
             self.min_bbox_area,
             block_region_types=block_region_types,
+            line_font_info=line_font_info,
+            line_colors=line_colors,
         )
 
-        image = self._render(document_group, bg_layer, size)
+        image, render_provenance = self._render(document_group, bg_layer, size)
 
         quality_metrics = compute_quality_metrics(
             image,
@@ -402,12 +427,18 @@ class SynthDoG(templates.Template):
         label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
 
+        # Merge geometric-effect provenance (from Document, captured before annotation
+        # capture) with pixel-level effect provenance (from _render) under one "effects" key.
+        merged_effects = {**doc_provenance.get("effects", {}), **render_provenance.get("effects", {})}
+        doc_provenance_rest = {k: v for k, v in doc_provenance.items() if k != "effects"}
+
         generation_params = {
             "landscape": bool(landscape),
             "canvas_size": list(size),
             "jpeg_quality": int(quality),
             "skew_angle": round(skew_angle, 3),
-            **doc_provenance,
+            **doc_provenance_rest,
+            "effects": merged_effects,
         }
 
         return _package_data(

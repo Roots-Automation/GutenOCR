@@ -5,6 +5,8 @@ All effect classes expose a static ``apply(image, args)`` method that
 accepts an RGBA uint8 numpy array and returns an RGBA uint8 numpy array.
 """
 
+from collections import OrderedDict
+
 import cv2
 import numpy as np
 from PIL import Image as PILImage
@@ -15,11 +17,15 @@ from PIL import ImageDraw, ImageFont
 # ---------------------------------------------------------------------------
 
 
-def apply_if_enabled(cfg: dict, effect_fn, image: np.ndarray) -> np.ndarray:
-    """Call *effect_fn(image, args)* with probability ``cfg["prob"]``."""
+def apply_if_enabled(cfg: dict, effect_fn, image: np.ndarray) -> tuple[np.ndarray, bool]:
+    """Call *effect_fn(image, args)* with probability ``cfg["prob"]``.
+
+    Returns ``(image, fired)`` so callers can record whether the effect
+    actually applied, for per-sample generation provenance.
+    """
     if np.random.rand() < cfg.get("prob", 0):
-        return effect_fn(image, cfg.get("args", {}))
-    return image
+        return effect_fn(image, cfg.get("args", {})), True
+    return image, False
 
 
 def _gaussian_blur_2d(arr: np.ndarray, sigma: float) -> np.ndarray:
@@ -52,17 +58,25 @@ def _gaussian_blur_1d(arr: np.ndarray, sigma: float) -> np.ndarray:
     )
 
 
-# Module-level cache: (H, W) -> (Y_grid, X_grid) float32.
-# Avoids recreating large meshgrids on every effect call; image size is
-# constant within a run so this stays small (one entry per unique size).
-_meshgrid_cache: dict = {}
+# Module-level LRU cache: (H, W) -> (Y_grid, X_grid) float32.
+# Avoids recreating large meshgrids on every effect call within a single
+# render pass (several physical effects share the same image size there).
+# Bounded because this pipeline randomizes image size per sample — an
+# unbounded cache leaks a full-resolution array pair per unique size seen,
+# forever, for the life of the worker process.
+_MESHGRID_CACHE_MAXSIZE = 4
+_meshgrid_cache: OrderedDict = OrderedDict()
 
 
 def _get_meshgrid(H: int, W: int):
     key = (H, W)
-    if key not in _meshgrid_cache:
-        Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
-        _meshgrid_cache[key] = (Y, X)
+    if key in _meshgrid_cache:
+        _meshgrid_cache.move_to_end(key)
+        return _meshgrid_cache[key]
+    Y, X = np.mgrid[0:H, 0:W].astype(np.float32)
+    _meshgrid_cache[key] = (Y, X)
+    if len(_meshgrid_cache) > _MESHGRID_CACHE_MAXSIZE:
+        _meshgrid_cache.popitem(last=False)
     return _meshgrid_cache[key]
 
 

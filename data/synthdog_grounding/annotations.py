@@ -317,6 +317,8 @@ def build_annotations(
     emit_quads: bool,
     min_bbox_area: float,
     block_region_types: dict[int, str] | None = None,
+    line_font_info: list[dict] | None = None,
+    line_colors: list[list[int] | None] | None = None,
 ) -> tuple[list[LineAnnotation], list[WordAnnotation], list[BlockAnnotation], int, int]:
     """Orchestrate line/word/block annotation construction and degenerate filtering."""
     line_bboxes = capture_line_bboxes(text_layers, image_width, image_height)
@@ -324,6 +326,8 @@ def build_annotations(
 
     lines = []
     for i, text in enumerate(texts):
+        font_info = line_font_info[i] if line_font_info else None
+        color = line_colors[i] if line_colors else None
         lines.append(
             LineAnnotation(
                 text=text,
@@ -331,6 +335,9 @@ def build_annotations(
                 block_id=block_ids[i],
                 line_id=i,
                 quad=line_quads[i] if line_quads else None,
+                font_family=font_info["font_family"] if font_info else None,
+                font_size_px=font_info["font_size_px"] if font_info else None,
+                text_color_rgb=color,
             )
         )
 

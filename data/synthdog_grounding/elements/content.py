@@ -4,6 +4,8 @@ Copyright (c) 2022-present NAVER Corp.
 MIT License
 """
 
+from pathlib import Path
+
 import numpy as np
 from annotations import _linearize_channel
 from synthtiger import components
@@ -16,6 +18,11 @@ from .textbox import TextBox
 
 def _relative_luminance(r, g, b):
     return 0.2126 * _linearize_channel(r) + 0.7152 * _linearize_channel(g) + 0.0722 * _linearize_channel(b)
+
+
+def _font_family_from_path(path: str) -> str:
+    """Font identifier for per-line error-analysis metadata (filename stem, not the full path)."""
+    return Path(path).stem
 
 
 def _make_adaptive_color(color_config: dict, gray_range: list[int], lum: float) -> components.Switch:
@@ -99,6 +106,7 @@ class Content:
         texts: list,
         block_ids: list,
         words_per_line: list,
+        line_font_info: list,
     ) -> tuple[int, int, int]:
         """Render a sequence of layout cells, appending results to the output lists.
 
@@ -107,6 +115,7 @@ class Content:
         col_key_to_block_id: dict = {}
         null_count = 0
         total_count = 0
+        font_family = _font_family_from_path(font["path"])
 
         for cell_bbox, align, col_key in cells:
             total_count += 1
@@ -132,6 +141,8 @@ class Content:
             texts.append(text)
             block_ids.append(col_key_to_block_id[col_key])
             words_per_line.append(word_local_data)
+            # font size is exactly the cell height passed to TextBox.generate (see textbox.py).
+            line_font_info.append({"font_family": font_family, "font_size_px": int(round(h))})
 
         return next_block_id, null_count, total_count
 
@@ -147,6 +158,7 @@ class Content:
         texts: list,
         block_ids: list,
         words_per_line: list,
+        line_font_info: list,
         font_override=None,
         use_page_number: bool = False,
     ) -> tuple[int, int, int]:
@@ -184,6 +196,7 @@ class Content:
             texts,
             block_ids,
             words_per_line,
+            line_font_info,
         )
 
     def generate(self, size, bg_color=(255, 255, 255)):
@@ -204,13 +217,13 @@ class Content:
         # (header → heading → body → footnote → footer) at the end, independent
         # of the space-allocation order required for correct layout_bbox arithmetic.
         def _bucket():
-            return [], [], [], []
+            return [], [], [], [], []
 
-        h_tl, h_tx, h_bi, h_wpl = _bucket()  # header
-        ft_tl, ft_tx, ft_bi, ft_wpl = _bucket()  # footer
-        fn_tl, fn_tx, fn_bi, fn_wpl = _bucket()  # footnote
-        hd_tl, hd_tx, hd_bi, hd_wpl = _bucket()  # heading
-        bd_tl, bd_tx, bd_bi, bd_wpl = _bucket()  # body
+        h_tl, h_tx, h_bi, h_wpl, h_fi = _bucket()  # header
+        ft_tl, ft_tx, ft_bi, ft_wpl, ft_fi = _bucket()  # footer
+        fn_tl, fn_tx, fn_bi, fn_wpl, fn_fi = _bucket()  # footnote
+        hd_tl, hd_tx, hd_bi, hd_wpl, hd_fi = _bucket()  # heading
+        bd_tl, bd_tx, bd_bi, bd_wpl, bd_fi = _bucket()  # body
 
         block_region_types: dict[int, str] = {}
         textbox_total_count = 0
@@ -250,6 +263,7 @@ class Content:
                     h_tx,
                     h_bi,
                     h_wpl,
+                    h_fi,
                 )
                 textbox_null_count += znull
                 textbox_total_count += ztot
@@ -279,6 +293,7 @@ class Content:
                     ft_tx,
                     ft_bi,
                     ft_wpl,
+                    ft_fi,
                     use_page_number=use_pn,
                 )
                 textbox_null_count += znull
@@ -305,6 +320,7 @@ class Content:
                     fn_tx,
                     fn_bi,
                     fn_wpl,
+                    fn_fi,
                 )
                 textbox_null_count += znull
                 textbox_total_count += ztot
@@ -328,6 +344,7 @@ class Content:
                     hd_tx,
                     hd_bi,
                     hd_wpl,
+                    hd_fi,
                     font_override=self.heading_font,
                 )
                 textbox_null_count += znull
@@ -354,23 +371,25 @@ class Content:
                 bd_tx,
                 bd_bi,
                 bd_wpl,
+                bd_fi,
             )
             textbox_null_count += gnull
             textbox_total_count += gtot
 
         # ── Merge buckets in reading order: header → heading → body → footnote → footer ──
-        text_layers, texts, block_ids, words_per_line = [], [], [], []
-        for tl, tx, bi, wpl in (
-            (h_tl, h_tx, h_bi, h_wpl),
-            (hd_tl, hd_tx, hd_bi, hd_wpl),
-            (bd_tl, bd_tx, bd_bi, bd_wpl),
-            (fn_tl, fn_tx, fn_bi, fn_wpl),
-            (ft_tl, ft_tx, ft_bi, ft_wpl),
+        text_layers, texts, block_ids, words_per_line, line_font_info = [], [], [], [], []
+        for tl, tx, bi, wpl, fi in (
+            (h_tl, h_tx, h_bi, h_wpl, h_fi),
+            (hd_tl, hd_tx, hd_bi, hd_wpl, hd_fi),
+            (bd_tl, bd_tx, bd_bi, bd_wpl, bd_fi),
+            (fn_tl, fn_tx, fn_bi, fn_wpl, fn_fi),
+            (ft_tl, ft_tx, ft_bi, ft_wpl, ft_fi),
         ):
             text_layers.extend(tl)
             texts.extend(tx)
             block_ids.extend(bi)
             words_per_line.extend(wpl)
+            line_font_info.extend(fi)
 
         # Apply color: content_color (uniform) takes priority; if it does not fire,
         # textbox_color applies per-line variation instead. The two modes are mutually
@@ -396,7 +415,8 @@ class Content:
                 except Exception:
                     pass
 
-        # Summarise text colors as median RGB (avoids storing N-line arrays).
+        # Summarise text colors as median RGB (sample-level provenance) while also
+        # keeping the per-line list so each LineAnnotation can carry its own color.
         if text_color_rgbs:
             text_color_median_rgb = [
                 int(np.median([c[0] for c in text_color_rgbs])),
@@ -405,6 +425,9 @@ class Content:
             ]
         else:
             text_color_median_rgb = None
+
+        # Guard against the color-extraction except-branch leaving this short.
+        line_colors = text_color_rgbs if len(text_color_rgbs) == len(text_layers) else [None] * len(text_layers)
 
         for text_layer in text_layers:
             self.text_sprinkle.apply([text_layer])
@@ -426,5 +449,7 @@ class Content:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            line_font_info,
+            line_colors,
             provenance,
         )

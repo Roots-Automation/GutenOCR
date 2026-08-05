@@ -34,10 +34,11 @@ class Paper:
         paper_layer = layers.RectLayer(size, (r, g, b, 255))
         self.image.apply([paper_layer])
 
-        if np.random.rand() < self.stain_cfg.get("prob", 0):
+        stain_applied = np.random.rand() < self.stain_cfg.get("prob", 0)
+        if stain_applied:
             paper_layer.image = StainOverlayEffect.apply(
                 np.clip(paper_layer.image, 0, 255).astype(np.uint8),
                 self.stain_cfg.get("args", {}),
             ).astype(np.float32)
 
-        return paper_layer, (r, g, b)
+        return paper_layer, (r, g, b), stain_applied

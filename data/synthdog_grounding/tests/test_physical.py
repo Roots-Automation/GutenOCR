@@ -53,8 +53,9 @@ def test_apply_if_enabled_zero_prob_skips():
         return image
 
     np.random.seed(0)
-    result = apply_if_enabled({"prob": 0.0}, boom, img)
+    result, fired = apply_if_enabled({"prob": 0.0}, boom, img)
     assert sentinel[0] == 0
+    assert fired is False
     assert np.array_equal(result, img)
 
 
@@ -68,7 +69,8 @@ def test_apply_if_enabled_full_prob_always_fires():
 
     np.random.seed(0)
     for _ in range(5):
-        apply_if_enabled({"prob": 1.0}, mark, img)
+        _, fired = apply_if_enabled({"prob": 1.0}, mark, img)
+        assert fired is True
     assert called[0] == 5
 
 
@@ -81,7 +83,8 @@ def test_apply_if_enabled_passes_args():
         return image
 
     np.random.seed(0)
-    apply_if_enabled({"prob": 1.0, "args": {"key": 42}}, capture, img)
+    _, fired = apply_if_enabled({"prob": 1.0, "args": {"key": 42}}, capture, img)
+    assert fired is True
     assert received == {"key": 42}
 
 
