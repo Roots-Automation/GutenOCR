@@ -5,49 +5,52 @@ MIT License
 """
 
 import re
+import sys
+from pathlib import Path
 
 import numpy as np
 from synthtiger import layers
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from pillow_compat import _cached_truetype, _is_renderable
 
-def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float) -> list[dict]:
-    """Compute per-word x-ratio dicts from character layers.
+_NON_WORD_RE = re.compile(r"[^\w]")
 
-    Args:
-        chars: List of character strings matching char_layers.
-        char_layers: List of rendered character layers with .left/.right attributes.
-        line_width: The width (in pixels) to use as the ratio denominator.  Pass
-            ``text_layer.size[0]`` (the integer merged-layer canvas width) so that
-            the denominator matches the span used during quad interpolation.
-    """
+
+def _extract_word_ratios(
+    chars: list[str],
+    positions: list[tuple[float, float]],
+    line_width: float,
+) -> list[dict]:
+    """Return per-word x-ratio dicts from per-character (left, right) positions."""
+    inv_w = 1.0 / line_width if line_width > 0 else None
     words = []
-    cur_chars: list[str] = []
-    cur_x1: float | None = None
-    cur_x2: float = 0.0
+    word_chars: list[str] = []
+    x1 = x2 = 0.0
 
-    for ch, layer in zip(chars, char_layers):
+    for ch, (left, right) in zip(chars, positions):
         if ch.isspace():
-            if cur_chars:
+            if word_chars:
                 words.append(
                     {
-                        "text": "".join(cur_chars),
-                        "x1_ratio": cur_x1 / line_width if line_width > 0 else 0.0,
-                        "x2_ratio": cur_x2 / line_width if line_width > 0 else 1.0,
+                        "text": "".join(word_chars),
+                        "x1_ratio": x1 * inv_w if inv_w else 0.0,
+                        "x2_ratio": x2 * inv_w if inv_w else 1.0,
                     }
                 )
-                cur_chars, cur_x1, cur_x2 = [], None, 0.0
+                word_chars.clear()
         else:
-            if cur_x1 is None:
-                cur_x1 = layer.left
-            cur_x2 = layer.right
-            cur_chars.append(ch)
+            if not word_chars:
+                x1 = left
+            x2 = right
+            word_chars.append(ch)
 
-    if cur_chars:
+    if word_chars:
         words.append(
             {
-                "text": "".join(cur_chars),
-                "x1_ratio": cur_x1 / line_width if line_width > 0 else 0.0,
-                "x2_ratio": cur_x2 / line_width if line_width > 0 else 1.0,
+                "text": "".join(word_chars),
+                "x1_ratio": x1 * inv_w if inv_w else 0.0,
+                "x2_ratio": x2 * inv_w if inv_w else 1.0,
             }
         )
 
@@ -55,88 +58,85 @@ def _extract_word_ratios(chars: list[str], char_layers: list, line_width: float)
 
 
 class TextBox:
-    """
-    Generates a single line of text rendered as an image layer.
-
-    The TextBox handles character-by-character rendering with proper spacing,
-    ensuring words are not split across lines (coherent text generation).
-
-    Attributes:
-        fill: Tuple of [min, max] fill ratios controlling how much of the
-              available width the text should occupy.
-
-    Example:
-        >>> textbox = TextBox({"fill": [0.8, 1.0]})
-        >>> layer, text = textbox.generate((400, 50), corpus_reader, font_config)
-    """
+    """Renders a line of text from a cursor into a synthtiger Layer with word-level x-ratio annotations."""
 
     def __init__(self, config):
-        """
-        Initialize a TextBox with the given configuration.
-
-        Args:
-            config: Dictionary with optional keys:
-                - fill: [min, max] fill ratio range (default: [1, 1])
-        """
         self.fill = config.get("fill", [1, 1])
 
-    def generate(self, size, text, font):
-        """
-        Generate a text layer for a single line.
-
-        Args:
-            size: Tuple of (width, height) for the text box area
-            text: Text iterator/reader that provides characters
-            font: Font configuration dictionary with keys like 'path', 'size', etc.
-
-        Returns:
-            Tuple of (text_layer, text_string, word_local_data) where:
-                - text_layer: A merged synthtiger Layer containing the rendered text
-                - text_string: The actual text that was rendered
-                - word_local_data: Per-word x-ratio dicts from character layers
-            Returns (None, None, None) if no valid text could be generated.
-        """
+    def generate(self, size, cursor, font):
+        """Fit one line of text into size, returning (layer, text_str, word_ratios) or (None, None, None)."""
         width, height = size
 
-        char_layers, chars = [], []
+        chars = []
         fill = np.random.uniform(self.fill[0], self.fill[1])
         width = np.clip(width * fill, height, width)
         font = {**font, "size": int(height)}
-        left, top = 0, 0
 
-        for char in text:
+        font_obj = _cached_truetype(font["path"], int(height))
+
+        ascent, descent = font_obj.getmetrics()
+        pil_height = ascent + descent
+        char_scale = height / pil_height if pil_height > 0 else 1.0
+
+        positions: list[tuple[float, float]] = []
+        # cursor_costs[i] = total cursor steps consumed to add chars[i],
+        # including any unrenderable chars skipped immediately before it.
+        cursor_costs: list[int] = []
+        prefix = ""
+        x = 0.0
+        skipped = 0  # unrenderable chars consumed since the last chars append
+
+        for char in cursor:
             if char in "\r\n":
+                skipped += 1
                 continue
-
-            char_layer = layers.TextLayer(char, **font)
-            char_scale = height / char_layer.height if char_layer.height > 0 else 1.0
-            char_layer.bbox = [left, top, *(char_layer.size * char_scale)]
-            if char_layer.right > width:
-                text.prev()  # undo consumption of the character that didn't fit
+            if not char.isspace() and not _is_renderable(font_obj, char):
+                skipped += 1
+                continue
+            next_prefix = prefix + char
+            x_right = font_obj.getlength(next_prefix) * char_scale
+            if x_right > width:
+                cursor.prev()
                 break
-
-            char_layers.append(char_layer)
+            positions.append((x, x_right))
             chars.append(char)
-            left = char_layer.right
+            cursor_costs.append(1 + skipped)
+            skipped = 0
+            prefix = next_prefix
+            x = x_right
 
-        while len(chars) and not chars[-1].isspace():
-            chars.pop()
-            char_layers.pop()
-            text.prev()
+        last_space = next((i for i in range(len(chars) - 1, -1, -1) if chars[i].isspace()), None)
 
-        if len(chars):
-            # Discard the trailing space; reader is already positioned after it,
-            # so the next textbox starts at the first real character.
-            chars.pop()
-            char_layers.pop()
+        if last_space is not None:
+            # Restore exactly the cursor steps consumed by chars[last_space:]
+            # plus any unrenderable chars consumed after the last appended char.
+            # Without the skipped adjustment the cursor lands too far forward,
+            # losing the renderable word that follows a cluster of skipped chars.
+            n_restore = sum(cursor_costs[last_space:]) + skipped
+            for _ in range(n_restore):
+                cursor.prev()
+            chars = chars[:last_space]
+            positions = positions[:last_space]
 
-        text = "".join(chars).strip()
-        text_alpha_only = re.sub(r"[^\w]", "", text)
-        if len(char_layers) == 0 or len(text) == 0 or len(text_alpha_only) == 0:
+        text_str = "".join(chars).strip()
+        text_alpha_only = _NON_WORD_RE.sub("", text_str)
+        if not chars or not text_str or not text_alpha_only:
             return None, None, None
 
-        text_layer = layers.Group(char_layers).merge()
+        # Strip leading spaces left by the previous call's backtrack; rebase
+        # positions so the first visible character starts at x=0. Without this,
+        # line_width includes the leading-space advance and x1_ratio for the
+        # first word is non-zero even though it visually starts at the left edge.
+        lead = next(i for i, ch in enumerate(chars) if not ch.isspace())
+        if lead:
+            x_off = positions[lead][0]
+            chars = chars[lead:]
+            positions = [(lo - x_off, ro - x_off) for lo, ro in positions[lead:]]
 
-        word_local_data = _extract_word_ratios(chars, char_layers, line_width=text_layer.size[0])
+        text_layer = layers.TextLayer(text_str, **font)
+        text_layer.bbox = [0, 0, *(text_layer.size * char_scale)]
+        # Use advance width, not ink width, so ratios stay in [0, 1].
+        line_width = positions[-1][1] if positions else 0.0
+        word_local_data = _extract_word_ratios(chars, positions, line_width=line_width)
 
-        return text_layer, text, word_local_data
+        return text_layer, text_str, word_local_data

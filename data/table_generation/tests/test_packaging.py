@@ -1,4 +1,4 @@
-"""Unit tests for packaging.py."""
+"""Unit tests for sharding.py."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from packaging import package_samples
+from sharding import package_samples
 
 
 def _write_fake_sample(directory: Path, idx: int) -> None:
@@ -24,7 +24,7 @@ def _write_fake_sample(directory: Path, idx: int) -> None:
     sidecar = {
         "image": {"path": f"{idx:08d}.jpg", "width": 32, "height": 32},
         "text": {"words": [], "lines": []},
-        "table": {"otsl": "FCEL NL", "html": "<table></table>", "rows": 1, "cols": 1},
+        "table": {"otsl": "fcel nl", "html": "<table></table>", "rows": 1, "cols": 1},
     }
     (directory / f"{idx:08d}.json").write_text(json.dumps(sidecar))
 

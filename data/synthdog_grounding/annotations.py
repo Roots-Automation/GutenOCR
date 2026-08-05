@@ -12,8 +12,8 @@ def _clamp01(v: float) -> float:
     return max(0.0, min(1.0, v))
 
 
-def _gray_lum(v: float) -> float:
-    """WCAG relative luminance of a single grayscale value in [0, 255]."""
+def _linearize_channel(v: float) -> float:
+    """WCAG sRGB linearization for a single channel value in [0, 255]."""
     c = v / 255.0
     return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
@@ -41,7 +41,9 @@ def _bbox_area_px(bbox: list[float], image_width: int, image_height: int) -> flo
 def build_block_annotations(
     block_ids: list[int],
     line_bboxes: list[list[float]],
+    line_texts: list[str],
     block_region_types: dict[int, str] | None = None,
+    line_quads: list[list[list[float]]] | None = None,
 ) -> list[BlockAnnotation]:
     """Build block-level annotations by grouping lines that share a block_id."""
     block_to_lines: dict[int, list[int]] = defaultdict(list)
@@ -56,12 +58,28 @@ def build_block_annotations(
         bx2 = _clamp01(max(b[2] for b in bboxes))
         by2 = _clamp01(max(b[3] for b in bboxes))
         region_type = (block_region_types or {}).get(bid, "body")
+        text = " ".join(line_texts[i] for i in line_indices)
+
+        quad = None
+        if line_quads is not None:
+            # Derive block quad from all corner points of constituent line quads.
+            all_pts = [pt for i in line_indices for pt in line_quads[i]]
+            qx = [p[0] for p in all_pts]
+            qy = [p[1] for p in all_pts]
+            qx1 = round(_clamp01(min(qx)), 3)
+            qy1 = round(_clamp01(min(qy)), 3)
+            qx2 = round(_clamp01(max(qx)), 3)
+            qy2 = round(_clamp01(max(qy)), 3)
+            quad = [[qx1, qy1], [qx2, qy1], [qx2, qy2], [qx1, qy2]]
+
         blocks.append(
             BlockAnnotation(
+                text=text,
                 block_id=bid,
                 bbox=[round(bx1, 3), round(by1, 3), round(bx2, 3), round(by2, 3)],
                 line_ids=line_indices,
                 region_type=region_type,
+                quad=quad,
             )
         )
     return blocks
@@ -74,15 +92,8 @@ def capture_line_bboxes(text_layers, w: int, h: int) -> list[list[float]]:
     and skew transforms (which update layer.quad but not layer.left/top/width/height)
     are reflected in the bounding box.
 
-    For the y-axis we average the top-edge y-values and the bottom-edge y-values
-    rather than taking the global min/max of all four corners.  Under perspective
-    warp, long text lines become slightly tilted: the left and right ends sit at
-    different image-space y-coordinates.  Taking global min/max inflates the bbox
-    height to cover the full tilt range (e.g. 42 px for a 20 px-tall line), which
-    causes adjacent lines' bboxes to overlap by up to 57 % even when the text
-    itself does not overlap.  Averaging the top-edge and bottom-edge y-values
-    collapses that inflation, giving a tight strip around the text and eliminating
-    the false overlap between consecutive lines.
+    Uses true AABB (min/max of all four corners) so the box always contains
+    every pixel of the text region, even under strong perspective warp.
 
     Quad corner order (synthtiger convention): [tl, tr, br, bl].
     """
@@ -90,14 +101,12 @@ def capture_line_bboxes(text_layers, w: int, h: int) -> list[list[float]]:
     for text_layer in text_layers:
         quad = text_layer.quad
         xs = [float(pt[0]) for pt in quad]
-        # Average top-edge y (corners 0,1) and bottom-edge y (corners 3,2)
-        y_top = (float(quad[0][1]) + float(quad[1][1])) / 2
-        y_bottom = (float(quad[3][1]) + float(quad[2][1])) / 2
+        ys = [float(pt[1]) for pt in quad]
         bbox = [
             _norm(min(xs), w),
-            _norm(min(y_top, y_bottom), h),
+            _norm(min(ys), h),
             _norm(max(xs), w),
-            _norm(max(y_top, y_bottom), h),
+            _norm(max(ys), h),
         ]
         bboxes.append(bbox)
     return bboxes
@@ -241,8 +250,9 @@ def compute_quality_metrics(
         line_contrasts.append(float(np.std(region)))
         line_bbox_areas_px.append((x2_px - x1_px) * (y2_px - y1_px))
         line_heights_px.append(float(y2_px - y1_px))
-        p10 = _gray_lum(float(np.percentile(region, 10)))
-        p90 = _gray_lum(float(np.percentile(region, 90)))
+        p10_raw, p90_raw = np.percentile(region, [10, 90])
+        p10 = _linearize_channel(float(p10_raw))
+        p90 = _linearize_channel(float(p90_raw))
         line_contrast_ratios.append(_contrast_ratio(p10, p90))
 
     word_bbox_areas_px = []
@@ -256,29 +266,23 @@ def compute_quality_metrics(
     # Pairwise intra/cross block line overlap (normalized bbox fractions)
     max_intra = 0.0
     max_cross = 0.0
-    for i in range(len(lines)):
-        bi = lines[i].bbox
-        area_i = (bi[2] - bi[0]) * (bi[3] - bi[1])
-        for j in range(i + 1, len(lines)):
-            bj = lines[j].bbox
-            area_j = (bj[2] - bj[0]) * (bj[3] - bj[1])
-            ix1 = max(bi[0], bj[0])
-            iy1 = max(bi[1], bj[1])
-            ix2 = min(bi[2], bj[2])
-            iy2 = min(bi[3], bj[3])
-            if ix2 <= ix1 or iy2 <= iy1:
-                continue
-            inter = (ix2 - ix1) * (iy2 - iy1)
-            min_area = min(area_i, area_j)
-            if min_area <= 0:
-                continue
-            frac = inter / min_area
-            if lines[i].block_id == lines[j].block_id:
-                if frac > max_intra:
-                    max_intra = frac
-            else:
-                if frac > max_cross:
-                    max_cross = frac
+    if len(lines) >= 2:
+        bboxes = np.array([ln.bbox for ln in lines], dtype=np.float32)
+        block_ids = np.array([ln.block_id for ln in lines], dtype=np.int32)
+        x1, y1, x2, y2 = bboxes[:, 0], bboxes[:, 1], bboxes[:, 2], bboxes[:, 3]
+        areas = (x2 - x1) * (y2 - y1)
+        i_idx, j_idx = np.triu_indices(len(lines), k=1)
+        iw = np.maximum(np.minimum(x2[i_idx], x2[j_idx]) - np.maximum(x1[i_idx], x1[j_idx]), 0)
+        ih = np.maximum(np.minimum(y2[i_idx], y2[j_idx]) - np.maximum(y1[i_idx], y1[j_idx]), 0)
+        inter = iw * ih
+        min_area = np.minimum(areas[i_idx], areas[j_idx])
+        valid = (inter > 0) & (min_area > 0)
+        frac = np.where(valid, inter / np.where(min_area > 0, min_area, 1.0), 0.0)
+        same_block = block_ids[i_idx] == block_ids[j_idx]
+        if same_block.any():
+            max_intra = float(frac[same_block].max())
+        if (~same_block).any():
+            max_cross = float(frac[~same_block].max())
 
     return {
         "min_line_contrast": round(min(line_contrasts), 3) if line_contrasts else None,
@@ -336,6 +340,10 @@ def build_annotations(
 
     surviving_block_ids = [ln.block_id for ln in lines]
     surviving_line_bboxes = [ln.bbox for ln in lines]
-    blocks = build_block_annotations(surviving_block_ids, surviving_line_bboxes, block_region_types)
+    surviving_line_texts = [ln.text for ln in lines]
+    surviving_line_quads = [ln.quad for ln in lines] if emit_quads else None
+    blocks = build_block_annotations(
+        surviving_block_ids, surviving_line_bboxes, surviving_line_texts, block_region_types, surviving_line_quads
+    )
 
     return lines, words, blocks, deg_line_ct, deg_word_ct

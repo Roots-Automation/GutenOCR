@@ -11,7 +11,7 @@ The generator:
 1. Randomly constructs a table structure (rows × cols, colspan/rowspan spans, header layout, border style)
 2. Fills cells with text sampled from a content distribution (bundled word list or a custom UNLV-derived distribution)
 3. Renders the table to a JPEG image using Pillow
-4. Encodes the structure as an OTSL token sequence (`FCEL`, `ECEL`, `XCEL`, `YCEL`, `NL`) compatible with `roots-ocr`'s `TSR_ANNOTATION_SCHEMA`
+4. Encodes the structure as an OTSL token sequence (`fcel`, `ecel`, `lcel`, `ucel`, `xcel`, `nl`) matching the docling-project FinTabNet_OTSL vocabulary (arXiv 2305.03393)
 5. Optionally applies affine augmentations (shear, rotation) via Pillow — no scikit-image
 
 ## Installation
@@ -40,10 +40,10 @@ python generate.py --num-samples 500 --seed 0 --output-dir ./out/raw \
 ### Package into tar shards
 
 ```bash
-python packaging.py ./out/raw ./out/shards --samples-per-shard 1000
+python sharding.py ./out/raw ./out/shards --samples-per-shard 1000
 
 # Dry run to check counts without writing
-python packaging.py ./out/raw ./out/shards --dry-run
+python sharding.py ./out/raw ./out/shards --dry-run
 ```
 
 ## CLI Reference
@@ -64,7 +64,7 @@ python packaging.py ./out/raw ./out/shards --dry-run
 | `--augment-count` | 2 | Number of augmented variants per base sample |
 | `--distribution` | bundled | Path to a custom UNLV distribution pickle |
 
-### `packaging.py`
+### `sharding.py`
 
 | Argument | Default | Description |
 |---|---|---|
@@ -107,7 +107,7 @@ out/shards/
     "lines": [{"text": "Revenue Q1 Q2", "box": [12, 8, 200, 24]}]
   },
   "table": {
-    "otsl": "FCEL XCEL NL FCEL FCEL NL",
+    "otsl": "fcel lcel nl fcel fcel nl",
     "html": "<table>...</table>",
     "rows": 2,
     "cols": 2
@@ -115,17 +115,20 @@ out/shards/
 }
 ```
 
-Bounding boxes are `[x1, y1, x2, y2]` in absolute pixels. The `table.otsl` field uses the vocabulary defined in `roots-ocr`'s `src/roots_ocr/data/tables/formats.py` and is compatible with `TSR_ANNOTATION_SCHEMA`.
+Bounding boxes are `[x1, y1, x2, y2]` in absolute pixels. The `table.otsl` field uses the docling-project OTSL vocabulary (arXiv 2305.03393).
 
 ### OTSL token vocabulary
 
+Matches the docling-project vocabulary from FinTabNet_OTSL (arXiv 2305.03393).
+
 | Token | Meaning |
 |---|---|
-| `FCEL` | Primary cell with content |
-| `ECEL` | Primary cell without content |
-| `XCEL` | Horizontal span extension (colspan) |
-| `YCEL` | Vertical span extension (rowspan) |
-| `NL` | End of row |
+| `fcel` | Primary cell with content |
+| `ecel` | Primary cell without content |
+| `lcel` | Horizontal span extension (left-looking, colspan) |
+| `ucel` | Vertical span extension (up-looking, rowspan) |
+| `xcel` | 2D span extension (cell is both a colspan and rowspan extension) |
+| `nl` | End of row |
 
 ## Using a Custom UNLV Distribution
 
@@ -146,4 +149,4 @@ pytest tests/ -v
 
 ## OTSL Compatibility
 
-The `table.otsl` field in every sidecar is validated at generation time against the structure dimensions. It round-trips losslessly through `roots-ocr`'s `otsl_to_html()` function. The `html` field stores the content-bearing HTML that, together with `otsl`, satisfies the `TSR_ANNOTATION_SCHEMA` contract.
+The `table.otsl` field in every sidecar is validated at generation time against the structure dimensions. The vocabulary matches docling-project's FinTabNet_OTSL, enabling direct comparison and mixed training with that dataset.

@@ -8,12 +8,12 @@ min_bbox_area: 16
 # grayscale luminance). Samples below this threshold are discarded at save time.
 # WCAG AA = 4.5, WCAG A = 3.0. Set to 1.5 as a backstop; the primary guard is
 # moving shadow to bg_effect so it cannot collapse text-vs-paper contrast.
-min_contrast_ratio: 1.5
+min_contrast_ratio: 1.2
 # Per-sample save filters — permissive defaults preserve current behaviour.
 # Tighten to discard low-quality samples at generation time.
 min_word_count: 5                    # minimum words required to save a sample
 max_textbox_null_frac: 0.95          # discard if >X fraction of textbox slots were empty
-min_line_height_px: 15.0             # discard if any line renders below X pixels tall
+min_line_height_px: 22.0             # discard if any line renders below X pixels tall
 min_sharpness: 10.0                  # discard if Laplacian variance < X (blur detection)
 max_intra_block_line_overlap: 0.95   # discard if within-column row bleeding exceeds X
 max_cross_block_line_overlap: 0.50   # discard if zone-vs-body spatial collision exceeds X
@@ -159,13 +159,13 @@ document:
         args:
           weights: [750, 50, 50, 25, 25, 25, 25, 50]
           args:
-            - percents: [[0.75, 1], [0.75, 1], [0.75, 1], [0.75, 1]]
-            - percents: [[0.75, 1], [1, 1], [0.75, 1], [1, 1]]
-            - percents: [[1, 1], [0.75, 1], [1, 1], [0.75, 1]]
-            - percents: [[0.75, 1], [1, 1], [1, 1], [1, 1]]
-            - percents: [[1, 1], [0.75, 1], [1, 1], [1, 1]]
-            - percents: [[1, 1], [1, 1], [0.75, 1], [1, 1]]
-            - percents: [[1, 1], [1, 1], [1, 1], [0.75, 1]]
+            - percents: [[0.88, 1], [0.88, 1], [0.88, 1], [0.88, 1]]
+            - percents: [[0.88, 1], [1, 1], [0.88, 1], [1, 1]]
+            - percents: [[1, 1], [0.88, 1], [1, 1], [0.88, 1]]
+            - percents: [[0.88, 1], [1, 1], [1, 1], [1, 1]]
+            - percents: [[1, 1], [0.88, 1], [1, 1], [1, 1]]
+            - percents: [[1, 1], [1, 1], [0.88, 1], [1, 1]]
+            - percents: [[1, 1], [1, 1], [1, 1], [0.88, 1]]
             - percents: [[1, 1], [1, 1], [1, 1], [1, 1]]
 
 # Applied to the background layer only, BEFORE compositing paper and text.

@@ -147,7 +147,7 @@ result = extractor.extract_ocr(
     gcs_source_uri="gs://my-bucket/document.pdf",
     gcs_destination_uri="gs://my-bucket/ocr-output/",
     batch_size=2,
-    timeout=300
+    timeout=300,
 )
 
 # Returns text from all pages
@@ -162,6 +162,7 @@ For ArXiv paper processing, the module integrates seamlessly:
 ```python
 # In arxiv processing pipeline
 from data.google_vision_ocr import GoogleVisionOCRExtractor
+
 
 def process_arxiv_paper_with_google_vision(image_path):
     extractor = GoogleVisionOCRExtractor()
@@ -242,9 +243,7 @@ The module returns comprehensive OCR data with intelligent line clustering:
 
 ```python
 # Use specific service account
-extractor = GoogleVisionOCRExtractor(
-    credentials_path="/path/to/service-account.json"
-)
+extractor = GoogleVisionOCRExtractor(credentials_path="/path/to/service-account.json")
 ```
 
 ### PDF Processing Options
@@ -256,8 +255,8 @@ result = extractor.extract_ocr(
     mode="pdf",
     gcs_source_uri="gs://bucket/large-document.pdf",
     gcs_destination_uri="gs://bucket/output/",
-    batch_size=5,    # Pages per output file
-    timeout=600      # Wait up to 10 minutes
+    batch_size=5,  # Pages per output file
+    timeout=600,  # Wait up to 10 minutes
 )
 ```
 
@@ -328,9 +327,7 @@ result = extractor.extract_ocr("handwritten_form.jpg", mode="document")
 # Process multi-page PDFs asynchronously
 extractor = GoogleVisionOCRExtractor()
 result = extractor.extract_ocr(
-    "", mode="pdf",
-    gcs_source_uri="gs://docs/book.pdf",
-    gcs_destination_uri="gs://docs/ocr-output/"
+    "", mode="pdf", gcs_source_uri="gs://docs/book.pdf", gcs_destination_uri="gs://docs/ocr-output/"
 )
 ```
 
@@ -369,6 +366,7 @@ result = extractor.extract_ocr("mixed_document.png", mode="document")
 # Modify arxiv download script to use Google Vision
 from data.google_vision_ocr import GoogleVisionOCRExtractor
 
+
 def process_arxiv_with_google_vision(image_path, mode="text"):
     extractor = GoogleVisionOCRExtractor()
     return extractor.extract_ocr(image_path, mode=mode)
@@ -383,6 +381,7 @@ def process_arxiv_with_google_vision(image_path, mode="text"):
 from data.google_vision_ocr import GoogleVisionOCRExtractor
 import json
 import sys
+
 
 def main():
     if len(sys.argv) < 2:
@@ -399,6 +398,7 @@ def main():
         print(json.dumps(result, indent=2))
     else:
         print(f"Error: {result['error']}", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()

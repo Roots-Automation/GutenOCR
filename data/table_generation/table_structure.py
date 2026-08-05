@@ -39,6 +39,9 @@ class TableStructure:
     has_header: bool = False
     irregular_header: bool = False
     border_style: BorderStyle = BorderStyle.FULL
+    # Semantic role fields (used by the 'semantic' OTSL flavor)
+    has_row_header: bool = False  # first column is a row-label column (rhed)
+    section_rows: list[int] = field(default_factory=list)  # body row indices that are section separators (srow)
 
 
 def _build_occupancy(rows: int, cols: int, spans: list[Span]) -> set[tuple[int, int]]:
@@ -62,6 +65,8 @@ def generate_table_structure(
     max_cols: int = 8,
     span_prob: float = 0.2,
     header_prob: float = 0.7,
+    row_header_prob: float = 0.35,
+    section_row_prob: float = 0.25,
 ) -> TableStructure:
     """Generate a random TableStructure.
 
@@ -73,6 +78,8 @@ def generate_table_structure(
         max_cols: Maximum number of columns.
         span_prob: Probability that any given primary cell starts a span.
         header_prob: Probability that the table has a header row.
+        row_header_prob: Probability that the first column is a row-header column.
+        section_row_prob: Probability that the table contains any section rows.
 
     Returns:
         A TableStructure with validated, non-overlapping spans.
@@ -83,6 +90,17 @@ def generate_table_structure(
     has_header = rng.random() < header_prob
     irregular_header = has_header and rng.random() < 0.3
     border_style = rng.choice(list(BorderStyle))
+    has_row_header = rng.random() < row_header_prob
+
+    # Section rows: randomly selected body rows (never the header row)
+    body_start = 1 if has_header else 0
+    section_rows: list[int] = []
+    if rows > body_start + 1 and rng.random() < section_row_prob:
+        body_rows = list(range(body_start, rows))
+        # Pick 1–3 section rows, leaving at least one non-section body row
+        max_sections = max(1, min(3, len(body_rows) - 1))
+        n_sections = rng.randint(1, max_sections)
+        section_rows = sorted(rng.sample(body_rows, n_sections))
 
     spans: list[Span] = []
     # Track occupied extension positions to avoid overlap
@@ -128,4 +146,6 @@ def generate_table_structure(
         has_header=has_header,
         irregular_header=irregular_header,
         border_style=border_style,
+        has_row_header=has_row_header,
+        section_rows=section_rows,
     )

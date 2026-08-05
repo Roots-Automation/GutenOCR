@@ -5,6 +5,7 @@ MIT License
 """
 
 import numpy as np
+from annotations import _linearize_channel
 from synthtiger import components
 
 from layouts import Grid, GridStack, Layout
@@ -14,21 +15,14 @@ from .textbox import TextBox
 
 
 def _relative_luminance(r, g, b):
-    def channel(c):
-        c = c / 255.0
-        return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-
-    return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b)
+    return 0.2126 * _linearize_channel(r) + 0.7152 * _linearize_channel(g) + 0.0722 * _linearize_channel(b)
 
 
 def _make_adaptive_color(color_config: dict, gray_range: list[int], lum: float) -> components.Switch:
     """Build a Switch(Gray) component whose prob is forced to 1.0 on dark backgrounds."""
     args = {**color_config.get("args", {}), "gray": gray_range}
     prob = color_config.get("prob", 0)
-    # 0.179 is the WCAG crossover: (L+0.05)² = 0.0525 → L ≈ 0.179.
-    # Below this, dark text [0,64] achieves lower contrast than light text [191,255];
-    # above it, dark text wins. Using 0.5 here was wrong — see SYNTHDOG-VALIDATION.md Thread 1.
-    if lum < 0.179:
+    if lum < 0.179:  # force light text on dark backgrounds (see crossover derivation above)
         prob = 1.0
     return components.Switch(components.Gray(), prob=prob, args=args)
 
@@ -106,24 +100,9 @@ class Content:
         block_ids: list,
         words_per_line: list,
     ) -> tuple[int, int, int]:
-        """Render a sequence of layout cells and append results to the output lists.
+        """Render a sequence of layout cells, appending results to the output lists.
 
-        Args:
-            cells: Sequence of (bbox, align, col_key) tuples from a Grid layout.
-                   col_key can be any hashable — zones pass plain col_idx (int),
-                   the body loop passes (grid_idx, col_idx) tuples.
-            cursor: TextCursor or LiteralTextCursor to read text from.
-            font: Sampled BaseFont instance.
-            region_type: Annotation region type string (e.g. "body", "header").
-            next_block_id: Next available block ID counter.
-            block_region_types: Dict to populate with {block_id: region_type}.
-            text_layers: Output list (mutated in-place).
-            texts: Output list (mutated in-place).
-            block_ids: Output list (mutated in-place).
-            words_per_line: Output list (mutated in-place).
-
-        Returns:
-            (next_block_id, null_count, total_count)
+        Returns (next_block_id, null_count, total_count).
         """
         col_key_to_block_id: dict = {}
         null_count = 0
@@ -164,54 +143,38 @@ class Content:
         canvas_ref: float,
         next_block_id: int,
         block_region_types: dict[int, str],
+        text_layers: list,
+        texts: list,
+        block_ids: list,
+        words_per_line: list,
         font_override=None,
         use_page_number: bool = False,
-    ) -> tuple[list, list[str], list[int], list[list[dict]], int, int, int]:
-        """Render a 1-row zone and return accumulated data.
+    ) -> tuple[int, int, int]:
+        """Render a 1-row zone, appending results to the output lists.
 
-        Args:
-            cfg: Zone config dict (text_scale, max_col, etc.)
-            zone_bbox: [x, y, w, h] for the zone area
-            region_type: Annotation region type string
-            canvas_ref: min(canvas_w, canvas_h) used as text-scale reference dimension
-            next_block_id: Next available block ID counter
-            block_region_types: Dict to populate with {block_id: region_type}
-            font_override: Optional BaseFont to use instead of self.font
-            use_page_number: If True, use a LiteralTextCursor with a random page number
-
-        Returns:
-            (text_layers, texts, block_ids, words_per_line,
-             next_block_id, null_count, total_count)
+        Returns (next_block_id, null_count, total_count).
         """
         zone_x, zone_y, zone_w, zone_h = zone_bbox
         if zone_w <= 0 or zone_h <= 0:
-            return [], [], [], [], next_block_id, 0, 0
+            return next_block_id, 0, 0
 
         text_scale_range = cfg.get("text_scale", [0.5, 0.9])
-        # Convert canvas-relative scale to an absolute font size, then to zone-relative
         text_size = canvas_ref * np.random.uniform(text_scale_range[0], text_scale_range[1])
         zone_min = min(zone_w, zone_h)
-        # Cap at 0.99 × zone_min so Grid can always fit at least 1 row
+        # Cap at 0.99 × zone_min so Grid can always fit at least 1 row.
         zone_text_scale = min(text_size / zone_min, 0.99)
 
         max_col = cfg.get("max_col", 3)
         grid = Grid({"max_row": 1, "max_col": max_col, "align": cfg.get("align", ["left", "right", "center"])})
         layout = grid.generate(zone_bbox, fill_range=(0.5, 1.0), text_scale_range=(zone_text_scale, zone_text_scale))
         if layout is None:
-            return [], [], [], [], next_block_id, 0, 1  # 1 total, 1 null
+            return next_block_id, 0, 0
 
         cursor: TextCursor = LiteralTextCursor(str(np.random.randint(1, 500))) if use_page_number else self.reader
+        font = (font_override if font_override is not None else self.font).sample()
 
-        font_sampler = font_override if font_override is not None else self.font
-        font = font_sampler.sample()
-
-        text_layers: list = []
-        texts: list[str] = []
-        block_ids: list[int] = []
-        words_per_line: list[list[dict]] = []
-
-        next_block_id, null_count, total_count = self._render_cells(
-            list(layout),
+        return self._render_cells(
+            layout,
             cursor,
             font,
             region_type,
@@ -223,37 +186,48 @@ class Content:
             words_per_line,
         )
 
-        return text_layers, texts, block_ids, words_per_line, next_block_id, null_count, total_count
-
     def generate(self, size, bg_color=(255, 255, 255)):
         width, height = size
 
         lum = _relative_luminance(*bg_color)
-        # WCAG crossover is ≈ 0.179, not 0.5 — see SYNTHDOG-VALIDATION.md Thread 1.
-        # Empirical analysis showed 21% of samples fell in the wrong zone under the old threshold,
-        # with worst-case contrast of 1.04:1 (near-invisible text).
-        gray_range = [0, 64] if lum > 0.179 else [191, 255]
+        # 0.179 = WCAG black-vs-white crossover: √(1.05×0.05) − 0.05.
+        # Below it, light text has better contrast; above it, dark text wins.
+        # Ranges are kept away from mid-gray to preserve contrast headroom after
+        # perspective warp, elastic distortion, and blur degrade rendered contrast.
+        gray_range = [0, 40] if lum > 0.179 else [215, 255]
 
         textbox_color = _make_adaptive_color(self.textbox_color_config, gray_range, lum)
         content_color = _make_adaptive_color(self.content_color_config, gray_range, lum)
         layout_bbox = list(_compute_layout_bbox(width, height, self.margin))
 
-        text_layers, texts, block_ids, words_per_line = [], [], [], []
+        # Each zone collects into its own bucket so we can merge in reading order
+        # (header → heading → body → footnote → footer) at the end, independent
+        # of the space-allocation order required for correct layout_bbox arithmetic.
+        def _bucket():
+            return [], [], [], []
+
+        h_tl, h_tx, h_bi, h_wpl = _bucket()  # header
+        ft_tl, ft_tx, ft_bi, ft_wpl = _bucket()  # footer
+        fn_tl, fn_tx, fn_bi, fn_wpl = _bucket()  # footnote
+        hd_tl, hd_tx, hd_bi, hd_wpl = _bucket()  # heading
+        bd_tl, bd_tx, bd_bi, bd_wpl = _bucket()  # body
+
         block_region_types: dict[int, str] = {}
         textbox_total_count = 0
         textbox_null_count = 0
         next_block_id = 0
+        zones_rendered: list[str] = []
 
-        # Reference dimension for text-scale calculations (same convention as GridStack)
         canvas_ref = float(min(width, height))
 
-        # Advance reader to a random word boundary once, shared by all zones and body
-        self.reader.move(np.random.randint(len(self.reader)))
-        for _ in range(len(self.reader)):
+        # Advance reader to a random word boundary once, shared by all zones and body.
+        n = len(self.reader)
+        self.reader.move(np.random.randint(n))
+        for _ in range(n):
             if self.reader.get().isspace():
                 break
             self.reader.next()
-        for _ in range(len(self.reader)):
+        for _ in range(n):
             if not self.reader.get().isspace():
                 break
             self.reader.next()
@@ -263,59 +237,75 @@ class Content:
             h_frac = np.random.uniform(*self.page_header_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("header")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
-                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
-                    self.page_header_cfg, zone_bbox, "header", canvas_ref, next_block_id, block_region_types
+                next_block_id, znull, ztot = self._render_zone(
+                    self.page_header_cfg,
+                    zone_bbox,
+                    "header",
+                    canvas_ref,
+                    next_block_id,
+                    block_region_types,
+                    h_tl,
+                    h_tx,
+                    h_bi,
+                    h_wpl,
                 )
-                text_layers.extend(zl)
-                texts.extend(zt)
-                block_ids.extend(zbi)
-                words_per_line.extend(zwpl)
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[1] += zone_h
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
 
         # ── Page footer ───────────────────────────────────────────────────────
+        # Space allocated now (before body) so layout_bbox height is correct,
+        # but annotations are merged after body in reading order.
         if np.random.rand() < self.page_footer_cfg.get("prob", 0.0):
             h_frac = np.random.uniform(*self.page_footer_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("footer")
                 footer_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footer_top, layout_bbox[2], zone_h]
                 pn_cfg = self.page_footer_cfg.get("page_number", {})
                 use_pn = np.random.rand() < pn_cfg.get("prob", 0.0)
-                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                next_block_id, znull, ztot = self._render_zone(
                     self.page_footer_cfg,
                     zone_bbox,
                     "footer",
                     canvas_ref,
                     next_block_id,
                     block_region_types,
+                    ft_tl,
+                    ft_tx,
+                    ft_bi,
+                    ft_wpl,
                     use_page_number=use_pn,
                 )
-                text_layers.extend(zl)
-                texts.extend(zt)
-                block_ids.extend(zbi)
-                words_per_line.extend(zwpl)
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
 
         # ── Footnote ─────────────────────────────────────────────────────────
+        # Space allocated now (before body), annotations merged after body.
         if np.random.rand() < self.footnote_cfg.get("prob", 0.0):
             h_frac = np.random.uniform(*self.footnote_cfg.get("height", [0.05, 0.12]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("footnote")
                 footnote_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footnote_top, layout_bbox[2], zone_h]
-                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
-                    self.footnote_cfg, zone_bbox, "footnote", canvas_ref, next_block_id, block_region_types
+                next_block_id, znull, ztot = self._render_zone(
+                    self.footnote_cfg,
+                    zone_bbox,
+                    "footnote",
+                    canvas_ref,
+                    next_block_id,
+                    block_region_types,
+                    fn_tl,
+                    fn_tx,
+                    fn_bi,
+                    fn_wpl,
                 )
-                text_layers.extend(zl)
-                texts.extend(zt)
-                block_ids.extend(zbi)
-                words_per_line.extend(zwpl)
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
@@ -325,20 +315,21 @@ class Content:
             h_frac = np.random.uniform(*self.section_heading_cfg.get("height", [0.06, 0.14]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
+                zones_rendered.append("heading")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
-                zl, zt, zbi, zwpl, next_block_id, znull, ztot = self._render_zone(
+                next_block_id, znull, ztot = self._render_zone(
                     self.section_heading_cfg,
                     zone_bbox,
                     "heading",
                     canvas_ref,
                     next_block_id,
                     block_region_types,
+                    hd_tl,
+                    hd_tx,
+                    hd_bi,
+                    hd_wpl,
                     font_override=self.heading_font,
                 )
-                text_layers.extend(zl)
-                texts.extend(zt)
-                block_ids.extend(zbi)
-                words_per_line.extend(zwpl)
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[1] += zone_h
@@ -347,9 +338,11 @@ class Content:
         # ── Body GridStack ────────────────────────────────────────────────────
         layouts = self.layout.generate(layout_bbox)
 
+        body_col_counts = []
         for grid_idx, layout in enumerate(layouts):
             font = self.font.sample()
             cells = [(bbox, align, (grid_idx, col_idx)) for bbox, align, col_idx in layout]
+            body_col_counts.append(len({col_idx for _, _, col_idx in layout}))
             next_block_id, gnull, gtot = self._render_cells(
                 cells,
                 self.reader,
@@ -357,26 +350,73 @@ class Content:
                 "body",
                 next_block_id,
                 block_region_types,
-                text_layers,
-                texts,
-                block_ids,
-                words_per_line,
+                bd_tl,
+                bd_tx,
+                bd_bi,
+                bd_wpl,
             )
             textbox_null_count += gnull
             textbox_total_count += gtot
+
+        # ── Merge buckets in reading order: header → heading → body → footnote → footer ──
+        text_layers, texts, block_ids, words_per_line = [], [], [], []
+        for tl, tx, bi, wpl in (
+            (h_tl, h_tx, h_bi, h_wpl),
+            (hd_tl, hd_tx, hd_bi, hd_wpl),
+            (bd_tl, bd_tx, bd_bi, bd_wpl),
+            (fn_tl, fn_tx, fn_bi, fn_wpl),
+            (ft_tl, ft_tx, ft_bi, ft_wpl),
+        ):
+            text_layers.extend(tl)
+            texts.extend(tx)
+            block_ids.extend(bi)
+            words_per_line.extend(wpl)
 
         # Apply color: content_color (uniform) takes priority; if it does not fire,
         # textbox_color applies per-line variation instead. The two modes are mutually
         # exclusive so neither silently discards the other's work.
         content_meta = content_color.sample()
+        text_color_rgbs: list[list[int]] = []
         if content_meta["state"]:
+            text_color_mode = "uniform"
             content_color.apply(text_layers, meta=content_meta)
+            try:
+                c = content_meta["args"]["color"]
+                text_color_rgbs = [[int(c[0]), int(c[1]), int(c[2])]] * len(text_layers)
+            except Exception:
+                pass
         else:
+            text_color_mode = "per_line"
             for text_layer in text_layers:
-                textbox_color.apply([text_layer])
+                layer_meta = textbox_color.sample()
+                textbox_color.apply([text_layer], meta=layer_meta)
+                try:
+                    c = layer_meta["args"]["color"]
+                    text_color_rgbs.append([int(c[0]), int(c[1]), int(c[2])])
+                except Exception:
+                    pass
+
+        # Summarise text colors as median RGB (avoids storing N-line arrays).
+        if text_color_rgbs:
+            text_color_median_rgb = [
+                int(np.median([c[0] for c in text_color_rgbs])),
+                int(np.median([c[1] for c in text_color_rgbs])),
+                int(np.median([c[2] for c in text_color_rgbs])),
+            ]
+        else:
+            text_color_median_rgb = None
 
         for text_layer in text_layers:
             self.text_sprinkle.apply([text_layer])
+
+        provenance = {
+            "paper_luminance": round(float(lum), 4),
+            "text_color_mode": text_color_mode,
+            "text_color_median_rgb": text_color_median_rgb,
+            "zones_rendered": zones_rendered,
+            "body_grid_count": len(layouts),
+            "body_col_counts": body_col_counts,
+        }
 
         return (
             text_layers,
@@ -386,4 +426,5 @@ class Content:
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            provenance,
         )

@@ -1,7 +1,87 @@
 import math
 import warnings
+from functools import lru_cache
 
+import numpy as np
 from PIL import ImageFont
+
+
+@lru_cache(maxsize=128)
+def _cached_truetype(path: str, size: int):
+    return ImageFont.truetype(path, size=size)
+
+
+def _patch_font_cache():
+    """Cache ImageFont.truetype by (path, size) — SynthTiger loads the same
+    font hundreds of times per sample with no cache of its own."""
+    from synthtiger.layers import text_layer as _tl
+
+    _tl.TextLayer._read_font = staticmethod(lambda path, size: _cached_truetype(path, size))
+
+
+def _fast_to_rgb(gray: int, colorize: bool = False):
+    """Drop-in for synthtiger.utils.image_util.to_rgb.
+
+    The original permutes all 65 536 (r, g) pairs to find a valid triple.
+    We generate a batch of 512 candidates at once and check vectorized —
+    3 numpy calls regardless of how many candidates are valid.
+
+    Uses the global np.random state (seeded by set_global_random_seed) so that
+    generate(seed=N) is fully deterministic.
+    """
+    if not colorize:
+        return (gray, gray, gray)
+
+    r = np.random.randint(0, 256, size=512, dtype=np.int32)
+    g = np.random.randint(0, 256, size=512, dtype=np.int32)
+    b = np.rint((gray - r * 0.2989 - g * 0.5870) / 0.1140).astype(np.int32)
+    valid = (b >= 0) & (b < 256)
+    if valid.any():
+        idx = int(np.argmax(valid))
+        return (int(r[idx]), int(g[idx]), int(b[idx]))
+    return (gray, gray, gray)
+
+
+def _patch_to_rgb():
+    """Replace the permutation-based to_rgb in synthtiger with the fast version."""
+    import synthtiger.components.color.gray as _gray
+    import synthtiger.components.color.gray_map as _gray_map
+    import synthtiger.utils as _u
+    import synthtiger.utils.image_util as _iu
+
+    _iu.to_rgb = _fast_to_rgb
+    _u.to_rgb = _fast_to_rgb
+    # The color components import `utils` and call `utils.to_rgb` directly,
+    # so patch at the module level where they'll look it up.
+    _gray.utils.to_rgb = _fast_to_rgb
+    _gray_map.utils.to_rgb = _fast_to_rgb
+
+
+_getsize_cache: dict = {}  # (path, size, text, direction) -> (w, h)
+_getlength_cache: dict = {}  # (path, size, text, direction) -> float
+
+# Glyph-presence detection caches.
+# Reference mask: U+E000 (Private Use Area) is never mapped by any text font,
+# so its rendered mask is always the .notdef fallback glyph.
+_notdef_mask_cache: dict = {}  # (path, size) -> np.ndarray
+_renderable_cache: dict = {}  # (path, size, codepoint) -> bool
+
+
+def _is_renderable(font_obj, char: str) -> bool:
+    """Return True if font_obj has a real glyph for char.
+
+    Compares the rendered mask of char against the .notdef fallback (obtained
+    via U+E000, which no text font maps).  Results are cached per (font, size,
+    codepoint) so the cost is one getmask call per unique character seen.
+    """
+    key = (font_obj.path, font_obj.size)
+    if key not in _notdef_mask_cache:
+        _notdef_mask_cache[key] = np.array(font_obj.getmask(""))
+    cp = ord(char)
+    cache_key = (*key, cp)
+    if cache_key not in _renderable_cache:
+        _renderable_cache[cache_key] = not np.array_equal(np.array(font_obj.getmask(char)), _notdef_mask_cache[key])
+    return _renderable_cache[cache_key]
 
 
 def register_pillow_compat():
@@ -14,6 +94,11 @@ def register_pillow_compat():
     if not hasattr(ImageFont.FreeTypeFont, "getsize"):
 
         def getsize(self, text, direction=None, features=None, language=None):
+            key = (self.path, self.size, text, direction)
+            cached = _getsize_cache.get(key)
+            if cached is not None:
+                return cached
+
             # Width: prefer getlength (advance width) over getbbox (ink width)
             try:
                 w = int(math.ceil(self.getlength(text, direction=direction, features=features, language=language)))
@@ -31,9 +116,26 @@ def register_pillow_compat():
                 _, top, _, bottom = self.getbbox(text)
             h = bottom - top
 
-            return w, h
+            result = (w, h)
+            _getsize_cache[key] = result
+            return result
 
         setattr(ImageFont.FreeTypeFont, "getsize", getsize)
+
+    # Patch FreeTypeFont.getlength with a cache — it's called ~32k times per
+    # 10 samples, always for single characters which repeat constantly.
+    _original_getlength = ImageFont.FreeTypeFont.getlength
+
+    def getlength(self, text, mode="", direction=None, features=None, language=None):
+        key = (self.path, self.size, text, direction)
+        cached = _getlength_cache.get(key)
+        if cached is not None:
+            return cached
+        result = _original_getlength(self, text, mode=mode, direction=direction, features=features, language=language)
+        _getlength_cache[key] = result
+        return result
+
+    setattr(ImageFont.FreeTypeFont, "getlength", getlength)
 
     # Patch ImageFont.FreeTypeFont.getmask2 to handle missing libraqm.
     # We always patch this because even if it exists, it may raise KeyError
@@ -59,3 +161,5 @@ def register_pillow_compat():
 
 # Apply patches immediately on import
 register_pillow_compat()
+_patch_font_cache()
+_patch_to_rgb()

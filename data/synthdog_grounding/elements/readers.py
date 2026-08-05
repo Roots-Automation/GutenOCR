@@ -218,32 +218,21 @@ class HuggingFaceTextReader:
         current_text = self._get_current_text()
         if current_text:
             self.idx = (self.idx - 1) % len(current_text)
+            self._needs_refresh = self.idx > len(current_text) * 0.8
 
     def get(self):
         """Get current character"""
         current_text = self._get_current_text()
         if not current_text:
-            return " "  # Return space if no text available
-        if self.idx >= len(current_text):
-            self.idx = 0  # Reset to beginning if index out of bounds
+            return " "
         return current_text[self.idx]
 
     def _refresh_buffer(self):
-        """Refresh the buffer with new text and clamp idx to stay in bounds."""
-        # Keep some text from current buffer and add new text
+        """Refresh the buffer with new text."""
         if len(self.text_buffer) > self.buffer_size // 4:
             self.text_buffer = self.text_buffer[-self.buffer_size // 4 :]
         self._joined_text_cache = None
-
         self.text_buffer.extend(self._fetch_docs(self.buffer_size * 3 // 4))
-
-        # The buffer may have shrunk, so clamp idx to stay in bounds.
-        # Position is approximate — semantic continuity is not needed.
-        new_text = self._get_current_text()
-        if new_text:
-            self.idx = self.idx % len(new_text)
-        else:
-            self.idx = 0
 
 
 class LiteralTextCursor:
@@ -257,7 +246,7 @@ class LiteralTextCursor:
     """
 
     def __init__(self, text: str) -> None:
-        self._buf = text + " "  # trailing space = word boundary
+        self._buf = text.replace("\r", "").replace("\n", "") + " "  # trailing space = word boundary
         self._idx = 0
         self._consumed = 0
 
@@ -277,6 +266,7 @@ class LiteralTextCursor:
 
     def move(self, idx: int) -> None:
         self._idx = idx % len(self._buf)
+        self._consumed = self._idx
 
     def next(self) -> None:
         self._idx = (self._idx + 1) % len(self._buf)

@@ -1,14 +1,40 @@
 # English config using HuggingFace FinePDFs corpus (PDF-extracted text).
 _base: config/config_base.yaml
 
+emit_quads: true
+
+# Larger images — more realistic scan resolution
+short_size: [1200, 2048]
+aspect_ratio: [1.0, 2.5]
+
 document:
+  # Paper fills the frame almost always; background is just occasional framing
+  fullscreen: 0.90
+  short_size: [1100, 2000]
+  aspect_ratio: [1.0, 2.5]
+
   content:
     text:
-      type: huggingface
-      dataset_name: "HuggingFaceFW/finepdfs"
-      split: "train"
-      streaming: true
-      buffer_size: 1000
-      charset: ascii
+      type: file
+      path: resources/corpus/finepdfs_en.txt
     font:
       paths: [resources/font/en]
+    layout:
+      # Smaller text → denser pages (targeting ~150-300 words/sample)
+      # Wide (landscape) pages get more columns; tall (portrait) pages get more rows
+      text_scale: [0.022, 0.040]
+      max_row: 30   # tall portrait pages can pack many rows
+      max_col: 5    # wide landscape pages can fit more columns
+      fill: [0.7, 1.0]
+
+    # Zone text_scales scaled proportionally down
+    page_header:
+      text_scale: [0.025, 0.045]
+      max_col: 5
+    page_footer:
+      text_scale: [0.025, 0.045]
+      max_col: 5
+    section_heading:
+      text_scale: [0.025, 0.045]
+    footnote:
+      text_scale: [0.022, 0.038]

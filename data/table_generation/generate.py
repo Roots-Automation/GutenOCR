@@ -24,7 +24,7 @@ import random
 from pathlib import Path
 
 from content_distribution import ContentDistribution
-from otsl import structure_to_otsl, validate_otsl
+from otsl import Flavor, structure_to_otsl, validate_otsl
 from PIL import Image
 from table_renderer import augment_image, render_table
 from table_structure import generate_table_structure
@@ -101,6 +101,7 @@ def generate_sample(
     augment: bool,
     augment_count: int,
     output_dir: Path,
+    flavor: Flavor = "semantic",
 ) -> list[Path]:
     """Generate one table sample (and optional augmented variants).
 
@@ -116,6 +117,7 @@ def generate_sample(
         augment: Whether to produce augmented variants.
         augment_count: Number of augmented variants per base sample.
         output_dir: Directory to write files into.
+        flavor: OTSL flavor — ``"base"`` (6 tokens) or ``"semantic"`` (9 tokens).
 
     Returns:
         List of written file paths (jpg + json pairs).
@@ -131,8 +133,8 @@ def generate_sample(
     content_grid = _build_content_grid(structure, dist, rng)
     img, word_boxes, line_boxes = render_table(structure, content_grid)
 
-    otsl_str = structure_to_otsl(structure, content_grid)
-    validate_otsl(otsl_str, rows=structure.rows, cols=structure.cols)
+    otsl_str = structure_to_otsl(structure, content_grid, flavor=flavor)
+    validate_otsl(otsl_str, rows=structure.rows, cols=structure.cols, flavor=flavor)
     html_str = _structure_to_html(structure, content_grid)
 
     def _sidecar(image: Image.Image, img_name: str) -> dict:
@@ -210,13 +212,19 @@ def main() -> None:
         default=None,
         help="Path to UNLV distribution pickle. Defaults to bundled sample_words.json.",
     )
+    parser.add_argument(
+        "--flavor",
+        choices=["base", "semantic"],
+        default="semantic",
+        help="OTSL flavor: 'base' (6 tokens) or 'semantic' (9 tokens, includes ched/rhed/srow).",
+    )
     args = parser.parse_args()
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     rng = random.Random(args.seed)
     dist = ContentDistribution(args.distribution)
 
-    logger.info("Generating %d samples → %s", args.num_samples, args.output_dir)
+    logger.info("Generating %d samples → %s (flavor=%s)", args.num_samples, args.output_dir, args.flavor)
 
     for i in tqdm(range(args.num_samples), desc="Generating"):
         generate_sample(
@@ -231,6 +239,7 @@ def main() -> None:
             augment=args.augment,
             augment_count=args.augment_count,
             output_dir=args.output_dir,
+            flavor=args.flavor,
         )
 
     total = sum(1 for _ in args.output_dir.glob("*.jpg"))

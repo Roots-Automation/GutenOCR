@@ -15,6 +15,16 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import pillow_compat  # noqa: E402, F401, I001
 
+# imgaug lazily initializes its GLOBAL_RNG on the first call to get_global_rng(),
+# drawing one value from np.random to seed it. If that happens inside
+# set_global_random_seed() (which has already set np.random to a deterministic
+# state), it advances the MT19937 position by 1 and breaks reproducibility on
+# the first generate(seed=N) call. Force initialization here at import time so
+# GLOBAL_RNG is never None when set_global_random_seed() runs.
+import imgaug.random as _imgaug_random  # noqa: E402
+
+_imgaug_random.get_global_rng()
+
 import copy  # noqa: E402
 import hashlib  # noqa: E402
 import json  # noqa: E402
@@ -25,9 +35,6 @@ from typing import Any  # noqa: E402
 
 import numpy as np  # noqa: E402
 import yaml  # noqa: E402
-from PIL import Image  # noqa: E402
-from synthtiger import components, layers, templates  # noqa: E402
-
 from annotations import build_annotations, compute_quality_metrics  # noqa: E402
 from effects.physical import (  # noqa: E402
     BookSpineShadowEffect,
@@ -38,8 +45,9 @@ from effects.physical import (  # noqa: E402
     WatermarkEffect,
     apply_if_enabled,
 )
-from elements import Background, Document  # noqa: E402
+from PIL import Image  # noqa: E402
 from serialization import (  # noqa: E402
+    KEY_GENERATION_PARAMS,
     KEY_QUALITY_METRICS,
     KEY_TEXT_BLOCKS,
     KEY_TEXT_LINES,
@@ -52,6 +60,39 @@ from serialization import (  # noqa: E402
     line_annotation_to_dict,
     word_annotation_to_dict,
 )
+from synthtiger import components, layers, templates  # noqa: E402
+from synthtiger.components.image_effect.brightness import Brightness as _Brightness  # noqa: E402
+from synthtiger.components.image_effect.contrast import Contrast as _Contrast  # noqa: E402
+
+from elements import Background, Document  # noqa: E402
+
+
+# Replace synthtiger's brightness/contrast with in-place float32 ops.
+# Original allocates a temporary array for np.clip; in-place avoids the allocation.
+def _brightness_apply_f32(self, layers, meta=None):
+    meta = self.sample(meta)
+    beta = float(meta["beta"])
+    for layer in layers:
+        rgb = layer.image[..., :3]
+        rgb += beta
+        np.clip(rgb, 0, 255, out=rgb)
+    return meta
+
+
+def _contrast_apply_f32(self, layers, meta=None):
+    meta = self.sample(meta)
+    alpha = float(meta["alpha"])
+    bias = 128.0 * (1.0 - alpha)
+    for layer in layers:
+        rgb = layer.image[..., :3]
+        rgb *= alpha
+        rgb += bias
+        np.clip(rgb, 0, 255, out=rgb)
+    return meta
+
+
+_Brightness.apply = _brightness_apply_f32
+_Contrast.apply = _contrast_apply_f32
 
 
 def _resolve_config_paths(config: dict, base_dir: Path) -> dict:
@@ -110,6 +151,7 @@ def _package_data(
     words: list,
     blocks: list,
     quality_metrics: dict,
+    generation_params: dict,
     emit_quads: bool,
 ) -> dict[str, Any]:
     """Assemble the final data dict returned by generate()."""
@@ -122,6 +164,7 @@ def _package_data(
         "words": words,
         "blocks": blocks,
         "quality_metrics": quality_metrics,
+        "generation_params": generation_params,
     }
 
     if emit_quads:
@@ -263,44 +306,37 @@ class SynthDoG(templates.Template):
         bg_layer,
         size: tuple[int, int],
     ) -> np.ndarray:
-        """Merge layers, apply effects, and rasterize to a numpy array."""
-        # Apply shadow to background only.
+        """Merge layers, apply effects, and rasterize to a numpy array.
+
+        All synthtiger compositing runs in float32.  A single clip+cast to uint8
+        happens after layer.output(); every physical effect then operates in uint8
+        so the pipeline never converts dtype more than once.
+        """
+        # float32 compositing phase ──────────────────────────────────────────
         self.bg_effect.apply([bg_layer])
-        # Merge paper + text into a single doc layer, then apply a weaker shadow
-        # for page-level depth. This partially affects text-vs-paper contrast but
-        # at reduced intensity; the backstop in save() catches any failures.
         doc_layer = document_group.merge()
         self.doc_effect.apply([doc_layer])
-        # Apply doc-layer physical effects (operate on the paper+text composite,
-        # before compositing with the background).
-        doc_img = np.clip(doc_layer.image, 0, 255).astype(np.uint8)
-        doc_img = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, doc_img)
-        doc_img = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, doc_img)
-        doc_layer.image = doc_img.astype(np.float32)
         layer = layers.Group([doc_layer, bg_layer]).merge()
-        # Apply elastic distortion to the composited image. This runs *after*
-        # annotations are captured from per-layer quads, so saved bboxes reflect
-        # the pre-distortion geometry.
-        #
-        # Empirical analysis (SYNTHDOG-VALIDATION.md Thread 11, n=50) confirmed this
-        # misalignment is negligible with config params alpha=[0,1], sigma=[0,0.5]:
-        #   mean pixel delta   1.4  (vs motion blur 2.6,  Gaussian blur 2.1)
-        #   p95 pixel delta   10.1  (vs motion blur 24.1, Gaussian blur 27.5)
-        #   centroid drift     2.3px (vs motion blur 2.6px, Gaussian blur 2.2px)
-        #   text coverage      0.90  (vs motion blur 0.92, Gaussian blur 0.93)
-        # Elastic distortion is at or below the level of the blur effects that are
-        # also applied post-annotation, so no fix is warranted.
         self.document.elastic_distortion.apply([layer])
         self.effect.apply([layer])
-        result = layer.output(bbox=[0, 0, *size])
-        # Global physical effects applied to the final composite: moiré → streaks → watermark → vignetting
+
+        # Single float32 → uint8 conversion ──────────────────────────────────
+        result = np.clip(layer.output(bbox=[0, 0, *size]), 0, 255).astype(np.uint8)
+
+        # uint8 physical effects phase ────────────────────────────────────────
+        result = apply_if_enabled(self.book_spine_cfg, BookSpineShadowEffect.apply, result)
+        result = apply_if_enabled(self.fold_crease_cfg, FoldCreaseEffect.apply, result)
         result = apply_if_enabled(self.moire_cfg, MoireOverlayEffect.apply, result)
         result = apply_if_enabled(self.low_toner_cfg, LowTonerStreakEffect.apply, result)
         result = apply_if_enabled(self.watermark_cfg, WatermarkEffect.apply, result)
         result = apply_if_enabled(self.vignetting_cfg, VignettingEffect.apply, result)
         return result
 
-    def generate(self):
+    def generate(self, seed: int | None = None):
+        if seed is not None:
+            import synthtiger as _st
+
+            _st.set_global_random_seed(seed)
         landscape = np.random.rand() < self.landscape
         short_size = np.random.randint(self.short_size[0], self.short_size[1] + 1)
         aspect_ratio = np.random.uniform(self.aspect_ratio[0], self.aspect_ratio[1])
@@ -317,6 +353,7 @@ class SynthDoG(templates.Template):
             block_region_types,
             textbox_null_count,
             textbox_total_count,
+            doc_provenance,
         ) = self.document.generate(size)
 
         document_group = layers.Group([*text_layers, paper_layer])
@@ -365,6 +402,14 @@ class SynthDoG(templates.Template):
         label = re.sub(r"\s+", " ", " ".join(ln.text for ln in lines)).strip()
         quality = np.random.randint(self.quality[0], self.quality[1] + 1)
 
+        generation_params = {
+            "landscape": bool(landscape),
+            "canvas_size": list(size),
+            "jpeg_quality": int(quality),
+            "skew_angle": round(skew_angle, 3),
+            **doc_provenance,
+        }
+
         return _package_data(
             image=image,
             label=label,
@@ -374,45 +419,66 @@ class SynthDoG(templates.Template):
             words=words,
             blocks=blocks,
             quality_metrics=quality_metrics,
+            generation_params=generation_params,
             emit_quads=self.emit_quads,
         )
 
     def init_save(self, root):
         os.makedirs(root, exist_ok=True)
 
-    def save(self, root, data, idx):
-        lines: list[LineAnnotation] = data.get("lines", [])
+    def _quality_failure(self, data: dict) -> str | None:
+        """Return a human-readable failure reason, or None if the sample passes all filters."""
+        lines = data.get("lines", [])
         if not lines:
-            return
-
-        quality_metrics = data.get("quality_metrics", {})
-        min_contrast = quality_metrics.get("min_line_contrast_ratio")
-        if min_contrast is not None and min_contrast < self.min_contrast_ratio:
-            return
-
-        if quality_metrics.get("word_count", 0) < self.min_word_count:
-            return
-
-        null_frac = quality_metrics.get("textbox_null_frac", 0.0) or 0.0
+            return "no lines"
+        qm = data.get("quality_metrics", {})
+        contrast = qm.get("min_line_contrast_ratio")
+        if contrast is not None and contrast < self.min_contrast_ratio:
+            return f"contrast {contrast:.3f} < {self.min_contrast_ratio}"
+        words = qm.get("word_count", 0)
+        if words < self.min_word_count:
+            return f"words {words} < {self.min_word_count}"
+        null_frac = qm.get("textbox_null_frac", 0.0) or 0.0
         if null_frac > self.max_textbox_null_frac:
-            return
-
-        min_h = quality_metrics.get("min_line_height_px")
+            return f"null_frac {null_frac:.3f} > {self.max_textbox_null_frac}"
+        min_h = qm.get("min_line_height_px")
         if min_h is not None and min_h < self.min_line_height_px:
-            return
-
-        sharpness = quality_metrics.get("sharpness")
+            return f"min_line_height {min_h:.1f} < {self.min_line_height_px}"
+        sharpness = qm.get("sharpness")
         if sharpness is not None and sharpness < self.min_sharpness:
-            return
+            return f"sharpness {sharpness:.1f} < {self.min_sharpness}"
+        intra = qm.get("max_intra_block_line_overlap")
+        if intra is not None and intra > self.max_intra_block_line_overlap:
+            return f"intra_overlap {intra:.3f} > {self.max_intra_block_line_overlap}"
+        cross = qm.get("max_cross_block_line_overlap")
+        if cross is not None and cross > self.max_cross_block_line_overlap:
+            return f"cross_overlap {cross:.3f} > {self.max_cross_block_line_overlap}"
+        return None
 
-        max_overlap = quality_metrics.get("max_intra_block_line_overlap")
-        if max_overlap is not None and max_overlap > self.max_intra_block_line_overlap:
-            return
+    def save(self, root, data, idx):
+        import logging
 
-        cross_overlap = quality_metrics.get("max_cross_block_line_overlap")
-        if cross_overlap is not None and cross_overlap > self.max_cross_block_line_overlap:
-            return
+        # Retry with deterministic sub-seeds until the sample passes all quality
+        # filters. Never give up — requesting N samples must yield exactly N on disk.
+        # Retry seeds are spaced far from the primary seed space: (idx+1) * 100_000 + attempt.
+        retry_base = (idx + 1) * 100_000
+        failure = self._quality_failure(data)
+        attempt = 0
+        while failure is not None:
+            if attempt > 0 and attempt % 100 == 0:
+                logging.getLogger(__name__).warning(
+                    "save idx=%d: still failing after %d retries; last failure: %s",
+                    idx,
+                    attempt,
+                    failure,
+                )
+            data = self.generate(seed=retry_base + attempt)
+            failure = self._quality_failure(data)
+            attempt += 1
 
+        lines: list[LineAnnotation] = data.get("lines", [])
+        quality_metrics = data.get("quality_metrics", {})
+        generation_params = data.get("generation_params", {})
         image = data["image"]
         quality = data["quality"]
         words = data.get("words", [])
@@ -421,14 +487,17 @@ class SynthDoG(templates.Template):
         # Content-based split: hash the label so the same text always lands
         # in the same split regardless of generation order or worker count.
         label_hash = int(hashlib.sha256(data["label"].encode()).hexdigest()[:16], 16)
-        split_idx = int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random()))
+        split_idx = min(
+            int(np.searchsorted(self._split_thresholds, np.random.default_rng(label_hash).random())),
+            len(self.splits) - 1,
+        )
         output_dirpath = os.path.join(root, self.splits[split_idx])
 
         # save image
         image_filename = f"image_{idx}.jpg"
         image_filepath = os.path.join(output_dirpath, image_filename)
         os.makedirs(os.path.dirname(image_filepath), exist_ok=True)
-        image = Image.fromarray(np.clip(image[..., :3], 0, 255).astype(np.uint8))
+        image = Image.fromarray(image[..., :3])
         image.save(image_filepath, quality=quality)
 
         # save metadata
@@ -439,8 +508,8 @@ class SynthDoG(templates.Template):
         text_words_data = [word_annotation_to_dict(wd) for wd in words]
         text_blocks_data = [block_annotation_to_dict(b) for b in blocks]
 
-        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS]
-        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics]
+        keys = [KEY_TEXT_LINES, KEY_TEXT_BLOCKS, KEY_TEXT_WORDS, KEY_QUALITY_METRICS, KEY_GENERATION_PARAMS]
+        values = [text_lines_data, text_blocks_data, text_words_data, quality_metrics, generation_params]
 
         metadata = self.format_metadata(
             image_filename=image_filename,

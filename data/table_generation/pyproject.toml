@@ -16,16 +16,20 @@ dependencies = [
     "pillow>=10.0",
     "numpy>=1.24",
     "tqdm>=4.65",
+    "datasets>=5.0.1",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
 ]
+analysis = [
+    "datasets>=2.0",
+]
 
 [project.scripts]
 table-generate = "generate:main"
-table-package = "packaging:main"
+table-package = "sharding:main"
 
 [project.urls]
 "Homepage" = "https://github.com/Roots-Automation/GutenOCR"
@@ -36,3 +40,8 @@ include = ["table_generation*"]
 
 [tool.setuptools.package-data]
 "*" = ["resources/*.json"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+]

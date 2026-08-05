@@ -43,3 +43,13 @@ include = ["elements*", "layouts*"]
 
 [tool.setuptools.package-data]
 "*" = ["*.yaml", "*.txt"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
+markers = ["slow: wall-clock timing tests; skip in CI with -m 'not slow'"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
