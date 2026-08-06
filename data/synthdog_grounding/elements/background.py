@@ -20,6 +20,6 @@ class Background:
     def generate(self, size):
         bg_layer = layers.RectLayer(size, (255, 255, 255, 255))
         self.image.apply([bg_layer])
-        self.effect.apply([bg_layer])
+        effect_meta = self.effect.apply([bg_layer])
 
-        return bg_layer
+        return bg_layer, effect_meta
