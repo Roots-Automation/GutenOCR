@@ -2,7 +2,7 @@
 
 Usage:
     uv run python download_corpus.py                         # default: 50k docs → resources/corpus/finepdfs_en.txt
-    uv run python download_corpus.py --docs 100000           # larger corpus
+    uv run python download_corpus.py --docs 2000000          # larger corpus, shuffled across all shards
     uv run python download_corpus.py --out resources/corpus/custom.txt
 """
 
@@ -18,6 +18,19 @@ def parse_args():
     p.add_argument("--docs", type=int, default=50_000, help="Number of documents to download")
     p.add_argument("--out", default="resources/corpus/finepdfs_en.txt", help="Output file path")
     p.add_argument("--charset", default="ascii", help="Strip chars not encodable in this charset (default: ascii)")
+    p.add_argument(
+        "--shuffle-buffer-size",
+        type=int,
+        default=10_000,
+        help=(
+            "Streaming shuffle buffer size. The dataset is sharded (579 shards for "
+            "eng_Latn); without shuffling, a doc count that's a small fraction of the "
+            "total only ever reads the first few shards. Shuffling randomizes shard "
+            "read order too, so the sample actually spans the whole dataset. Set to 0 "
+            "to disable (fastest, but biased toward however the source shards are ordered)."
+        ),
+    )
+    p.add_argument("--seed", type=int, default=42, help="Shuffle seed (for reproducibility)")
     return p.parse_args()
 
 
@@ -30,6 +43,8 @@ def main():
     from datasets import load_dataset
 
     ds = load_dataset(args.dataset, split=args.split, streaming=True)
+    if args.shuffle_buffer_size > 0:
+        ds = ds.shuffle(seed=args.seed, buffer_size=args.shuffle_buffer_size)
 
     saved = 0
     skipped = 0
