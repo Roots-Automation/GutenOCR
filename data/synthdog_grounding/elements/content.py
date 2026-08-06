@@ -408,7 +408,7 @@ class Content:
             text_color_mode = "uniform"
             content_color.apply(text_layers, meta=content_meta)
             try:
-                c = content_meta["args"]["color"]
+                c = content_meta["meta"]["rgb"]
                 text_color_rgbs = [[int(c[0]), int(c[1]), int(c[2])]] * len(text_layers)
             except Exception:
                 pass
@@ -418,7 +418,7 @@ class Content:
                 layer_meta = textbox_color.sample()
                 textbox_color.apply([text_layer], meta=layer_meta)
                 try:
-                    c = layer_meta["args"]["color"]
+                    c = layer_meta["meta"]["rgb"]
                     text_color_rgbs.append([int(c[0]), int(c[1]), int(c[2])])
                 except Exception:
                     pass
