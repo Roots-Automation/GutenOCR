@@ -67,6 +67,10 @@ resources/font/**/OpenSans*.ttf
 resources/font/**/SourceSerif*.ttf
 resources/font/**/CourierPrime*.ttf
 
+# FinePDFs corpus downloaded on demand via download_corpus.py (tens of GB --
+# never commit). Small wiki corpora (enwiki/jawiki/kowiki/zhwiki .txt) stay tracked.
+resources/corpus/finepdfs_en.txt*
+
 # Logs
 *.log
 
