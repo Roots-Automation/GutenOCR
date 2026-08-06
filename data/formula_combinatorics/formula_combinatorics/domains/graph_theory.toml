@@ -1,0 +1,709 @@
+[meta]
+domain = "graph_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "GRAPH_POOL"
+values = ["G", "H", '\Gamma', "D", "T"]
+
+[[pool]]
+name   = "VTX_POOL"
+values = ["u", "v", "w", "x", "y"]
+
+[[pool]]
+name   = "R_POOL"
+values = ["r", "s", "t", "k"]
+
+[[pool]]
+name   = "P_POOL"
+values = ["p", "q", '\rho']
+
+[[pool]]
+name   = "LAM_POOL"
+values = ['\lambda_1', '\lambda_2', '\lambda_n', '\lambda_{\min}', '\lambda_{\max}']
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "M"]
+
+# ---------------------------------------------------------------------------
+# Part A: reparameterized originals
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "handshaking_lemma"
+latex = '\sum{lim_mod}_{{v \in V({gg})}} \deg_{{{gg}}}(v) = 2|E({gg})|'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "complete_graph_edges"
+latex = '|E(K_{{{nn}}})| = \binom{{{nn}}}{{2}} = \frac{{{nn}({nn}-1)}}{{2}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "chromatic_number_bound"
+latex = '\chi({gg}) \leq \Delta({gg}) + 1'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_planar_formula"
+latex = '|V| - |E| + |F| = 2'
+
+# ----
+
+[[template]]
+name  = "degree_definition"
+latex = '\deg_{{{gg}}}({vv}) = |\{{{uu} \in V({gg}) : \{{{uu},{vv}\}} \in E({gg})\}}|'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.uu]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["vv"]
+
+# ----
+
+[[template]]
+name  = "planar_edge_bound"
+latex = '|E({gg})| \leq 3|V({gg})| - 6'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+# connectivity_inequality has \kappa' — triple-quoted
+[[template]]
+name  = "connectivity_inequality"
+latex = '''\kappa({gg}) \leq \kappa'({gg}) \leq \delta({gg})'''
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "chromatic_complete_graph"
+latex = '\chi(K_{{{nn}}}) = {nn}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "independence_vertex_cover"
+latex = '\alpha({gg}) + \tau({gg}) = |V({gg})|'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "graph_distance_triangle"
+latex = 'd_{{{gg}}}({uu},{vv}) \leq d_{{{gg}}}({uu},{ww}) + d_{{{gg}}}({ww},{vv})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+[template.slots.ww]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu", "vv"]
+
+# ----
+
+[[template]]
+name  = "spectral_ordering"
+latex = '\lambda_1({gg}) \geq \lambda_2({gg}) \geq \cdots \geq \lambda_{{{nn}}}({gg})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "degree_sequence_sum"
+latex = '2|E({gg})| = \sum{lim_mod}_{{k \geq 0}} k \cdot n_k({gg})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "ramsey_bound"
+latex = 'R({ss},{tt}) \leq \binom{{{ss}+{tt}-2}}{{{ss}-1}}'
+
+[template.slots.ss]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.tt]
+type         = "X"
+pool         = "R_POOL"
+exclude_from = ["ss"]
+
+# ----
+
+[[template]]
+name  = "turan_theorem"
+latex = '\mathrm{{ex}}({nn}, K_{{{rr}+1}}) = \Bigl(1 - \tfrac{{1}}{{{rr}}}\Bigr)\frac{{{nn}^2}}{{2}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "R_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: new flat standalone templates
+# ---------------------------------------------------------------------------
+
+# Trees
+
+[[template]]
+name  = "tree_edge_count"
+latex = '|E({gg})| = |V({gg})| - 1'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "matrix_tree_theorem"
+latex = '\tau({gg}) = \det\!\bigl(L_{{ij}}({gg})\bigr)'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "cayley_formula"
+latex = '\tau(K_{{{nn}}}) = {nn}^{{{nn}-2}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# Spectral
+
+[[template]]
+name  = "graph_laplacian_def"
+latex = 'L({gg}) = D({gg}) - A({gg})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "laplacian_eigenvalue_zero"
+latex = '\lambda_{{\min}}\!\bigl(L({gg})\bigr) = 0'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "fiedler_connectivity"
+latex = '\lambda_2\!\bigl(L({gg})\bigr) > 0 \iff {gg} \text{{ is connected}}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "adjacency_eigenvalue_bound"
+latex = '|{lam}(A({gg}))| \leq \Delta({gg})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+# ----
+
+[[template]]
+name  = "cheeger_inequality"
+latex = '\frac{{h({gg})^2}}{{2}} \leq \lambda_2(L({gg})) \leq 2\,h({gg})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "path_count_adjacency"
+latex = '\bigl(A({gg})^{{{kk}}}\bigr)_{{{uu}{vv}}} = \#\text{{walks of length }}{kk} \text{{ from }}{uu}\text{{ to }}{vv}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+# Colorings
+
+[[template]]
+name  = "chromatic_polynomial_def"
+latex = 'P({gg}, k) = \#\text{{proper }}k\text{{-colorings of }}{gg}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+# edge_coloring_vizing has \chi' — triple-quoted
+[[template]]
+name  = "edge_coloring_vizing"
+latex = '''\chi'({gg}) \in \{{\Delta({gg}),\;\Delta({gg})+1\}}'''
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "brooks_theorem"
+latex = '\chi({gg}) \leq \Delta({gg}) \text{{ for connected }}{gg} \text{{ not }}K_{{{nn}}}\text{{ or odd cycle}}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "four_color_theorem"
+latex = '\chi({gg}) \leq 4 \text{{ for every planar }}{gg}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# Bipartite and matchings
+
+[[template]]
+name  = "bipartite_edge_bound"
+latex = '|E({gg})| \leq \left\lfloor \frac{{|V({gg})|^2}}{{4}} \right\rfloor'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "konig_theorem"
+latex = '\nu({gg}) = \tau({gg}) \quad \text{{({gg} bipartite)}}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "hall_condition"
+latex = '{gg} \text{{ has a perfect matching}} \iff |N(S)| \geq |S| \;\forall\, S \subseteq A'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "matching_gallai"
+latex = '\nu({gg}) + \rho({gg}) = |V({gg})|'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# Flows and cuts
+
+[[template]]
+name  = "max_flow_min_cut"
+latex = '\max_f \operatorname{{val}}(f) = \operatorname{{cap}}(S^*, T^*) \quad \text{{in }}{gg}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "menger_theorem"
+latex = '\kappa({gg}) = \min_{{{uu},{vv}}} \lambda\!\bigl({gg};\,{uu},{vv}\bigr)'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+# Random graphs
+
+[[template]]
+name  = "erdos_renyi_degree"
+latex = '\mathbb{{E}}[\deg(v)] = ({nn}-1){pp} \quad \text{{in }}G({nn},{pp})'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+# ----
+
+[[template]]
+name  = "random_graph_connectivity_threshold"
+latex = 'G({nn}, p)\text{{ is a.s.\ connected for }}p = \frac{{\ln {nn}}}{{{nn}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# Clique / independence
+
+[[template]]
+name  = "clique_complement"
+latex = '\omega({gg}) = \alpha\!\left(\bar{{{gg}}}\right)'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "ramsey_lower_bound"
+latex = 'R(k,k) \geq 2^{{{kk}/2}}'
+
+[template.slots.kk]
+type = "S"
+pool = "R_POOL"
+
+# Diameter / radius
+
+[[template]]
+name  = "diameter_eccentricity"
+latex = '\operatorname{{diam}}({gg}) = \max_{{{uu} \in V({gg})}} \varepsilon({uu})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+# ----
+
+[[template]]
+name  = "radius_diameter_bound"
+latex = '\operatorname{{rad}}({gg}) \leq \operatorname{{diam}}({gg}) \leq 2\,\operatorname{{rad}}({gg})'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# Density
+
+[[template]]
+name  = "graph_density"
+latex = 'd({gg}) = \frac{{2\,|E({gg})|}}{{|V({gg})|\,(|V({gg})|-1)}}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# Isomorphism
+
+[[template]]
+name  = "graph_isomorphism_degree_seq"
+latex = '{g1} \cong {g2} \implies \deg\text{{-seq}}({g1}) = \deg\text{{-seq}}({g2})'
+
+[template.slots.g1]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.g2]
+type         = "X"
+pool         = "GRAPH_POOL"
+exclude_from = ["g1"]
+
+# Euler circuit
+
+[[template]]
+name  = "euler_circuit_condition"
+latex = '{gg} \text{{ has an Euler circuit}} \iff {gg} \text{{ connected, all degrees even}}'
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: high-n_eff function-pair templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "flow_capacity_bound"
+latex = '0 \leq {fn1}({uu},{vv}) \leq {fn2}({uu},{vv}) \quad \forall\,({uu},{vv}) \in E({gg})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+# ----
+
+[[template]]
+name  = "distance_weight_relaxation"
+latex = '{fn1}({vv}) \leq {fn1}({uu}) + {fn2}({uu},{vv}) \quad \forall\,{uu} \in N({vv})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "bellman_ford_update"
+latex = '{fn1}({vv}) = \min_{{{uu} \in N({vv})}} \bigl\{{{fn1}({uu}) + {fn2}({uu},{vv})\bigr\}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "graph_hom_composition"
+latex = '{fn1} \circ {fn2} : {g1} \to {g3} \text{{ is a graph homomorphism}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g1]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.g3]
+type         = "X"
+pool         = "GRAPH_POOL"
+exclude_from = ["g1"]
+
+# ----
+
+[[template]]
+name  = "kirchhoff_potential"
+latex = '\sum{lim_mod}_{{{uu} \sim {vv}}} {fn2}({uu},{vv})\,\bigl({fn1}({uu}) - {fn1}({vv})\bigr) = 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]
+
+# ----
+
+[[template]]
+name  = "spectral_quadratic_form"
+latex = '{fn1}^\top A({gg})\,{fn2} = \sum{lim_mod}_{{({uu},{vv}) \in E({gg})}} \bigl({fn1}({uu}){fn2}({vv}) + {fn1}({vv}){fn2}({uu})\bigr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VTX_POOL"
+
+[template.slots.vv]
+type         = "X"
+pool         = "VTX_POOL"
+exclude_from = ["uu"]

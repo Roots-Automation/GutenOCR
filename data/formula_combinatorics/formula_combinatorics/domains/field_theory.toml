@@ -1,0 +1,479 @@
+[meta]
+domain = "field_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "COORD_POOL"
+values = ["x", "y", "z", "r", '\theta', '\phi']
+
+[[pool]]
+name   = "ENERGY_POOL"
+values = ["E", "E_0", '\mathcal{E}', "U"]
+
+[[pool]]
+name   = "HAM_POOL"
+values = ["H", '\hat{H}', '\mathcal{H}', '\hat{\mathcal{H}}', "H_0", '\tilde{H}']
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["i", "j", "k", "n", "m"]
+
+[[pool]]
+name   = "K_POOL"
+values = ["k", "k_0", '\kappa', "k_n"]
+
+[[pool]]
+name   = "MASS_POOL"
+values = ["m", "M", '\mu', "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\omega_0', '\Omega', '\nu']
+
+[[pool]]
+name   = "PSI_POOL"
+values = ['\psi', '\phi', '\Psi', '\varphi', '\tilde{\psi}', '\hat{\psi}']
+
+[[pool]]
+name   = "Q_POOL"
+values = ["q", "q_i", "q_k", "q_j"]
+
+[[pool]]
+name   = "SPACETIME_IDX_POOL"
+values = ['\mu', '\nu', '\rho', '\sigma', '\lambda', '\kappa']
+
+# ---------------------------------------------------------------------------
+# Part C1: Variational and field equations
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "variational_action"
+latex = '\delta\int{lim_mod}_{{t_1}}^{{t_2}} {fn}\!\left({qq},\,\dot{{{qq}}},\,t\right)\,dt = 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_lagrange_functional"
+latex = '\frac{{d}}{{dt}}\frac{{\partial {fn}}}{{\partial \dot{{{qq}}}}} - \frac{{\partial {fn}}}{{\partial {qq}}} = 0'
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "greens_function_equation"
+latex = '{fn1}({cc})\,{fn2}({cc}) = -4\pi\,\delta({cc}-{cc})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+# ----
+
+[[template]]
+name  = "action_functional"
+latex = 'S[{fn1}] = \int{lim_mod}_{{t_0}}^{{t_1}} {fn2}\!\left({qq},\,\dot{{{qq}}},\,t\right)\,dt'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "lagrangian_density_field"
+latex = '\mathcal{{L}}\bigl({fn1},\,\partial_{{{mu}}}{fn1}\bigr) = {fn2}({fn1}) - V({fn1})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "noether_current"
+latex = 'j^{{{mu}}} = \frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{mu}}}{fn1})}}\,\delta {fn2}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "scattering_amplitude"
+latex = '\mathcal{{M}} = \langle {fn1} | T | {fn2} \rangle = \langle {fn1} | {ham} | {fn2} \rangle'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+# ----
+
+[[template]]
+name  = "field_equation_general"
+latex = '\partial_{{{mu}}}\frac{{\partial \mathcal{{L}}}}{{\partial(\partial_{{{mu}}}{fn1})}} - \frac{{\partial \mathcal{{L}}}}{{\partial {fn2}}} = 0'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C2: Function-pair (field theory context)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_dispersion_relation"
+latex = '{fn1}({om}) = {fn2}({kk}\,c)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_correlation_fn"
+latex = '{fn1}(r) = {fn2}\!\left(\langle {psi}(0)\,{psi}(r)\rangle\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.psi]
+type = "S"
+pool = "PSI_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix C3: Upsilon meson / particle physics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "upsilon_meson_mass"
+latex = 'm_\Upsilon \approx 9.460\,\frac{{\mathrm{{GeV}}}}{{c^2}}'
+
+[[template]]
+name  = "upsilon_leptonic_width"
+latex = '\Gamma(\Upsilon \to \ell^+ \ell^-) = \frac{{16\pi \alpha^2 e_b^2}}{{3\, {mm}^2}} |\psi(0)|^2'
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix C4: Dirac notation and conserved currents (slot-free)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "dirac_adjoint_derivative"
+latex = '\bar{{\psi}}\,\overleftarrow{{\partial}}_{{\mu}} = -\partial_{{\mu}}\bar{{\psi}}'
+
+[[template]]
+name  = "conserved_current_lr_arrows"
+latex = 'j^{{\mu}} = \bar{{\psi}}\,\gamma^{{\mu}}\,\psi,\quad j^{{\mu}} = \bar{{\psi}}\,\overrightarrow{{\partial}}^{{\mu}}\psi - \bar{{\psi}}\,\overleftarrow{{\partial}}^{{\mu}}\psi'
+
+# ---------------------------------------------------------------------------
+# Part C5: 4-vectors and relativistic tensors
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "four_momentum_def"
+latex = 'p^{{{mu}}} = ({ee}/c,\, \mathbf{{p}})'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+# ----
+
+[[template]]
+name  = "four_vector_norm"
+latex = 'p_{{{mu}}} p^{{{mu}}} = -{mm}^2 c^2'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ----
+
+[[template]]
+name  = "minkowski_metric_idx"
+latex = 'ds^2 = \eta_{{{mu}{nu}}} dx^{{{mu}}} dx^{{{nu}}}'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+# ----
+
+[[template]]
+name  = "stress_energy_conservation"
+latex = '\partial_{{{mu}}} T^{{{mu}{nu}}} = 0'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+# ---------------------------------------------------------------------------
+# Part C5: Levi-Civita symbol
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "levi_civita_3d_cross"
+latex = '(\mathbf{{A}}\times\mathbf{{B}})^{{{ii}}} = \varepsilon^{{{ii}{jj}{kk}}} A_{{{jj}}} B_{{{kk}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+# ----
+
+[[template]]
+name  = "levi_civita_3d_curl"
+latex = '(\nabla\times\mathbf{{A}})^{{{ii}}} = \varepsilon^{{{ii}{jj}{kk}}} \partial_{{{jj}}} A_{{{kk}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+# ----
+
+[[template]]
+name  = "levi_civita_contraction"
+latex = '\varepsilon_{{{ii}{jj}{kk}}} \varepsilon^{{{ii}{ll}{mm}}} = \delta^{{{ll}}}_{{{jj}}} \delta^{{{mm}}}_{{{kk}}} - \delta^{{{ll}}}_{{{kk}}} \delta^{{{mm}}}_{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[template.slots.mm]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk", "ll"]
+
+# ----
+
+[[template]]
+name  = "levi_civita_4d_dual"
+latex = '\tilde{{F}}^{{{mu}{nu}}} = \tfrac{{1}}{{2}} \varepsilon^{{{mu}{nu}{rho}{sig}}} F_{{{rho}{sig}}}'
+
+[template.slots.mu]
+type = "S"
+pool = "SPACETIME_IDX_POOL"
+
+[template.slots.nu]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu"]
+
+[template.slots.rho]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu", "nu"]
+
+[template.slots.sig]
+type         = "X"
+pool         = "SPACETIME_IDX_POOL"
+exclude_from = ["mu", "nu", "rho"]
+
+# ---------------------------------------------------------------------------
+# Part C5: Kronecker delta
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "kronecker_mixed"
+latex = '\delta^{{{ii}}}_{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ----
+
+[[template]]
+name  = "kronecker_trace"
+latex = '\delta^{{{ii}}}_{{{ii}}} = n'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "kronecker_contraction"
+latex = '\delta^{{{ii}}}_{{{jj}}} T^{{{jj}}} = T^{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["ii"]

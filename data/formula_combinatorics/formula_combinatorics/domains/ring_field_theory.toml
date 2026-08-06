@@ -1,0 +1,1398 @@
+[meta]
+domain = "ring_field_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "RING_POOL"
+values = ["R", "S", "A", "B", '\mathbb{Z}', '\mathbb{Q}[x]', '\mathbb{Z}[x]', '\mathbb{F}_p', '\mathcal{O}', '\mathbb{Z}[\sqrt{d}]']
+
+[[pool]]
+name   = "IDEAL_POOL"
+values = ["I", "J", '\mathfrak{m}', '\mathfrak{p}', '\mathfrak{a}', '\mathfrak{b}', "P", "Q", '\mathfrak{q}', '\mathfrak{n}']
+
+[[pool]]
+name   = "FIELD_POOL"
+values = ["K", "L", "E", "F", "k", '\mathbb{Q}', '\mathbb{F}_p', '\mathbb{Q}(\sqrt{d})', '\mathbb{F}_{p^n}', '\mathbb{C}', '\mathbb{R}']
+
+[[pool]]
+name   = "MODULE_POOL"
+values = ["M", "N", "V", "W", '\mathcal{M}', '\mathcal{N}', "P", "Q", "L", "U"]
+
+[[pool]]
+name   = "ELEM_POOL"
+values = ["a", "b", "c", "x", "y", "z", '\alpha', '\beta', '\gamma', '\xi', '\eta']
+
+[[pool]]
+name   = "POLY_POOL"
+values = ["f", "g", "h", "p", "q", '\phi', '\psi', '\chi']
+
+[[pool]]
+name   = "SUBGP_POOL"
+values = ["G", "H", "N", "A", "B", '\Gamma']
+
+[[pool]]
+name   = "HOMO_POOL"
+values = ['\phi', '\varphi', '\psi', "f", '\theta', '\rho', '\pi', "g", '\alpha', '\sigma']
+
+[[pool]]
+name   = "RING_NAMES_POOL"
+values = ["R", "S", "A", "B"]
+
+[[pool]]
+name   = "ELT_POOL"
+values = ["g", "h", "x", "r", "s", "a"]
+
+# ---------------------------------------------------------------------------
+# Part A: reparameterized originals (20)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ideal_quotient"
+latex = '{II} \trianglelefteq {RR},\quad {RR}/{II}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "maximal_ideal_field"
+latex = '{RR}/{II} \text{{ field}} \iff {II} \text{{ maximal in }} {RR}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+# ----
+
+[[template]]
+name  = "prime_ideal_domain"
+latex = '{RR}/{II} \text{{ domain}} \iff {II} \text{{ prime in }} {RR}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+# ----
+
+[[template]]
+name  = "chinese_remainder"
+latex = '{II} + {JJ} = {RR} \implies {RR}/({II} \cap {JJ}) \cong {RR}/{II} \times {RR}/{JJ}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "crt_embedding"
+latex = '{RR}/({II} \cap {JJ}) \hookrightarrow {RR}/{II} \times {RR}/{JJ}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+# ----
+
+[[template]]
+name  = "ring_homomorphism"
+latex = '{phi} : {RR} \to {SS},\quad {phi}(ab) = {phi}(a){phi}(b),\quad {phi}(1) = 1'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+# ----
+
+[[template]]
+name  = "first_isomorphism_ring"
+latex = '{RR}/\ker {phi} \cong \operatorname{{im}}\, {phi} \subseteq {SS}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+# ----
+
+[[template]]
+name  = "tower_law"
+latex = '[{KK}:{FF}] = [{KK}:{LL}][{LL}:{FF}]'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.LL]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK", "LL"]
+
+# ----
+
+[[template]]
+name  = "extension_dimension"
+latex = '[{KK}:{FF}] = \dim_{{{FF}}} {KK}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "simple_extension_degree"
+latex = '{KK} = {FF}({g_el}),\quad [{KK}:{FF}] = \deg \min_{{{FF}}}({g_el})'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.g_el]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "galois_group_order"
+latex = '|\operatorname{{Gal}}({KK}/{FF})| = [{KK}:{FF}]'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "galois_group_iso"
+latex = '\operatorname{{Gal}}({KK}/{FF}) \cong {HH}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.HH]
+type = "S"
+pool = "SUBGP_POOL"
+
+# ----
+
+[[template]]
+name  = "fixed_field"
+latex = '{KK}^{{\operatorname{{Gal}}({KK}/{FF})}} = {FF}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "galois_correspondence"
+latex = '\left\{{{HH} \leq \operatorname{{Gal}}({KK}/{FF})\right\}} \longleftrightarrow \left\{{{LL} : {FF} \subseteq {LL} \subseteq {KK}\right\}}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.LL]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK", "LL"]
+
+[template.slots.HH]
+type = "S"
+pool = "SUBGP_POOL"
+
+# ----
+
+[[template]]
+name  = "tensor_product"
+latex = '{MM} \otimes_{{{RR}}} {NN}'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "tensor_associativity"
+latex = '({MM} \otimes_{{{RR}}} {NN}) \otimes_{{{RR}}} {LL} \cong {MM} \otimes_{{{RR}}} ({NN} \otimes_{{{RR}}} {LL})'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.LL]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM", "NN"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "tensor_unit"
+latex = '{RR} \otimes_{{{RR}}} {MM} \cong {MM}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+# ----
+
+[[template]]
+name  = "hom_modules"
+latex = '\operatorname{{Hom}}_{{{RR}}}({MM}, {NN})'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+# ----
+
+[[template]]
+name  = "hom_direct_sum"
+latex = '\operatorname{{Hom}}_{{{RR}}}({MM} \oplus {NN}, {LL}) \cong \operatorname{{Hom}}_{{{RR}}}({MM},{LL}) \oplus \operatorname{{Hom}}_{{{RR}}}({NN},{LL})'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.LL]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM", "NN"]
+
+# ----
+
+[[template]]
+name  = "hom_exact_sequence"
+latex = '0 \to \operatorname{{Hom}}_{{{RR}}}({LL},{MM}) \to \operatorname{{Hom}}_{{{RR}}}({LL},{NN}) \to \operatorname{{Hom}}_{{{RR}}}({LL},{PP})'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.LL]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.MM]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["LL"]
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["LL", "MM"]
+
+[template.slots.PP]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["LL", "MM", "NN"]
+
+# ---------------------------------------------------------------------------
+# Part B1: Ideal Structure (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "radical_ideal"
+latex = '\sqrt{{{II}}} = \{{ {xx} \in {RR} : \exists n,\, {xx}^n \in {II} \}}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "primary_ideal_def"
+latex = '{QQ} \text{{ primary in }} {RR}: {aa} {bb} \in {QQ} \Rightarrow {aa} \in {QQ} \text{{ or }} {bb}^n \in {QQ}'
+
+[template.slots.QQ]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "coprime_ideals_product"
+latex = '{II} + {JJ} = {RR} \Rightarrow {II} \cdot {JJ} = {II} \cap {JJ}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "ideal_containment_quotient"
+latex = '{JJ} \subseteq {II} \Rightarrow {II}/{JJ} \trianglelefteq {RR}/{JJ}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "ideal_generated"
+latex = '({aa}) = \{{ r \cdot {aa} : r \in {RR} \}} \trianglelefteq {RR}'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "nilradical_intersection"
+latex = '\operatorname{{nil}}({RR}) = \bigcap_{{{II} \text{{ prime}}}} {II}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B2: Isomorphism Theorems (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "second_iso_ring"
+latex = '({SS} + {II})/{II} \cong {SS}/({SS} \cap {II})'
+
+[template.slots.SS]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "third_iso_ring"
+latex = '({RR}/{II})/({JJ}/{II}) \cong {RR}/{JJ} \quad ({II} \subseteq {JJ})'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+# ----
+
+[[template]]
+name  = "ring_product_hom"
+latex = '{phi} : {RR} \to {SS} \times {TT},\quad {phi}({aa}) = ({phi}_1({aa}), {phi}_2({aa}))'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+[template.slots.TT]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR", "SS"]
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "local_ring_hom"
+latex = '{phi} : ({RR}, {II}) \to ({SS}, {JJ}) \text{{ local}} \iff {phi}({II}) \subseteq {JJ}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.JJ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+# ----
+
+[[template]]
+name  = "kernel_image_iso"
+latex = '{RR} / \ker {phi} \cong \operatorname{{im}}\, {phi} \leq {SS}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+# ----
+
+[[template]]
+name  = "surjective_ideal_correspondence"
+latex = '{phi} : {RR} \twoheadrightarrow {SS}: \text{{ideals of }} {SS} \longleftrightarrow \text{{ideals of }} {RR} \text{{ above }} \ker {phi}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["RR"]
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B3: PID / UFD / Polynomial Rings (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bezout_identity"
+latex = '\gcd({aa}, {bb}) = {rr} \cdot {aa} + {ss} \cdot {bb} \text{{ in }} {RR}'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+[template.slots.rr]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa", "bb"]
+
+[template.slots.ss]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa", "bb", "rr"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "eisenstein_criterion"
+latex = '{ff} \text{{ irred over }} {FF}: {II} \mid a_i\,(i<n),\; {II} \nmid a_n,\; {II}^2 \nmid a_0'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.FF]
+type = "S"
+pool = "FIELD_POOL"
+
+# ----
+
+[[template]]
+name  = "gauss_primitive_product"
+latex = '{ff},\, {gg} \text{{ primitive}} \Rightarrow {ff} \cdot {gg} \text{{ primitive}}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "POLY_POOL"
+exclude_from = ["ff"]
+
+# ----
+
+[[template]]
+name  = "polynomial_degree_product"
+latex = '\deg({ff} \cdot {gg}) = \deg {ff} + \deg {gg} \text{{ in }} {RR}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "POLY_POOL"
+exclude_from = ["ff"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "hilbert_basis"
+latex = '{RR} \text{{ Noetherian}} \Rightarrow {RR}[x] \text{{ Noetherian}}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "minimal_poly_degree"
+latex = '[{KK}({aa}):{KK}] = \deg \min_{{{KK}}}({aa})'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ---------------------------------------------------------------------------
+# Part B4: Field Theory (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "algebraic_element"
+latex = '{aa} \in {KK} \text{{ algebraic over }} {FF},\quad [{FF}({aa}):{FF}] < \infty'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "separable_closure"
+latex = '{LL} = {KK}^{{\mathrm{{sep}}}} \subseteq {KK},\quad {LL}/{FF} \text{{ separable}}'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.LL]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK", "FF"]
+
+# ----
+
+[[template]]
+name  = "primitive_element_theorem"
+latex = '{KK} = {FF}({aa}),\quad {KK}/{FF} \text{{ finite separable}}'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "frobenius_endomorphism"
+latex = '{phi} : {KK} \to {KK},\quad {phi}({aa}) = {aa}^p,\quad \operatorname{{char}} {KK} = p'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "finite_field_subfield"
+latex = '{LL} \subseteq {KK} \iff [{LL}:{FF}] \mid [{KK}:{FF}]'
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.LL]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK", "LL"]
+
+# ----
+
+[[template]]
+name  = "norm_trace"
+latex = 'N_{{{KK}/{FF}}}({aa}) = \prod{lim_mod}_{{{phi} \in \operatorname{{Gal}}({KK}/{FF})}} {phi}({aa})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5: Galois Theory Extended (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "artin_theorem"
+latex = '{KK}^{{{HH}}} = {FF} \text{{ and }} [{KK}:{FF}] = |{HH}| \text{{ (Artin)}}'
+
+[template.slots.HH]
+type = "S"
+pool = "SUBGP_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "galois_orbit_stabilizer"
+latex = '|\operatorname{{Orb}}_{{\operatorname{{Gal}}({KK}/{FF})}}({aa})| = [\operatorname{{Gal}}({KK}/{FF}) : \operatorname{{Stab}}({aa})]'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.HH]
+type = "S"
+pool = "SUBGP_POOL"
+
+# ----
+
+[[template]]
+name  = "splitting_field_unique"
+latex = '{KK} \text{{ splitting field of }} {ff} \text{{ over }} {FF},\quad \text{{unique up to iso}}'
+
+[template.slots.ff]
+type = "S"
+pool = "POLY_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "galois_action_composition"
+latex = '{sigma}, {tau} \in \operatorname{{Gal}}({KK}/{FF}) \Rightarrow {sigma} \circ {tau} \in \operatorname{{Gal}}({KK}/{FF})'
+
+[template.slots.sigma]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.tau]
+type = "X"
+pool = "HOMO_POOL"
+exclude_from = ["sigma"]
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ----
+
+[[template]]
+name  = "subgroup_field_correspondence"
+latex = '{HH} \leq \operatorname{{Gal}}({KK}/{FF}) \longleftrightarrow {LL} = {KK}^{{{HH}}},\quad {FF} \subseteq {LL} \subseteq {KK}'
+
+[template.slots.HH]
+type = "S"
+pool = "SUBGP_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.LL]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK", "LL"]
+
+# ----
+
+[[template]]
+name  = "degree_orbit_formula"
+latex = '[{KK}:{FF}({aa})] \cdot |\operatorname{{Orb}}({aa})| = [{KK}:{FF}]'
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ---------------------------------------------------------------------------
+# Part B6: Commutative Algebra & Homological (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "localization_def"
+latex = '{SS}^{{-1}}{RR} = \{{ {aa}/{bb} : {aa} \in {RR},\, {bb} \in {SS} \}}'
+
+[template.slots.SS]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.RR]
+type = "X"
+pool = "RING_POOL"
+exclude_from = ["SS"]
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "nakayama_lemma"
+latex = '{II} {MM} = {MM} \Rightarrow {MM} = 0 \quad \text{{(Nakayama, }} {RR} \text{{ local)}}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "primary_decomposition"
+latex = '{II} = {QQ}_1 \cap {QQ}_2 \cap \cdots \text{{ (Lasker-Noether, }} {RR} \text{{ Noetherian)}}'
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.QQ]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II"]
+
+[template.slots.PP]
+type = "X"
+pool = "IDEAL_POOL"
+exclude_from = ["II", "QQ"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "projective_direct_summand"
+latex = '{PP} \text{{ projective}} \iff \exists {QQ} : {PP} \oplus {QQ} \text{{ free}}'
+
+[template.slots.PP]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.QQ]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["PP"]
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+# ----
+
+[[template]]
+name  = "flat_module_tensor_exact"
+latex = '{MM} \text{{ flat over }} {RR} \iff {NN} \otimes_{{{RR}}} {MM} \text{{ preserves exact sequences}}'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ----
+
+[[template]]
+name  = "ext1_extension_class"
+latex = '\operatorname{{Ext}}^1_{{{RR}}}({MM}, {NN}) \longleftrightarrow \left[ 0 \to {NN} \to E \to {MM} \to 0 \right]'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff function-pair templates (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_triple_ring"
+latex = '{fn1}({aa} \cdot {bb}) = {fn2}({aa}) \cdot {fn3}({bb})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn3]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["aa"]
+
+# ----
+
+[[template]]
+name  = "fn_pair_ring_hom"
+latex = '{fn1}({phi}({aa})) = {fn2}({aa}) \quad \forall {aa} \in {RR}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_field_conjugate"
+latex = '{fn1}({sigma}({aa})) = {fn2}({aa}) \quad ({sigma} \in \operatorname{{Gal}}({KK}/{FF}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.sigma]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_module_action"
+latex = '{fn1}(r \cdot m) = r \cdot {fn2}(m) \quad \forall r \in {RR},\, m \in {MM}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_ideal_coset"
+latex = '{fn1}({aa} + {II}) = {fn2}({aa}) \quad \text{{in }} {RR}/{II}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.II]
+type = "S"
+pool = "IDEAL_POOL"
+
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_norm_product"
+latex = '{fn1}({aa}) \cdot {fn2}({sigma}({aa})) = N_{{{KK}/{FF}}}({aa})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.aa]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.sigma]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "FIELD_POOL"
+exclude_from = ["KK"]
+
+# ---------------------------------------------------------------------------
+# Extra templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ring_homomorphism_rightarrow"
+latex = 'f: {RR} \rightarrow {SS},\quad f(1_{{{RR}}}) = 1_{{{SS}}}'
+
+[template.slots.RR]
+type = "S"
+pool = "RING_NAMES_POOL"
+
+[template.slots.SS]
+type = "X"
+pool = "RING_NAMES_POOL"
+exclude_from = ["RR"]
+
+# ----
+
+[[template]]
+name  = "frobenius_endomorphism_longmapsto"
+latex = '\mathrm{{Frob}}: {rr} \longmapsto {rr}^p \quad (p\text{{ prime}})'
+
+[template.slots.rr]
+type = "S"
+pool = "ELT_POOL"
+
+# ---------------------------------------------------------------------------
+# Polynomial division uniqueness (existence-uniqueness statement)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "polynomial_division_uniqueness"
+latex = '\exists!\, {q}, {r} : {f}({v}) = {g}({v}) \cdot {q}({v}) + {r}({v}), \quad \deg {r} < \deg {g}'
+
+[template.slots.v]
+type = "S"
+pool = "ELEM_POOL"
+idx  = 0.35
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.q]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.r]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5

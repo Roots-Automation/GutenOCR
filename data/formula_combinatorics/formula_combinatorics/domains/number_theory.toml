@@ -1,0 +1,1709 @@
+# Number theory domain — TOML pack (WU7 migration)
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["n", "m", "k", "j", "r", "l", "s", "t", "i", "p", "N", "M"]
+
+[[pool]]
+name   = "INT_POOL"
+values = ["a", "b", "c", "d", "u", "v", "x", "y"]
+
+[[pool]]
+name   = "PRIME_POOL"
+values = ["p", "q", "r", "s", "l", "t", 'p_1', 'p_2', 'q_1', 'q_2', '\ell', "u"]
+
+[[pool]]
+name   = "PRIME_BASE_POOL"
+values = ["p", "q", "r", "s", "l", "t", '\ell', "u"]
+
+[[pool]]
+name   = "MOD_POOL"
+values = ["m", "n", "p", "q", "N", "M", "k", "r", "P", "Q"]
+
+[[pool]]
+name   = "FUNC_POOL"
+values = ["f", "g", "h", '\phi', '\psi', '\chi', '\varphi', '\xi', '\eta', '\zeta']
+
+[[pool]]
+name   = "ALPHA_POOL"
+values = ['\alpha', '\beta', '\gamma', '\delta', '\theta', '\lambda', '\mu', '\nu']
+
+[[pool]]
+name   = "RING_POOL"
+values = ['\mathbb{Z}', '\mathbb{Z}[i]', '\mathbb{Z}[\omega]', '\mathcal{O}_K', '\mathcal{O}_F']
+
+[[pool]]
+name   = "FIELD_POOL"
+values = ['\mathbb{Q}', '\mathbb{F}_p', '\mathbb{F}_q', '\mathbb{Q}(\sqrt{d})', '\mathbb{Q}(\zeta_n)']
+
+[[pool]]
+name   = "COEFF_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', '\alpha', '\beta', '\gamma', '\lambda', '\mu']
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
+# ---------------------------------------------------------------------------
+# Part A: 20 templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "binomial_coefficient"
+latex = '\binom{{{nn}}}{{{kk}}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "binomial_coefficient_def"
+latex = '\binom{{{nn}}}{{{kk}}} = \frac{{{nn}!}}{{{kk}!\,({nn}-{kk})!}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "modular_congruence"
+latex = '{aa} \equiv {bb} \pmod{{{mm}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+
+[[template]]
+name  = "gcd_lcm_identity"
+latex = '\gcd({aa}, {bb}) \cdot \operatorname{{lcm}}({aa}, {bb}) = {aa} \cdot {bb}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name  = "sum_first_n"
+latex = '\sum{lim_mod}_{{{kk}=1}}^{{{nn}}} {kk} = \frac{{{nn}({nn}+1)}}{{2}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "sum_of_squares"
+latex = '\sum{lim_mod}_{{{kk}=1}}^{{{nn}}} {kk}^2 = \frac{{{nn}({nn}+1)(2{nn}+1)}}{{6}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "fibonacci_recurrence"
+latex = 'F_{{{nn}+2}} = F_{{{nn}+1}} + F_{{{nn}}},\quad F_0 = 0,\; F_1 = 1'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "euler_totient"
+latex = '\phi({nn}) = {nn} \prod{lim_mod}_{{{pp} \mid {nn}}} \left(1 - \frac{{1}}{{{pp}}}\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "fermat_little_theorem"
+latex = '{aa}^{{{pp}-1}} \equiv 1 \pmod{{{pp}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "catalan_numbers"
+latex = 'C_{{{nn}}} = \frac{{1}}{{{nn}+1}} \binom{{2{nn}}}{{{nn}}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "geometric_series"
+latex = '\sum{lim_mod}_{{{kk}=0}}^{{{nn}}} {aa}^{{{kk}}} = \frac{{1 - {aa}^{{{nn}+1}}}}{{1 - {aa}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+
+[[template]]
+name  = "factorial_product"
+latex = '{nn}! = \prod{lim_mod}_{{{kk}=1}}^{{{nn}}} {kk}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "leibniz_pi"
+latex = '\sum{lim_mod}_{{{kk}=0}}^{{\infty}} \frac{{(-1)^{{{kk}}}}}{{2{kk}+1}} = \frac{{\pi}}{{4}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "wilson_theorem"
+latex = '({pp}-1)! \equiv -1 \pmod{{{pp}}}'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "sum_of_divisors"
+latex = '\sigma_{{{kk}}}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} d^{{{kk}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "number_of_divisors"
+latex = '\tau({nn}) = \sum{lim_mod}_{{d \mid {nn}}} 1 = \prod{lim_mod}_{{{pp}^k \| {nn}}} (k+1)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "prime_number_theorem"
+latex = '\pi({xx}) \sim \frac{{{xx}}}{{\ln {xx}}}'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+
+[[template]]
+name  = "mobius_inversion"
+latex = '{ff}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {gg}(d) \implies {gg}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{ff}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "riemann_zeta_euler_product"
+latex = '\zeta({ss}) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{1}}{{{nn}^{{{ss}}}}} = \prod{lim_mod}_{{{pp} \text{{ prime}}}} \frac{{1}}{{1-{pp}^{{-{ss}}}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "sum_of_cubes"
+latex = '\sum{lim_mod}_{{{kk}=1}}^{{{nn}}} {kk}^3 = \left(\frac{{{nn}({nn}+1)}}{{2}}\right)^2'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+# ---------------------------------------------------------------------------
+# Part B1: Divisibility and GCD (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "divisibility_def"
+latex = '{aa} \mid {bb} \iff \exists {cc} \in \mathbb{{Z}},\; {bb} = {cc} \cdot {aa}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.cc]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb"]
+
+[[template]]
+name  = "bezout_identity"
+latex = '\gcd({aa},{bb}) = {xx}\,{aa} + {yy}\,{bb}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.xx]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb"]
+[template.slots.yy]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb", "xx"]
+
+[[template]]
+name  = "euclidean_step"
+latex = '{aa} = {qq}\,{bb} + {rr},\quad 0 \leq {rr} < {bb}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.qq]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb"]
+[template.slots.rr]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb", "qq"]
+
+[[template]]
+name  = "lcm_via_gcd"
+latex = '\operatorname{{lcm}}({aa},{bb}) = \frac{{{aa} \cdot {bb}}}{{\gcd({aa},{bb})}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name  = "divisor_sum_phi"
+latex = '\sum{lim_mod}_{{d \mid {nn}}} \phi(d) = {nn}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "prime_factorization"
+latex = '{nn} = \prod{lim_mod}_{{i=1}}^{{{kk}}} {pp}_i^{{e_i}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+[template.slots.pp]
+type = "S"
+pool = "PRIME_BASE_POOL"
+
+[[template]]
+name  = "coprime_reduction"
+latex = '\gcd({aa},{mm}) = 1 \implies {aa}^{{{nn}}} \equiv {aa}^{{{nn} \bmod \phi({mm})}} \pmod{{{mm}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "unique_factorization"
+latex = '{nn} = {pp}_1^{{a_1}} \cdots {pp}_{{{kk}}}^{{a_{{{kk}}}}}\quad (\text{{unique up to order}})'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_BASE_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+# ---------------------------------------------------------------------------
+# Part B2: Modular arithmetic (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "crt"
+latex = '{xx} \equiv {aa} \pmod{{{mm}}},\; {xx} \equiv {bb} \pmod{{{nn}}} \implies {xx} \equiv {cc} \pmod{{{mm}{nn}}}'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.aa]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx"]
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx", "aa"]
+[template.slots.cc]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx", "aa", "bb"]
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+[template.slots.nn]
+type = "X"
+pool = "MOD_POOL"
+exclude_from = ["mm"]
+
+[[template]]
+name  = "euler_theorem"
+latex = '\gcd({aa},{nn}) = 1 \implies {aa}^{{\phi({nn})}} \equiv 1 \pmod{{{nn}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.nn]
+type = "S"
+pool = "MOD_POOL"
+
+[[template]]
+name  = "modular_inverse"
+latex = '{aa}\,{aa}^{{-1}} \equiv 1 \pmod{{{mm}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+
+[[template]]
+name  = "primitive_root_order"
+latex = '\operatorname{{ord}}_{{{pp}}}({aa}) = \phi({pp}),\quad {aa} \text{{ is a primitive root mod }} {pp}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "discrete_log"
+latex = '{aa} \equiv {gg}^{{{kk}}} \pmod{{{pp}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.gg]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "quadratic_residue_def"
+latex = '{aa} \text{{ is a QR mod }} {pp} \iff \exists {xx} \in \mathbb{{Z}},\; {xx}^2 \equiv {aa} \pmod{{{pp}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.xx]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name  = "legendre_symbol"
+latex = '\left(\frac{{{aa}}}{{{pp}}}\right) \equiv {aa}^{{({pp}-1)/2}} \pmod{{{pp}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "quadratic_reciprocity"
+latex = '\left(\frac{{{pp}}}{{{qq}}}\right)\left(\frac{{{qq}}}{{{pp}}}\right) = (-1)^{{\frac{{{pp}-1}}{{2}}\cdot\frac{{{qq}-1}}{{2}}}}'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.qq]
+type = "X"
+pool = "PRIME_POOL"
+exclude_from = ["pp"]
+
+# ---------------------------------------------------------------------------
+# Part B3: Arithmetic functions (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "phi_prime_power"
+latex = '\phi({pp}^{{{kk}}}) = {pp}^{{{kk}-1}}({pp}-1)'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "phi_multiplicative"
+latex = '\gcd({mm},{nn})=1 \implies \phi({mm}{nn}) = \phi({mm})\phi({nn})'
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+[template.slots.nn]
+type = "X"
+pool = "MOD_POOL"
+exclude_from = ["mm"]
+
+[[template]]
+name  = "sigma_prime_power"
+latex = '\sigma({pp}^{{{kk}}}) = \frac{{{pp}^{{{kk}+1}}-1}}{{{pp}-1}}'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "dirichlet_convolution"
+latex = '({ff} * {gg})({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {ff}(d)\,{gg}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "mobius_def"
+latex = '\mu({nn}) = \begin{{cases}} 1 & {nn}=1 \\ (-1)^{{{kk}}} & {nn}=p_1\cdots p_{{{kk}}} \\ 0 & \text{{otherwise}} \end{{cases}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "liouville_function"
+latex = '\lambda({nn}) = (-1)^{{\Omega({nn})}},\quad \Omega({nn}) = \sum{lim_mod}_{{{pp}^k \mid\mid {nn}}} k'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "von_mangoldt_def"
+latex = '\Lambda({nn}) = \begin{{cases}} \log {pp} & {nn}={pp}^{{{kk}}} \\ 0 & \text{{otherwise}} \end{{cases}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "multiplicative_def"
+latex = '{ff}({mm}\,{nn}) = {ff}({mm})\,{ff}({nn})\quad (\gcd({mm},{nn})=1)'
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+[template.slots.nn]
+type = "X"
+pool = "MOD_POOL"
+exclude_from = ["mm"]
+
+# ---------------------------------------------------------------------------
+# Part B4: Combinatorial identities (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vandermonde_identity"
+latex = '\sum{lim_mod}_{{{kk}=0}}^{{{rr}}} \binom{{{mm}}}{{{kk}}}\binom{{{nn}}}{{{rr}-{kk}}} = \binom{{{mm}+{nn}}}{{{rr}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.mm]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.nn]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm"]
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm", "nn"]
+[template.slots.rr]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm", "nn", "kk"]
+
+[[template]]
+name  = "hockey_stick_identity"
+latex = '\sum{lim_mod}_{{{ii}={rr}}}^{{{nn}}} \binom{{{ii}}}{{{rr}}} = \binom{{{nn}+1}}{{{rr}+1}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.rr]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn", "rr"]
+
+[[template]]
+name  = "multinomial_coefficient"
+latex = '\binom{{{nn}}}{{{kk}_1,\ldots,{kk}_{{{mm}}}}} = \frac{{{nn}!}}{{{kk}_1!\cdots {kk}_{{{mm}}}!}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn", "kk"]
+
+[[template]]
+name  = "lucas_theorem"
+latex = '\binom{{{mm}}}{{{nn}}} \equiv \prod{lim_mod}_{{i=0}}^{{{kk}}} \binom{{m_i}}{{n_i}} \pmod{{{pp}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.mm]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.nn]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm"]
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm", "nn"]
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "stirling_second_kind"
+latex = 'S({nn},{kk}) = \frac{{1}}{{{kk}!}}\sum{lim_mod}_{{j=0}}^{{{kk}}} (-1)^j \binom{{{kk}}}{{j}} ({kk}-j)^{{{nn}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "stirling_first_kind"
+latex = '\genfrac{{[}}{{]}}{{0pt}}{{}}{{{nn}}}{{{kk}}} = ({nn}-1)\,\genfrac{{[}}{{]}}{{0pt}}{{}}{{{nn}-1}}{{{kk}}} + \genfrac{{[}}{{]}}{{0pt}}{{}}{{{nn}-1}}{{{kk}-1}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "bell_number"
+latex = 'B_{{{nn}}} = \sum{lim_mod}_{{{kk}=0}}^{{{nn}}} S({nn},{kk})'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[[template]]
+name  = "catalan_ballot"
+latex = 'C_{{{nn}}} = \frac{{1}}{{{nn}+1}}\binom{{2{nn}}}{{{nn}}} = \binom{{2{nn}}}{{{nn}}} - \binom{{2{nn}}}{{{nn}+1}}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5: Diophantine equations and continued fractions (6 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "linear_diophantine"
+latex = '{aa}\,{xx} + {bb}\,{yy} = \gcd({aa},{bb})'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.xx]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb"]
+[template.slots.yy]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb", "xx"]
+
+[[template]]
+name  = "pell_equation"
+latex = '{xx}^2 - {DD}\,{yy}^2 = 1'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.yy]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx"]
+[template.slots.DD]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "pythagorean_triple"
+latex = '{aa} = {mm}^2 - {nn}^2,\; {bb} = 2{mm}{nn},\; {cc} = {mm}^2+{nn}^2'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.cc]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa", "bb"]
+[template.slots.mm]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.nn]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm"]
+
+[[template]]
+name  = "continued_fraction_def"
+latex = '{xx} = {aa}_0 + \cfrac{{1}}{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cdots}}}}'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.aa]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "convergent_recurrence"
+latex = '{pp}_{{{nn}}} = {aa}_{{{nn}}}\,{pp}_{{{nn}-1}} + {pp}_{{{nn}-2}}'
+[template.slots.pp]
+type = "S"
+pool = "INT_POOL"
+[template.slots.aa]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["pp"]
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "fermat_sum_two_squares"
+latex = '{pp} \equiv 1 \pmod{{4}} \implies {pp} = {aa}^2 + {bb}^2'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Part B5b: cfrac alignment variants and deep nesting (3 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cfrac_aligned_variant"
+latex = ""
+
+  [[template.variants]]
+  name  = "cfrac_default_two_level"
+  latex = '{xx} = {aa}_0 + \cfrac{{1}}{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cdots}}}}'
+  [template.variants.slots.xx]
+  type = "S"
+  pool = "INT_POOL"
+  [template.variants.slots.aa]
+  type = "X"
+  pool = "INT_POOL"
+  exclude_from = ["xx"]
+
+  [[template.variants]]
+  name  = "cfrac_left_two_level"
+  latex = '{xx} = {aa}_0 + \cfrac[l]{{1}}{{{aa}_1 + \cfrac[l]{{1}}{{{aa}_2 + \cdots}}}}'
+  [template.variants.slots.xx]
+  type = "S"
+  pool = "INT_POOL"
+  [template.variants.slots.aa]
+  type = "X"
+  pool = "INT_POOL"
+  exclude_from = ["xx"]
+
+  [[template.variants]]
+  name  = "cfrac_right_two_level"
+  latex = '{xx} = {aa}_0 + \cfrac[r]{{1}}{{{aa}_1 + \cfrac[r]{{1}}{{{aa}_2 + \cdots}}}}'
+  [template.variants.slots.xx]
+  type = "S"
+  pool = "INT_POOL"
+  [template.variants.slots.aa]
+  type = "X"
+  pool = "INT_POOL"
+  exclude_from = ["xx"]
+
+[[template]]
+name  = "cfrac_three_level"
+latex = '{xx} = {aa}_0 + \cfrac{{1}}{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cfrac{{1}}{{{aa}_3 + \cdots}}}}}}'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.aa]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "cfrac_three_level_named"
+latex = '{aa}_0 + \cfrac{{1}}{{{aa}_1 + \cfrac{{1}}{{{aa}_2 + \cfrac{{1}}{{{aa}_3 + \cdots}}}}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B6: Analytic number theory (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "dirichlet_series_def"
+latex = 'F({ss}) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{{ff}({nn})}}{{{nn}^{{{ss}}}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name  = "euler_product_general"
+latex = 'F({ss}) = \prod{lim_mod}_{{{pp} \text{{ prime}}}} \left(1 - \frac{{{ff}({pp})}}{{{pp}^{{{ss}}}}}\right)^{{-1}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[[template]]
+name  = "pnt_li"
+latex = '\pi({xx}) \sim \mathrm{{Li}}({xx}) = \int_2^{{{xx}}} \frac{{dt}}{{\ln t}}'
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+
+[[template]]
+name  = "dirichlet_l_function"
+latex = 'L({ss},\chi) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} \frac{{\chi({nn})}}{{{nn}^{{{ss}}}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "chebyshev_psi"
+latex = '\psi({xx}) = \sum{lim_mod}_{{{pp}^{{{kk}}} \leq {xx}}} \log {pp}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "bertrand_postulate"
+latex = '\forall {nn} \geq 1,\;\exists \text{{ prime }} {pp}:\; {nn} < {pp} \leq 2{nn}'
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "functional_equation_zeta"
+latex = '\xi({ss}) = \xi(1-{ss})'
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+
+[[template]]
+name  = "mertens_theorem"
+latex = '\prod{lim_mod}_{{{pp} \leq {xx}}} \left(1 - \frac{{1}}{{{pp}}}\right) \sim \frac{{e^{{-\gamma}}}}{{\ln {xx}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.xx]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B7: Algebraic number theory (6 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "norm_def"
+latex = 'N_{{{KK}/\mathbb{{Q}}}}({al}) = \prod{lim_mod}_{{i=1}}^{{{nn}}} \sigma_i({al})'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+[template.slots.al]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "trace_def"
+latex = '\mathrm{{Tr}}_{{{KK}/\mathbb{{Q}}}}({al}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} \sigma_i({al})'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+[template.slots.al]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "dedekind_factorization"
+latex = '{pp}\,\mathcal{{O}}_K = \prod{lim_mod}_{{i=1}}^{{{gg}}} \mathfrak{{P}}_i^{{e_i}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.gg]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "ideal_norm_mult"
+latex = 'N(\mathfrak{{a}}\mathfrak{{b}}) = N(\mathfrak{{a}})\,N(\mathfrak{{b}})\quad \text{{in }} {RR}'
+[template.slots.RR]
+type = "S"
+pool = "RING_POOL"
+
+[[template]]
+name  = "class_group_order"
+latex = 'h_K = |\mathrm{{Cl}}(\mathcal{{O}}_{{{KK}}})|,\quad {KK}/\mathbb{{Q}} \text{{ a number field}}'
+[template.slots.KK]
+type = "S"
+pool = "FIELD_POOL"
+
+[[template]]
+name  = "minkowski_bound"
+latex = 'M_K \leq \frac{{n!}}{{n^n}}\left(\frac{{4}}{{\pi}}\right)^{{{rr}}} \sqrt{{|\Delta_K|}}'
+[template.slots.rr]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B8: p-adic valuations (6 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "p_adic_valuation_def"
+latex = 'v_{{{pp}}}({nn}) = \max\!\{{k \geq 0 : {pp}^k \mid {nn}\}}'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "p_adic_norm"
+latex = '\|{nn}\|_{{{pp}}} = {pp}^{{-v_{{{pp}}}({nn})}}'
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "ultrametric_inequality"
+latex = '\|{aa}+{bb}\|_{{{pp}}} \leq \max\!\left(\|{aa}\|_{{{pp}}},\,\|{bb}\|_{{{pp}}}\right)'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "p_adic_expansion"
+latex = '{aa} = \sum{lim_mod}_{{{kk}=0}}^{{\infty}} a_{{{kk}}}\,{pp}^{{{kk}}},\quad a_{{{kk}}} \in \{{0,\ldots,{pp}-1\}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "hensel_lemma"
+latex = '''{ff}({aa}) \equiv 0 \pmod{{{pp}}},\; {ff}'({aa}) \not\equiv 0 \implies \exists \tilde{{{aa}}},\; {ff}(\tilde{{{aa}}}) \equiv 0 \pmod{{{pp}^{{{kk}}}}}'''
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "product_formula"
+latex = '\|{aa}\|_\infty \cdot \prod{lim_mod}_{{{pp}}} \|{aa}\|_{{{pp}}} = 1'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff function-pair templates (12 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "dirichlet_conv_pair"
+latex = '({fn1} * {fn2})({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {fn1}(d)\,{fn2}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "multiplicative_pair"
+latex = '\gcd({mm},{nn})=1 \implies {fn1}({mm}\,{nn}) = {fn1}({mm})\,{fn1}({nn})'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.mm]
+type = "S"
+pool = "MOD_POOL"
+[template.slots.nn]
+type = "X"
+pool = "MOD_POOL"
+exclude_from = ["mm"]
+
+[[template]]
+name  = "dirichlet_series_pair"
+latex = '\sum{lim_mod}_{{{nn}=1}}^\infty \frac{{{fn1}({nn})}}{{{nn}^{{{ss}}}}} \cdot \sum{lim_mod}_{{{nn}=1}}^\infty \frac{{{fn2}({nn})}}{{{nn}^{{{ss}}}}} = \sum{lim_mod}_{{{nn}=1}}^\infty \frac{{({fn1}*{fn2})({nn})}}{{{nn}^{{{ss}}}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+
+[[template]]
+name  = "mobius_inv_pair"
+latex = '{fn1}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d) \iff {fn2}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "sum_divisors_pair"
+latex = '\sum{lim_mod}_{{d \mid {nn}}} {fn1}(d)\,{fn2}({nn}/d) = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d)\,{fn1}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "euler_product_pair"
+latex = '\prod{lim_mod}_{{{pp}}} \frac{{1}}{{1-{fn1}({pp})\,{pp}^{{-{ss}}}}} = \sum{lim_mod}_{{{nn}=1}}^\infty \frac{{{fn1}({nn})}}{{{nn}^{{{ss}}}}}'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+
+[[template]]
+name  = "fn_divisor_identity"
+latex = '{fn1}(\sigma({nn})) = {fn2}\!\left(\sum{lim_mod}_{{d \mid {nn}}} d\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "fn_prime_count"
+latex = '{fn1}(\pi({nn})) = {fn2}\!\left(\sum{lim_mod}_{{{pp} \leq {nn},\,{pp}\text{{ prime}}}} 1\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "fn_euler_phi_product"
+latex = '{fn1}(\varphi({nn})) = {fn2}\!\left({nn} \prod{lim_mod}_{{{pp} \mid {nn}}} \!\!\left(1 - \frac{{1}}{{{pp}}}\right)\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "fn_moebius_inversion"
+latex = '{fn1}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} {fn2}(d) \iff {fn2}({nn}) = \sum{lim_mod}_{{d \mid {nn}}} \mu(d)\,{fn1}({nn}/d)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "fn_zeta_product"
+latex = '{fn1}(\zeta({ss})) = {fn2}\!\left(\prod{lim_mod}_{{{pp}\text{{ prime}}}} \frac{{1}}{{1-{pp}^{{-{ss}}}}}\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.ss]
+type = "S"
+pool = "ALPHA_POOL"
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "fn_arithmetic_pair"
+latex = '{fn1}({aa} \cdot {bb}) = {fn2}({aa}) \cdot {fn2}({bb}),\quad \gcd({aa},{bb})=1'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Part D: Negation / nexists (2 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "nexists_quadratic_residue"
+latex = '\nexists\, {aa} \in \mathbb{{Z}}:\; {aa}^2 \equiv {bb} \pmod{{{mm}}}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.mm]
+type = "S"
+pool = "PRIME_POOL"
+
+[[template]]
+name  = "nexists_common_factor"
+latex = '\nexists\, {pp} \text{{ prime}}:\; {pp} \mid {aa} \;\wedge\; {pp} \mid {bb}'
+[template.slots.aa]
+type = "S"
+pool = "INT_POOL"
+[template.slots.bb]
+type = "X"
+pool = "INT_POOL"
+exclude_from = ["aa"]
+[template.slots.pp]
+type = "S"
+pool = "PRIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Substack generators
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "substack_sum_nt"
+latex = '{s}'
+[template.slots.s]
+type = "E"
+gen  = "_substack_sum"
+n    = 5000000
+
+[[template]]
+name  = "substack_prod_nt"
+latex = '{s}'
+[template.slots.s]
+type = "E"
+gen  = "_substack_prod"
+n    = 5000000
+
+# ---------------------------------------------------------------------------
+# Floor and ceiling functions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "floor_ceil"
+latex = ""
+
+  [[template.variants]]
+  name  = "floor_fraction"
+  latex = '\left\lfloor \frac{{{num}}}{{{den}}} \right\rfloor'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "ceil_fraction"
+  latex = '\left\lceil \frac{{{num}}}{{{den}}} \right\rceil'
+
+  [template.variants.slots.num]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.den]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "floor_add_int"
+  latex = '\left\lfloor {v} + {n} \right\rfloor = \left\lfloor {v} \right\rfloor + {n}'
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "INT_POOL"
+
+  [[template.variants]]
+  name  = "ceil_neg_floor"
+  latex = '\left\lceil {v} \right\rceil = -\left\lfloor -{v} \right\rfloor'
+
+  [template.variants.slots.v]
+  type = "E"
+  gen  = "_atom"
+  n    = 150
+
+  [[template.variants]]
+  name  = "floor_sum_bound"
+  latex = '\left\lfloor {u} \right\rfloor + \left\lfloor {w} \right\rfloor \leq \left\lfloor {u} + {w} \right\rfloor'
+
+  [template.variants.slots.u]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+  [template.variants.slots.w]
+  type = "E"
+  gen  = "_expr"
+  n    = 5000
+
+# ---------------------------------------------------------------------------
+# Sophie Germain identity
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sophie_germain"
+latex = ""
+
+  [[template.variants]]
+  name     = "sophie_germain_standard"
+  latex    = '{a}^4 + 4{b}^4 = \left({a}^2 + 2{b}^2 + 2{a} {b}\right)\left({a}^2 + 2{b}^2 - 2{a} {b}\right)'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "sophie_germain_sum_of_squares"
+  latex    = '{a}^4 + 4{b}^4 = \left(({a}+{b})^2 + {b}^2\right)\left(({a}-{b})^2 + {b}^2\right)'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "sophie_germain_lhs_only"
+  latex    = '{a}^4 + 4{b}^4'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "INT_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Mean inequalities (power mean, harmonic mean)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mean_inequalities"
+latex = ""
+
+  [[template.variants]]
+  name     = "am_gm_power_mean"
+  latex    = '\frac{{{u}^{{1/{v}}} + {w}^{{1/{v}}}}}{{2}} \geq \left(\frac{{{u} + {w}}}{{2}}\right)^{{1/{v}}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "hm_gm_two"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name     = "hm_gm_am_chain"
+  latex    = '\frac{{2{u}\,{w}}}{{{u}+{w}}} \leq \sqrt{{{u}\,{w}}} \leq \frac{{{u}+{w}}}{{2}}'
+  distinct = [["u", "w"]]
+
+  [template.variants.slots.u]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.w]
+  type = "S"
+  pool = "COEFF_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "hm_def"
+  latex = 'H_{{{n}}} = \frac{{{n}}}{{\frac{{1}}{{{a}_1}} + \frac{{1}}{{{a}_2}} + \cdots + \frac{{1}}{{{a}_{{{n}}}}}}}'
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "IDX_POOL"
+
+  [[template.variants]]
+  name  = "am_gm_hm_inequality"
+  latex = '\frac{{{n}}}{{\sum{lim_mod}_{{k=1}}^{{{n}}} \frac{{1}}{{{a}_k}}}} \leq \left(\prod{lim_mod}_{{k=1}}^{{{n}}} {a}_k\right)^{{1/{n}}} \leq \frac{{1}}{{{n}}} \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Vieta's formulas — cubic (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vieta_cubic"
+latex = '{vv}_1 + {vv}_2 + {vv}_3 = -\frac{{{b}}}{{{a}}}, \quad {vv}_1 {vv}_2 + {vv}_1 {vv}_3 + {vv}_2 {vv}_3 = \frac{{{c_coef}}}{{{a}}}, \quad {vv}_1 {vv}_2 {vv}_3 = -\frac{{{d_coef}}}{{{a}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+
+[template.slots.c_coef]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a", "b"]
+
+[template.slots.d_coef]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a", "b", "c_coef"]
+
+# ---------------------------------------------------------------------------
+# AM-GM inequality — general n-variable form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "am_gm_nvar"
+latex = '\frac{{{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}}}{{{n}}} \geq \sqrt[{{{n}}}]{{{a}_1 \cdot {a}_2 \cdots {a}_{{{n}}}}}'
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.n]
+type = "S"
+pool = "IDX_POOL"

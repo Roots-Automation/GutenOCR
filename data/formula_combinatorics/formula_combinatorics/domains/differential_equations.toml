@@ -1,0 +1,1491 @@
+[meta]
+domain = "differential_equations"
+
+[[pool]]
+name = "FUNC_POOL"
+values = ["y","u","v","w",'\phi','\psi','\chi','\theta','\eta','\xi',"f","g"]
+
+[[pool]]
+name = "VAR_POOL"
+values = ["x","t","r","s",'\tau','\sigma','\zeta','\rho']
+
+[[pool]]
+name = "COEFF_POOL"
+values = ["a","b","c","k",'\alpha','\beta','\gamma','\lambda','\mu','\nu','\kappa','\vartheta']
+
+[[pool]]
+name = "PARAM_POOL"
+values = ['\omega','\Omega','\lambda','\mu','\alpha','\beta',"k","m","r","c"]
+
+[[pool]]
+name = "OP_POOL"
+values = ["L","A","B",'\mathcal{L}','\mathcal{A}','\mathcal{D}']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["n","m","k","j","N","M"]
+
+[[pool]]
+name = "DOMAIN_POOL"
+values = ['\Omega','\Omega_0',"D",'\mathcal{D}','\Sigma','[0,L]','[0,T]']
+
+[[pool]]
+name = "SPACE_POOL"
+values = ['\mathbb{R}','\mathbb{R}^n','\mathbb{R}^2','\mathbb{R}^3','L^2(\Omega)','H^1(\Omega)']
+
+# --- Part A: reparameterized originals (14) ---
+
+[[template]]
+name = "first_order_linear_ode"
+latex = '\frac{{d{ff}}}{{d{vv}}} + {aa}({vv}) {ff} = g({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "second_order_linear_ode"
+latex = '\frac{{d^2{ff}}}{{d{vv}^2}} + {aa} \frac{{d{ff}}}{{d{vv}}} + {om} {ff} = 0'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "heat_equation"
+latex = '\frac{{\partial {ff}}}{{\partial t}} = {kap} \frac{{\partial^2 {ff}}}{{\partial {vv}^2}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.kap]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "wave_equation"
+latex = '\frac{{\partial^2 {ff}}}{{\partial t^2}} = {cc}^2 \frac{{\partial^2 {ff}}}{{\partial {vv}^2}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "laplace_equation"
+latex = '\nabla^2 {ff} = \frac{{\partial^2 {ff}}}{{\partial {vv1}^2}} + \frac{{\partial^2 {ff}}}{{\partial {vv2}^2}} = 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+[[template]]
+name = "homogeneous_ode_solution"
+latex = '{ff}({vv}) = C_1 e^{{{lam1} {vv}}} + C_2 e^{{{lam2} {vv}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.lam1]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.lam2]
+type = "X"
+pool = "PARAM_POOL"
+exclude_from = ["lam1"]
+
+[[template]]
+name = "separable_ode"
+latex = '\frac{{1}}{{{ff}}} \frac{{d{ff}}}{{d{vv}}} = {aa}({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "exponential_growth_solution"
+latex = '{ff}({vv}) = {ff}_0 \, e^{{{rate} {vv}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.rate]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "sturm_liouville_bvp"
+latex = '''{ff}''({vv}) + {om} {ff}({vv}) = 0, \quad {ff}(0) = 0, \; {ff}(L) = 0'''
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "logistic_equation"
+latex = '\frac{{d{ff}}}{{dt}} = {rr} {ff}\!\left(1 - \frac{{{ff}}}{{{KK}}}\right)'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.KK]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["rr"]
+
+[[template]]
+name = "driven_harmonic_oscillator"
+latex = '\frac{{\partial^2 {ff}}}{{\partial t^2}} + 2{aa} \frac{{\partial {ff}}}{{\partial t}} + {om0} {ff} = F_0 \cos({om} t)'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.om0]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.om]
+type = "X"
+pool = "PARAM_POOL"
+exclude_from = ["om0"]
+
+[[template]]
+name = "integrating_factor"
+latex = '\mu({vv}) = e^{{\int {aa}({vv}) \, d{vv}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "greens_function"
+latex = '{op} G({vv}, {xi}) = \delta({vv} - {xi})'
+
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xi]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "variation_of_parameters"
+latex = '''{ff}_p({vv}) = {ff}_1({vv}) \int \frac{{{gg}_2 h}}{{{ff}_1 {gg}_2' - {gg}_2 {ff}_1'}} \, d{vv}'''
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+# --- Part B1: ODE Theory (8) ---
+
+[[template]]
+name = "wronskian_def"
+latex = '''W({ff1}, {ff2})({vv}) = {ff1} {ff2}' - {ff2} {ff1}' '''
+
+[template.slots.ff1]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff1"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "abel_identity"
+latex = 'W_{{{ff1},{ff2}}}({vv}) = W_0 \,e^{{-\int{lim_mod}_{{v_0}}^{{{vv}}} {aa}(s)\,ds}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff1]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff1"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "exact_ode"
+latex = '{MM}\,d{vv} + {NN}\,d{ww} = 0 \text{{ exact iff }} \frac{{\partial {MM}}}{{\partial {ww}}} = \frac{{\partial {NN}}}{{\partial {vv}}}'
+
+[template.slots.MM]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["MM"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "bernoulli_substitution"
+latex = '''{ff}' + {aa}({vv}) {ff} = {bb}({vv}) {ff}^{{{nn}}},\quad z = {ff}^{{1-{nn}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["aa"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "reduction_of_order"
+latex = '{ff2}({vv}) = {ff1}({vv}) \int\frac{{e^{{-\int {aa}({vv})\,d{vv}}}}}{{{ff1}^2({vv})}} \, d{vv}'
+
+[template.slots.ff1]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff1"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "variation_of_parameters_full"
+latex = '{ff1}_p = -{ff1} \int \frac{{{ff2} {gg}}}{{W}} \, d{vv} + {ff2} \int \frac{{{ff1} {gg}}}{{W}} \, d{vv}'
+
+[template.slots.ff1]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff1"]
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff1","ff2"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "characteristic_equation"
+latex = '''{ff}'' + {aa} {ff}' + {bb} {ff} = 0:\quad \lambda^2 + {aa} \lambda + {bb} = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "laplace_ode_transform"
+latex = '''\bigl({ss}^2 + {aa} {ss} + {bb}\bigr) \hat{{{ff}}}({ss}) = \hat{{g}}({ss}) + ({ss} + {aa}) {ff}(0) + {ff}'(0)'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["aa"]
+
+# --- Part B2: PDE Theory (8) ---
+
+[[template]]
+name = "poisson_equation"
+latex = '\nabla^2 {ff} = {gg} \quad \text{{in }} {dom}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "helmholtz_equation"
+latex = '\nabla^2 {ff} + {kk}^2 {ff} = 0 \quad \text{{in }} {dom}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "transport_equation"
+latex = '\frac{{\partial {ff}}}{{\partial t}} + {cc} \frac{{\partial {ff}}}{{\partial {vv}}} = 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "diffusion_3d"
+latex = '\frac{{\partial {ff}}}{{\partial t}} = {kap} \nabla^2 {ff} \quad \text{{in }} {dom}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.kap]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "characteristics_first_order"
+latex = '{aa} \frac{{\partial {ff}}}{{\partial {vv1}}} + {bb} \frac{{\partial {ff}}}{{\partial {vv2}}} = {cc}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["aa","bb"]
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+[[template]]
+name = "biharmonic_equation"
+latex = '\nabla^4 {ff} = 0 \quad \text{{in }} {dom}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "cauchy_initial_data"
+latex = '{ff}({vv}, 0) = {gg}({vv}), \quad\frac{{\partial {ff}}}{{\partial t}}({vv}, 0) = {hh}({vv})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "maximum_principle"
+latex = '{op}\, {ff} \leq 0 \text{{ in }} {dom} \Rightarrow \max {ff} \text{{ attained on }} \partial {dom}'
+
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+# --- Part B3: Transforms & Green's Functions (7) ---
+
+[[template]]
+name = "laplace_transform_def"
+latex = '\mathcal{{L}}[{ff}]({ss}) = \int_0^{{\infty}} e^{{-{ss} {vv}}} {ff}({vv}) \, d{vv}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "laplace_derivative_rule"
+latex = '\mathcal{{L}}[{ff}^{{({nn})}}]({vv}) = {vv}^{{{nn}}} F({vv}) - \sum{lim_mod}_{{k=0}}^{{{nn}-1}} {vv}^{{{nn}-1-k}} {ff}^{{(k)}}(0)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "laplace_convolution"
+latex = '\mathcal{{L}}[{ff} * {gg}]({vv}) = \mathcal{{L}}[{ff}]({vv}) \cdot \mathcal{{L}}[{gg}]({vv})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "laplace_shift_theorem"
+latex = '\mathcal{{L}}[e^{{{aa} {vv}}} {ff}({vv})]({ss}) = \mathcal{{L}}[{ff}]({ss} - {aa})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "greens_function_solution"
+latex = '{ff}({vv}) = \int{lim_mod}_{{{dom}}} G({vv}, {xi}) \, {gg}({xi}) \, d{xi}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xi]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "duhamel_principle"
+latex = '{ff}({vv}, {tt}) = \int_0^{{{tt}}} S({tt} - {tau}) \, {gg}({tau}) \, d{tau}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.tt]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[template.slots.tau]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv","tt"]
+
+[[template]]
+name = "fourier_eigenfunction_series"
+latex = '{ff}({vv}, t) = \sum{lim_mod}_{{{nn}=1}}^{{\infty}} a_{{{nn}}} e^{{-{lam}_{{{nn}}} t}} \varphi_{{{nn}}}({vv})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B4: Boundary Value Problems & Sturm-Liouville (7) ---
+
+[[template]]
+name = "sturm_liouville_regular"
+latex = '-\frac{{d}}{{d{vv}}}\!\left({pp}({vv}) \frac{{d{ff}}}{{d{vv}}}\right) + {qq}({vv}) {ff} = {lam} {ww}({vv}) {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["pp"]
+
+[template.slots.ww]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["pp","qq"]
+
+[template.slots.lam]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "rayleigh_quotient"
+latex = '''{lam} = \frac{{\int_a^b \bigl( {pp}|{ff}'|^2 + {qq}|{ff}|^2 \bigr) d{vv}}}{{\int_a^b {ww} |{ff}|^2 \, d{vv}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["pp"]
+
+[template.slots.ww]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["pp","qq"]
+
+[[template]]
+name = "eigenfunction_orthogonality"
+latex = '\int{lim_mod}_{{{dom}}} \varphi_{{{mm}}} \varphi_{{{nn}}} {ww} \, d{vv} = \delta_{{{mm}{nn}}} \|\varphi_{{{nn}}}\|^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.nn]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["mm"]
+
+[template.slots.ww]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "eigenfunction_expansion"
+latex = '{ff} = \sum{lim_mod}_{{{nn}}} c_{{{nn}}} \varphi_{{{nn}}}, \quad c_{{{nn}}} = \frac{{\langle {gg}, \varphi_{{{nn}}} \rangle}}{{\|\varphi_{{{nn}}}\|^2}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "dirichlet_bvp"
+latex = '{op}\, {ff} = {gg} \text{{ in }} {dom}, \quad {ff} = {hh} \text{{ on }} \partial {dom}'
+
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "neumann_bvp"
+latex = '{op}\, {ff} = {gg} \text{{ in }} {dom}, \quad \frac{{\partial {ff}}}{{\partial n}} = {hh} \text{{ on }} \partial {dom}'
+
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.dom]
+type = "S"
+pool = "DOMAIN_POOL"
+
+[[template]]
+name = "separation_of_variables"
+latex = '{ff}({vv}, {tt}) = {gg}({vv}) \cdot {hh}({tt})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.tt]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+# --- Part B5: Series Methods & Special Functions (7) ---
+
+[[template]]
+name = "power_series_ode"
+latex = '{ff}({vv}) = \sum{lim_mod}_{{{nn}=0}}^{{\infty}} a_{{{nn}}} ({vv} - {vv}_0)^{{{nn}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "frobenius_method"
+latex = '{ff}({vv}) = {vv}^{{{rr}}} \sum{lim_mod}_{{{nn}=0}}^{{\infty}} a_{{{nn}}} {vv}^{{{nn}}} \text{{ near regular singular point}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "frobenius_indicial"
+latex = '''{ff}'' + \frac{{{pp}({vv})}}{{{vv}}} {ff}' + \frac{{{qq}({vv})}}{{{vv}^2}} {ff} = 0:\quad {rr}({rr}-1) + {pp}_0 {rr} + {qq}_0 = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["pp"]
+
+[template.slots.rr]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "bessel_equation"
+latex = '''{vv}^2 {ff}'' + {vv} {ff}' + ({vv}^2 - {nn}^2) {ff} = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "legendre_equation"
+latex = '''(1 - {vv}^2) {ff}'' - 2{vv} {ff}' + {nn}({nn}+1) {ff} = 0'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "power_series_recurrence"
+latex = '''{ff}'' + {lam} {ff} = 0:\quad a_{{{nn}+2}} = -\frac{{{lam}}}{{({nn}+1)({nn}+2)}} a_{{{nn}}}'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "fuchs_indicial_pair"
+latex = '{rr1} - {rr2} \notin \mathbb{{Z}} \Rightarrow {ff}_1({vv}) = {vv}^{{{rr1}}} \textstyle\sum a_k {vv}^k,\quad {ff}_2({vv}) = {vv}^{{{rr2}}} \textstyle\sum b_k {vv}^k'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.rr1]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.rr2]
+type = "X"
+pool = "PARAM_POOL"
+exclude_from = ["rr1"]
+
+# --- Part B6: Stability & Dynamical Systems (7) ---
+
+[[template]]
+name = "autonomous_system"
+latex = '\frac{{d{vv1}}}{{dt}} = {ff}({vv1}, {vv2}), \quad\frac{{d{vv2}}}{{dt}} = {gg}({vv1}, {vv2})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+[[template]]
+name = "jacobian_linearization"
+latex = 'J = \begin{{pmatrix}}\partial_{{{vv1}}} {ff} & \partial_{{{vv2}}} {ff} \\\partial_{{{vv1}}} {gg} & \partial_{{{vv2}}} {gg}\end{{pmatrix}}\bigg|_{{({vv1}^*, {vv2}^*)}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+[[template]]
+name = "lyapunov_stability"
+latex = '{VV}({vv}) > 0,\; \nabla {VV}({vv}) \cdot {ff}({vv}) \leq 0 \Rightarrow 0 \text{{ Lyapunov stable for }} {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.VV]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "lyapunov_asymptotic"
+latex = '{VV}({vv}) > 0,\; \nabla {VV}({vv}) \cdot {ff}({vv}) < 0 \Rightarrow 0 \text{{ asymptotically stable for }} {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.VV]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "pitchfork_normal_form"
+latex = '\dot{{{ff}}} = {rr} {vv} \mp {vv}^3'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "hopf_normal_form"
+latex = '\dot{{{vv1}}} = {rr} {vv1} - {om} {vv2} - ({vv1}^2+{vv2}^2){vv1},\quad \dot{{{vv2}}} = {om} {vv1} + {rr} {vv2} - ({vv1}^2+{vv2}^2){vv2}'
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+[template.slots.rr]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.om]
+type = "X"
+pool = "PARAM_POOL"
+exclude_from = ["rr"]
+
+[[template]]
+name = "poincare_bendixson"
+latex = '\dot{{{vv1}}} = {ff}({vv1},{vv2}),\;\dot{{{vv2}}} = {gg}({vv1},{vv2})\text{{ bounded, no eq. pt}} \Rightarrow \text{{closed orbit}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv1]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.vv2]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv1"]
+
+# --- Part C: function-pair templates (6) ---
+
+[[template]]
+name = "fn_operator_eigenvalue"
+latex = '{fn1}\!\bigl({op}[{fn2}({ff})]\bigr) = {fn3}\!\bigl({lam} {ff}\bigr) \quad \text{{in }} {sp}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[[template]]
+name = "fn_ode_solution_pair"
+latex = '''{fn1}\!\left({ff}' + {pp} {ff}\right) = {fn2}\!\left({ff}\right) \quad ({vv} \in {sp})'''
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPACE_POOL"
+
+[[template]]
+name = "fn_transform_pair"
+latex = '{fn1}\!\bigl(\mathcal{{L}}[{ff}]({ss})\bigr) = {fn2}\!\bigl({ff}({vv})\bigr)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "fn_green_composition"
+latex = '{fn1}\!\left(\int G({vv},{xi})\,{fn2}\!\bigl({gg}({xi})\bigr)\, d{xi}\right) = {fn3}\!\bigl({ff}({vv})\bigr)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.xi]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+[[template]]
+name = "fn_stability_lyapunov"
+latex = '{fn1}\!\bigl(\dot{{{VV}}}({vv})\bigr) \leq {fn2}\!\bigl({VV}({vv})\bigr)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.VV]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[[template]]
+name = "fn_pde_solution_form"
+latex = '{fn1}\!\bigl({ff}({vv}, {tt})\bigr) = {fn2}\!\bigl({gg}({vv})\bigr) \cdot {fn3}\!\bigl({hh}({tt})\bigr)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff","gg"]
+
+[template.slots.vv]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.tt]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["vv"]
+
+# ---------------------------------------------------------------------------
+# Logistic growth
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "logistic_growth"
+latex = '{v}(t) = \frac{{{a}}}{{1 + {b} e^{{-{g} t}}}}'
+
+[template.slots.v]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "COEFF_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["a"]
+
+[template.slots.g]
+type = "S"
+pool = "PARAM_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Exponential growth / decay (ODE solutions)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "exponential_ode_solution"
+latex = ""
+
+  [[template.variants]]
+  name  = "exponential_growth_pos"
+  latex = '{ff} = {aa} e^{{{kk} t}}'
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUNC_POOL"
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.kk]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["aa"]
+
+  [[template.variants]]
+  name  = "exponential_decay"
+  latex = '{ff} = {aa} e^{{-{kk} t}}'
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUNC_POOL"
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = "COEFF_POOL"
+
+  [template.variants.slots.kk]
+  type = "X"
+  pool = "COEFF_POOL"
+  exclude_from = ["aa"]

@@ -1,0 +1,834 @@
+[meta]
+domain = "combinatorics"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "M", "p", "q", "r", "s", "t", "i", "l", "n_0"]
+
+[[pool]]
+name   = "K_POOL"
+values = ["k", "r", "j", "l", "i", "s", "t", "p"]
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ["a", "b", "c", "d", "k", "m", "n", "p", "q"]
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x", "y", "z", "t", "u", "v", "r", "s"]
+
+[[pool]]
+name   = "SET_POOL"
+values = ["A", "B", "C", "D", "E", "S", "T", "U", '\mathcal{A}', '\mathcal{B}', '\mathcal{C}', '\mathcal{S}']
+
+# ---------------------------------------------------------------------------
+# Part A — core combinatorics identities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "permutations"
+latex = 'P({n}, {k}) = \frac{{{n}!}}{{({n}-{k})!}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "derangements_sum"
+latex = 'D_{{{n}}} = {n}!\sum{lim_mod}_{{{ii}=0}}^{{{n}}} \frac{{(-1)^{{{ii}}}}}{{{ii}!}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = ["j", "i", "k", "l"]
+
+# ----
+
+[[template]]
+name  = "sum_binomials"
+latex = '\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} = 2^{{{n}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "binomial_theorem"
+latex = '\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} {v}^{{{k}}} = (1+{v})^{{{n}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+# ----
+
+[[template]]
+name  = "pascal_rule"
+latex = '\binom{{{n}}}{{{k}}} = \binom{{{n}-1}}{{{k}-1}} + \binom{{{n}-1}}{{{k}}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "multinomial_coefficient"
+latex = '{formula}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.formula]
+type  = "P"
+gen   = "_multinomial_full"
+param = "n"
+n     = 72
+
+# ----
+
+[[template]]
+name  = "master_theorem_recurrence"
+latex = '{ff}({n}) = {aa}\,{ff}\!\left(\frac{{{n}}}{{{bb}}}\right) + {rhs}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = ["2", "3", "4", "a", "b"]
+
+[template.slots.bb]
+type = "S"
+pool = ["2", "3", "4", "b", "c"]
+
+[template.slots.rhs]
+type  = "P"
+gen   = "_recurrence_rhs"
+param = "n"
+n     = 5
+
+# ----
+
+[[template]]
+name  = "linear_recurrence"
+latex = 'a_{{{n}}} = {c1}\,a_{{{n}-1}} + {c2}\,a_{{{n}-2}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.c1]
+type         = "X"
+pool         = "SCALARS_POOL"
+exclude_from = ["n"]
+
+[template.slots.c2]
+type         = "X"
+pool         = "SCALARS_POOL"
+exclude_from = ["n", "c1"]
+
+# ----
+
+[[template]]
+name  = "named_sequence_recurrence"
+latex = '{ff}_{{{n}}} = {c1}\,{ff}_{{{n}-1}} + {c2}\,{ff}_{{{n}-2}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.c1]
+type         = "X"
+pool         = "SCALARS_POOL"
+exclude_from = ["n"]
+
+[template.slots.c2]
+type         = "X"
+pool         = "SCALARS_POOL"
+exclude_from = ["n", "c1"]
+
+# ----
+
+[[template]]
+name  = "ordinary_generating_function"
+latex = '{gg}({v}) = \sum{lim_mod}_{{{n} \geq 0}} {sc}_{{{n}}}\, {v}^{{{n}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.sc]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ----
+
+[[template]]
+name  = "multiset_coefficient"
+latex = '\binom{{{n}+{k}-1}}{{{k}-1}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "derangement_recurrence"
+latex = 'D_{{{n}}} = ({n}-1)\!\left(D_{{{n}-1}} + D_{{{n}-2}}\right)'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "hockey_stick_identity"
+latex = '\sum{lim_mod}_{{{k}=0}}^{{{r2}}} \binom{{{n}+{k}}}{{{k}}} = \binom{{{n}+{r2}+1}}{{{r2}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.r2]
+type = "S"
+pool = ["r", "s", "R", "N"]
+
+# ----
+
+[[template]]
+name  = "central_binomial_asymptotics"
+latex = '\binom{{2{n}}}{{{n}}} \sim \frac{{4^{{{n}}}}}{{\sqrt{{\pi {n}}}}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "stirling_approximation"
+latex = ""
+
+  [[template.variants]]
+  name  = "stirling_standard"
+  latex = '{n}! \sim \sqrt{{2\pi {n}}} \left(\frac{{{n}}}{{e}}\right)^{{{n}}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "stirling_log"
+  latex = '\ln({n}!) \approx {n}\ln {n} - {n} + \frac{{1}}{{2}}\ln(2\pi {n})'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "stirling_gamma"
+  latex = '\Gamma({n}+1) \sim \sqrt{{2\pi {n}}} \left(\frac{{{n}}}{{e}}\right)^{{{n}}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "derangement_alternating_sum"
+latex = 'D_{{{n}}} = {n}! \left(1 - 1 + \frac{{1}}{{2!}} - \frac{{1}}{{3!}} + \cdots + \frac{{(-1)^{{{n}}}}}{{{n}!}}\right)'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "vandermonde_identity"
+latex = '\binom{{{mm}+{n}}}{{{k}}} = \sum{lim_mod}_{{{j}=0}}^{{{k}}} \binom{{{mm}}}{{{j}}}\binom{{{n}}}{{{k}-{j}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mm]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.n]
+type         = "X"
+pool         = "N_POOL"
+exclude_from = ["mm"]
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.j]
+type         = "X"
+pool         = "K_POOL"
+exclude_from = ["k"]
+
+# ----
+
+[[template]]
+name  = "catalan_numbers"
+latex = ""
+
+  [[template.variants]]
+  name  = "catalan_binomial"
+  latex = 'C_{{{n}}} = \frac{{1}}{{{n}+1}}\binom{{2{n}}}{{{n}}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "catalan_factorial"
+  latex = 'C_{{{n}}} = \frac{{(2{n})!}}{{({n}+1)!\,{n}!}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "catalan_recurrence"
+  latex = 'C_{{{n}+1}} = \sum{lim_mod}_{{{k}=0}}^{{{n}}} C_{{{k}}} C_{{{n}-{k}}}'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "stirling_numbers_second"
+latex = ""
+
+  [[template.variants]]
+  name  = "stirling_second_s_notation"
+  latex = 'S({n},{k}) = {k}\,S({n}-1,{k}) + S({n}-1,{k}-1)'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "K_POOL"
+
+  [[template.variants]]
+  name  = "stirling_second_bracket"
+  latex = '\left\{{\begin{{matrix}}{n}\\{k}\end{{matrix}}\right\}} = {k}\left\{{\begin{{matrix}}{n}-1\\{k}\end{{matrix}}\right\}} + \left\{{\begin{{matrix}}{n}-1\\{k}-1\end{{matrix}}\right\}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "falling_rising_factorial"
+latex = ""
+
+  [[template.variants]]
+  name  = "falling_factorial_descending"
+  latex = '({v})_{{{n}}} = {v}({v}-1)\cdots({v}-{n}+1)'
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = ["2", "3", "n", "m", "k"]
+
+  [[template.variants]]
+  name  = "falling_factorial_ratio"
+  latex = '({v})_{{{n}}} = \frac{{{v}!}}{{({v}-{n})!}}'
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "rising_factorial_pochhammer"
+  latex = '({sc})_{{{n}}} = {sc}({sc}+1)\cdots({sc}+{n}-1) = \frac{{\Gamma({sc}+{n})}}{{\Gamma({sc})}}'
+
+  [template.variants.slots.sc]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "absorption_identity"
+latex = '{k}\binom{{{n}}}{{{k}}} = {n}\binom{{{n}-1}}{{{k}-1}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "bell_number_recurrence"
+latex = 'B_{{{n}+1}} = \sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "inclusion_exclusion"
+latex = ""
+
+  [[template.variants]]
+  name  = "inclusion_exclusion_two"
+  latex = '|{ss1} \cup {ss2}| = |{ss1}| + |{ss2}| - |{ss1} \cap {ss2}|'
+
+  [template.variants.slots.ss1]
+  type = "S"
+  pool = "SET_POOL"
+
+  [template.variants.slots.ss2]
+  type         = "X"
+  pool         = "SET_POOL"
+  exclude_from = ["ss1"]
+
+  [[template.variants]]
+  name  = "inclusion_exclusion_three"
+  latex = '|{ss1} \cup {ss2} \cup {ss3}| = |{ss1}| + |{ss2}| + |{ss3}| - |{ss1} \cap {ss2}| - |{ss1} \cap {ss3}| - |{ss2} \cap {ss3}| + |{ss1} \cap {ss2} \cap {ss3}|'
+
+  [template.variants.slots.ss1]
+  type = "S"
+  pool = "SET_POOL"
+
+  [template.variants.slots.ss2]
+  type         = "X"
+  pool         = "SET_POOL"
+  exclude_from = ["ss1"]
+
+  [template.variants.slots.ss3]
+  type         = "X"
+  pool         = "SET_POOL"
+  exclude_from = ["ss1", "ss2"]
+
+# ----
+
+[[template]]
+name  = "negative_binomial_coeff"
+latex = '\binom{{-{n}}}{{{k}}} = (-1)^{{{k}}} \binom{{{n}+{k}-1}}{{{k}}}'
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "exponential_generating_function"
+latex = '{gg}({v}) = \sum{lim_mod}_{{{n} \geq 0}} {sc}_{{{n}}}\, \frac{{{v}^{{{n}}}}}{{{n}!}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.sc]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ----
+
+[[template]]
+name  = "fibonacci_identities"
+latex = ""
+
+  [[template.variants]]
+  name  = "fibonacci_recurrence"
+  latex = 'F_{{{n}}} = F_{{{n}-1}} + F_{{{n}-2}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "fibonacci_addition"
+  latex = 'F_{{{mm}+{n}}} = F_{{{mm}}} F_{{{n}+1}} + F_{{{mm}-1}} F_{{{n}}}'
+
+  [template.variants.slots.mm]
+  type = "S"
+  pool = "N_POOL"
+
+  [template.variants.slots.n]
+  type         = "X"
+  pool         = "N_POOL"
+  exclude_from = ["mm"]
+
+  [[template.variants]]
+  name  = "fibonacci_sum"
+  latex = '\sum{lim_mod}_{{{k}=1}}^{{{n}}} F_{{{k}}} = F_{{{n}+2}} - 1'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = "K_POOL"
+
+  [[template.variants]]
+  name  = "cassini_identity"
+  latex = 'F_{{{n}-1}} F_{{{n}+1}} - F_{{{n}}}^2 = (-1)^{{{n}}}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B — high-n_eff function-pair templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_binomial_symmetry"
+latex = '{fn1}\!\binom{{{n}}}{{{k}}} = {fn2}\!\binom{{{n}}}{{{n}-{k}}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_generating_func"
+latex = '{fn1}\!\left(\sum{lim_mod}_{{{n}\geq 0}} {sc}_{{{n}}}\,{v}^{{{n}}}\right) = {fn2}({v})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.sc]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_recurrence_pair"
+latex = '{fn1}(a_{{{n}}}) = {fn2}\!\left(a_{{{n}-1}} + a_{{{n}-2}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_stirling_transform"
+latex = '{fn1}(S({n},{k})) = {fn2}\!\left(\frac{{1}}{{{k}!}}\sum{lim_mod}_{{j=0}}^{{{k}}} (-1)^{{{k}-j}}\binom{{{k}}}{{j}} j^{{{n}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_bell_recurrence"
+latex = '{fn1}(B_{{{n}+1}}) = {fn2}\!\left(\sum{lim_mod}_{{{k}=0}}^{{{n}}} \binom{{{n}}}{{{k}}} B_{{{k}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "K_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_catalan_formula"
+latex = '{fn1}(C_{{{n}}}) = {fn2}\!\left(\frac{{1}}{{{n}+1}}\binom{{2{n}}}{{{n}}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Binomial theorem — two-variable form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "binomial_theorem_two_var"
+latex = '\left({u} + {w}\right)^{{{exp}}} = \sum{lim_mod}_{{k=0}}^{{{exp}}} \binom{{{exp}}}{{k}} \left({u}\right)^k \left({w}\right)^{{{exp}-k}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.exp]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.u]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+# ---------------------------------------------------------------------------
+# Gauss power-sum identities (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sum_of_squares_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^2 = \frac{{{n}({n}+1)(2{n}+1)}}{{6}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "sum_of_cubes_gauss"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} k^3 = \left(\frac{{{n}({n}+1)}}{{2}}\right)^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = "N_POOL"

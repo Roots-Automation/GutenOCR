@@ -1,0 +1,472 @@
+[meta]
+domain = "statistical_mechanics"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "BETA_POOL"
+values = ['\beta', '(k_B T)^{-1}', '\beta_0', '\tilde{\beta}', '1/(k T)']
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["i", "j", "k", "n", "m"]
+
+[[pool]]
+name   = "SIGMA_POOL"
+values = ['\sigma', '\Sigma', '\sigma_0']
+
+[[pool]]
+name   = "TEMP_POOL"
+values = ["T", "T_0", "T_H", "T_C"]
+
+[[pool]]
+name   = "KB_POOL"
+values = ["k_B", 'k_{\mathrm{B}}', "k", '\kappa_B', 'k_{\mathrm{Boltz}}']
+
+[[pool]]
+name   = "ENERGY_POOL"
+values = ["E", "E_0", '\mathcal{E}', "U"]
+
+[[pool]]
+name   = "MU_POOL"
+values = ['\mu', '\mu_0', "E_F"]
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\omega_0', '\Omega', '\nu']
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "n_0"]
+
+[[pool]]
+name   = "PRESS_POOL"
+values = ["p", "P", "p_0"]
+
+[[pool]]
+name   = "VOL_POOL"
+values = ["V", "V_0", '\mathcal{V}', "L"]
+
+[[pool]]
+name   = "FUG_POOL"
+values = ["z", '\lambda', '\zeta']
+
+[[pool]]
+name   = "MASS_POOL"
+values = ["m", "M", '\mu', "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
+
+[[pool]]
+name   = "TC_POOL"
+values = ["T_C", "T_c", "T_1", '\tau_c', 'T_{\mathrm{cold}}']
+
+[[pool]]
+name   = "TH_POOL"
+values = ["T_H", "T_h", "T_2", '\tau_h', 'T_{\mathrm{hot}}']
+
+# ---------------------------------------------------------------------------
+# Part A: Partition function / Stefan-Boltzmann
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "partition_function"
+latex = 'Z = \sum{lim_mod}_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "stefan_boltzmann"
+latex = 'P = {sg}\,A\,{temp}^4'
+
+[template.slots.sg]
+type = "S"
+pool = "SIGMA_POOL"
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Statistical mechanics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "boltzmann_distribution"
+latex = 'p_{{{ii}}} = \frac{{e^{{-{bt}\,E_{{{ii}}}}}}}{{Z}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+# ----
+
+[[template]]
+name  = "helmholtz_free_energy"
+latex = 'F = -{kb}\,{temp}\ln Z'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "entropy_statistical"
+latex = 'S = -{kb}\sum{lim_mod}_{{{ii}}} p_{{{ii}}}\ln p_{{{ii}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "average_energy"
+latex = '\langle {ee} \rangle = -\frac{{\partial \ln Z}}{{\partial {bt}}}'
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+# ----
+
+[[template]]
+name  = "heat_capacity_cv"
+latex = 'C_V = {kb}\,{bt}^2\,\bigl\langle (E - \langle E \rangle)^2 \bigr\rangle'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = ['\beta', '\beta_0', '\tilde{\beta}', '\bar{\beta}', '\hat{\beta}']
+
+# ----
+
+[[template]]
+name  = "equipartition_theorem"
+latex = '\langle E \rangle = \frac{{f}}{{2}}\,k_B\,{temp}'
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "fermi_dirac_distribution"
+latex = 'f({ee}) = \frac{{1}}{{e^{{{bt}({ee}-{mu})}}+1}}'
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "bose_einstein_distribution"
+latex = 'n({ee}) = \frac{{1}}{{e^{{{bt}({ee}-{mu})}}-1}}'
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "entropy_from_partition"
+latex = 'S = {kb}\bigl(\ln Z + {bt}\,\langle E\rangle\bigr)'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Thermodynamics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "first_law_thermo"
+latex = 'dU = \delta Q - \delta W'
+
+[[template]]
+name  = "ideal_gas_law"
+latex = '{pp}\,V = {nn}\,R\,{temp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRESS_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "van_der_waals_eq"
+latex = '\left({pp} + \frac{{a}}{{V^2}}\right)(V-b) = R\,{temp}'
+
+[template.slots.pp]
+type = "S"
+pool = "PRESS_POOL"
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "carnot_efficiency"
+latex = '\eta = 1 - \frac{{{tc}}}{{{th}}}'
+
+[template.slots.tc]
+type = "S"
+pool = "TC_POOL"
+
+[template.slots.th]
+type = "S"
+pool = "TH_POOL"
+
+# ----
+
+[[template]]
+name  = "gibbs_free_energy_def"
+latex = 'G = H - {temp}\,S'
+
+[template.slots.temp]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "maxwell_relation_thermo"
+latex = '\left(\frac{{\partial T}}{{\partial V}}\right)_S = -\left(\frac{{\partial {pp}}}{{\partial S}}\right)_V'
+
+[template.slots.pp]
+type = "S"
+pool = "PRESS_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix: Grand canonical / \Xi notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "thermal_speed"
+latex = '\upsilon_{{\mathrm{{th}}}} = \sqrt{{\frac{{2 {kb} {tt}}}{{{mm}}}}}'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ----
+
+[[template]]
+name  = "grand_canonical_partition"
+latex = ""
+
+  [[template.variants]]
+  name  = "grand_canonical_partition_fug"
+  latex = '\Xi(\mu, {vv}, {tt}) = \sum{lim_mod}_{{N=0}}^{{\infty}} {ff}^N Z_N({vv}, {tt})'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VOL_POOL"
+
+  [template.variants.slots.tt]
+  type = "S"
+  pool = "TEMP_POOL"
+
+  [template.variants.slots.ff]
+  type = "S"
+  pool = "FUG_POOL"
+
+  [[template.variants]]
+  name  = "grand_canonical_partition_exp"
+  latex = '\Xi(\mu, {vv}, {tt}) = \sum{lim_mod}_{{N=0}}^{{\infty}} e^{{N {bb} \mu}} Z_N({vv}, {tt})'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.vv]
+  type = "S"
+  pool = "VOL_POOL"
+
+  [template.variants.slots.tt]
+  type = "S"
+  pool = "TEMP_POOL"
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = "BETA_POOL"
+
+# ----
+
+[[template]]
+name  = "grand_potential_from_xi"
+latex = '\Omega = -{kb} {tt} \ln \Xi'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TEMP_POOL"
+
+# ----
+
+[[template]]
+name  = "mean_particle_number_xi"
+latex = '\langle N \rangle = {kb} {tt} \frac{{\partial \ln \Xi}}{{\partial \mu}}\bigg|_{{T,V}}'
+
+[template.slots.kb]
+type = "S"
+pool = "KB_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TEMP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: Function-pair (statistical mechanics context)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_boltzmann_weight"
+latex = '{fn1}\!\left(e^{{-{bt}\,E_{{{ii}}}}}\right) = {fn2}\!\left(\frac{{1}}{{Z}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_canonical_ensemble"
+latex = '{fn1}(Z) = {fn2}\!\left(\sum{lim_mod}_{{{ii}}} e^{{-{bt}\,E_{{{ii}}}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.bt]
+type = "S"
+pool = "BETA_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix: High-temperature approximation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "classical_partition_high_t"
+latex = 'Z \approx \left(\frac{{k_B T}}{{\hbar\,{om}}}\right)^{{{nn}}} \quad (k_B T \gg \hbar\,{om})'
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"

@@ -1,0 +1,150 @@
+"""Named sub-generator registry for TOML template packs.
+
+Every callable that appears as ``E(...)``, ``P(...)``, or ``EP(...)`` in a domain
+module must be registered here under a stable string name so that TOML template
+packs can reference it by name rather than by embedding a callable.
+
+Naming conventions:
+- Atomic / expression generators:  _atom, _expr, _fn_rich, _fn_rich_nosub
+- Polynomial generators:            _poly, _poly_mid_N (degree N middle terms)
+- Matrix environment generators:    matrix_env_RxC_ENV (rows x cols, env name)
+- Matrix-with-ellipsis generators:  matrix_ellipsis_ENV
+- Smallmatrix generators:           smallmatrix_RxC (rows x cols)
+"""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+
+from ._templates import (
+    _def_integral,
+    _diff_op,
+    _gather_numbered,
+    _gather_starred,
+    _grouped_coeff,
+    _indef_integral,
+    _integral_bounds_split,
+    _interval,
+    _invis_bracket_split,
+    _matrix_env,
+    _matrix_with_ellipsis,
+    _multicolumn_inequalities,
+    _multicolumn_mixed,
+    _multicolumn_scalars,
+    _multinomial_full,
+    _multline_poly_numbered,
+    _multline_poly_starred,
+    _piecewise_2,
+    _piecewise_3,
+    _poly,
+    _poly_mid_factory,
+    _recurrence_rhs,
+    _smallmatrix_inline,
+    _substack_prod,
+    _substack_sum,
+)
+from ._vocab import (
+    _atom,
+    _cos_dbl_coeff_sub,
+    _eps_sub,
+    _euler_arg_sub,
+    _expr,
+    _fn_rich,
+    _fn_rich_nosub,
+    _hyp_arg_sub,
+    _idx_atom,
+    _sin_dbl_coeff_sub,
+    _taylor_arg_sub,
+    _tol_sub,
+    _trig_pyth_arg_sub,
+)
+
+SUB_GENERATORS: dict[str, Callable] = {
+    # -----------------------------------------------------------------------
+    # Atomic / expression generators (signature: gen(rng) -> str)
+    # -----------------------------------------------------------------------
+    "_atom": _atom,
+    "_expr": _expr,
+    "_fn_rich": _fn_rich,
+    "_fn_rich_nosub": _fn_rich_nosub,
+    # Atomic helpers (signature: gen(rng) -> str)
+    "_eps_sub": _eps_sub,
+    "_tol_sub": _tol_sub,
+    "_idx_atom": _idx_atom,
+    # -----------------------------------------------------------------------
+    # Polynomial generators (signature: gen(rng, var) -> str)
+    # -----------------------------------------------------------------------
+    "_poly": _poly,
+    "_poly_mid_2": _poly_mid_factory(2),
+    "_poly_mid_3": _poly_mid_factory(3),
+    "_poly_mid_4": _poly_mid_factory(4),
+    "_poly_mid_5": _poly_mid_factory(5),
+    # Integral generators (signature: gen(rng) -> str)
+    "_indef_integral": _indef_integral,
+    "_def_integral": _def_integral,
+    "_interval": _interval,
+    # Combinatorics generators (signature: gen(rng, param) -> str)
+    "_multinomial_full": _multinomial_full,
+    "_recurrence_rhs": _recurrence_rhs,
+    # Align / multiline environment generators (signature: gen(rng) -> str)
+    "_diff_op": _diff_op,
+    "_piecewise_2": _piecewise_2,
+    "_piecewise_3": _piecewise_3,
+    "_invis_bracket_split": _invis_bracket_split,
+    "_integral_bounds_split": _integral_bounds_split,
+    "_grouped_coeff": _grouped_coeff,
+    "_multline_poly_starred": _multline_poly_starred,
+    "_multline_poly_numbered": _multline_poly_numbered,
+    "_gather_starred": _gather_starred,
+    "_gather_numbered": _gather_numbered,
+    "_multicolumn_scalars": _multicolumn_scalars,
+    "_multicolumn_mixed": _multicolumn_mixed,
+    "_multicolumn_inequalities": _multicolumn_inequalities,
+    # Substack sum/product generators (signature: gen(rng) -> str)
+    "_substack_sum": _substack_sum,
+    "_substack_prod": _substack_prod,
+    # Trig sub-generators (signature: gen(rng) -> str)
+    "_sin_dbl_coeff_sub": _sin_dbl_coeff_sub,
+    "_cos_dbl_coeff_sub": _cos_dbl_coeff_sub,
+    "_trig_pyth_arg_sub": _trig_pyth_arg_sub,
+    "_euler_arg_sub": _euler_arg_sub,
+    "_hyp_arg_sub": _hyp_arg_sub,
+    "_taylor_arg_sub": _taylor_arg_sub,
+    # -----------------------------------------------------------------------
+    # Matrix environment generators — pmatrix (parentheses)
+    # -----------------------------------------------------------------------
+    "matrix_env_2x2_pmatrix": lambda rng: _matrix_env(rng, 2, 2, "pmatrix"),
+    "matrix_env_3x3_pmatrix": lambda rng: _matrix_env(rng, 3, 3, "pmatrix"),
+    "matrix_env_4x4_pmatrix": lambda rng: _matrix_env(rng, 4, 4, "pmatrix"),
+    "matrix_env_3x1_pmatrix": lambda rng: _matrix_env(rng, 3, 1, "pmatrix"),
+    "matrix_env_1x3_pmatrix": lambda rng: _matrix_env(rng, 1, 3, "pmatrix"),
+    # --- bmatrix (square brackets)
+    "matrix_env_2x2_bmatrix": lambda rng: _matrix_env(rng, 2, 2, "bmatrix"),
+    "matrix_env_3x3_bmatrix": lambda rng: _matrix_env(rng, 3, 3, "bmatrix"),
+    "matrix_env_3x1_bmatrix": lambda rng: _matrix_env(rng, 3, 1, "bmatrix"),
+    "matrix_env_1x3_bmatrix": lambda rng: _matrix_env(rng, 1, 3, "bmatrix"),
+    # --- vmatrix (single pipes = determinant)
+    "matrix_env_2x2_vmatrix": lambda rng: _matrix_env(rng, 2, 2, "vmatrix"),
+    "matrix_env_3x3_vmatrix": lambda rng: _matrix_env(rng, 3, 3, "vmatrix"),
+    # --- Bmatrix (curly braces)
+    "matrix_env_2x2_Bmatrix": lambda rng: _matrix_env(rng, 2, 2, "Bmatrix"),
+    "matrix_env_3x3_Bmatrix": lambda rng: _matrix_env(rng, 3, 3, "Bmatrix"),
+    # --- Vmatrix (double pipes)
+    "matrix_env_2x2_Vmatrix": lambda rng: _matrix_env(rng, 2, 2, "Vmatrix"),
+    "matrix_env_3x3_Vmatrix": lambda rng: _matrix_env(rng, 3, 3, "Vmatrix"),
+    # --- plain matrix (no delimiters)
+    "matrix_env_2x2_matrix": lambda rng: _matrix_env(rng, 2, 2, "matrix"),
+    "matrix_env_3x3_matrix": lambda rng: _matrix_env(rng, 3, 3, "matrix"),
+    # -----------------------------------------------------------------------
+    # Matrix-with-ellipsis generators (signature: gen(rng) -> str)
+    # -----------------------------------------------------------------------
+    "matrix_ellipsis_pmatrix": lambda rng: _matrix_with_ellipsis(rng, "pmatrix"),
+    "matrix_ellipsis_bmatrix": lambda rng: _matrix_with_ellipsis(rng, "bmatrix"),
+    "matrix_ellipsis_vmatrix": lambda rng: _matrix_with_ellipsis(rng, "vmatrix"),
+    # -----------------------------------------------------------------------
+    # Smallmatrix inline generators (signature: gen(rng) -> str)
+    # -----------------------------------------------------------------------
+    "smallmatrix_2x2": lambda rng: _smallmatrix_inline(rng, 2, 2),
+    "smallmatrix_3x2": lambda rng: _smallmatrix_inline(rng, 3, 2),
+    "smallmatrix_2x3": lambda rng: _smallmatrix_inline(rng, 2, 3),
+}

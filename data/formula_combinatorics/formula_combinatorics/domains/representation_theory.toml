@@ -1,0 +1,1138 @@
+domain = "representation_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name = "REP_POOL"
+values = ['\rho','\pi','\sigma','\tau',"V","W","U",'\phi']
+
+[[pool]]
+name = "GROUP_POOL"
+values = ["G","H","K","N","A","B",'\Gamma','\Delta']
+
+[[pool]]
+name = "ELEM_POOL"
+values = ["g","h","a","b","x",'\sigma','\tau','\alpha','\beta','\gamma']
+
+[[pool]]
+name = "HOMO_POOL"
+values = ['\phi','\psi','\theta',"f","T",'\Phi','\Psi','\chi']
+
+[[pool]]
+name = "MODULE_POOL"
+values = ["M","N","V","W","U","L","S","P"]
+
+[[pool]]
+name = "WEIGHT_POOL"
+values = ['\lambda','\mu','\nu','\alpha','\beta','\omega','\Lambda']
+
+[[pool]]
+name = "LIE_POOL"
+values = ['\mathfrak{g}','\mathfrak{h}','\mathfrak{n}','\mathfrak{b}','\mathfrak{k}','\mathfrak{m}']
+
+[[pool]]
+name = "FIELD_POOL"
+values = ["k",'\mathbb{F}',"K",'\mathbb{C}','\mathbb{R}']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["i","j","k","m","n"]
+
+# ---------------------------------------------------------------------------
+# Part A: Reparameterized originals (12)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "character_trace"
+latex = '\chi_{{{rr}}}({gg}) = \operatorname{{tr}}\!\left({rr}({gg})\right)'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_dimension"
+latex = '\chi_{{{rr}}}(e) = \dim {rr}'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "character_orthogonality"
+latex = '\frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} \chi_i({gg})\,\overline{{\chi_j({gg})}} = \delta_{{ij}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_centralizer"
+latex = '\sum{lim_mod}_{{i}} |\chi_i({gg})|^2 = |C_{{{GG}}}({gg})|'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "irreducible_decomposition"
+latex = '{rr} \cong \bigoplus_i {rr}_i^{{\oplus n_i}},\quad {rr}_i \text{{ irreducible}}'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "sum_of_squares"
+latex = '\sum_i (\dim {rr}_i)^2 = |{GG}|'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "burnside_orbit"
+latex = '|X/{GG}| = \frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} |X^{{{gg}}}|'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "burnside_fixed_points"
+latex = '|\text{{orbits}}| = \frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} |\{{x : {gg} \cdot x = x\}}|'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "schur_linear_map"
+latex = '{phi} : {rr} \to {rr} \text{{ {GG}-linear}} \implies {phi} = \lambda \operatorname{{Id}}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "schur_hom_space"
+latex = '\operatorname{{Hom}}_{{{GG}}}({rr}_i, {rr}_j) \cong \begin{{cases}} \mathbb{{C}} & i = j \\ 0 & i \neq j \end{{cases}}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "induced_representation"
+latex = '\operatorname{{Ind}}_{{{HH}}}^{{{GG}}} {rr} \cong \mathbb{{C}}[{GG}] \otimes_{{\mathbb{{C}}[{HH}]}} {rr}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "frobenius_reciprocity"
+latex = '\langle \operatorname{{Ind}}_{{{HH}}}^{{{GG}}} {chi}, {psi} \rangle_{{{GG}}} = \langle {chi}, \operatorname{{Res}}_{{{HH}}}^{{{GG}}} {psi} \rangle_{{{HH}}}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.chi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.psi]
+type = "X"
+pool = "HOMO_POOL"
+exclude_from = ["chi"]
+
+# ---------------------------------------------------------------------------
+# Part B1: Character Theory (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "inner_product_characters"
+latex = '\langle \chi_{{{rr}}}, \chi_{{{ss}}} \rangle_{{{GG}}} = \frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} \chi_{{{rr}}}({gg})\, \overline{{\chi_{{{ss}}}({gg})}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_sum_formula"
+latex = '\sum{lim_mod}_{{{gg} \in {GG}}} \chi_{{{rr}}}({gg}) = \langle \chi_{{{rr}}}, \mathbf{{1}} \rangle \cdot |{GG}|'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_product"
+latex = '\chi_{{{rr} \otimes {ss}}}({gg}) = \chi_{{{rr}}}({gg}) \cdot \chi_{{{ss}}}({gg})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_dual"
+latex = '\chi_{{{rr}^*}}({gg}) = \overline{{\chi_{{{rr}}}({gg})}}'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_table_column_ortho"
+latex = '\sum_i \chi_i({gg})\, \overline{{\chi_i({hh})}} = |C_{{{GG}}}({gg})| \cdot \delta_{{[{gg}][{hh}]}}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]
+
+[[template]]
+name = "multiplicity_formula"
+latex = 'm_{{{rr}}} = \frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} \chi_V({gg})\, \overline{{\chi_{{{rr}}}({gg})}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B2: Schur's Lemma & Hom Spaces (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "schur_irreducible"
+latex = '{phi} \in \operatorname{{Hom}}_{{{GG}}}({rr}, {rr}) \Rightarrow {phi} = \lambda \cdot \operatorname{{Id}}_{{{rr}}}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "schur_noniso"
+latex = '{rr} \not\cong {ss} \text{{ irreducible}} \Rightarrow \operatorname{{Hom}}_{{{GG}}}({rr}, {ss}) = 0'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "endomorphism_dim"
+latex = '\dim \operatorname{{Hom}}_{{{GG}}}({rr}, {ss}) = \langle \chi_{{{rr}}}, \chi_{{{ss}}} \rangle_{{{GG}}}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[[template]]
+name = "isotypic_component"
+latex = '{VV} = \bigoplus_{{[{rr}]}} {MM}_{{{rr}}},\quad {MM}_{{{rr}}} \cong {rr}^{{\oplus m_{{{rr}}}}}'
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.rr]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["VV"]
+
+[template.slots.MM]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["VV", "rr"]
+
+[[template]]
+name = "intertwining_operator"
+latex = '{phi} \circ {rr}({gg}) = {ss}({gg}) \circ {phi} \quad \forall {gg} \in {GG}'
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "decomp_multiplicity"
+latex = '{VV} \cong \bigoplus_{{{rr}}} {rr}^{{\oplus m_{{{rr}}}}},\quad m_{{{rr}}} = \langle \chi_{{{VV}}}, \chi_{{{rr}}} \rangle'
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.rr]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["VV"]
+
+# ---------------------------------------------------------------------------
+# Part B3: Induced/Restricted Representations (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "dimension_induction"
+latex = '\dim\!\left(\operatorname{{Ind}}_{{{HH}}}^{{{GG}}} {rr}\right) = [{GG}:{HH}] \cdot \dim {rr}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "induced_character"
+latex = '\chi_{{\operatorname{{Ind}}_{{{HH}}}^{{{GG}}}{rr}}}({gg}) = \frac{{1}}{{|{HH}|}} \sum{lim_mod}_{{x \in {GG},\, x^{{-1}} {gg} x \in {HH}}} \chi_{{{rr}}}(x^{{-1}} {gg} x)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "character_restriction"
+latex = '\chi_{{\operatorname{{Res}}_{{{HH}}}^{{{GG}}}{rr}}}({hh}) = \chi_{{{rr}}}({hh}) \quad \forall {hh} \in {HH}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.hh]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "tensor_product_reps"
+latex = '({rr} \otimes {ss})({gg}) = {rr}({gg}) \otimes {ss}({gg})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "mackey_criterion"
+latex = '\operatorname{{Ind}}_{{{HH}}}^{{{GG}}} {chi} \text{{ irred}} \iff {chi}^s \neq {chi} \;\forall s \in {GG} \setminus {HH}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.chi]
+type = "S"
+pool = "HOMO_POOL"
+
+[[template]]
+name = "clifford_theory"
+latex = '\operatorname{{Res}}_{{{NN}}}^{{{GG}}} {rr} = e \cdot \bigoplus_t {rr}^{{(t)}}, \quad {NN} \trianglelefteq {GG}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "GROUP_POOL"
+exclude_from = ["GG"]
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B4: Module Theory (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "maschke_theorem"
+latex = '\operatorname{{char}}({ff}) \nmid |{GG}| \Rightarrow {ff}[{GG}] \text{{ is semisimple}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "krull_schmidt"
+latex = '{MM} \cong \bigoplus_i {MM}_i^{{n_i}},\quad {MM}_i \text{{ indecomposable, unique up to iso}}'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[[template]]
+name = "module_hom"
+latex = '\operatorname{{Hom}}_{{k{GG}}}({MM}, {NN}) = \{{ f : f({gg} \cdot m) = {gg} \cdot f(m) \;\forall {gg} \in {GG} \}}'
+
+[template.slots.MM]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["MM"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "semisimple_algebra_decomp"
+latex = '{ff}[{GG}] \cong \bigoplus_i M_{{n_i}}({ff})'
+
+[template.slots.ff]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "exact_sequence"
+latex = '0 \to {LL} \to {MM} \to {NN} \to 0 \text{{ (short exact of }} {GG}\text{{-modules)}}'
+
+[template.slots.LL]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.MM]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["LL"]
+
+[template.slots.NN]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["LL", "MM"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "projective_cover"
+latex = '{PP} \twoheadrightarrow {MM} \to 0, \quad {PP} \text{{ projective }} {GG}\text{{-module}}'
+
+[template.slots.PP]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.MM]
+type = "X"
+pool = "MODULE_POOL"
+exclude_from = ["PP"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5: Lie Algebra Representations (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "lie_module_action"
+latex = 'X \cdot (Y \cdot v) - Y \cdot (X \cdot v) = [X, Y] \cdot v, \quad X, Y \in {gg}'
+
+[template.slots.gg]
+type = "S"
+pool = "LIE_POOL"
+
+[[template]]
+name = "weight_space"
+latex = '{VV}_{{{ww}}} = \{{ v \in {VV} : {hh} \cdot v = {ww}({hh})\, v \;\forall {hh} \in {gg} \}}'
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.ww]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.hh]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "LIE_POOL"
+
+[[template]]
+name = "highest_weight_module"
+latex = '{VV} = \bigoplus_{{{ww} \leq {ll}}} {VV}_{{{ww}}}, \quad {VV}_{{{ll}}} \neq 0'
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.ww]
+type = "X"
+pool = "WEIGHT_POOL"
+exclude_from = ["ll"]
+
+[[template]]
+name = "root_decomposition"
+latex = '{gg} = {hh} \oplus \bigoplus_{{{alpha} \in \Phi}} {gg}_{{{alpha}}}'
+
+[template.slots.gg]
+type = "S"
+pool = "LIE_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "LIE_POOL"
+exclude_from = ["gg"]
+
+[template.slots.alpha]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[[template]]
+name = "killing_form"
+latex = '\kappa(X, Y) = \operatorname{{tr}}\!\left(\operatorname{{ad}} X \circ \operatorname{{ad}} Y\right), \quad X, Y \in {gg}'
+
+[template.slots.gg]
+type = "S"
+pool = "LIE_POOL"
+
+[[template]]
+name = "casimir_element"
+latex = '\Omega \cdot v = c_{{{ll}}} \cdot v \quad \forall v \in {VV}_{{{ll}}} \text{{ (Casimir on irreducible)}}'
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B6: Symmetric Group & Young Tableaux (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "hook_length_formula"
+latex = '\dim S^{{{ll}}} = \frac{{n!}}{{\prod{lim_mod}_{{(i,j) \in {ll}}} h(i,j)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[[template]]
+name = "young_symmetrizer"
+latex = 'c_{{{ll}}} = a_{{{ll}}} \cdot b_{{{ll}}} \in \mathbb{{C}}[S_n]'
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[[template]]
+name = "plancherel_measure"
+latex = '\mathbb{{P}}(\lambda = {ll}) = \frac{{(\dim S^{{{ll}}})^2}}{{n!}}'
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[[template]]
+name = "murnaghan_nakayama"
+latex = '\chi^{{{ll}}}({gg}) = \sum_T (-1)^{{\operatorname{{ht}}(T)}} \chi^{{{mm}}}(\tilde{{{gg}}}), \quad \text{{rim-hook tableaux}}'
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "WEIGHT_POOL"
+exclude_from = ["ll"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "specht_module"
+latex = 'S^{{{ll}}} = \mathbb{{C}}[S_n] \cdot e_T, \quad T \text{{ standard of shape }} {ll}'
+
+[template.slots.ll]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[[template]]
+name = "littlewood_richardson"
+latex = 'c^{{{nu}}}_{{{ll},{mm}}} = \#\text{{LR-tableaux of shape }} {nu}/{ll} \text{{ and content }} {mm}'
+
+[template.slots.nu]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.ll]
+type = "X"
+pool = "WEIGHT_POOL"
+exclude_from = ["nu"]
+
+[template.slots.mm]
+type = "X"
+pool = "WEIGHT_POOL"
+exclude_from = ["nu", "ll"]
+
+# ---------------------------------------------------------------------------
+# Part B7: Representation-Theoretic Identities (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "rep_ring_sum"
+latex = '[{rr}] + [{ss}] = [{rr} \oplus {ss}] \in R({GG})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "rep_ring_product_rule"
+latex = '[{rr}] \cdot [{ss}] = [{rr} \otimes {ss}] \in R({GG})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "adams_operation"
+latex = '\psi^{{{kk}}}(\chi_{{{rr}}})({gg}) = \chi_{{{rr}}}({gg}^{{{kk}}})'
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "regular_representation"
+latex = '\mathbb{{C}}[{GG}] \cong \bigoplus_i {rr}_i^{{\oplus \dim {rr}_i}}'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[[template]]
+name = "character_value_conjugacy"
+latex = '{gg} \sim {hh} \text{{ in }} {GG} \Rightarrow \chi_{{{rr}}}({gg}) = \chi_{{{rr}}}({hh})'
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]
+
+[[template]]
+name = "group_algebra_iso"
+latex = '{ff}[{GG}] \cong \bigoplus_i M_{{n_i}}({ff}), \quad \sum_i n_i^2 = |{GG}|'
+
+[template.slots.ff]
+type = "S"
+pool = "FIELD_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff function-pair templates (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "character_fn_sum"
+latex = '\frac{{1}}{{|{GG}|}} \sum{lim_mod}_{{{gg} \in {GG}}} {fn1}({gg}) \cdot \overline{{{fn2}({gg})}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "trace_fn_pair"
+latex = '\operatorname{{tr}}\!\left({fn1}({gg}) \cdot {fn2}({hh})\right) = \sum_i {fn1}({gg})_{{ii}} \cdot {fn2}({hh})_{{ii}}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]
+
+[[template]]
+name = "weight_fn_module"
+latex = '{fn1}({hh}) \cdot {fn2}(v) = {ww}({hh}) \cdot {fn2}(v) \text{{ in weight space }} {VV}_{{{ww}}}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.ww]
+type = "S"
+pool = "WEIGHT_POOL"
+
+[template.slots.VV]
+type = "S"
+pool = "MODULE_POOL"
+
+[template.slots.hh]
+type = "S"
+pool = "ELEM_POOL"
+
+[[template]]
+name = "fn_triple_rep"
+latex = '{fn1}({gg} \cdot {hh}) = {fn2}({gg}) \cdot {fn3}({hh})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]
+
+[[template]]
+name = "rep_fn_equivariance"
+latex = '{fn1}({gg} \cdot x) = {rr}({gg}) \cdot {fn1}(x) \quad \forall {gg} \in {GG}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+[[template]]
+name = "matrix_coeff_fn"
+latex = '{fn1}({gg})_{{ij}} = \langle {fn1}({gg})\, e_j,\, e_i \rangle'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.GG]
+type = "S"
+pool = "GROUP_POOL"
+
+# ---------------------------------------------------------------------------
+# Part D: Assembly extras (4)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "rep_isomorphism_simeq"
+latex = '{rr} \simeq {ss} \iff \exists\text{{ invertible intertwiner }} {phi}: {rr} \xrightarrow{{\sim}} {ss}'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.phi]
+type = "S"
+pool = "HOMO_POOL"
+
+[[template]]
+name = "character_determines_rep"
+latex = '\chi_{{{rr}}} = \chi_{{{ss}}} \implies {rr} \simeq {ss}'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[[template]]
+name = "external_tensor_product"
+latex = '({rr} \boxtimes {ss})({gg},\,{hh}) = {rr}({gg}) \otimes {ss}({hh})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]
+
+[[template]]
+name = "boxtimes_character"
+latex = '\chi_{{{rr} \boxtimes {ss}}}({gg},\,{hh}) = \chi_{{{rr}}}({gg})\,\chi_{{{ss}}}({hh})'
+
+[template.slots.rr]
+type = "S"
+pool = "REP_POOL"
+
+[template.slots.ss]
+type = "X"
+pool = "REP_POOL"
+exclude_from = ["rr"]
+
+[template.slots.gg]
+type = "S"
+pool = "ELEM_POOL"
+
+[template.slots.hh]
+type = "X"
+pool = "ELEM_POOL"
+exclude_from = ["gg"]

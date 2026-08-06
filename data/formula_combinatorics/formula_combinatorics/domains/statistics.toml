@@ -1,0 +1,1186 @@
+[meta]
+domain = "statistics"
+
+[[pool]]
+name = "EXP_OP"
+values = ["E",'\mathbb{E}','\mathrm{E}','\mathbf{E}','\hat{E}','\tilde{E}']
+
+[[pool]]
+name = "LAM_POOL"
+values = ['\lambda','\mu','\nu','\alpha','\beta']
+
+[[pool]]
+name = "MU_POOL"
+values = ['\mu','\mu_0','\nu',"m"]
+
+[[pool]]
+name = "PROB_OP"
+values = ["P",'\mathbb{P}','\Pr','\mathbf{P}','\hat{P}','\tilde{P}']
+
+[[pool]]
+name = "RV_POOL"
+values = ["X","Y","Z","W","U","V"]
+
+[[pool]]
+name = "SIG_POOL"
+values = ['\sigma','\sigma_0','\tau','\eta']
+
+[[pool]]
+name = "N_POOL"
+values = ["n","m","N","M"]
+
+[[pool]]
+name = "PARAM_POOL"
+values = ['\theta','\mu','\sigma','\lambda','\beta','\alpha','\eta','\phi']
+
+[[pool]]
+name = "K_POOL"
+values = ["k","p","q","r"]
+
+[[pool]]
+name = "TIME_POOL"
+values = ["t","s","T",'t_0','t_1']
+
+[[pool]]
+name = "MM_POOL"
+values = ["m","M",'\ell',"K"]
+
+[[pool]]
+name = "RESP_POOL"
+values = ["y","z","w",'\mathbf{y}','\mathbf{z}']
+
+[[pool]]
+name = "COEFF_VEC_POOL"
+values = ['\beta','\theta','\gamma','\alpha']
+
+[[pool]]
+name = "P_POOL"
+values = ["p","q",'\pi','\rho']
+
+# --- Part A: Descriptive Statistics (8) ---
+
+[[template]]
+name = "sample_mean"
+latex = '\bar{{{rv}}}_{{{nn}}} = \frac{{1}}{{{nn}}}\sum{lim_mod}_{{i=1}}^{{{nn}}} {rv}_i'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_variance"
+latex = 's^2 = \frac{{1}}{{{nn}-1}}\sum{lim_mod}_{{i=1}}^{{{nn}}}({rv}_i - \bar{{{rv}}})^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_std_dev"
+latex = 's = \sqrt{{\frac{{1}}{{{nn}-1}}\sum{lim_mod}_{{i=1}}^{{{nn}}}({rv}_i - \bar{{{rv}}})^2}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_covariance"
+latex = 's_{{{rv1}{rv2}}} = \frac{{1}}{{{nn}-1}}\sum{lim_mod}_{{i=1}}^{{{nn}}}({rv1}_i - \bar{{{rv1}}})({rv2}_i - \bar{{{rv2}}})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_correlation"
+latex = 'r = \frac{{s_{{{rv1}{rv2}}}}}{{s_{{{rv1}}}\,s_{{{rv2}}}}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "empirical_cdf"
+latex = '\hat{{F}}_{{{nn}}}(x) = \frac{{1}}{{{nn}}}\sum{lim_mod}_{{i=1}}^{{{nn}}} \mathbf{{1}}[{rv}_i \leq x]'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_quantile"
+latex = '\hat{{Q}}({pp}) = {rv}_{{(\lceil {nn}\,{pp} \rceil)}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "sample_range"
+latex = 'R = {rv}_{{({nn})}} - {rv}_{{(1)}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B1: Estimation Theory (8) ---
+
+[[template]]
+name = "mle_argmax"
+latex = '\hat{{{lam}}} = \operatorname{{arg\,max}}_{{{lam}}} \mathcal{{L}}({lam})'
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "score_function"
+latex = 's({lam}) = \frac{{\partial}}{{\partial {lam}}} \log \mathcal{{L}}({lam})'
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "fisher_information"
+latex = 'I({lam}) = {op}\!\left[\left(\frac{{\partial}}{{\partial {lam}}} \log f(x;\,{lam})\right)^{{\!2}}\right]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "cramer_rao"
+latex = '\operatorname{{Var}}(\hat{{{lam}}}) \geq \dfrac{{1}}{{I({lam})}}'
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "delta_method"
+latex = '''\sqrt{{{nn}}}\,\bigl({fn}(\bar{{{rv}}}_n) - {fn}({mu})\bigr) \xrightarrow{{d}} \mathcal{{N}}\!\left(0,\,{fn}'({mu})^2\,{sig}^2\right)'''
+
+[template.slots.fn]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "bias_estimator"
+latex = '\mathrm{{Bias}}(\hat{{{par}}}) = {op}[\hat{{{par}}}] - {par}'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "mse_decomp"
+latex = '\mathrm{{MSE}}(\hat{{{par}}}) = \mathrm{{Bias}}(\hat{{{par}}})^2 + \operatorname{{Var}}(\hat{{{par}}})'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "asymptotic_normality"
+latex = '\sqrt{{{nn}}}(\hat{{{par}}}_{{{nn}}} - {par}) \xrightarrow{{d}} \mathcal{{N}}(0,\,V({par}))'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B2: Sufficient Statistics & Exponential Families (5) ---
+
+[[template]]
+name = "log_likelihood_sum"
+latex = '\ell({fn1}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} \log {fn2}(x_i \mid {fn1})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "rao_blackwell"
+latex = '{op}\!\left[\bigl({fn1}({rv1}) - {fn2}({rv2})\bigr)^2\right] \geq {op}\!\left[\bigl(\hat{{\theta}} - {fn2}({rv2})\bigr)^2\right]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "sufficient_stat_factorization"
+latex = 'f(\mathbf{{x}} \mid {par}) = g(T(\mathbf{{x}}),\,{par})\,h(\mathbf{{x}})'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "exponential_family"
+latex = 'f(x \mid {par}) = h(x)\exp\!\bigl(\eta({par})\,T(x) - A({par})\bigr)'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "complete_statistic"
+latex = '{op}_{{par}}[g(T)] = 0\;\forall\,{par} \;\Longrightarrow\; g(T) = 0 \;\text{{a.s.}}'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B3: Hypothesis Testing (10) ---
+
+[[template]]
+name = "z_test_statistic"
+latex = 'Z = \frac{{\bar{{{rv}}} - {mu}}}{{{sig}/\sqrt{{{nn}}}}} \sim \mathcal{{N}}(0,1)'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "one_sample_t_test"
+latex = 'T = \frac{{\bar{{{rv}}} - {mu}}}{{s/\sqrt{{{nn}}}}} \sim t_{{{nn}-1}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "two_sample_t_test"
+latex = 'T = \frac{{\bar{{{rv1}}} - \bar{{{rv2}}}}}{{s_p\sqrt{{1/{nn1}+1/{nn2}}}}},\quad s_p^2 = \frac{{({nn1}-1)s_{{{rv1}}}^2+({nn2}-1)s_{{{rv2}}}^2}}{{{nn1}+{nn2}-2}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[template.slots.nn1]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.nn2]
+type = "X"
+pool = "N_POOL"
+exclude_from = ["nn1"]
+
+[[template]]
+name = "pooled_variance"
+latex = 's_p^2 = \frac{{({nn1}-1)s_{{{rv1}}}^2+({nn2}-1)s_{{{rv2}}}^2}}{{{nn1}+{nn2}-2}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[template.slots.nn1]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.nn2]
+type = "X"
+pool = "N_POOL"
+exclude_from = ["nn1"]
+
+[[template]]
+name = "chi_squared_gof"
+latex = '\chi^2 = \sum{lim_mod}_{{i=1}}^{{{kk}}} \frac{{(O_i - E_i)^2}}{{E_i}} \sim \chi^2_{{{kk}-1}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[[template]]
+name = "f_statistic"
+latex = 'F = \frac{{s_{{{rv1}}}^2}}{{s_{{{rv2}}}^2}} \sim F_{{{nn1}-1,\,{nn2}-1}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[template.slots.nn1]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.nn2]
+type = "X"
+pool = "N_POOL"
+exclude_from = ["nn1"]
+
+[[template]]
+name = "likelihood_ratio_test"
+latex = '\Lambda = -2\log\frac{{L(\hat{{{par}}}_0)}}{{L(\hat{{{par}}})}} \xrightarrow{{d}} \chi^2_{{{kk}}}'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[[template]]
+name = "neyman_pearson_lemma"
+latex = '\frac{{f(\mathbf{{x}} \mid {par1})}}{{f(\mathbf{{x}} \mid {par2})}} \gtrless c'
+
+[template.slots.par1]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.par2]
+type = "X"
+pool = "PARAM_POOL"
+exclude_from = ["par1"]
+
+[[template]]
+name = "p_value_def"
+latex = 'p = {op}(T \geq t_{{\mathrm{{obs}}}} \mid H_0)'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[[template]]
+name = "power_function"
+latex = '\beta({par}) = P(\text{{reject }}\,H_0 \mid {par})'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B4: Confidence Intervals (6) ---
+
+[[template]]
+name = "sample_mean_normal_approx"
+latex = '\bar{{{rv}}}_{{{nn}}} \approx \mathcal{{N}}\!\left({mu},\,\frac{{{sig}^2}}{{{nn}}}\right)'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "ci_known_variance"
+latex = '\bar{{{rv}}} \pm z_{{\alpha/2}}\,\frac{{{sig}}}{{\sqrt{{{nn}}}}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "ci_unknown_variance"
+latex = '\bar{{{rv}}} \pm t_{{{nn}-1,\,\alpha/2}}\,\frac{{s}}{{\sqrt{{{nn}}}}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "ci_proportion"
+latex = '\hat{{p}} \pm z_{{\alpha/2}}\sqrt{{\frac{{\hat{{p}}(1-\hat{{p}})}}{{{nn}}}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "ci_coverage"
+latex = 'P\!\left(\hat{{{par}}}_L \leq {par} \leq \hat{{{par}}}_U\right) = 1 - \alpha'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "chi_squared_variance_ci"
+latex = '\left[\frac{{({nn}-1)s^2}}{{\chi^2_{{{nn}-1,\,\alpha/2}}}},\;\frac{{({nn}-1)s^2}}{{\chi^2_{{{nn}-1,\,1-\alpha/2}}}}\right]'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B5: Linear Regression (8) ---
+
+[[template]]
+name = "ols_normal_equations"
+latex = '\hat{{{coeff}}} = (X^\top X)^{{-1}}X^\top {resp}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[[template]]
+name = "fitted_values"
+latex = '\hat{{{resp}}} = X\hat{{{coeff}}} = H\,{resp}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[[template]]
+name = "hat_matrix"
+latex = 'H = X(X^\top X)^{{-1}}X^\top,\quad H^2 = H,\quad H^\top = H'
+
+[[template]]
+name = "rss_formula"
+latex = '\mathrm{{RSS}} = \|{resp} - X\hat{{{coeff}}}\|^2 = {resp}^\top(I - H){resp}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[[template]]
+name = "r_squared"
+latex = 'R^2 = 1 - \frac{{\|{resp} - X\hat{{{coeff}}}\|^2}}{{\|{resp} - \bar{{{resp}}}\,\mathbf{{1}}\|^2}}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[[template]]
+name = "regression_variance_est"
+latex = '\hat{{\sigma}}^2 = \frac{{\mathrm{{RSS}}}}{{{nn}-{kk}}} = \frac{{\|{resp} - X\hat{{{coeff}}}\|^2}}{{{nn}-{kk}}}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[[template]]
+name = "simple_regression_slope"
+latex = '\hat{{{coeff}}}_1 = \frac{{\sum_{{i=1}}^{{{nn}}}(x_i - \bar{{x}})({resp}_i - \bar{{{resp}}})}}{{\sum_{{i=1}}^{{{nn}}}(x_i - \bar{{x}})^2}}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "gauss_markov"
+latex = '\operatorname{{Var}}(\tilde{{{coeff}}}) \geq \operatorname{{Var}}(\hat{{{coeff}}}_\mathrm{{OLS}})\quad \forall\,\tilde{{{coeff}}}\text{{ linear unbiased}}'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+# --- Part B6: ANOVA (4) ---
+
+[[template]]
+name = "anova_decomp"
+latex = 'SS_T = SS_B + SS_W,\quad df_B = {kk}-1,\quad df_W = {nn}-{kk}'
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "anova_f_ratio"
+latex = 'F = \frac{{SS_B/({kk}-1)}}{{SS_W/({nn}-{kk})}} \sim F_{{{kk}-1,\,{nn}-{kk}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "anova_between"
+latex = 'SS_B = \sum{lim_mod}_{{i=1}}^{{{kk}}} {nn}_i(\bar{{X}}_{{i\cdot}} - \bar{{X}}_{{\cdot\cdot}})^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "anova_within"
+latex = 'SS_W = \sum_{{i=1}}^{{{kk}}}\sum_{{j=1}}^{{{nn}_i}}(X_{{ij}} - \bar{{X}}_{{i\cdot}})^2'
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B7: Bayesian Statistics (8) ---
+
+[[template]]
+name = "bayes_posterior"
+latex = 'p({lam} \mid \mathbf{{x}}) \propto p(\mathbf{{x}} \mid {lam})\,p({lam})'
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "map_estimator"
+latex = '\hat{{{par}}}_\mathrm{{MAP}} = \operatorname{{arg\,max}}_{{{par}}} p({par} \mid \mathbf{{x}})'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "posterior_mean"
+latex = '{op}[{par} \mid \mathbf{{x}}] = \int {par}\, p({par} \mid \mathbf{{x}})\, d{par}'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "credible_interval"
+latex = 'P\!\left({par} \in C \mid \mathbf{{x}}\right) = 1 - \alpha'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "posterior_predictive"
+latex = 'p(\tilde{{{rv}}} \mid \mathbf{{x}}) = \int p(\tilde{{{rv}}} \mid {par})\,p({par} \mid \mathbf{{x}})\, d{par}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "marginal_likelihood"
+latex = 'p(\mathbf{{x}}) = \int p(\mathbf{{x}} \mid {par})\,p({par})\, d{par}'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "jeffreys_prior"
+latex = 'p({par}) \propto \sqrt{{I({par})}}'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "conjugate_update_beta"
+latex = '\mathrm{{Beta}}({al},\,{bt}) \xrightarrow{{\text{{update}}}} \mathrm{{Beta}}({al}+{kk},\,{bt}+{nn}-{kk})'
+
+[template.slots.al]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.bt]
+type = "X"
+pool = "LAM_POOL"
+exclude_from = ["al"]
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B8: Nonparametric Statistics (6) ---
+
+[[template]]
+name = "ks_statistic"
+latex = 'D_{{{nn}}} = \sup_x \lvert \hat{{F}}_{{{nn}}}(x) - F(x) \rvert'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "glivenko_cantelli"
+latex = '\sup_x \lvert \hat{{F}}_{{{nn}}}(x) - F(x) \rvert \xrightarrow{{\mathrm{{a.s.}}}} 0'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "spearman_correlation"
+latex = 'r_s = 1 - \frac{{6\sum{lim_mod}_{{i=1}}^{{{nn}}} d_i^2}}{{{nn}({nn}^2-1)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "wilcoxon_signed_rank"
+latex = 'W^+ = \sum{lim_mod}_{{i=1}}^{{{nn}}} R_i\,\mathbf{{1}}[{rv}_i > {mu}]'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "mann_whitney_u"
+latex = 'U = \sum_{{i=1}}^{{{nn1}}}\sum_{{j=1}}^{{{nn2}}} \mathbf{{1}}[{rv1}_i > {rv2}_j]'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[template.slots.nn1]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.nn2]
+type = "X"
+pool = "N_POOL"
+exclude_from = ["nn1"]
+
+[[template]]
+name = "sign_test_statistic"
+latex = 'B = \sum{lim_mod}_{{i=1}}^{{{nn}}} \mathbf{{1}}[{rv}_i > {mu}] \sim \mathrm{{Bin}}\!\left({nn},\tfrac{{1}}{{2}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B9: Order Statistics (4) ---
+
+[[template]]
+name = "order_stat_pdf"
+latex = 'f_{{{rv}_{{({kk})}}}}(x) = \frac{{{nn}!}}{{({kk}-1)!\,({nn}-{kk})!}}[F(x)]^{{{kk}-1}}\,[1-F(x)]^{{{nn}-{kk}}}\,f(x)'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "min_cdf"
+latex = 'F_{{{rv}_{{(1)}}}}(x) = 1 - [1-F(x)]^{{{nn}}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "max_cdf"
+latex = 'F_{{{rv}_{{({nn})}}}}(x) = [F(x)]^{{{nn}}}'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "sample_median_approx"
+latex = '\tilde{{{rv}}} \approx \mathcal{{N}}\!\left({mu},\,\frac{{\pi\,{sig}^2}}{{2\,{nn}}}\right)\quad ({nn} \text{{ large}})'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# --- Part B10: Multiple Testing (3) ---
+
+[[template]]
+name = "bonferroni_correction"
+latex = '\alpha_i \leq \frac{{\alpha}}{{{mm}}}'
+
+[template.slots.mm]
+type = "S"
+pool = "MM_POOL"
+
+[[template]]
+name = "fdr_bh_threshold"
+latex = 'p_{{({kk})}} \leq \frac{{{kk}\,\alpha}}{{{mm}}}\quad \text{{(Benjamini--Hochberg)}}'
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MM_POOL"
+
+[[template]]
+name = "fwer_definition"
+latex = '\mathrm{{FWER}} = P\!\left(\bigcup_{{i \in \mathcal{{H}}_0}} \{{\text{{reject }}{par}_i\}}\right)'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B11: Survival Analysis (5) ---
+
+[[template]]
+name = "survival_function"
+latex = 'S({tt}) = P({rv} > {tt}) = 1 - F({tt})'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "hazard_function"
+latex = 'h({tt}) = \frac{{f({tt})}}{{S({tt})}}'
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "cumulative_hazard"
+latex = 'H({tt}) = -\log S({tt}) = \int_0^{{{tt}}} h(s)\, ds'
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "hazard_survival_link"
+latex = 'S({tt}) = \exp(-H({tt}))'
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "kaplan_meier"
+latex = '\hat{{S}}({tt}) = \prod_{{t_i \leq {tt}}}\!\left(1 - \frac{{d_i}}{{n_i}}\right)'
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# --- Part C: function-pair templates (6) ---
+
+[[template]]
+name = "fn_likelihood_ratio"
+latex = '{fn1}\!\left(-2\log\frac{{L(\hat{{{par}}}_0)}}{{L(\hat{{{par}}})}}\right) = {fn2}(\Lambda)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "fn_posterior_transform"
+latex = '{fn1}\!\left(\int {par}\,p({par} \mid \mathbf{{x}})\,d{par}\right) = {fn2}\!\left({op}[{par} \mid \mathbf{{x}}]\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "fn_ols_estimator"
+latex = '{fn1}(\hat{{{coeff}}}) = {fn2}\!\left((X^\top X)^{{-1}}X^\top {resp}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_VEC_POOL"
+
+[template.slots.resp]
+type = "S"
+pool = "RESP_POOL"
+
+[[template]]
+name = "fn_test_statistic"
+latex = '{fn1}\!\left(\frac{{\bar{{{rv}}} - {mu}}}{{s/\sqrt{{{nn}}}}}\right) = {fn2}(t_{{{nn}-1}})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "fn_sufficient_stat"
+latex = '{fn1}(f(\mathbf{{x}} \mid {par})) = {fn2}(g(T(\mathbf{{x}}),\,{par})\,h(\mathbf{{x}}))'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "fn_survival_hazard"
+latex = '{fn1}(S({tt})) = {fn2}\!\left(\exp\!\left(-\int_0^{{{tt}}} h(s)\,ds\right)\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"

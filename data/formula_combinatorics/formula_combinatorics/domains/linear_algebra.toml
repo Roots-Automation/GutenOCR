@@ -1,0 +1,679 @@
+[meta]
+name        = "linear_algebra"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Linear algebra domain — matrices, norms, eigenvalues, decompositions"
+
+# ---------------------------------------------------------------------------
+# Pool definitions
+# ---------------------------------------------------------------------------
+
+# _MATRIX_NAMES from _vocab.py
+[[pool]]
+name   = "MATRIX_NAMES"
+values = ["A", "B", "M", "P", "Q", "R"]
+
+# _STATS_N from _vocab.py
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "N", "M"]
+
+[[pool]]
+name   = "P_NORM_POOL"
+values = ["1", "2", '\infty', "F"]
+
+[[pool]]
+name   = "VEC_LVERT_POOL"
+values = ['\mathbf{u}', '\mathbf{v}', '\mathbf{x}', "u", "v", "x", '\mathbf{w}']
+
+[[pool]]
+name   = "MAT_LVERT_POOL"
+values = ["A", "B", "M", "T", "U", "H"]
+
+[[pool]]
+name   = "P_LVERT_POOL"
+values = ["2", "p", '\infty', "1"]
+
+[[pool]]
+name   = "LIM_MOD"
+values = ["", '\limits']
+
+[[pool]]
+name   = "VEC_POOL"
+values = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+
+[[pool]]
+name   = "MAT_POOL"
+values = ['A', 'B', 'C', 'M', 'T', 'U']
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
+# ---------------------------------------------------------------------------
+# Main templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "pmatrix_2x2"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_pmatrix"
+n    = 50.0
+
+[[template]]
+name  = "vmatrix_det_3x3"
+latex = '\det {mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_vmatrix"
+n    = 200.0
+
+[[template]]
+name  = "determinant_expansion_2x2"
+latex = '\begin{{equation*}}\begin{{vmatrix}} {e0} & {e1} \\ {e2} & {e3} \end{{vmatrix}} = {e0} {e3} - {e1} {e2}\end{{equation*}}'
+[template.slots.e0]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e1]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e2]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e3]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+
+[[template]]
+name  = "eigenvalue_equation"
+latex = '{m} \mathbf{{v}} = \lambda \mathbf{{v}}'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+
+[[template]]
+name  = "characteristic_polynomial"
+latex = '\det\!\left({m} - \lambda I\right) = 0'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+
+[[template]]
+name  = "inverse_product"
+latex = '(AB)^{{-1}} = B^{{-1}} A^{{-1}}'
+
+[[template]]
+name  = "dot_product"
+latex = '\mathbf{{u}} \cdot \mathbf{{v}} = \sum{lim_mod}_{{i=1}}^{{{n}}} u_i v_i'
+[template.slots.lim_mod]
+type = "S"
+pool = "LIM_MOD"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "cross_product"
+latex = '\mathbf{{u}} \times \mathbf{{v}} = \begin{{vmatrix}} \mathbf{{i}} & \mathbf{{j}} & \mathbf{{k}} \\ u_1 & u_2 & u_3 \\ v_1 & v_2 & v_3 \end{{vmatrix}}'
+
+[[template]]
+name  = "matrix_norm_triangle"
+latex = '\|{m} + {m2}\|_{{{p}}} \leq \|{m}\|_{{{p}}} + \|{m2}\|_{{{p}}}'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.m2]
+type = "X"
+pool = "MATRIX_NAMES"
+exclude_from = ["m"]
+[template.slots.p]
+type = "S"
+pool = "P_NORM_POOL"
+
+[[template]]
+name  = "trace_det_eigenvalues"
+latex = '\operatorname{{tr}}({m}) = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i, \quad \det({m}) = \prod{lim_mod}_{{i=1}}^{{{n}}} \lambda_i'
+[template.slots.lim_mod]
+type = "S"
+pool = "LIM_MOD"
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "svd"
+latex = '{m} = U \Sigma V^\top'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+
+[[template]]
+name  = "operator_norm_bound"
+latex = '\|{m} \mathbf{{x}}\|_2 \leq \|{m}\|_2 \|\mathbf{{x}}\|_2'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+
+[[template]]
+name  = "dot_product_2d"
+latex = '\begin{{equation*}}\begin{{pmatrix}} {e0} \\ {e1} \end{{pmatrix}} \cdot \begin{{pmatrix}} {e2} \\ {e3} \end{{pmatrix}} = {e0} {e2} + {e1} {e3}\end{{equation*}}'
+[template.slots.e0]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e1]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e2]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+[template.slots.e3]
+type = "E"
+gen  = "_atom"
+n    = 4.0
+
+[[template]]
+name  = "bmatrix_2x2"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_bmatrix"
+n    = 50.0
+
+[[template]]
+name  = "rank_nullity"
+latex = '\operatorname{{rank}}({m}) + \operatorname{{null}}({m}) = {n}'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "qr_decomposition"
+latex = '{m} = QR'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+
+[[template]]
+name  = "orthogonal_projection"
+latex = 'P_{{V}} \mathbf{{x}} = \frac{{\mathbf{{v}} \cdot \mathbf{{x}}}}{{\mathbf{{v}} \cdot \mathbf{{v}}}} \mathbf{{v}}'
+
+[[template]]
+name  = "spectral_decomposition"
+latex = '{m} = \sum{lim_mod}_{{i=1}}^{{{n}}} \lambda_i \mathbf{{u}}_i \mathbf{{u}}_i^\top'
+[template.slots.lim_mod]
+type = "S"
+pool = "LIM_MOD"
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Part PERP — orthogonal complements
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "orthogonal_complement_def"
+latex = '{m}^\perp = \{{\mathbf{{v}} \in \mathbb{{R}}^{{{n}}} \mid \mathbf{{v}} \cdot \mathbf{{u}} = 0 \;\forall\,\mathbf{{u}} \in {m}\}}'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "orthogonal_vectors_iff"
+latex = '\mathbf{{u}} \perp \mathbf{{v}} \iff \mathbf{{u}} \cdot \mathbf{{v}} = 0'
+
+[[template]]
+name  = "gram_schmidt_orthogonality"
+latex = '\mathbf{{e}}_i \perp \mathbf{{e}}_j \;\forall\; i \neq j \quad \text{{(Gram--Schmidt output)}}'
+
+[[template]]
+name  = "orthogonal_direct_sum"
+latex = '\mathbb{{R}}^{{{n}}} = {m} \oplus {m}^\perp'
+[template.slots.m]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Part ARROWS — linear maps and morphisms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "linear_map_rightarrow"
+latex = 'T: \mathbb{{R}}^{{{m}}} \rightarrow \mathbb{{R}}^{{{n}}}'
+[template.slots.m]
+type = "S"
+pool = "N_POOL"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "matrix_action_mapsto"
+latex = '{mm}: \mathbf{{v}} \mapsto {mm}\mathbf{{v}}, \quad {mm} \in \mathbb{{R}}^{{{n} \times {n}}}'
+[template.slots.mm]
+type = "S"
+pool = "MATRIX_NAMES"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "dual_map_longmapsto"
+latex = 'T^*: \phi \longmapsto \phi \circ T, \quad \phi \in V^*'
+
+# ---------------------------------------------------------------------------
+# Part MATRIX_ENVS — varied matrix environments
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bmatrix_curly_2x2"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_Bmatrix"
+n    = 50.0
+
+[[template]]
+name  = "bmatrix_curly_3x3"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_Bmatrix"
+n    = 200.0
+
+[[template]]
+name  = "vmatrix_double_2x2"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_Vmatrix"
+n    = 50.0
+
+[[template]]
+name  = "vmatrix_double_det_3x3"
+latex = '\det {mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_Vmatrix"
+n    = 200.0
+
+[[template]]
+name  = "matrix_plain_2x2"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_matrix"
+n    = 50.0
+
+[[template]]
+name  = "matrix_plain_3x3"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_matrix"
+n    = 200.0
+
+[[template]]
+name  = "matrix_ceil_2x2"
+latex = '\left\lceil {mat} \right\rceil'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_matrix"
+n    = 50.0
+
+[[template]]
+name  = "matrix_angle_2x2"
+latex = '\left\langle {mat} \right\rangle'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_matrix"
+n    = 50.0
+
+[[template]]
+name  = "matrix_bra_form_2x2"
+latex = '\left\langle {mat} \right\rvert'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_2x2_matrix"
+n    = 50.0
+
+[[template]]
+name  = "smallmatrix_inline_2x2"
+latex = '{sm}'
+[template.slots.sm]
+type = "E"
+gen  = "smallmatrix_2x2"
+n    = 200.0
+
+[[template]]
+name  = "smallmatrix_inline_3x2"
+latex = '{sm}'
+[template.slots.sm]
+type = "E"
+gen  = "smallmatrix_3x2"
+n    = 300.0
+
+[[template]]
+name  = "pmatrix_3x3"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_pmatrix"
+n    = 200.0
+
+[[template]]
+name  = "bmatrix_3x3"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x3_bmatrix"
+n    = 200.0
+
+[[template]]
+name  = "pmatrix_4x4"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_4x4_pmatrix"
+n    = 1000.0
+
+[[template]]
+name  = "bmatrix_col_vector_3x1"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_3x1_bmatrix"
+n    = 15.0
+
+[[template]]
+name  = "bmatrix_row_vector_1x3"
+latex = '\begin{{equation*}}{mat}\end{{equation*}}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_env_1x3_bmatrix"
+n    = 15.0
+
+# ---------------------------------------------------------------------------
+# Part ELLIPSIS_MATRICES — matrices with ellipsis notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "matrix_corner_pmatrix"
+latex = '{mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_ellipsis_pmatrix"
+n    = 8.0
+
+[[template]]
+name  = "matrix_corner_bmatrix"
+latex = '{mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_ellipsis_bmatrix"
+n    = 8.0
+
+[[template]]
+name  = "matrix_corner_vmatrix"
+latex = '{mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_ellipsis_vmatrix"
+n    = 8.0
+
+[[template]]
+name  = "matrix_ellipsis_det"
+latex = '\det{mat}'
+[template.slots.mat]
+type = "E"
+gen  = "matrix_ellipsis_vmatrix"
+n    = 8.0
+
+# ---------------------------------------------------------------------------
+# Part LVERT_NORMS — double-bar norm templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "norm_normalization"
+latex = '\lVert {vv} \rVert = 1'
+[template.slots.vv]
+type = "S"
+pool = "VEC_LVERT_POOL"
+
+[[template]]
+name  = "norm_operator_def"
+latex = '\lVert {AA} \rVert_{{\mathrm{{op}}}} = \sup_{{\lVert {vv} \rVert = 1}} \lVert {AA}\,{vv} \rVert'
+[template.slots.AA]
+type = "S"
+pool = "MAT_LVERT_POOL"
+[template.slots.vv]
+type = "S"
+pool = "VEC_LVERT_POOL"
+
+[[template]]
+name  = "norm_lp"
+latex = '\lVert f \rVert_{{L^{{{pp}}}}} = \Bigl(\int \lvert f \rvert^{{{pp}}}\,d\mu\Bigr)^{{1/{pp}}}'
+[template.slots.pp]
+type = "S"
+pool = "P_LVERT_POOL"
+
+[[template]]
+name  = "norm_triangle_inequality"
+latex = '\lVert {uu} + {vv} \rVert \leq \lVert {uu} \rVert + \lVert {vv} \rVert'
+[template.slots.uu]
+type = "S"
+pool = "VEC_LVERT_POOL"
+[template.slots.vv]
+type = "X"
+pool = "VEC_LVERT_POOL"
+exclude_from = ["uu"]
+
+[[template]]
+name  = "norm_submultiplicative"
+latex = '\lVert {AA}\,{BB} \rVert \leq \lVert {AA} \rVert\,\lVert {BB} \rVert'
+[template.slots.AA]
+type = "S"
+pool = "MAT_LVERT_POOL"
+[template.slots.BB]
+type = "X"
+pool = "MAT_LVERT_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name  = "norm_spectral_radius_bound"
+latex = '\rho({AA}) \leq \lVert {AA} \rVert'
+[template.slots.AA]
+type = "S"
+pool = "MAT_LVERT_POOL"
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz and triangle inequality (inner-product / norm forms)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_vector"
+latex = '\left|\langle \mathbf{{{u1}}}, \, \mathbf{{{u2}}} \rangle\right|^2 \leq \left\|\mathbf{{{u1}}}\right\|^2 \left\|\mathbf{{{u2}}}\right\|^2'
+
+[template.slots.u1]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.slots.u2]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u1"]
+idx  = 0.35
+
+[[template]]
+name  = "triangle_inequality_norm"
+latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
+
+[template.slots.u]
+type = "S"
+pool = "VEC_POOL"
+idx  = 0.35
+
+[template.slots.v]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["u"]
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Adjoint / dagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "adjoint_involutive"
+latex = '({AA}^{{\dagger}})^{{\dagger}} = {AA}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_anti_multiplicative"
+latex    = '({AA} {BB})^{{\dagger}} = {BB}^{{\dagger}} {AA}^{{\dagger}}'
+distinct = [["AA", "BB"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.BB]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "adjoint_inner_product"
+latex    = '\langle {AA} {uu}, {vv} \rangle = \langle {uu}, {AA}^{{\dagger}} {vv} \rangle'
+distinct = [["uu", "vv"]]
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[template.slots.uu]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Bidual / ddagger
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bidual_notation"
+latex = '{AA}^{{\ddagger}} = ({AA}^{{\dagger}})^{{\dagger}}'
+
+[template.slots.AA]
+type = "S"
+pool = "MAT_POOL"
+
+[[template]]
+name     = "bidual_canonical_embedding"
+latex    = '\iota : V \hookrightarrow V^{{\ddagger}},\quad \iota({vv})({ff}) = {ff}({vv})'
+distinct = [["vv", "ff"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "S"
+pool = ['f', 'g', 'h', 'F', 'G']
+
+[[template]]
+name     = "norm_leqslant_bound"
+latex    = '\|{vv}\| \leqslant {aa} \|{ww}\|'
+distinct = [["vv", "ww"]]
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ww]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q']
+
+[[template]]
+name  = "cauchy_schwarz_biggl"
+latex = '\Biggl| \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k {b}_k \Biggr|^2 \leq \Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {a}_k^2 \Biggr)\Biggl( \sum{lim_mod}_{{k=1}}^{{{n}}} {b}_k^2 \Biggr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'd', 'e']
+
+[template.slots.b]
+type = "S"
+pool = ['f', 'g', 'h', 'i', 'j']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm']
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz inequality (sum form)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_sum"
+latex = '\left(\sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}} \, {p2}_{{{idx}}}\right)^2 \leq \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p1}_{{{idx}}}^2 \cdot \sum{lim_mod}_{{{idx}=1}}^{{{ub}}} {p2}_{{{idx}}}^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = "LIM_MOD"
+
+[template.slots.idx]
+type = "S"
+pool = ['i', 'j', 'k', 'l', 'm', 'r']
+
+[template.slots.ub]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.p1]
+type = "S"
+pool = "VEC_POOL"
+
+[template.slots.p2]
+type = "X"
+pool = "VEC_POOL"
+exclude_from = ["p1"]

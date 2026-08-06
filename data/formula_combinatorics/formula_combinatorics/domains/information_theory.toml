@@ -1,0 +1,1350 @@
+[meta]
+domain = "information_theory"
+
+[[pool]]
+name = "RV_POOL"
+values = ["X","Y","Z","U","V","W","S","T","A","B","N","M"]
+
+[[pool]]
+name = "DIST_POOL"
+values = ["P","Q","R",'\mu','\nu',"S","T","U",'\pi','\rho']
+
+[[pool]]
+name = "LOG_POOL"
+values = ['\log_2','\ln','\log','\log_{10}','\log_e','\log_q','\mathrm{ld}','\log_p']
+
+[[pool]]
+name = "ALPHA_POOL"
+values = ['\alpha','\beta','2','\frac{1}{2}','\frac{3}{2}','\gamma','\delta','\kappa','\lambda','\tau']
+
+[[pool]]
+name = "EPS_POOL"
+values = ['\epsilon','\delta','\varepsilon','\eta','\gamma','\kappa','\nu','\zeta']
+
+[[pool]]
+name = "RATE_POOL"
+values = ["R",'R_0','R_1','\mathcal{C}',"C"]
+
+[[pool]]
+name = "SET_POOL"
+values = ['\mathcal{X}','\mathcal{Y}','\mathcal{Z}','\mathcal{A}','\mathcal{U}']
+
+[[pool]]
+name = "PARAM_POOL"
+values = ['\theta','\phi','\lambda','\mu','\sigma']
+
+[[pool]]
+name = "NOISE_POOL"
+values = ['\sigma^2','N_0','N_0/2','\sigma_n^2']
+
+[[pool]]
+name = "SNR_POOL"
+values = ['\mathrm{SNR}','\gamma','\rho','P/N_0']
+
+[[pool]]
+name = "BW_POOL"
+values = ["W","B",'\Delta f','B_n']
+
+[[pool]]
+name = "PWR_POOL"
+values = ["P",'P_s','P_T','\mathcal{P}']
+
+[[pool]]
+name = "PWR_BASE_POOL"
+values = ["P",'\mathcal{P}']
+
+[[pool]]
+name = "NOISE_BASE_POOL"
+values = ['\sigma^2']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["i","j","k","l","m","n","p","q","r","s","t"]
+
+# --- Part A (14) ---
+
+[[template]]
+name = "entropy"
+latex = 'H({XX}) = -\sum{lim_mod}_{{x \in {Sx}}} p(x)\, {lb}\, p(x)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.Sx]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "joint_entropy"
+latex = 'H({XX}, {YY}) = -\sum{lim_mod}_{{x,y}} p(x,y)\, {lb}\, p(x,y)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "conditional_entropy"
+latex = 'H({YY} \mid {XX}) = H({XX}, {YY}) - H({XX})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "mutual_information"
+latex = 'I({XX}; {YY}) = H({XX}) + H({YY}) - H({XX}, {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "kl_divergence"
+latex = 'D_{{KL}}({pp} \| {qq}) = \sum_x {pp}(x)\, {lb}\, \frac{{{pp}(x)}}{{{qq}(x)}}'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "channel_capacity"
+latex = 'C = \max_{{p({XX})}} I({XX}; {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "entropy_bound"
+latex = 'H({XX}) \leq {lb}\, |{Sx}|'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.Sx]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "entropy_subadditivity"
+latex = 'H({XX}_1, \ldots, {XX}_{{{nn}}}) \leq \sum{lim_mod}_{{i=1}}^{{{nn}}} H({XX}_i)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "mutual_info_nonneg"
+latex = 'I({XX}; {YY}) \geq 0'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "cross_entropy"
+latex = 'H({pp}, {qq}) = -\sum_x {pp}(x)\, {lb}\, {qq}(x)'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "rate_distortion"
+latex = 'R(D) = \min_{{{pp}(\hat{{{XX}}}|{XX})\,:\,\mathbb{{E}}[d({XX},\hat{{{XX}}})] \leq D}} I({XX}; \hat{{{XX}}})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[[template]]
+name = "fano_inequality"
+latex = 'H({ee}) + {ee}\, {lb}(|{Sx}| - 1) \geq H({XX} \mid \hat{{{XX}}})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.Sx]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "EPS_POOL"
+
+[[template]]
+name = "data_processing_inequality"
+latex = '{XX} \to {YY} \to {ZZ} \implies I({XX}; {ZZ}) \leq I({XX}; {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.ZZ]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX","YY"]
+
+[[template]]
+name = "chain_rule_entropy"
+latex = 'H({XX}_1, \ldots, {XX}_{{{nn}}}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} H({XX}_i \mid {XX}_1, \ldots, {XX}_{{i-1}})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B Entropy (8) ---
+
+[[template]]
+name = "renyi_entropy"
+latex = 'H_{{{aa}}}({XX}) = \frac{{1}}{{1 - {aa}}}\, {lb}\!\left(\sum{lim_mod}_{{x \in {Sx}}} p(x)^{{{aa}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ALPHA_POOL"
+
+[template.slots.Sx]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "tsallis_entropy"
+latex = 'S_{{{aa}}}({XX}) = \frac{{1}}{{{aa} - 1}}\left(1 - \sum{lim_mod}_{{x}} p(x)^{{{aa}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "ALPHA_POOL"
+
+[[template]]
+name = "differential_entropy"
+latex = 'h({XX}) = -\int{lim_mod}_{{-\infty}}^{{\infty}} p(x)\, {lb}\, p(x)\, dx'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "conditional_differential_entropy"
+latex = 'h({YY} \mid {XX}) = -\iint p(x,y)\, {lb}\, p(y \mid x)\, dx\, dy'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "entropy_gaussian"
+latex = 'h\!\left(\mathcal{{N}}({mm}, {sv})\right) = \tfrac{{1}}{{2}}\, {lb}(2\pi e\, {sv})'
+
+[template.slots.mm]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.sv]
+type = "S"
+pool = "NOISE_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "entropy_uniform"
+latex = 'H\!\left(\mathrm{{Uniform}}({Sx})\right) = {lb}\, |{Sx}|'
+
+[template.slots.Sx]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "entropy_power_inequality"
+latex = 'N\!\left(h({XX} + {YY})\right) \geq N\!\left(h({XX})\right) + N\!\left(h({YY})\right)'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "entropy_rate"
+latex = '\bar{{H}}({XX}) = \lim_{{{nn}\to\infty}} \frac{{1}}{{{nn}}} H({XX}_1, \ldots, {XX}_{{{nn}}})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B MI (6) ---
+
+[[template]]
+name = "mi_kl_form"
+latex = 'I({XX}; {YY}) = D_{{KL}}\!\left(p_{{{XX}{YY}}} \| p_{{{XX}}} \otimes p_{{{YY}}}\right)'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "conditional_mi"
+latex = 'I({XX}; {YY} \mid {ZZ}) = H({XX} \mid {ZZ}) - H({XX} \mid {YY}, {ZZ})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.ZZ]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX","YY"]
+
+[[template]]
+name = "mi_chain_rule"
+latex = 'I({XX}; {YY}_1, \ldots, {YY}_{{{nn}}}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} I({XX}; {YY}_i \mid {YY}_1, \ldots, {YY}_{{i-1}})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "interaction_information"
+latex = 'I({XX}; {YY}; {ZZ}) = I({XX}; {YY}) - I({XX}; {YY} \mid {ZZ})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.ZZ]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX","YY"]
+
+[[template]]
+name = "multivariate_mi"
+latex = 'I({XX}_1;\, \ldots;\, {XX}_{{{nn}}}) = \sum{lim_mod}_{{S \subseteq [{nn}]}} (-1)^{{|S|+1}} H\!\left(\{{{{XX}}_i\}}_{{i \in S}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "mi_integral_form"
+latex = 'I({XX}; {YY}) = \int\!\int p(x, y)\, {lb}\, \frac{{p(x,y)}}{{p(x)\, p(y)}}\, dx\, dy'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+# --- Part B Divergences (8) ---
+
+[[template]]
+name = "kl_continuous"
+latex = 'D_{{KL}}({pp} \| {qq}) = \int p(x)\, {lb}\, \frac{{{pp}(x)}}{{{qq}(x)}}\, dx'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "js_divergence"
+latex = 'D_{{JS}}({pp} \| {qq}) = \tfrac{{1}}{{2}} D_{{KL}}\!\left({pp} \,\Big\|\, \tfrac{{{pp}+{qq}}}{{2}}\right) + \tfrac{{1}}{{2}} D_{{KL}}\!\left({qq} \,\Big\|\, \tfrac{{{pp}+{qq}}}{{2}}\right)'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "total_variation"
+latex = '\mathrm{{TV}}({pp}, {qq}) = \tfrac{{1}}{{2}} \sum_x |{pp}(x) - {qq}(x)|'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "hellinger_distance"
+latex = 'H^2({pp}, {qq}) = 1 - \sum_x \sqrt{{{pp}(x)\, {qq}(x)}}'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "chi_squared_divergence"
+latex = '\chi^2({pp} \| {qq}) = \sum_x \frac{{({pp}(x) - {qq}(x))^2}}{{{qq}(x)}}'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "f_divergence"
+latex = 'D_f({pp} \| {qq}) = \sum_x {qq}(x)\, f\!\left(\frac{{{pp}(x)}}{{{qq}(x)}}\right)'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "bhattacharyya_distance"
+latex = 'D_B({pp}, {qq}) = -\ln\!\left(\sum_x \sqrt{{{pp}(x)\, {qq}(x)}}\right)'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[[template]]
+name = "alpha_renyi_divergence"
+latex = 'D_{{{aa}}}({pp} \| {qq}) = \frac{{1}}{{{aa}-1}}\, {lb}\sum_x {pp}(x)^{{{aa}}}\, {qq}(x)^{{1-{aa}}}'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "DIST_POOL"
+exclude_from = ["pp"]
+
+[template.slots.aa]
+type = "S"
+pool = "ALPHA_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+# --- Part B Channel coding (6) ---
+
+[[template]]
+name = "shannon_awgn"
+latex = 'C = \tfrac{{1}}{{2}}\, {lb}(1 + {snr})'
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[template.slots.snr]
+type = "S"
+pool = "SNR_POOL"
+
+[[template]]
+name = "gaussian_channel_capacity"
+latex = 'C = {bw}\, {lb}\!\left(1 + \frac{{{pw}}}{{{nz}\cdot {bw}}}\right)'
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[template.slots.bw]
+type = "S"
+pool = "BW_POOL"
+
+[template.slots.pw]
+type = "S"
+pool = "PWR_POOL"
+
+[template.slots.nz]
+type = "S"
+pool = "NOISE_POOL"
+
+[[template]]
+name = "bsc_capacity"
+latex = 'C = 1 - H_b({ee}) = 1 + {ee}\, {lb}\, {ee} + (1-{ee})\, {lb}(1-{ee})'
+
+[template.slots.ee]
+type = "S"
+pool = "EPS_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "parallel_gaussian_channels"
+latex = 'C = \sum{lim_mod}_{{k=1}}^{{{nn}}} \tfrac{{1}}{{2}}\, {lb}\!\left(1 + \frac{{{pw}_k}}{{{nz}_k}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[template.slots.pw]
+type = "S"
+pool = "PWR_BASE_POOL"
+
+[template.slots.nz]
+type = "S"
+pool = "NOISE_BASE_POOL"
+
+[[template]]
+name = "rate_distortion_gaussian"
+latex = 'R(D) = \max\!\left(0,\, \tfrac{{1}}{{2}}\, {lb}\frac{{{sv}}}{{D}}\right)'
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[template.slots.sv]
+type = "S"
+pool = "NOISE_POOL"
+
+[[template]]
+name = "error_exponent"
+latex = 'P_e^{{({nn})}} \leq e^{{-{nn}\, E({rr})}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.rr]
+type = "S"
+pool = "RATE_POOL"
+
+# --- Part B Source coding (4) ---
+
+[[template]]
+name = "source_coding_theorem"
+latex = 'H_{{{lb}}}({XX}) \leq L^*_{{avg}} < H_{{{lb}}}({XX}) + 1'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "huffman_bound"
+latex = 'H({XX}) \leq \bar{{L}}_{{Huffman}} < H({XX}) + 1,\quad H({XX}) = -\sum_x p(x)\, {lb}\, p(x)'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "kraft_inequality"
+latex = '\sum{lim_mod}_{{k=1}}^{{{nn}}} D^{{-l_k}} \leq 1'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "lempel_ziv_rate"
+latex = '\lim_{{{nn} \to \infty}} \frac{{c_{{LZ}}({XX}_1^{{{nn}}})}}{{nn}} = H({XX})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# --- Part B AEP / Typicality (4) ---
+
+[[template]]
+name = "aep"
+latex = '-\frac{{1}}{{{nn}}}\, {lb}\, p({XX}_1, \ldots, {XX}_{{{nn}}}) \xrightarrow{{p}} H({XX})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "typical_set_prob"
+latex = '\Pr\!\left[{XX}^{{{nn}}} \in \mathcal{{T}}_{{{ee}}}^{{{nn}}}\right] \geq 1 - {ee}'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "EPS_POOL"
+
+[[template]]
+name = "typical_set_size"
+latex = '\left|\mathcal{{T}}_{{{ee}}}^{{{nn}}}\right| \leq 2^{{{nn}(H({XX})+{ee})}}'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "EPS_POOL"
+
+[[template]]
+name = "joint_typicality_lemma"
+latex = '\Pr\!\left[(x^{{{nn}}}, y^{{{nn}}}) \in \mathcal{{T}}_{{{ee}}}^{{{nn}}}({XX},{YY})\right] \approx 2^{{-{nn}\, I({XX};{YY})}}'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "EPS_POOL"
+
+# --- Part B Fisher information (6) ---
+
+[[template]]
+name = "fisher_information"
+latex = '\mathcal{{I}}_{{{pp}}}({pa}) = \mathbb{{E}}\!\left[\left(\frac{{\partial}}{{\partial {pa}}} \ln {pp}(x;\, {pa})\right)^2\right]'
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "cramer_rao_bound"
+latex = '\mathrm{{Var}}\!\left(\hat{{{pa}}}\right) \geq \frac{{1}}{{{nn}\, \mathcal{{I}}({pa})}}'
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "fisher_additivity"
+latex = '\mathcal{{I}}_{{X^{{{nn}}}}}({pa}) = {nn}\, \mathcal{{I}}_X({pa})'
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "fisher_matrix"
+latex = '\left[\mathcal{{I}}({pa})\right]_{{ij}} = \mathbb{{E}}\!\left[\frac{{\partial \ln p}}{{\partial {pa}_i}}\cdot \frac{{\partial \ln p}}{{\partial {pa}_j}}\right]'
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "jeffreys_prior"
+latex = '\pi({pa}) \propto \sqrt{{\det \mathcal{{I}}({pa})}}'
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "cramer_rao_biased"
+latex = '''\mathrm{{Var}}\!\left(\hat{{{pa}}}\right) \geq \frac{{\left[1 + b'({pa})\right]^2}}{{\mathcal{{I}}({pa})}}'''
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+# --- Part B MDL / Kolmogorov (4) ---
+
+[[template]]
+name = "kolmogorov_complexity"
+latex = 'K({XX}) = \min\{{|d| : \mathcal{{U}}(d) = {XX}\}}'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "mdl_two_part"
+latex = 'L({XX},\, \hat{{{XX}}}) = L(\hat{{{XX}}}) + L({XX} \mid \hat{{{XX}}})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "normalized_compression_distance"
+latex = 'd({XX},{YY}) = \frac{{K({XX}{YY}) - \min(K({XX}),\, K({YY}))}}{{\max(K({XX}),\, K({YY}))}}'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "aic_criterion"
+latex = '\mathrm{{AIC}} = 2{kk} - 2\ln\hat{{{ll}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ll]
+type = "S"
+pool = "DIST_POOL"
+
+# --- Part B Network information theory (4) ---
+
+[[template]]
+name = "mac_capacity_region"
+latex = 'R_{{1}} + R_{{2}} \leq I({XX}, {YY};\, {ZZ}),\quad R_{{1}} \leq I({XX};\, {ZZ} \mid {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[template.slots.ZZ]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX","YY"]
+
+[[template]]
+name = "slepian_wolf"
+latex = 'R_{{{XX}}} + R_{{{YY}}} \geq H({XX}, {YY}),\quad R_{{{XX}}} \geq H({XX} \mid {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "wyner_ziv"
+latex = 'R({XX} \mid {YY}) \geq H({XX} \mid {YY})'
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "broadcast_degraded"
+latex = 'R_1 \leq I({UU};\, {YY}),\quad R_2 \leq I({XX};\, {ZZ} \mid {UU})'
+
+[template.slots.UU]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.XX]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["UU"]
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["UU","XX"]
+
+[template.slots.ZZ]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["UU","XX","YY"]
+
+# --- Part C function-pair templates (12) ---
+
+[[template]]
+name = "kl_pair_continuous"
+latex = 'D_{{KL}}({fn1} \| {fn2}) = \int {fn1}(x)\, \ln \frac{{{fn1}(x)}}{{{fn2}(x)}}\, dx'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "entropy_pair_joint"
+latex = 'H({fn1}, {fn2}) = -\iint {fn1}(x)\,{fn2}(y)\,\ln\!\left[{fn1}(x)\,{fn2}(y)\right]\, dx\, dy'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "mi_pair"
+latex = 'I({fn1};\, {fn2}) = \iint p(x,y)\, \ln \frac{{p(x,y)}}{{{fn1}(x)\, {fn2}(y)}}\, dx\, dy'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "cross_entropy_pair"
+latex = 'H({fn1},\, {fn2}) = -\int {fn1}(x)\, \ln {fn2}(x)\, dx'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "js_pair"
+latex = 'D_{{JS}}({fn1} \| {fn2}) = \tfrac{{1}}{{2}} D_{{KL}}({fn1} \| M) + \tfrac{{1}}{{2}} D_{{KL}}({fn2} \| M),\quad M = \tfrac{{{fn1}+{fn2}}}{{2}}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "total_variation_pair"
+latex = '\mathrm{{TV}}({fn1},\, {fn2}) = \sup_{{A}} \left|{fn1}(A) - {fn2}(A)\right|'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "renyi_divergence_pair"
+latex = 'D_{{{aa}}}({fn1} \| {fn2}) = \frac{{1}}{{{aa}-1}} \ln \int {fn1}(x)^{{{aa}}}\, {fn2}(x)^{{1-{aa}}}\, dx'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.aa]
+type = "S"
+pool = "ALPHA_POOL"
+
+[[template]]
+name = "fisher_pair"
+latex = '\mathcal{{I}}_{{{fn1}}}({pa}) = -\mathbb{{E}}_{{{fn1}}}\!\left[\frac{{\partial^2 \ln {fn1}(x;\,{pa})}}{{\partial {pa}^2}}\right]'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pa]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name = "mutual_info_three_pair"
+latex = 'I({fn1};\, {fn2} \mid {fn3}) = H({fn1} \mid {fn3}) - H({fn1} \mid {fn2},\, {fn3})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn3]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "capacity_pair"
+latex = 'C = \max_{{{fn1}}} I({fn1};\, {fn2})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "data_processing_pair"
+latex = 'D_{{KL}}\!\left({fn1}({YY}) \| {fn2}({YY})\right) \leq D_{{KL}}\!\left({fn1}({XX}) \| {fn2}({XX})\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "entropy_power_pair"
+latex = 'e^{{2h({fn1}+{fn2})}} \geq e^{{2h({fn1})}} + e^{{2h({fn2})}}'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+# --- Part C additions (4) ---
+
+[[template]]
+name = "fn_channel_capacity_pair"
+latex = '{fn1}(C) = {fn2}\!\left(\max_{{{pp}}} I({XX}; {YY})\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.pp]
+type = "S"
+pool = "DIST_POOL"
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]
+
+[[template]]
+name = "fn_source_coding_pair"
+latex = '{fn1}(L^*) = {fn2}\!\left(\sum{lim_mod}_{{x}} p(x)\, {lb}\, \frac{{1}}{{p(x)}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+[[template]]
+name = "fn_rate_distortion_pair"
+latex = '{fn1}(R(D)) = {fn2}\!\left(\min_{{p(\hat{{x}}|x):\,\mathbb{{E}}[d]\leq D}} I(X;\hat{{X}})\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[[template]]
+name = "fn_entropy_bound_pair"
+latex = '{fn1}(H({XX})) \leq {fn2}({lb}\,|\mathcal{{X}}|)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.lb]
+type = "S"
+pool = "LOG_POOL"
+
+# --- lg / binary log templates (3) ---
+
+[[template]]
+name = "entropy_lg"
+latex = 'H({XX}) = -\sum{lim_mod}_{{x}} p(x) \lg p(x)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "shannon_hartley_lg"
+latex = 'C = {bw} \lg\!\left(1 + \frac{{{pw}}}{{{nz}}}\right)'
+
+[template.slots.bw]
+type = "S"
+pool = "BW_POOL"
+
+[template.slots.pw]
+type = "S"
+pool = "PWR_BASE_POOL"
+
+[template.slots.nz]
+type = "S"
+pool = "NOISE_BASE_POOL"
+
+[[template]]
+name = "mutual_info_lg"
+latex = 'I({XX}; {YY}) = \sum{lim_mod}_{{x,y}} p(x,y) \lg \frac{{p(x,y)}}{{p(x)\,p(y)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.XX]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["XX"]

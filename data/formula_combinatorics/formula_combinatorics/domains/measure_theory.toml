@@ -1,0 +1,1291 @@
+[meta]
+domain = "measure_theory"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "FUNC_POOL"
+values = ["f", "g", "h", "F", "G", '\phi', '\psi', '\varphi', '\chi', '\xi', '\eta']
+
+[[pool]]
+name   = "MU_POOL"
+values = ['\mu', '\nu', '\lambda', '\rho', '\sigma', '\tau', '\kappa', '\pi']
+
+[[pool]]
+name   = "SPACE_POOL"
+values = ["X", "Y", "Z", '\Omega', "E", "S"]
+
+[[pool]]
+name   = "SET_POOL"
+values = ["A", "B", "C", "E", "F", "G", "H", "K"]
+
+[[pool]]
+name   = "SIGALG_POOL"
+values = ['\mathcal{F}', '\mathcal{G}', '\mathcal{A}', '\mathcal{B}', '\mathcal{E}', '\mathcal{M}']
+
+[[pool]]
+name   = "VAR_POOL"
+values = ["x", "y", "t", "s", "u", "v", '\omega']
+
+[[pool]]
+name   = "EXP_POOL"
+values = ["p", "q", "r", "2", "1", '\infty']
+
+[[pool]]
+name   = "SCALAR_POOL"
+values = ["a", "b", "c", '\alpha', '\beta', '\lambda', '\epsilon', '\delta']
+
+[[pool]]
+name   = "INT_POOL"
+values = ["n", "m", "k", "N", "M"]
+
+# ---------------------------------------------------------------------------
+# Part A: reparameterized originals (14)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sigma_additivity"
+latex = '{mu}(\emptyset) = 0, \quad {mu}\!\left(\bigsqcup_n {AA}_n\right) = \sum_n {mu}({AA}_n)'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "nonnegativity_integral"
+latex = '\int {ff} \, d{mu}({xx}) \geq 0 \text{{ for }} {ff} \geq 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "radon_nikodym"
+latex = '\frac{{d{mu}}}{{d{nu}}} \geq 0, \quad {mu}({AA}) = \int{lim_mod}_{{{AA}}} \frac{{d{mu}}}{{d{nu}}} \, d{nu}({xx})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "l1_convergence"
+latex = '\int |{ff}_{{{nn}}} - {ff}| \, d{mu} \to 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "fatou_lemma"
+latex = '\int \liminf_n {ff}_n \, d{mu} \leq \liminf_n \int {ff}_n \, d{mu}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "fubini_tonelli"
+latex = '\int{lim_mod}_{{X \times Y}} {ff} \, d({mu} \otimes {nu}) = \int_X \int_Y {ff}({xx},{yy}) \, d{nu}({yy}) \, d{mu}({xx})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+# ----
+
+[[template]]
+name  = "lp_norm"
+latex = '\|{ff}\|_{{L^{{{pp}}}({mu})}} = \left(\int |{ff}|^{{{pp}}} \, d{mu}\right)^{{1/{pp}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "absolute_continuity"
+latex = '{mu} \ll {nu} \iff {mu}({AA}) = 0 \text{{ whenever }} {nu}({AA}) = 0'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "lebesgue_decomposition"
+latex = '{mu} = {mu}_{{{nu}\text{{-ac}}}} + {mu}_{{{nu}\text{{-sing}}}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+# ----
+
+[[template]]
+name  = "dominated_convergence"
+latex = '|{ff}_n| \leq {gg},\; \int {gg} \, d{mu} < \infty \implies \int {ff}_n \, d{mu} \to \int {ff} \, d{mu}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "sigma_algebra_generated"
+latex = '\sigma({CC}) = \bigcap\left\{{{FF} : {CC} \subseteq {FF},\; {FF} \text{{ is a }} \sigma\text{{-algebra}}\right\}}'
+
+[template.slots.CC]
+type = "S"
+pool = "SIGALG_POOL"
+
+[template.slots.FF]
+type = "X"
+pool = "SIGALG_POOL"
+exclude_from = ["CC"]
+
+# ----
+
+[[template]]
+name  = "markov_inequality"
+latex = '{mu}(\{{|{ff}| \geq {tt}\}}) \leq \frac{{1}}{{{tt}}} \int |{ff}| \, d{mu}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "jensens_inequality"
+latex = '{phi}\!\left(\int {ff} \, d{mu}\right) \leq \int {phi}({ff}) \, d{mu}'
+
+[template.slots.phi]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["phi"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "product_measure"
+latex = '({mu} \otimes {nu})({AA} \times {BB}) = {mu}({AA}) \cdot {nu}({BB})'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ---------------------------------------------------------------------------
+# Part B1: sigma-algebras & measurability (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "borel_sigma_algebra"
+latex = '\mathcal{{B}}({XX}) = \sigma(\text{{open sets in }} {XX})'
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+# ----
+
+[[template]]
+name  = "measurable_preimage"
+latex = '{ff}^{{-1}}({AA}) \in {FF} \text{{ for every }} {AA} \in {GG}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.FF]
+type = "S"
+pool = "SIGALG_POOL"
+
+[template.slots.GG]
+type = "X"
+pool = "SIGALG_POOL"
+exclude_from = ["FF"]
+
+# ----
+
+[[template]]
+name  = "sigma_algebra_intersection"
+latex = '{FF} \cap {GG} \text{{ is a }} \sigma\text{{-algebra}}'
+
+[template.slots.FF]
+type = "S"
+pool = "SIGALG_POOL"
+
+[template.slots.GG]
+type = "X"
+pool = "SIGALG_POOL"
+exclude_from = ["FF"]
+
+# ----
+
+[[template]]
+name  = "measurable_composition"
+latex = '{gg} \circ {ff} : ({XX}, {FF}) \to ({YY}, {HH}) \text{{ is measurable}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.YY]
+type = "X"
+pool = "SPACE_POOL"
+exclude_from = ["XX"]
+
+[template.slots.FF]
+type = "S"
+pool = "SIGALG_POOL"
+
+[template.slots.HH]
+type = "X"
+pool = "SIGALG_POOL"
+exclude_from = ["FF"]
+
+# ----
+
+[[template]]
+name  = "indicator_function"
+latex = '\mathbf{{1}}_{{{AA}}}({xx}) = \begin{{cases}} 1 & {xx} \in {AA} \\ 0 & {xx} \notin {AA} \end{{cases}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "simple_function"
+latex = '{ff} = \sum{lim_mod}_{{k=1}}^{{{nn}}} {aa}_k \, \mathbf{{1}}_{{{AA}_k}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "INT_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B2: outer measures & Caratheodory (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "outer_measure_subadditivity"
+latex = '{mu}^*\!\left(\bigcup_n {AA}_n\right) \leq \sum_n {mu}^*({AA}_n)'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "caratheodory_condition"
+latex = '{mu}^*({EE}) = {mu}^*({EE} \cap {AA}) + {mu}^*({EE} \cap {AA}^c) \quad \forall\, {EE}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.EE]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "premeasure_extension"
+latex = '{mu} : \mathcal{{A}} \to [0, \infty] \text{{ premeasure}} \Rightarrow \exists\, \bar{{{mu}}} \text{{ on }} \sigma(\mathcal{{A}})'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "regularity_inner"
+latex = '{mu}({AA}) = \sup\{{{mu}({KK}) : {KK} \subseteq {AA}, {KK} \text{{ compact}}\}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.KK]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "regularity_outer"
+latex = '{mu}({AA}) = \inf\{{{mu}({UU}) : {AA} \subseteq {UU}, {UU} \text{{ open}}\}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.UU]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "covering_measure"
+latex = '{mu}({AA}) = \inf\!\left\{{\sum_k \ell(I_k) : {AA} \subseteq \bigcup_k I_k\right\}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B3: convergence theorems (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "monotone_convergence"
+latex = '0 \leq {ff}_n \nearrow {ff} \Rightarrow \int {ff}_n \, d{mu} \nearrow \int {ff} \, d{mu}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "vitali_convergence"
+latex = '{ff}_n \to {ff} \text{{ in }} L^{{{pp}}} \iff \text{{u.i. and }} {ff}_n \xrightarrow{{{mu}}} {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "egorov_theorem"
+latex = '{ff}_n \to {ff} \text{{ a.e.}} \Rightarrow \forall \epsilon > 0, \exists\, {AA} : {mu}({AA}^c) < \epsilon, {ff}_n \rightrightarrows {ff} \text{{ on }} {AA}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "lusin_theorem"
+latex = '{ff} \text{{ measurable}} \Rightarrow \forall \epsilon > 0, \exists\, {KK} \text{{ closed}}, {mu}({KK}^c) < \epsilon, {ff}|_{{{KK}}} \text{{ continuous}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.KK]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "convergence_in_measure"
+latex = '{mu}(\{{|{ff}_n - {ff}| > \epsilon\}}) \to 0 \quad \forall\, \epsilon > 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "cauchy_in_measure"
+latex = '{ff}_n \to {gg} \text{{ and }} {ff}_n \to {hh} \text{{ in measure}} \Rightarrow {gg} = {hh} \text{{ a.e.}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.hh]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff", "gg"]
+
+# ---------------------------------------------------------------------------
+# Part B4: Lp spaces (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "holder_inequality"
+latex = '\int |{ff} {gg}| \, d{mu} \leq \|{ff}\|_{{{pp}}} \|{gg}\|_{{{qq}}}, \quad \tfrac{{1}}{{{pp}}} + \tfrac{{1}}{{{qq}}} = 1'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "minkowski_inequality"
+latex = '\|{ff} + {gg}\|_{{{pp}}} \leq \|{ff}\|_{{{pp}}} + \|{gg}\|_{{{pp}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "lp_completeness"
+latex = 'L^{{{pp}}}({XX}, {mu}) \text{{ is a Banach space}}'
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "l2_inner_product"
+latex = '\langle {ff}, {gg} \rangle_{{L^2}} = \int {ff} \, \overline{{{gg}}} \, d{mu}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "lp_inclusion"
+latex = '{mu}({XX}) < \infty \Rightarrow L^{{{pp}}}({XX}) \subseteq L^{{{qq}}}({XX}) \text{{ for }} {pp} > {qq}'
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "lp_dual"
+latex = '\bigl(L^{{{pp}}}({XX}, {mu})\bigr)^* \cong L^{{{qq}}}, \quad \tfrac{{1}}{{{pp}}} + \tfrac{{1}}{{{qq}}} = 1'
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.qq]
+type = "X"
+pool = "EXP_POOL"
+exclude_from = ["pp"]
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B5: differentiation of measures (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lebesgue_diff_theorem"
+latex = '\lim_{{r \to 0}} \frac{{1}}{{{mu}(B_r({xx}))}}\int{lim_mod}_{{B_r({xx})}} {ff} \, d{mu} = {ff}({xx}) \text{{ a.e.}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "hardy_littlewood"
+latex = '{mu}(\{{M{ff} > {aa}\}}) \leq \frac{{C}}{{{aa}}} \|{ff}\|_{{L^1}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ----
+
+[[template]]
+name  = "rn_chain_rule"
+latex = '\frac{{d{mu}}}{{d{rho}}} = \frac{{d{mu}}}{{d{nu}}} \cdot \frac{{d{nu}}}{{d{rho}}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.rho]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu", "nu"]
+
+# ----
+
+[[template]]
+name  = "total_variation"
+latex = '\|{mu}\| = |{mu}|({XX}) = \sup \sum_k |{mu}({AA}_k)|'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "hahn_decomposition"
+latex = '{XX} = {PP} \cup {NN},\; {PP} \cap {NN} = \emptyset,\; {nu} \geq 0 \text{{ on }} {PP},\; {nu} \leq 0 \text{{ on }} {NN}'
+
+[template.slots.XX]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.nu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.PP]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.NN]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["PP"]
+
+# ----
+
+[[template]]
+name  = "jordan_decomposition"
+latex = '{nu} = {nu}^+ - {nu}^-, \quad {nu}^+ \perp {nu}^-'
+
+[template.slots.nu]
+type = "S"
+pool = "MU_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B6: product measures & pushforward (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "three_fold_product"
+latex = '({mu} \otimes {nu} \otimes {rho})({AA} \times {BB} \times {CC}) = {mu}({AA})\, {nu}({BB})\, {rho}({CC})'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.rho]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu", "nu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+[template.slots.CC]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA", "BB"]
+
+# ----
+
+[[template]]
+name  = "change_of_variables"
+latex = '\int{lim_mod}_{{f({AA})}} {gg}({yy}) \, d{nu}({yy}) = \int{lim_mod}_{{{AA}}} {gg}({ff}({xx})) |\det D{ff}({xx})| \, d{mu}({xx})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VAR_POOL"
+exclude_from = ["xx"]
+
+# ----
+
+[[template]]
+name  = "disintegration"
+latex = '{mu} = \int{lim_mod}_{{{YY}}} {mu}^{{{yy}}} \, d{nu}({yy}) \quad \text{{(disintegration over }} {nu}\text{{)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.YY]
+type = "S"
+pool = "SPACE_POOL"
+
+[template.slots.yy]
+type = "S"
+pool = "VAR_POOL"
+
+# ----
+
+[[template]]
+name  = "pushforward_measure"
+latex = '{nu} = {ff}_* {mu}, \quad {nu}({BB}) = {mu}({ff}^{{-1}}({BB}))'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.BB]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "image_measure_integral"
+latex = '\int {gg} \, d({ff}_* {mu}) = \int {gg} \circ {ff} \, d{mu}'
+
+[template.slots.gg]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["gg"]
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "singular_measures"
+latex = '{mu} \perp {nu} : \exists\, {AA}, {BB} \text{{ disjoint}}, {mu}({BB}) = 0,\; {nu}({AA}) = 0'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ---------------------------------------------------------------------------
+# Part B7: probability measures (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "probability_axioms"
+latex = '\mathbb{{P}}(\Omega) = 1, \quad \mathbb{{P}}\!\left(\bigsqcup_n {AA}_n\right) = \sum_n \mathbb{{P}}({AA}_n)'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+# ----
+
+[[template]]
+name  = "conditional_probability"
+latex = '\mathbb{{P}}({AA} \mid {BB}) = \frac{{\mathbb{{P}}({AA} \cap {BB})}}{{\mathbb{{P}}({BB})}}'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "independence"
+latex = '\mathbb{{P}}({AA} \cap {BB}) = \mathbb{{P}}({AA}) \cdot \mathbb{{P}}({BB}) \quad ({AA}, {BB} \text{{ independent}})'
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.BB]
+type = "X"
+pool = "SET_POOL"
+exclude_from = ["AA"]
+
+# ----
+
+[[template]]
+name  = "expectation_def"
+latex = '\mathbb{{E}}[{ff}] = \int_\Omega {ff} \, d\mathbb{{P}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+# ----
+
+[[template]]
+name  = "variance_def"
+latex = '\operatorname{{Var}}({ff}) = \mathbb{{E}}[({ff} - \mathbb{{E}}[{ff}])^2] = \mathbb{{E}}[{ff}^2] - (\mathbb{{E}}[{ff}])^2'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+# ----
+
+[[template]]
+name  = "chebyshev_inequality"
+latex = '\mathbb{{P}}(|{ff} - \mathbb{{E}}[{ff}]| \geq {tt}) \leq \frac{{\operatorname{{Var}}({ff})}}{{{tt}^2}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: high-n_eff function-pair templates (6)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "integrand_product_fn"
+latex = '\int{lim_mod}_{{{AA}}} {fn1}({xx}) {fn2}({xx}) \, d{mu}({xx})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "lp_fn_sum"
+latex = '\|{fn1} + {fn2}\|_{{L^{{{pp}}}({mu})}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.pp]
+type = "S"
+pool = "EXP_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "radon_nikodym_fn"
+latex = '{mu}({AA}) = \int{lim_mod}_{{{AA}}} {fn1}({xx}) \, d{nu}({xx}) \quad ({fn1} = \tfrac{{d{mu}}}{{d{nu}}})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.AA]
+type = "S"
+pool = "SET_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.nu]
+type = "X"
+pool = "MU_POOL"
+exclude_from = ["mu"]
+
+# ----
+
+[[template]]
+name  = "conditional_expectation_fn"
+latex = '\mathbb{{E}}[{fn1} \mid {FF}] \text{{ is }} {FF}\text{{-measurable}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.FF]
+type = "S"
+pool = "SIGALG_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_pair_measure_integral"
+latex = '\int {fn1}({xx}) \, d({fn2}_* {mu})({xx}) = \int {fn1}({fn2}({xx})) \, d{mu}({xx})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_triple_integral"
+latex = '\int {fn1}({fn2}({xx})) \, {fn3}({xx}) \, d{mu}({xx})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn3]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VAR_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"

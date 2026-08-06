@@ -1,0 +1,1454 @@
+# Group theory domain — TOML pack (WU7 migration)
+
+[[pool]]
+name   = "ELEMS"
+values = [
+  "g", "h", "a", "b", "x", "y",
+  '\sigma', '\tau', '\alpha', '\beta', '\gamma', '\delta', '\omega',
+]
+
+[[pool]]
+name   = "SIMPLE"
+values = ["G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W"]
+
+[[pool]]
+name   = "NV_POOL"
+values = ["n", "m", "4", "5", "6", "7", "8", "p", "q", "r"]
+
+[[pool]]
+name   = "QV_POOL"
+values = ["q", "2", "3", "4", "5", "p"]
+
+[[pool]]
+name   = "P_POOL"
+values = ["p", "q", '\ell', "r", "s", 'p_1', 'p_2']
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "m", "r", "k", "d", 'n_1', 'n_2']
+
+[[pool]]
+name   = "HOMOS"
+values = ['\phi', '\varphi', '\psi', "f", '\theta', '\rho', '\pi', "g", '\alpha', '\sigma']
+
+[[pool]]
+name   = "GRP_NAMES"
+values = ["G", "H", "K", "N", "Q"]
+
+[[pool]]
+name   = "ELT_POOL"
+values = ["g", "h", "x", "r", "s", "a"]
+
+[[pool]]
+name   = "G_POOL"
+values = [
+  # SIMPLE (12)
+  "G", "H", "K", "N", "A", "B", "P", "Q", "L", "M", "T", "W",
+  # NAMED_GROUPS — nv=n (17)
+  'S_{n}', 'D_{n}', 'A_{n}',
+  'GL_{n}(\mathbb{F}_{q})', 'SL_{n}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{n}', '\mathbb{Z}/n\mathbb{Z}',
+  'GL_{n}(\mathbb{F}_{2})', 'SL_{n}(\mathbb{F}_{2})',
+  'GL_{n}(\mathbb{F}_{3})', 'SL_{n}(\mathbb{F}_{3})',
+  'GL_{n}(\mathbb{F}_{4})', 'SL_{n}(\mathbb{F}_{4})',
+  'GL_{n}(\mathbb{F}_{5})', 'SL_{n}(\mathbb{F}_{5})',
+  'GL_{n}(\mathbb{F}_{p})', 'SL_{n}(\mathbb{F}_{p})',
+  # nv=m (17)
+  'S_{m}', 'D_{m}', 'A_{m}',
+  'GL_{m}(\mathbb{F}_{q})', 'SL_{m}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{m}', '\mathbb{Z}/m\mathbb{Z}',
+  'GL_{m}(\mathbb{F}_{2})', 'SL_{m}(\mathbb{F}_{2})',
+  'GL_{m}(\mathbb{F}_{3})', 'SL_{m}(\mathbb{F}_{3})',
+  'GL_{m}(\mathbb{F}_{4})', 'SL_{m}(\mathbb{F}_{4})',
+  'GL_{m}(\mathbb{F}_{5})', 'SL_{m}(\mathbb{F}_{5})',
+  'GL_{m}(\mathbb{F}_{p})', 'SL_{m}(\mathbb{F}_{p})',
+  # nv=4 (17)
+  'S_{4}', 'D_{4}', 'A_{4}',
+  'GL_{4}(\mathbb{F}_{q})', 'SL_{4}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{4}', '\mathbb{Z}/4\mathbb{Z}',
+  'GL_{4}(\mathbb{F}_{2})', 'SL_{4}(\mathbb{F}_{2})',
+  'GL_{4}(\mathbb{F}_{3})', 'SL_{4}(\mathbb{F}_{3})',
+  'GL_{4}(\mathbb{F}_{4})', 'SL_{4}(\mathbb{F}_{4})',
+  'GL_{4}(\mathbb{F}_{5})', 'SL_{4}(\mathbb{F}_{5})',
+  'GL_{4}(\mathbb{F}_{p})', 'SL_{4}(\mathbb{F}_{p})',
+  # nv=5 (17)
+  'S_{5}', 'D_{5}', 'A_{5}',
+  'GL_{5}(\mathbb{F}_{q})', 'SL_{5}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{5}', '\mathbb{Z}/5\mathbb{Z}',
+  'GL_{5}(\mathbb{F}_{2})', 'SL_{5}(\mathbb{F}_{2})',
+  'GL_{5}(\mathbb{F}_{3})', 'SL_{5}(\mathbb{F}_{3})',
+  'GL_{5}(\mathbb{F}_{4})', 'SL_{5}(\mathbb{F}_{4})',
+  'GL_{5}(\mathbb{F}_{5})', 'SL_{5}(\mathbb{F}_{5})',
+  'GL_{5}(\mathbb{F}_{p})', 'SL_{5}(\mathbb{F}_{p})',
+  # nv=6 (17)
+  'S_{6}', 'D_{6}', 'A_{6}',
+  'GL_{6}(\mathbb{F}_{q})', 'SL_{6}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{6}', '\mathbb{Z}/6\mathbb{Z}',
+  'GL_{6}(\mathbb{F}_{2})', 'SL_{6}(\mathbb{F}_{2})',
+  'GL_{6}(\mathbb{F}_{3})', 'SL_{6}(\mathbb{F}_{3})',
+  'GL_{6}(\mathbb{F}_{4})', 'SL_{6}(\mathbb{F}_{4})',
+  'GL_{6}(\mathbb{F}_{5})', 'SL_{6}(\mathbb{F}_{5})',
+  'GL_{6}(\mathbb{F}_{p})', 'SL_{6}(\mathbb{F}_{p})',
+  # nv=7 (17)
+  'S_{7}', 'D_{7}', 'A_{7}',
+  'GL_{7}(\mathbb{F}_{q})', 'SL_{7}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{7}', '\mathbb{Z}/7\mathbb{Z}',
+  'GL_{7}(\mathbb{F}_{2})', 'SL_{7}(\mathbb{F}_{2})',
+  'GL_{7}(\mathbb{F}_{3})', 'SL_{7}(\mathbb{F}_{3})',
+  'GL_{7}(\mathbb{F}_{4})', 'SL_{7}(\mathbb{F}_{4})',
+  'GL_{7}(\mathbb{F}_{5})', 'SL_{7}(\mathbb{F}_{5})',
+  'GL_{7}(\mathbb{F}_{p})', 'SL_{7}(\mathbb{F}_{p})',
+  # nv=8 (17)
+  'S_{8}', 'D_{8}', 'A_{8}',
+  'GL_{8}(\mathbb{F}_{q})', 'SL_{8}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{8}', '\mathbb{Z}/8\mathbb{Z}',
+  'GL_{8}(\mathbb{F}_{2})', 'SL_{8}(\mathbb{F}_{2})',
+  'GL_{8}(\mathbb{F}_{3})', 'SL_{8}(\mathbb{F}_{3})',
+  'GL_{8}(\mathbb{F}_{4})', 'SL_{8}(\mathbb{F}_{4})',
+  'GL_{8}(\mathbb{F}_{5})', 'SL_{8}(\mathbb{F}_{5})',
+  'GL_{8}(\mathbb{F}_{p})', 'SL_{8}(\mathbb{F}_{p})',
+  # nv=p (17)
+  'S_{p}', 'D_{p}', 'A_{p}',
+  'GL_{p}(\mathbb{F}_{q})', 'SL_{p}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{p}', '\mathbb{Z}/p\mathbb{Z}',
+  'GL_{p}(\mathbb{F}_{2})', 'SL_{p}(\mathbb{F}_{2})',
+  'GL_{p}(\mathbb{F}_{3})', 'SL_{p}(\mathbb{F}_{3})',
+  'GL_{p}(\mathbb{F}_{4})', 'SL_{p}(\mathbb{F}_{4})',
+  'GL_{p}(\mathbb{F}_{5})', 'SL_{p}(\mathbb{F}_{5})',
+  'GL_{p}(\mathbb{F}_{p})', 'SL_{p}(\mathbb{F}_{p})',
+  # nv=q (17)
+  'S_{q}', 'D_{q}', 'A_{q}',
+  'GL_{q}(\mathbb{F}_{q})', 'SL_{q}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{q}', '\mathbb{Z}/q\mathbb{Z}',
+  'GL_{q}(\mathbb{F}_{2})', 'SL_{q}(\mathbb{F}_{2})',
+  'GL_{q}(\mathbb{F}_{3})', 'SL_{q}(\mathbb{F}_{3})',
+  'GL_{q}(\mathbb{F}_{4})', 'SL_{q}(\mathbb{F}_{4})',
+  'GL_{q}(\mathbb{F}_{5})', 'SL_{q}(\mathbb{F}_{5})',
+  'GL_{q}(\mathbb{F}_{p})', 'SL_{q}(\mathbb{F}_{p})',
+  # nv=r (17)
+  'S_{r}', 'D_{r}', 'A_{r}',
+  'GL_{r}(\mathbb{F}_{q})', 'SL_{r}(\mathbb{F}_{q})',
+  '\mathbb{Z}_{r}', '\mathbb{Z}/r\mathbb{Z}',
+  'GL_{r}(\mathbb{F}_{2})', 'SL_{r}(\mathbb{F}_{2})',
+  'GL_{r}(\mathbb{F}_{3})', 'SL_{r}(\mathbb{F}_{3})',
+  'GL_{r}(\mathbb{F}_{4})', 'SL_{r}(\mathbb{F}_{4})',
+  'GL_{r}(\mathbb{F}_{5})', 'SL_{r}(\mathbb{F}_{5})',
+  'GL_{r}(\mathbb{F}_{p})', 'SL_{r}(\mathbb{F}_{p})',
+]
+
+# ---------------------------------------------------------------------------
+# Part A — Lagrange's theorem (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lagrange_theorem"
+latex = ""
+
+  [[template.variants]]
+  name  = "lagrange_divisibility"
+  latex = '|{H}| \mid |{G}|'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+  [[template.variants]]
+  name  = "lagrange_index_formula"
+  latex = '[{G}:{H}] = \frac{{|{G}|}}{{|{H}|}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+  [[template.variants]]
+  name  = "lagrange_order_product"
+  latex = '|{G}| = [{G}:{H}] \cdot |{H}|'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+# ---------------------------------------------------------------------------
+# Part B — Core standalone templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "first_isomorphism_theorem"
+latex = '{G}/\ker {phi} \cong \operatorname{{im}}\, {phi}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+
+[[template]]
+name  = "second_isomorphism_theorem"
+latex = '{H}/({H} \cap {N_sub}) \cong {H}{N_sub}/{N_sub}'
+[template.slots.H]
+type = "S"
+pool = "SIMPLE"
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["H"]
+
+[[template]]
+name  = "third_isomorphism_theorem"
+latex = '({G}/{N_sub})/({H}/{N_sub}) \cong {G}/{H}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "H"]
+
+# ---------------------------------------------------------------------------
+# Element order (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "element_order"
+latex = ""
+
+  [[template.variants]]
+  name  = "element_order_divides"
+  latex = '\operatorname{{ord}}({g_el}) \mid |{G}|'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "element_order_power"
+  latex = '{g_el}^{{|{G}|}} = e'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "element_order_lcm"
+  latex = '\operatorname{{ord}}({g_el} {h_el}) \mid \operatorname{{lcm}}(\operatorname{{ord}}({g_el}), \operatorname{{ord}}({h_el}))'
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+[[template]]
+name  = "orbit_stabilizer"
+latex = '|{G}| = |\operatorname{{Orb}}({g_el})| \cdot |\operatorname{{Stab}}_{{{G}}}({g_el})|'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Class equation (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "class_equation"
+latex = ""
+
+  [[template.variants]]
+  name  = "class_equation_center"
+  latex = '|{G}| = |Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]'
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "class_equation_conjugacy"
+  latex = '|{G}| = \sum{lim_mod}_{{[{g_el}]}} \frac{{|{G}|}}{{|C_{{{G}}}({g_el})|}}'
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Sylow's theorem (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sylow_theorem"
+latex = ""
+
+  [[template.variants]]
+  name  = "sylow_order_decomposition"
+  latex = '|{G}| = {p}^k m,\quad \gcd({p}, m) = 1'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+
+  [[template.variants]]
+  name  = "sylow_p_power_divides"
+  latex = '{p}^k \mid |{G}|,\quad {p}^{{k+1}} \nmid |{G}|'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+
+  [[template.variants]]
+  name  = "sylow_count_congruence"
+  latex = 'n_{{{p}}}({G}) \mid m,\quad n_{{{p}}}({G}) \equiv 1 \pmod{{{p}}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+
+# ---------------------------------------------------------------------------
+# Commutator (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "commutator"
+latex = ""
+
+  [[template.variants]]
+  name  = "commutator_definition"
+  latex = '[{g_el}, {h_el}] = {g_el}^{{-1}} {h_el}^{{-1}} {g_el} {h_el}'
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "commutator_product_rule"
+  latex = '[{g_el}, {h_el} {N_sub}] = [{g_el},{h_el}] \cdot [{g_el},{N_sub}]^{{{h_el}}}'
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+  [template.variants.slots.N_sub]
+  type = "S"
+  pool = "SIMPLE"
+
+# ---------------------------------------------------------------------------
+# Derived subgroup (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "derived_subgroup"
+latex = ""
+
+  [[template.variants]]
+  name  = "derived_subgroup_definition"
+  latex = '[{G}, {G}] = \langle [{g_el}, {h_el}] : {g_el}, {h_el} \in {G} \rangle'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "abelianization"
+  latex = '{G}/[{G},{G}] \cong {G}^{{\mathrm{{ab}}}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+
+# ---------------------------------------------------------------------------
+# Center of a group (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "center_of_group"
+latex = ""
+
+  [[template.variants]]
+  name  = "center_definition"
+  latex = 'Z({G}) = \left\{{{g_el} \in {G} \mid {g_el} {h_el} = {h_el} {g_el}\; \forall {h_el} \in {G}\right\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "center_abelian_iff"
+  latex = '{G} \text{{ abelian}} \iff Z({G}) = {G}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+
+  [[template.variants]]
+  name  = "center_normal_inn"
+  latex = 'Z({G}) \trianglelefteq {G},\quad {G}/Z({G}) \cong \operatorname{{Inn}}({G})'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+
+# ---------------------------------------------------------------------------
+# Conjugacy (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "conjugacy"
+latex = ""
+
+  [[template.variants]]
+  name  = "conjugacy_relation"
+  latex = '{g_el} \sim {h_el} \iff \exists\, {n} \in {G} : {n} {g_el} {n}^{{-1}} = {h_el}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "conjugacy_class_size"
+  latex = '|[{g_el}]_{{{G}}}| = [{G} : C_{{{G}}}({g_el})]'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Normalizer (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "normalizer"
+latex = ""
+
+  [[template.variants]]
+  name  = "normalizer_definition"
+  latex = 'N_{{{G}}}({H}) = \left\{{{g_el} \in {G} : {g_el} {H} {g_el}^{{-1}} = {H}\right\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "normal_iff_normalizer"
+  latex = '{H} \trianglelefteq {G} \iff N_{{{G}}}({H}) = {G}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+# ---------------------------------------------------------------------------
+# Centralizer (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "centralizer"
+latex = ""
+
+  [[template.variants]]
+  name  = "centralizer_definition"
+  latex = 'C_{{{G}}}({g_el}) = \left\{{{h_el} \in {G} : {h_el} {g_el} = {g_el} {h_el}\right\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "centralizer_class_size"
+  latex = '|{G}| = |C_{{{G}}}({g_el})| \cdot |[{g_el}]|'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Homomorphism properties (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "homomorphism_properties"
+latex = ""
+
+  [[template.variants]]
+  name  = "homomorphism_multiplicativity"
+  latex = '{phi}({g_el} {h_el}) = {phi}({g_el})\,{phi}({h_el})'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "homomorphism_identity_inverse"
+  latex = '{phi}({g_el}^{{-1}}) = {phi}({g_el})^{{-1}},\quad {phi}(e) = e'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "isomorphism_bijective_homo"
+  latex = '{phi} : {G} \to {H} \text{{ iso.}} \iff {phi} \text{{ bij. hom.}}'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+# ---------------------------------------------------------------------------
+# Kernel (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "kernel"
+latex = ""
+
+  [[template.variants]]
+  name  = "kernel_definition"
+  latex = '\ker {phi} = \left\{{{g_el} \in {G} : {phi}({g_el}) = e\right\}}'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "kernel_normal_embedding"
+  latex = '\ker {phi} \trianglelefteq {G},\quad {G}/\ker {phi} \hookrightarrow {H}'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+# ---------------------------------------------------------------------------
+# Direct product (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "direct_product"
+latex = ""
+
+  [[template.variants]]
+  name  = "direct_product_two"
+  latex = '{G} \times {H}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+  [[template.variants]]
+  name  = "direct_product_three"
+  latex = '{G} \times {H} \times {N_sub}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.N_sub]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G", "H"]
+
+  [[template.variants]]
+  name  = "direct_product_cyclic"
+  latex = '\mathbb{{Z}}_{{{p}}} \times \mathbb{{Z}}_{{{p}^2}}'
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+
+# ---------------------------------------------------------------------------
+# Semidirect product (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "semidirect_product"
+latex = ""
+
+  [[template.variants]]
+  name  = "semidirect_product_iso"
+  latex = '{G} \cong {N_sub} \rtimes {H}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.N_sub]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G", "N_sub"]
+
+  [[template.variants]]
+  name  = "semidirect_product_conditions"
+  latex = '{N_sub} \trianglelefteq {G},\quad {G} = {N_sub}{H},\quad {N_sub} \cap {H} = \{{e\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.N_sub]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G", "N_sub"]
+
+# ---------------------------------------------------------------------------
+# Group presentations (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "group_presentations"
+latex = ""
+
+  [[template.variants]]
+  name  = "dihedral_presentation"
+  latex = 'D_{{{nv}}} = \langle {g_el}, {h_el} \mid {g_el}^{{{nv}}} = {h_el}^2 = e,\; {h_el} {g_el} {h_el}^{{-1}} = {g_el}^{{-1}} \rangle'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+  [[template.variants]]
+  name  = "cyclic_presentation"
+  latex = '\mathbb{{Z}}/{nv}\mathbb{{Z}} = \langle {g_el} \mid {g_el}^{{{nv}}} = e \rangle'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "quaternion_presentation"
+  latex = 'Q_8 = \langle {g_el}, {h_el} \mid {g_el}^4 = e,\; {g_el}^2 = {h_el}^2,\; {h_el} {g_el} {h_el}^{{-1}} = {g_el}^{{-1}} \rangle'
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+# ---------------------------------------------------------------------------
+# Free groups (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "free_groups"
+latex = ""
+
+  [[template.variants]]
+  name  = "free_group_rank_n"
+  latex = 'F_{{{nv}}} = \langle {g_el}_1, \ldots, {g_el}_{{{nv}}} \mid \varnothing \rangle'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+  [[template.variants]]
+  name  = "free_group_rank_2_nonabelian"
+  latex = 'F_2 = \langle {g_el}, {h_el} \rangle,\quad [{g_el},{h_el}] \neq e'
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+  [template.variants.slots.h_el]
+  type = "X"
+  pool = "ELEMS"
+  exclude_from = ["g_el"]
+
+[[template]]
+name  = "cayley_theorem"
+latex = '{G} \hookrightarrow S_{{|{G}|}}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+# ---------------------------------------------------------------------------
+# Short exact sequence (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "short_exact_sequence"
+latex = ""
+
+  [[template.variants]]
+  name  = "short_exact_sequence_maps"
+  latex = '0 \to {H} \xrightarrow{{{phi}}} {G} \xrightarrow{{{psi}}} {G}/{H} \to 0'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.psi]
+  type = "X"
+  pool = "HOMOS"
+  exclude_from = ["phi"]
+
+  [[template.variants]]
+  name  = "short_exact_sequence_normal"
+  latex = '1 \to {N_sub} \to {G} \to {G}/{N_sub} \to 1'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.N_sub]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+
+# ---------------------------------------------------------------------------
+# Exactness (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "exactness"
+latex = ""
+
+  [[template.variants]]
+  name  = "exactness_ker_im"
+  latex = '\ker {psi} = \operatorname{{im}}\, {phi}'
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+  [template.variants.slots.psi]
+  type = "X"
+  pool = "HOMOS"
+  exclude_from = ["phi"]
+
+  [[template.variants]]
+  name  = "exactness_injective"
+  latex = '0 \to {H} \xrightarrow{{{phi}}} {G} \text{{ exact}} \iff {phi} \text{{ injective}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.phi]
+  type = "S"
+  pool = "HOMOS"
+
+[[template]]
+name  = "inner_automorphisms"
+latex = '\operatorname{{Inn}}({G}) \cong {G} / Z({G})'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "outer_automorphisms"
+latex = '\operatorname{{Out}}({G}) = \operatorname{{Aut}}({G}) / \operatorname{{Inn}}({G})'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+# ---------------------------------------------------------------------------
+# Abelianisation quotient (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "abelianization_quotient"
+latex = ""
+
+  [[template.variants]]
+  name  = "abelianization_def"
+  latex = '{G}^{{\mathrm{{ab}}}} = {G}/[{G},{G}]'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+
+  [[template.variants]]
+  name  = "abelian_iff_trivial_commutator"
+  latex = '{G} \text{{ abelian}} \iff [{G},{G}] = \{{e\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+
+[[template]]
+name  = "index_product_inequality"
+latex = '[{G}:{H} \cap {N_sub}] \leq [{G}:{H}] \cdot [{G}:{N_sub}]'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "H"]
+
+# ---------------------------------------------------------------------------
+# p-group centre (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "p_group_center"
+latex = ""
+
+  [[template.variants]]
+  name  = "p_group_nontrivial_center"
+  latex = '|{G}| = {p}^{{{n}}} \implies Z({G}) \neq \{{e\}}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+  [[template.variants]]
+  name  = "p_group_subgroup_normal"
+  latex = '|{G}| = {p}^{{{n}}},\; {H} \leq {G} \implies {H} \trianglelefteq {G}'
+  [template.variants.slots.G]
+  type = "S"
+  pool = "G_POOL"
+  [template.variants.slots.H]
+  type = "X"
+  pool = "SIMPLE"
+  exclude_from = ["G"]
+  [template.variants.slots.p]
+  type = "S"
+  pool = "P_POOL"
+  [template.variants.slots.n]
+  type = "S"
+  pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Named group orders (3 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "named_group_orders"
+latex = ""
+
+  [[template.variants]]
+  name  = "symmetric_group_order"
+  latex = '|S_{{{nv}}}| = {nv}!'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+
+  [[template.variants]]
+  name  = "alternating_normal_index2"
+  latex = 'A_{{{nv}}} \trianglelefteq S_{{{nv}}},\quad [S_{{{nv}}} : A_{{{nv}}}] = 2'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+
+  [[template.variants]]
+  name  = "gl_order_formula"
+  latex = '|GL_{{{nv}}}(\mathbb{{F}}_{{{qv}}})| = \prod{lim_mod}_{{k=0}}^{{{nv}-1}} ({qv}^{{{nv}}} - {qv}^k)'
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+  [template.variants.slots.qv]
+  type = "S"
+  pool = "QV_POOL"
+
+# ---------------------------------------------------------------------------
+# Dihedral group (2 variants)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "dihedral_group"
+latex = ""
+
+  [[template.variants]]
+  name  = "dihedral_group_order"
+  latex = '|D_{{{nv}}}| = 2{nv}'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+
+  [[template.variants]]
+  name  = "dihedral_group_center"
+  latex = 'Z(D_{{{nv}}}) = \begin{{cases}} \{{e, {g_el}^{{{nv}/2}}\}} & {nv} \text{{ even}} \\ \{{e\}} & {nv} \text{{ odd}} \end{{cases}}'
+  [template.variants.slots.nv]
+  type = "S"
+  pool = "NV_POOL"
+  [template.variants.slots.g_el]
+  type = "S"
+  pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Standalone templates (B / C section)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "burnside_lemma"
+latex = '|{H}/{G}| = \tfrac{{1}}{{|{G}|}}\sum{lim_mod}_{{{g_el} \in {G}}} \left|{H}^{{{g_el}}}\right|'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+[[template]]
+name  = "fixed_point_subset"
+latex = '{H}^{{{g_el}}} = \left\{{{h_el} \in {H} : {g_el} \cdot {h_el} = {h_el}\right\}}'
+[template.slots.H]
+type = "S"
+pool = "SIMPLE"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+[template.slots.h_el]
+type = "X"
+pool = "ELEMS"
+exclude_from = ["g_el"]
+
+[[template]]
+name  = "orbit_coset_iso"
+latex = '{G}/\operatorname{{Stab}}_{{{G}}}({g_el}) \cong {G} \cdot {g_el}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+[[template]]
+name  = "action_faithful"
+latex = '{phi} : {G} \hookrightarrow \operatorname{{Sym}}({H})\text{{ faithful}} \iff \bigcap_{{{g_el} \in {H}}} \operatorname{{Stab}}_{{{G}}}({g_el}) = \{{e\}}'
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+[[template]]
+name  = "group_extension_ses"
+latex = '1 \to {N_sub} \xrightarrow{{{phi}}} {G} \xrightarrow{{{psi}}} {H} \to 1'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "N_sub"]
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+[template.slots.psi]
+type = "X"
+pool = "HOMOS"
+exclude_from = ["phi"]
+
+[[template]]
+name  = "split_extension"
+latex = '{G} \cong {N_sub} \rtimes_{{{phi}}} {H},\quad {phi} : {H} \to \operatorname{{Aut}}({N_sub})'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "N_sub"]
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+
+[[template]]
+name  = "second_cohomology_extensions"
+latex = 'H^2({H},\, {N_sub}) \cong \operatorname{{Ext}}({H},\, {N_sub})'
+[template.slots.H]
+type = "S"
+pool = "SIMPLE"
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["H"]
+
+[[template]]
+name  = "lower_central_series"
+latex = '{G} = {G}_0 \trianglerighteq {G}_1 \trianglerighteq \cdots \trianglerighteq {G}_{{{n}}} = 1,\quad {G}_k = [{G}, {G}_{{k-1}}]'
+[template.slots.G]
+type = "S"
+pool = "SIMPLE"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "derived_series_solvable"
+latex = '{G}^{{(0)}} = {G} \supset {G}^{{(1)}} \supset \cdots \supset {G}^{{({n})}} = 1'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "nilpotent_class"
+latex = '\gamma_{{{n}}}({G}) = 1,\quad \gamma_{{{n}-1}}({G}) \neq 1,\quad \operatorname{{cl}}({G}) = {n}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "schur_zassenhaus"
+latex = '\gcd(|{N_sub}|, [{G}:{N_sub}]) = 1 \implies {G} \cong {N_sub} \rtimes {H}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.N_sub]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "N_sub"]
+
+[[template]]
+name  = "jordan_holder"
+latex = '\text{{Any two composition series of }} {G} \text{{ have the same factors up to iso and reordering}}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "frattini_subgroup"
+latex = '\Phi({G}) = \bigcap_{{M \text{{ max}} \leq {G}}} M \trianglelefteq {G}'
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "transfer_homomorphism"
+latex = '\operatorname{{Ver}} : {G} \to {H}/[{H},{H}],\quad {phi}({g_el}) = \prod{lim_mod}_{{t}} t{g_el} t^{{-1}} \bmod [{H},{H}]'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Part C — _FN_SLOT templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_group_order"
+latex = '{fn1}(|{G}|) = {fn2}([{G}:{H}] \cdot |{H}|)'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+
+[[template]]
+name  = "fn_index_tower"
+latex = '{fn1}([{G}:{K}]) = {fn2}([{G}:{H}] \cdot [{H}:{K}])'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.H]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G"]
+[template.slots.K]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["G", "H"]
+
+[[template]]
+name  = "fn_conjugation_apply"
+latex = '{fn1}({g_el} {h_el} {g_el}^{{-1}}) = {fn2}({h_el})'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+[template.slots.h_el]
+type = "X"
+pool = "ELEMS"
+exclude_from = ["g_el"]
+
+[[template]]
+name  = "fn_orbit_stabilizer"
+latex = '{fn1}(|{G}|) = {fn2}(|\operatorname{{Orb}}_{{{G}}}({g_el})| \cdot |\operatorname{{Stab}}_{{{G}}}({g_el})|)'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+[[template]]
+name  = "fn_hom_kernel"
+latex = '{fn1}(\ker {phi}) = {fn2}\!\left(\{{g \in {G} : {phi}({g_el}) = e\}}\right)'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.phi]
+type = "S"
+pool = "HOMOS"
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+[[template]]
+name  = "fn_sylow_decomposition"
+latex = '{fn1}(|{G}|) = {fn2}({p}^{{{n}}} m),\quad \gcd({p}, m) = 1'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.p]
+type = "S"
+pool = "P_POOL"
+[template.slots.n]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "fn_abelianization"
+latex = '{fn1}({G}^{{\mathrm{{ab}}}}) = {fn2}({G}/[{G},{G}])'
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "fn_class_equation"
+latex = '{fn1}(|{G}|) = {fn2}\!\left(|Z({G})| + \sum{lim_mod}_{{{g_el}}} [{G} : C_{{{G}}}({g_el})]\right)'
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+[template.slots.G]
+type = "S"
+pool = "G_POOL"
+[template.slots.g_el]
+type = "S"
+pool = "ELEMS"
+
+# ---------------------------------------------------------------------------
+# Normal subgroup / semidirect / wreath / homomorphism standalone templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "normal_subgroup_left"
+latex = '{NN} \vartriangleleft {GG}'
+[template.slots.NN]
+type = "S"
+pool = "SIMPLE"
+[template.slots.GG]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "normal_subgroup_quotient"
+latex = '{NN} \vartriangleleft {GG} \Rightarrow {GG}/{NN} \text{{ is a group}}'
+[template.slots.NN]
+type = "S"
+pool = "SIMPLE"
+[template.slots.GG]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "normal_subgroup_right"
+latex = '{GG} \vartriangleright {NN}'
+[template.slots.NN]
+type = "S"
+pool = "SIMPLE"
+[template.slots.GG]
+type = "S"
+pool = "G_POOL"
+
+[[template]]
+name  = "semidirect_left"
+latex = '{GG} = {KK} \ltimes {NN}'
+[template.slots.GG]
+type = "S"
+pool = "SIMPLE"
+[template.slots.KK]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["GG"]
+[template.slots.NN]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["GG", "KK"]
+
+[[template]]
+name  = "semidirect_left_action"
+latex = '{GG} = {NN} \rtimes {KK} \cong {KK} \ltimes {NN}'
+[template.slots.GG]
+type = "S"
+pool = "SIMPLE"
+[template.slots.KK]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["GG"]
+[template.slots.NN]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["GG", "KK"]
+
+[[template]]
+name  = "wreath_product"
+latex = '{GG} \wr S_{{{nn}}}'
+[template.slots.GG]
+type = "S"
+pool = "SIMPLE"
+[template.slots.nn]
+type = "S"
+pool = "NV_POOL"
+
+[[template]]
+name  = "wreath_product_iterated"
+latex = '{GG} \wr {HH} \cong {GG}^{{|{HH}|}} \rtimes {HH}'
+[template.slots.GG]
+type = "S"
+pool = "SIMPLE"
+[template.slots.HH]
+type = "X"
+pool = "SIMPLE"
+exclude_from = ["GG"]
+
+[[template]]
+name  = "group_homomorphism_rightarrow"
+latex = '\phi: {GG} \rightarrow {HH} \text{{ is a group homomorphism}}'
+[template.slots.GG]
+type = "S"
+pool = "GRP_NAMES"
+[template.slots.HH]
+type = "X"
+pool = "GRP_NAMES"
+exclude_from = ["GG"]
+
+[[template]]
+name  = "conjugation_mapsto"
+latex = '\phi_h: {gg} \mapsto h{gg}h^{{-1}}, \quad {gg} \in {GG}'
+[template.slots.gg]
+type = "S"
+pool = "ELT_POOL"
+[template.slots.GG]
+type = "S"
+pool = "GRP_NAMES"

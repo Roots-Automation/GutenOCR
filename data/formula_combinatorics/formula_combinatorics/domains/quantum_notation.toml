@@ -1,0 +1,319 @@
+[meta]
+name        = "quantum_notation"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Quantum notation domain — systematic Dirac bra-ket coverage for OCR pretraining"
+
+# ---------------------------------------------------------------------------
+# Pool definitions
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name = "STATE_POOL"
+values = [
+    '\psi', '\phi', '\Psi', '\varphi',
+    '\chi', '\xi', '\alpha', '\beta',
+    '\psi_0', '\phi_0', '\psi_n', '\phi_k',
+]
+
+[[pool]]
+name = "PLAIN_STATE_POOL"
+values = ['\psi', '\phi', '\Psi', '\varphi', '\chi', '\xi', '\alpha', '\beta']
+
+[[pool]]
+name = "OP_POOL"
+values = [
+    '\hat{A}', '\hat{B}', '\hat{H}', '\hat{O}', '\hat{U}',
+    '\hat{P}', '\hat{Q}', '\hat{S}', '\hat{L}', '\hat{J}',
+    'A', 'U', 'H', 'O',
+]
+
+[[pool]]
+name = "IDX_POOL"
+values = ['n', 'm', 'k', 'i', 'j', '\ell', '\nu', '\mu']
+
+[[pool]]
+name = "COEFF_POOL"
+values = ['\alpha', '\beta', '\gamma', 'c_0', 'c_1', 'c_n', 'a', 'b']
+
+[[pool]]
+name = "ANG_J_POOL"
+values = ['\tfrac{1}{2}', '1', '\tfrac{3}{2}', '2', 'j', 'j_1', 'j_2']
+
+[[pool]]
+name = "ANG_M_POOL"
+values = ['-\tfrac{1}{2}', '\tfrac{1}{2}', 'm', 'm_1', '-m', '0']
+
+[[pool]]
+name = "ANG_L_POOL"
+values = ['0', '1', '2', '\ell', '3']
+
+[[pool]]
+name = "ANG_ML_POOL"
+values = ['0', '\pm 1', 'm', 'm_\ell', '-1']
+
+[[pool]]
+name = "IDENTITY_POOL"
+values = ['\hat{1}', '\mathbf{1}', '\mathbb{I}', '\mathbf{I}']
+
+[[pool]]
+name = "KET_N_POOL"
+values = ['n', '1', '2', '3', "n'"]
+
+# ---------------------------------------------------------------------------
+# Part A — Atomic bra-ket forms (8 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "pure_ket"
+latex = '|{state}\rangle'
+[template.slots.state]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "pure_bra"
+latex = '\langle{state}|'
+[template.slots.state]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "inner_product_bk"
+latex = '\langle{bra}|{ket}\rangle'
+[template.slots.bra]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.ket]
+type = "X"
+pool = "STATE_POOL"
+exclude_from = ["bra"]
+
+[[template]]
+name  = "outer_product_bk"
+latex = '|{ket}\rangle\langle{bra}|'
+[template.slots.ket]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.bra]
+type = "X"
+pool = "STATE_POOL"
+exclude_from = ["ket"]
+
+[[template]]
+name  = "operator_expectation_short"
+latex = '\langle {op} \rangle'
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[[template]]
+name  = "operator_matrix_element"
+latex = '\langle {bra} | {op} | {ket} \rangle'
+[template.slots.bra]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+[template.slots.ket]
+type = "X"
+pool = "STATE_POOL"
+exclude_from = ["bra"]
+
+[[template]]
+name  = "hermitian_expectation_bk"
+latex = '\langle {psi} | {op} | {psi} \rangle'
+[template.slots.psi]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[[template]]
+name  = "ket_norm_lvert"
+latex = '\lVert |{state}\rangle \rVert = 1'
+[template.slots.state]
+type = "S"
+pool = "STATE_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B — Completeness relations and density matrices (5 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "completeness_discrete"
+latex = '\sum_{{{idx}}} |{idx}\rangle\langle{idx}| = {id}'
+[template.slots.idx]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.id]
+type = "S"
+pool = "IDENTITY_POOL"
+
+[[template]]
+name  = "completeness_continuous"
+latex = '\int |x\rangle\langle x|\,dx = {id}'
+[template.slots.id]
+type = "S"
+pool = "IDENTITY_POOL"
+
+[[template]]
+name  = "density_matrix_pure"
+latex = '\rho = |{psi}\rangle\langle{psi}|'
+[template.slots.psi]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "density_matrix_mixed"
+latex = '\rho = \sum_{{{idx}}} p_{{{idx}}}\,|{psi}_{{{idx}}}\rangle\langle{psi}_{{{idx}}}|'
+[template.slots.idx]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.psi]
+type = "S"
+pool = "PLAIN_STATE_POOL"
+
+[[template]]
+name  = "density_matrix_trace"
+latex = '\operatorname{tr}(\rho) = 1, \quad \rho \geq 0'
+
+# ---------------------------------------------------------------------------
+# Part C — Composite and multi-particle states (7 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ket_quantum_numbers_3"
+latex = '|{nn},\,{ll},\,{mm}\rangle'
+[template.slots.nn]
+type = "S"
+pool = "KET_N_POOL"
+[template.slots.ll]
+type = "S"
+pool = "ANG_L_POOL"
+[template.slots.mm]
+type = "S"
+pool = "ANG_ML_POOL"
+
+[[template]]
+name  = "ket_angular_momentum"
+latex = '|{jj},\,{mm}\rangle'
+[template.slots.jj]
+type = "S"
+pool = "ANG_J_POOL"
+[template.slots.mm]
+type = "S"
+pool = "ANG_M_POOL"
+
+[[template]]
+name  = "ket_tensor_product"
+latex = '|{s1}\rangle \otimes |{s2}\rangle'
+[template.slots.s1]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.s2]
+type = "X"
+pool = "STATE_POOL"
+exclude_from = ["s1"]
+
+[[template]]
+name  = "ket_tensor_shorthand"
+latex = '|{s1}\rangle|{s2}\rangle'
+[template.slots.s1]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.s2]
+type = "X"
+pool = "STATE_POOL"
+exclude_from = ["s1"]
+
+[[template]]
+name  = "qubit_superposition"
+latex = '|{psi}\rangle = {c1}|0\rangle + {c2}|1\rangle'
+[template.slots.psi]
+type = "S"
+pool = "STATE_POOL"
+[template.slots.c1]
+type = "S"
+pool = "COEFF_POOL"
+[template.slots.c2]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["c1"]
+
+[[template]]
+name  = "qubit_bloch_superposition"
+latex = '|{psi}\rangle = \cos\tfrac{{\theta}}{{2}}|0\rangle + e^{{i\varphi}}\sin\tfrac{{\theta}}{{2}}|1\rangle'
+[template.slots.psi]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "two_particle_composite"
+latex = '|{n1},\,{n2}\rangle'
+[template.slots.n1]
+type = "S"
+pool = "IDX_POOL"
+[template.slots.n2]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["n1"]
+
+# ---------------------------------------------------------------------------
+# Part D — Angular momentum coupling (4 templates, no slots)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "clebsch_gordan_coeff"
+latex = '\langle j_1\,m_1;\,j_2\,m_2 | j\,m \rangle'
+
+[[template]]
+name  = "cg_state_expansion"
+latex = '|j_1 j_2;\,j\,m\rangle = \sum_{{m_1,m_2}}\langle j_1\,m_1;\,j_2\,m_2 | j\,m\rangle\,|j_1\,m_1\rangle|j_2\,m_2\rangle'
+
+[[template]]
+name  = "wigner_3j_symbol"
+latex = '\begin{pmatrix} j_1 & j_2 & j_3 \\ m_1 & m_2 & m_3 \end{pmatrix}'
+
+[[template]]
+name  = "wigner_6j_symbol"
+latex = '\begin{Bmatrix} j_1 & j_2 & j_3 \\ j_4 & j_5 & j_6 \end{Bmatrix}'
+
+# ---------------------------------------------------------------------------
+# Part E — Vacuum and thermal expectation values (5 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vacuum_expectation_value"
+latex = '\langle 0 | {op} | 0 \rangle'
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[[template]]
+name  = "vacuum_expectation_general"
+latex = '\langle \Omega | {op} | \Omega \rangle'
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[[template]]
+name  = "time_ordered_vev"
+latex = '\langle 0 | T\{\hat{\phi}(x)\,\hat{\phi}(y)\} | 0 \rangle'
+
+[[template]]
+name  = "thermal_expectation_beta"
+latex = '\langle {op} \rangle_{{\beta}} = \operatorname{{tr}}\!\left(\rho_{{\beta}}\,{op}\right)'
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"
+
+[[template]]
+name  = "thermal_expectation_t"
+latex = '\langle {op} \rangle_T'
+[template.slots.op]
+type = "S"
+pool = "OP_POOL"

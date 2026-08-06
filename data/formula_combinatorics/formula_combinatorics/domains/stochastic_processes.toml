@@ -1,0 +1,1500 @@
+[meta]
+domain = "stochastic_processes"
+
+[[pool]]
+name = "FUNC_POOL"
+values = ["f","g","h","F","G",'\phi','\psi','\varphi','\chi','\xi','\eta']
+
+[[pool]]
+name = "PROC_POOL"
+values = ["X","Y","Z","M","N","S","V",'\xi','\eta']
+
+[[pool]]
+name = "BM_POOL"
+values = ["B","W",'\tilde{B}','\tilde{W}',"B^{(1)}","W^{(1)}"]
+
+[[pool]]
+name = "TIME_POOL"
+values = ["t","s","u","T","r","t_0","t_1"]
+
+[[pool]]
+name = "STOP_POOL"
+values = ['\tau','\sigma','\rho','\zeta',"T","S"]
+
+[[pool]]
+name = "COEFF_POOL"
+values = ['\mu','\alpha','\beta','\gamma','\kappa','\theta',"a","b","c","k","r"]
+
+[[pool]]
+name = "DIFF_POOL"
+values = ['\sigma','\varepsilon','\nu',"s","v",'\delta']
+
+[[pool]]
+name = "FILT_POOL"
+values = ['\mathcal{F}','\mathcal{G}','\mathcal{H}','\mathbb{F}','\mathbb{G}']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["n","m","k","j","N","M"]
+
+[[pool]]
+name = "MEAS_POOL"
+values = ['\mathbb{P}','\mathbb{Q}','\tilde{\mathbb{P}}','\mathbb{P}^*']
+
+# --- Part A: Brownian Motion (10) ---
+
+[[template]]
+name = "brownian_increments"
+latex = '{bm}_{{{t2}}} - {bm}_{{{t1}}} \sim \mathcal{{N}}(0,\, {t2} - {t1})'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "brownian_variance"
+latex = '\mathbb{{E}}\!\left[{bm}_{{{t}}}^2\right] = {t}'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "brownian_covariance"
+latex = '\mathbb{{E}}\!\left[{bm}_{{{t1}}} {bm}_{{{t2}}}\right] = \min({t1},\, {t2})'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "quadratic_variation"
+latex = '[{bm}]_{{{t}}} = {t}'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "brownian_scaling"
+latex = '{coeff}\, {bm}_{{{{{t}}}/{coeff}^2}} \stackrel{{d}}{{=}} {bm}_{{{t}}}'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "brownian_time_reversal"
+latex = '{bm}_{{{T}}} - {bm}_{{{T}-{t}}} \stackrel{{d}}{{=}} {bm}_{{{t}}},\quad 0 \le {t} \le {T}'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "STOP_POOL"
+
+[template.slots.t]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["T"]
+
+[[template]]
+name = "reflection_principle"
+latex = '\mathbb{{P}}\!\left(\max_{{0 \le {t1} \le {t2}}} {bm}_{{{t1}}} \ge {coeff}\right) = 2\,\mathbb{{P}}\!\left({bm}_{{{t2}}} \ge {coeff}\right)'
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "levy_characterization"
+latex = '{proc}_0 = 0,\quad [{proc}]_{{{t}}} = {t} \;\Longrightarrow\; {proc} \text{{ is a Brownian motion}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "ito_martingale_part"
+latex = '''{func}({bm}_{{{t}}}) - \int_0^{{{t}}} \tfrac{{1}}{{2}} {func}''({bm}_{{{s}}})\, d{s} \text{{ is a local martingale}}'''
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "correlated_brownians"
+latex = 'd{bm1}_{{{t}}}\, d{bm2}_{{{t}}} = {coeff}\, d{t}'
+
+[template.slots.bm1]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.bm2]
+type = "X"
+pool = "BM_POOL"
+exclude_from = ["bm1"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+# --- Part B1: Itô Calculus (8) ---
+
+[[template]]
+name = "ito_isometry"
+latex = '\mathbb{{E}}\!\left[\left(\int_0^{{{t}}} {func}({s})\, d{bm}_{{{s}}}\right)^{{\!2}}\right] = \mathbb{{E}}\!\left[\int_0^{{{t}}} {func}({s})^2\, d{s}\right]'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "ito_formula_bm"
+latex = '''d{func}({bm}_{{{t}}}) = {func}'({bm}_{{{t}}})\, d{bm}_{{{t}}} + \tfrac{{1}}{{2}} {func}''({bm}_{{{t}}})\, d{t}'''
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "ito_formula_general"
+latex = 'd{func}({t}, {proc}_{{{t}}}) = \partial_{{{t}}} {func}\, d{t} + \partial_x {func}\, d{proc}_{{{t}}} + \tfrac{{1}}{{2}} \partial_{{xx}} {func}\, (d{proc}_{{{t}}})^2'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "ito_product_rule"
+latex = 'd({proc1}_{{{t}}} {proc2}_{{{t}}}) = {proc1}_{{{t}}}\, d{proc2}_{{{t}}} + {proc2}_{{{t}}}\, d{proc1}_{{{t}}} + d[{proc1}, {proc2}]_{{{t}}}'
+
+[template.slots.proc1]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.proc2]
+type = "X"
+pool = "PROC_POOL"
+exclude_from = ["proc1"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "quadratic_covariation_def"
+latex = '[{proc1}, {proc2}]_{{{t}}} = {proc1}_{{{t}}} {proc2}_{{{t}}} - \int_0^{{{t}}} {proc1}_{{{s}}}\, d{proc2}_{{{s}}} - \int_0^{{{t}}} {proc2}_{{{s}}}\, d{proc1}_{{{s}}}'
+
+[template.slots.proc1]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.proc2]
+type = "X"
+pool = "PROC_POOL"
+exclude_from = ["proc1"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "stratonovich_ito_relation"
+latex = '\int_0^{{{t}}} {func}({s})\, \circ\, d{bm}_{{{s}}} = \int_0^{{{t}}} {func}({s})\, d{bm}_{{{s}}} + \tfrac{{1}}{{2}} [{func}, {bm}]_{{{t}}}'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "martingale_representation"
+latex = '{proc}_{{{t}}} = {proc}_0 + \int_0^{{{t}}} {func}({s})\, d{bm}_{{{s}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "ito_formula_two_var"
+latex = 'd{func}({proc1}_{{{t}}}, {proc2}_{{{t}}}) = \partial_1 {func}\, d{proc1}_{{{t}}} + \partial_2 {func}\, d{proc2}_{{{t}}} + \tfrac{{1}}{{2}}\bigl(\partial_{{11}} {func}\, d[{proc1}]_{{{t}}} + 2\,\partial_{{12}} {func}\, d[{proc1},{proc2}]_{{{t}}} + \partial_{{22}} {func}\, d[{proc2}]_{{{t}}}\bigr)'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.proc1]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.proc2]
+type = "X"
+pool = "PROC_POOL"
+exclude_from = ["proc1"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+# --- Part B2: Stochastic Differential Equations (8) ---
+
+[[template]]
+name = "sde_general_form"
+latex = 'd{proc}_{{{t}}} = {drift}({proc}_{{{t}}}, {t})\, d{t} + {diff}({proc}_{{{t}}}, {t})\, d{bm}_{{{t}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "geometric_brownian_motion_sde"
+latex = 'd{proc}_{{{t}}} = {drift}\, {proc}_{{{t}}}\, d{t} + {diff}\, {proc}_{{{t}}}\, d{bm}_{{{t}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.diff]
+type = "S"
+pool = "DIFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "gbm_solution"
+latex = '{proc}_{{{t}}} = {proc}_0 \exp\!\left(\left({drift} - \tfrac{{{diff}^2}}{{2}}\right){t} + {diff}\, {bm}_{{{t}}}\right)'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.diff]
+type = "S"
+pool = "DIFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "ornstein_uhlenbeck_sde"
+latex = 'd{proc}_{{{t}}} = {kappa}({theta} - {proc}_{{{t}}})\, d{t} + {diff}\, d{bm}_{{{t}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.kappa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.theta]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["kappa"]
+
+[template.slots.diff]
+type = "S"
+pool = "DIFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "sde_lipschitz_condition"
+latex = '\lvert {drift}(x) - {drift}(y) \rvert + \lvert {diff}(x) - {diff}(y) \rvert \le {coeff} \lvert x - y \rvert'
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name = "sde_linear_solution"
+latex = '{proc}_{{{t}}} = \Phi_{{{t}}}\!\left({proc}_0 + \int_0^{{{t}}} \Phi_{{{s}}}^{{-1}} {drift}({s})\, d{s} + \int_0^{{{t}}} \Phi_{{{s}}}^{{-1}} {diff}({s})\, d{bm}_{{{s}}}\right)'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "sde_stopped_process"
+latex = '{proc}^{{{{{stop}}}}}_{{{t} \wedge {stop}}} = {proc}_{{{t} \wedge {stop}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.stop]
+type = "S"
+pool = "STOP_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "sde_pathwise_solution"
+latex = '\mathbb{{E}}\!\left[\int_0^{{{t}}}\!\left({drift}({proc}_{{{s}}})^2 + {diff}({proc}_{{{s}}})^2\right)d{s}\right] < \infty'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+# --- Part B3: Continuous-Time Martingale Theory (8) ---
+
+[[template]]
+name = "martingale_def"
+latex = '\mathbb{{E}}\!\left[{proc}_{{{t2}}} \mid {filt}_{{{t1}}}\right] = {proc}_{{{t1}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.filt]
+type = "S"
+pool = "FILT_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "supermartingale_def"
+latex = '\mathbb{{E}}\!\left[{proc}_{{{t2}}} \mid {filt}_{{{t1}}}\right] \le {proc}_{{{t1}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.filt]
+type = "S"
+pool = "FILT_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "doob_optional_stopping"
+latex = '\mathbb{{E}}\!\left[{proc}_{{{stop}}}\right] = \mathbb{{E}}\!\left[{proc}_0\right]'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.stop]
+type = "S"
+pool = "STOP_POOL"
+
+[[template]]
+name = "doob_maximal_inequality"
+latex = '\mathbb{{P}}\!\left(\sup_{{0 \le {t1} \le {t2}}} \lvert {proc}_{{{t1}}} \rvert \ge {coeff}\right) \le \frac{{\mathbb{{E}}\!\left[\lvert {proc}_{{{t2}}} \rvert\right]}}{{{coeff}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "doob_lp_inequality"
+latex = '\mathbb{{E}}\!\left[\sup_{{0 \le {t} \le {T}}} \lvert {proc}_{{{t}}} \rvert^{{{idx}}}\right]^{{1/{idx}}} \le \frac{{{idx}}}{{{idx}-1}}\,\mathbb{{E}}\!\left[\lvert {proc}_{{{T}}} \rvert^{{{idx}}}\right]^{{1/{idx}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[template.slots.idx]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "local_martingale_def"
+latex = '\exists\, {stop}_{{{idx}}} \uparrow \infty \text{{ s.t. }} {proc}^{{{{{stop}}}_{{{idx}}}}} \text{{ is a martingale}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.stop]
+type = "S"
+pool = "STOP_POOL"
+
+[template.slots.idx]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name = "girsanov_radon_nikodym"
+latex = '\frac{{d{meas2}}}{{d{meas1}}}\bigg|_{{{filt}_{{{t}}}}} = \exp\!\left(\int_0^{{{t}}} {coeff}_{{{s}}}\, d{bm}_{{{s}}} - \tfrac{{1}}{{2}} \int_0^{{{t}}} {coeff}_{{{s}}}^2\, d{s}\right)'
+
+[template.slots.meas1]
+type = "S"
+pool = "MEAS_POOL"
+
+[template.slots.meas2]
+type = "X"
+pool = "MEAS_POOL"
+exclude_from = ["meas1"]
+
+[template.slots.filt]
+type = "S"
+pool = "FILT_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "girsanov_new_bm"
+latex = '{bm2}_{{{t}}} = {bm1}_{{{t}}} - \int_0^{{{t}}} {coeff}_{{{s}}}\, d{s} \text{{ is a }}{meas}\text{{-Brownian motion}}'
+
+[template.slots.bm1]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.bm2]
+type = "X"
+pool = "BM_POOL"
+exclude_from = ["bm1"]
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.meas]
+type = "S"
+pool = "MEAS_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+# --- Part B4: Markov Processes & Generators (8) ---
+
+[[template]]
+name = "markov_semigroup_def"
+latex = 'P_{{{t}}} {func}(x) = \mathbb{{E}}^x\!\left[{func}({proc}_{{{t}}})\right]'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "generator_def"
+latex = '\mathcal{{L}}{func}(x) = \lim_{{{t} \downarrow 0}} \frac{{P_{{{t}}} {func}(x) - {func}(x)}}{{{t}}}'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "diffusion_generator_1d"
+latex = '\mathcal{{L}} = {drift}(x) \frac{{d}}{{dx}} + \tfrac{{1}}{{2}} {diff}(x)^2 \frac{{d^2}}{{dx^2}}'
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[[template]]
+name = "fokker_planck_1d"
+latex = '\frac{{\partial {func}}}{{\partial {t}}} = -\frac{{\partial}}{{\partial x}}\!\left({drift}(x)\, {func}\right) + \tfrac{{1}}{{2}} \frac{{\partial^2}}{{\partial x^2}}\!\left({diff}(x)^2\, {func}\right)'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.drift]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func","drift"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "kolmogorov_backward"
+latex = '\frac{{\partial {func}}}{{\partial {t}}} + \mathcal{{L}}{func} = 0,\quad {func}(x, {T}) = {func2}(x)'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "feynman_kac"
+latex = '{func}(x, {t}) = \mathbb{{E}}^x\!\left[e^{{-\int{lim_mod}_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}})\, d{s}}}\, {func2}({proc}_{{{T}}})\right]'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t","T"]
+
+[[template]]
+name = "dynkin_formula"
+latex = '\mathbb{{E}}^x\!\left[{func}({proc}_{{{stop}}})\right] = {func}(x) + \mathbb{{E}}^x\!\left[\int_0^{{{stop}}} \mathcal{{L}}{func}({proc}_{{{t}}})\, d{t}\right]'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.stop]
+type = "S"
+pool = "STOP_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "invariant_measure"
+latex = '\int P_{{{t}}} {func}(x)\, {meas}(dx) = \int {func}(x)\, {meas}(dx)\quad \forall\, {t} > 0'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.meas]
+type = "S"
+pool = "MEAS_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+# --- Part B5: Poisson Processes & Jump Processes (8) ---
+
+[[template]]
+name = "poisson_process_increment"
+latex = '{proc}_{{{t}}} - {proc}_{{{s}}} \sim \mathrm{{Poisson}}\!\left({coeff}({t} - {s})\right)'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "compound_poisson_process"
+latex = '{proc1}_{{{t}}} = \sum{lim_mod}_{{k=1}}^{{{proc2}_{{{t}}}}} {func}_k'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.proc1]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.proc2]
+type = "X"
+pool = "PROC_POOL"
+exclude_from = ["proc1"]
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "compensated_poisson_martingale"
+latex = '\tilde{{{proc}}}_{{{t}}} = {proc}_{{{t}}} - {coeff}\, {t}\text{{ is a martingale}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "jump_sde_form"
+latex = 'd{proc}_{{{t}}} = {drift}({proc}_{{{t}}})\, d{t} + {diff}({proc}_{{{t}}})\, d{bm}_{{{t}}} + {coeff}({proc}_{{{t}-}})\, d{jump}_{{{t}}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.coeff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift","diff"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.jump]
+type = "X"
+pool = "PROC_POOL"
+exclude_from = ["proc"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "levy_khintchine_formula"
+latex = '\Psi({coeff}) = i{drift}\,{coeff} - \tfrac{{1}}{{2}} {diff}^2 {coeff}^2 + \int \!\left(e^{{i{coeff} z}} - 1 - i{coeff} z\right) \nu(dz)'
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.drift]
+type = "X"
+pool = "COEFF_POOL"
+exclude_from = ["coeff"]
+
+[template.slots.diff]
+type = "S"
+pool = "DIFF_POOL"
+
+[[template]]
+name = "poisson_intensity"
+latex = '\mathbb{{E}}\!\left[{proc}_{{{t}}}\right] = {coeff}\, {t}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "inter_arrival_exponential"
+latex = '{stop}_{{{idx}}} \sim \mathrm{{Exp}}({coeff})\text{{ i.i.d.}},\quad N_{{{t}}} = \max\left\{{k : {stop}_1 + \cdots + {stop}_k \le {t}\right\}}'
+
+[template.slots.stop]
+type = "S"
+pool = "STOP_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.idx]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "levy_ito_decomposition"
+latex = '{proc}_{{{t}}} = {drift}\, {t} + {diff}\, {bm}_{{{t}}} + \int{lim_mod}_{{|z|<1}} z\, \tilde{{N}}({t},\, dz) + \int{lim_mod}_{{|z|\ge 1}} z\, N({t},\, dz)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.diff]
+type = "S"
+pool = "DIFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+# --- Part B6: Stochastic Control & Filtering (8) ---
+
+[[template]]
+name = "hjb_equation"
+latex = '\frac{{\partial {func}}}{{\partial {t}}} + \max_{{u}}\left[{drift}(x, u) \cdot \nabla_x {func} + \tfrac{{1}}{{2}} \mathrm{{tr}}(\sigma\sigma^T D^2 {func})\right] = 0'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.drift]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "value_function_bellman"
+latex = '{func}(x, {t}) = \sup_u \mathbb{{E}}\!\left[\int{lim_mod}_{{{t}}}^{{{T}}} {coeff}({proc}_{{{s}}}, u_{{{s}}})\, d{s} + {func2}({proc}_{{{T}}})\right]'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t","T"]
+
+[[template]]
+name = "kalman_filter_update"
+latex = '\hat{{{proc}}}_{{{t}|{t}}} = \hat{{{proc}}}_{{{t}|{s}}} + K_{{{t}}}\!\left(Y_{{{t}}} - H\, \hat{{{proc}}}_{{{t}|{s}}}\right)'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "kalman_gain_matrix"
+latex = 'K_{{{t}}} = P_{{{t}|{s}}} {H}^T\!\left({H} P_{{{t}|{s}}} {H}^T + {R}\right)^{{-1}}'
+
+[template.slots.H]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.R]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["H"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "riccati_equation_ode"
+latex = '\dot{{P}}_{{{t}}} = {A} P_{{{t}}} + P_{{{t}}} {A}^T - P_{{{t}}} {H}^T {R}^{{-1}} {H} P_{{{t}}} + {Q}'
+
+[template.slots.A]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.H]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["A"]
+
+[template.slots.R]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["A","H"]
+
+[template.slots.Q]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["A","H","R"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "lqr_cost_functional"
+latex = 'J({proc}) = \mathbb{{E}}\!\left[\int_0^{{{T}}} \left({proc}_{{{t}}}^T Q\, {proc}_{{{t}}} + u_{{{t}}}^T R\, u_{{{t}}}\right) d{t} + {proc}_{{{T}}}^T P\, {proc}_{{{T}}}\right]'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "zakai_equation"
+latex = 'd\sigma_{{{t}}}({func}) = \sigma_{{{t}}}(\mathcal{{L}}{func})\, d{t} + \sigma_{{{t}}}({func2}\, {func})\, d{bm}_{{{t}}}'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "kushner_stratonovich_filter"
+latex = 'd\pi_{{{t}}}({func}) = \pi_{{{t}}}(\mathcal{{L}}{func})\, d{t} + \left(\pi_{{{t}}}({func2}\, {func}) - \pi_{{{t}}}({func2})\,\pi_{{{t}}}({func})\right) \circ d{bm}_{{{t}}}'
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+# --- Part C: High-n_eff function-pair templates (6) ---
+
+[[template]]
+name = "fn_ito_formula_composition"
+latex = '''{fn1}\!\left(d{func}({bm}_{{{t}}})\right) = {fn2}\!\left({func}'({bm}_{{{t}}})\, d{bm}_{{{t}}} + \tfrac{{1}}{{2}} {func}''({bm}_{{{t}}})\, d{t}\right)'''
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "fn_sde_solution_form"
+latex = '{fn1}({proc}_{{{t}}}) = {fn2}\!\left({proc}_0 + \int_0^{{{t}}} {drift}({proc}_{{{s}}})\, d{s} + \int_0^{{{t}}} {diff}({proc}_{{{s}}})\, d{bm}_{{{s}}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.drift]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["drift"]
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "fn_martingale_transform"
+latex = '{fn1}\!\left(\mathbb{{E}}\!\left[{proc}_{{{t2}}} \mid {filt}_{{{t1}}}\right]\right) = {fn2}({proc}_{{{t1}}})'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.filt]
+type = "S"
+pool = "FILT_POOL"
+
+[template.slots.t1]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.t2]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t1"]
+
+[[template]]
+name = "fn_fokker_planck_operator"
+latex = '{fn1}\!\left(\frac{{\partial {func}}}{{\partial {t}}}\right) = {fn2}\!\left(-\frac{{\partial}}{{\partial x}}\!\left({drift}(x)\, {func}\right) + \tfrac{{1}}{{2}} \frac{{\partial^2}}{{\partial x^2}}\!\left({diff}(x)^2\, {func}\right)\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.drift]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.diff]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func","drift"]
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[[template]]
+name = "fn_feynman_kac_composition"
+latex = '{fn1}({func}(x, {t})) = {fn2}\!\left(\mathbb{{E}}^x\!\left[e^{{-{coeff}\, {T}}} {func2}({proc}_{{{T}}})\right]\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.func]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.func2]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["func"]
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+[[template]]
+name = "fn_girsanov_density"
+latex = '{fn1}\!\left(\frac{{d{meas2}}}{{d{meas1}}}\right) = {fn2}\!\left(\exp\!\left(\int_0^{{{t}}} {coeff}_{{{s}}}\, d{bm}_{{{s}}} - \tfrac{{1}}{{2}} \int_0^{{{t}}} {coeff}_{{{s}}}^2\, d{s}\right)\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.meas1]
+type = "S"
+pool = "MEAS_POOL"
+
+[template.slots.meas2]
+type = "X"
+pool = "MEAS_POOL"
+exclude_from = ["meas1"]
+
+[template.slots.coeff]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.bm]
+type = "S"
+pool = "BM_POOL"
+
+[template.slots.t]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.s]
+type = "X"
+pool = "TIME_POOL"
+exclude_from = ["t"]
+
+# --- Part D: Discrete Markov Chain identities (3) ---
+
+[[template]]
+name = "communicating_states"
+latex = 'i \rightleftharpoons j \iff \exists\, n:\; P^n(i,j)>0 \;\wedge\; P^m(j,i)>0'
+
+[[template]]
+name = "detailed_balance_reversibility"
+latex = '\pi_i \, {proc}(i,j) \rightleftharpoons \pi_j \, {proc}(j,i) \;\forall\; i,j \in S'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"
+
+[[template]]
+name = "monotone_process_uparrow"
+latex = '0 \leq {proc}_1 \leq {proc}_2 \leq \cdots \uparrow {proc}_\infty \text{{a.s.}}'
+
+[template.slots.proc]
+type = "S"
+pool = "PROC_POOL"

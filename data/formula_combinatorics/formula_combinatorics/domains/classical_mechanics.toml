@@ -1,0 +1,651 @@
+[meta]
+domain = "classical_mechanics"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "HAM_POOL"
+values = ["H", '\hat{H}', '\mathcal{H}', '\hat{\mathcal{H}}', "H_0", '\tilde{H}']
+
+[[pool]]
+name   = "LAG_POOL"
+values = ["L", '\mathcal{L}', '\Lambda', '\tilde{L}', "L_0", '\hat{L}']
+
+[[pool]]
+name   = "MASS_POOL"
+values = ["m", "M", '\mu', "m_1", "m_2", '\tilde{m}', "m_0", "M_0"]
+
+[[pool]]
+name   = "Q_POOL"
+values = ["q", "q_i", "q_k", "q_j"]
+
+[[pool]]
+name   = "P_POOL"
+values = ["p", "p_i", "p_k", '\pi']
+
+[[pool]]
+name   = "ENERGY_POOL"
+values = ["E", "E_0", '\mathcal{E}', "U"]
+
+[[pool]]
+name   = "VEC_F_POOL"
+values = ['\mathbf{F}', '\vec{F}', "F", '\hat{F}', '\tilde{F}', '\mathcal{F}']
+
+[[pool]]
+name   = "CHARGE_POOL"
+values = ["q", "e", "Q", "q_1", "q_2"]
+
+[[pool]]
+name   = "E_FIELD_POOL"
+values = ['\mathbf{E}', '\vec{E}', "E", '\hat{E}', '\mathcal{E}', '\tilde{E}']
+
+[[pool]]
+name   = "B_FIELD_POOL"
+values = ['\mathbf{B}', '\vec{B}', "B", '\hat{B}', '\mathcal{B}', '\tilde{B}']
+
+[[pool]]
+name   = "EPS_POOL"
+values = ['\varepsilon_0', '\epsilon_0', '\varepsilon', '\epsilon_r\varepsilon_0', '\varepsilon_{\mathrm{eff}}']
+
+[[pool]]
+name   = "COORD_POOL"
+values = ["x", "y", "z", "r", '\theta', '\phi']
+
+[[pool]]
+name   = "OMEGA_POOL"
+values = ['\omega', '\omega_0', '\Omega', '\nu']
+
+[[pool]]
+name   = "GAMMA_POOL"
+values = ['\gamma', '\Gamma', '\gamma_0']
+
+[[pool]]
+name   = "VEL_POOL"
+values = ["v", "v_0", "u", "v_1"]
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["i", "j", "k", "n", "m"]
+
+[[pool]]
+name   = "HBAR_POOL"
+values = ['\hbar', 'h/(2\pi)', "h", '\hslash']
+
+[[pool]]
+name   = "LAM_POOL"
+values = ['\lambda', '\Lambda', '\mu', '\kappa']
+
+# ---------------------------------------------------------------------------
+# Part A: Lagrangian / Hamiltonian mechanics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "hamiltonian"
+latex = '{ham} = \frac{{p^2}}{{2\,{mm}}} + V({qq})'
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "lagrangian"
+latex = '{lag} = \frac{{1}}{{2}}\,{mm}\,\dot{{{qq}}}^2 - V({qq})'
+
+[template.slots.lag]
+type = "S"
+pool = "LAG_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_lagrange"
+latex = '\frac{{d}}{{dt}}\frac{{\partial {lag}}}{{\partial \dot{{{qq}}}}} - \frac{{\partial {lag}}}{{\partial {qq}}} = 0'
+
+[template.slots.lag]
+type = "S"
+pool = "LAG_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "euler_lagrange_alt"
+latex = '\frac{{d}}{{dt}}\frac{{\partial {lag}}}{{\partial \dot{{{qq}}}}} = \frac{{\partial {lag}}}{{\partial {qq}}}'
+
+[template.slots.lag]
+type = "S"
+pool = "LAG_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "newtons_second_law"
+latex = '{ff} = {mm}\,\ddot{{\mathbf{{r}}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "VEC_F_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ----
+
+[[template]]
+name  = "angular_momentum"
+latex = '\mathbf{{L}}_{{{ii}}} = \mathbf{{r}}_{{{ii}}} \times \mathbf{{p}}_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "poisson_bracket"
+latex = '\{{{ham},\,{fn}\}} = \frac{{\partial {ham}}}{{\partial q}}\frac{{\partial {fn}}}{{\partial p}} - \frac{{\partial {ham}}}{{\partial p}}\frac{{\partial {fn}}}{{\partial q}}'
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "lorentz_force"
+latex = '{ff} = {qq}\!\left({ef} + \mathbf{{v}} \times {bf}\right)'
+
+[template.slots.ff]
+type = "S"
+pool = "VEC_F_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "CHARGE_POOL"
+
+[template.slots.ef]
+type = "S"
+pool = "E_FIELD_POOL"
+
+[template.slots.bf]
+type = "S"
+pool = "B_FIELD_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Classical mechanics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "hamiltons_eom_q"
+latex = '\dot{{{qq}}} = \frac{{\partial {ham}}}{{\partial {pp}}}'
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+# ----
+
+[[template]]
+name  = "hamiltons_eom_p"
+latex = '\dot{{{pp}}} = -\frac{{\partial {ham}}}{{\partial {qq}}}'
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+[template.slots.ham]
+type = "S"
+pool = "HAM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+# ----
+
+[[template]]
+name  = "conservation_energy"
+latex = '{ee} = \tfrac{{1}}{{2}}\,{mm}\,\dot{{{qq}}}^2 + V({qq}) = \mathrm{{const}}'
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.qq]
+type = "S"
+pool = "Q_POOL"
+
+# ----
+
+[[template]]
+name  = "work_energy_theorem"
+latex = 'W = \Delta K = \tfrac{{1}}{{2}}\,{mm}\,{vv}_f^2 - \tfrac{{1}}{{2}}\,{mm}\,{vv}_i^2'
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = ["v", "u"]
+
+# ----
+
+[[template]]
+name  = "sho_equation"
+latex = '\ddot{{{cc}}} + {om}^2\,{cc} = 0'
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "sho_solution"
+latex = '{cc}(t) = A\cos\!\bigl({om}\,t + \varphi\bigr)'
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "damped_oscillator"
+latex = '\ddot{{{cc}}} + 2\,{gm}\,\dot{{{cc}}} + {om}^2\,{cc} = 0'
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "gravitational_potential"
+latex = 'V(r) = -\frac{{G\,{m1}\,{m2}}}{{r}}'
+
+[template.slots.m1]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.m2]
+type         = "X"
+pool         = "MASS_POOL"
+exclude_from = ["m1"]
+
+# ----
+
+[[template]]
+name  = "keplers_third_law"
+latex = 'T^2 = \frac{{4\pi^2\,a^3}}{{G\,{mm}}}'
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ----
+
+[[template]]
+name  = "centripetal_acceleration"
+latex = 'a_c = \frac{{{vv}^2}}{{r}} = {om}^2\,r'
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ----
+
+[[template]]
+name  = "moment_of_inertia_sum"
+latex = 'I = \sum{lim_mod}_{{{ii}}} {mm}_{{{ii}}}\,r_{{{ii}}}^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = ["m", "M", '\mu', '\tilde{m}']
+
+# ----
+
+[[template]]
+name  = "torque_cross_product"
+latex = '\boldsymbol{{\tau}} = \mathbf{{r}} \times {ff}'
+
+[template.slots.ff]
+type = "S"
+pool = "VEC_F_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: Special relativity
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lorentz_factor_def"
+latex = '{gm} = \frac{{1}}{{\sqrt{{1-{vv}^2/c^2}}}}'
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ----
+
+[[template]]
+name  = "time_dilation_sr"
+latex = '''\Delta t' = {gm}\,\Delta t'''
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+# ----
+
+[[template]]
+name  = "length_contraction_sr"
+latex = '''L' = \frac{{L}}{{{gm}}}'''
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+# ----
+
+[[template]]
+name  = "relativistic_momentum_sr"
+latex = '\mathbf{{p}} = {gm}\,{mm}\,{vv}'
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ----
+
+[[template]]
+name  = "relativistic_energy_sr"
+latex = '{ee} = {gm}\,{mm}\,c^2'
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+[template.slots.mm]
+type = "S"
+pool = "MASS_POOL"
+
+# ----
+
+[[template]]
+name  = "minkowski_metric"
+latex = 'ds^2 = -c^2\,dt^2 + dx^2 + dy^2 + dz^2'
+
+# ----
+
+[[template]]
+name  = "relativistic_velocity_addition"
+latex = '{vv} = \frac{{{v1}+{v2}}}{{1+{v1}\,{v2}/c^2}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+[template.slots.v1]
+type = "S"
+pool = "VEL_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VEL_POOL"
+exclude_from = ["v1"]
+
+# ---------------------------------------------------------------------------
+# Part B: Waves and optics
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "wave_equation_1d"
+latex = '\frac{{\partial^2 {fn}}}{{\partial t^2}} = {vv}^2\,\frac{{\partial^2 {fn}}}{{\partial x^2}}'
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ----
+
+[[template]]
+name  = "speed_of_light_formula"
+latex = 'c = \frac{{1}}{{\sqrt{{\mu_0\,{eps}}}}}'
+
+[template.slots.eps]
+type = "S"
+pool = "EPS_POOL"
+
+# ----
+
+[[template]]
+name  = "snells_law_optics"
+latex = 'n_{{{i1}}}\sin\theta_{{{i1}}} = n_{{{i2}}}\sin\theta_{{{i2}}}'
+
+[template.slots.i1]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.i2]
+type         = "X"
+pool         = "IDX_POOL"
+exclude_from = ["i1"]
+
+# ----
+
+[[template]]
+name  = "de_broglie_wavelength"
+latex = '{lm} = \frac{{h}}{{{pp}}}'
+
+[template.slots.lm]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+# ----
+
+[[template]]
+name  = "planck_relation"
+latex = '{ee} = {hb}\,{om}'
+
+[template.slots.ee]
+type = "S"
+pool = "ENERGY_POOL"
+
+[template.slots.hb]
+type = "S"
+pool = "HBAR_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "OMEGA_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix: SR with \upsilon notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "normalized_velocity"
+latex = '\upsilon \equiv \frac{{{vv}}}{{c}}, \quad 0 \leq \upsilon < 1'
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ----
+
+[[template]]
+name  = "lorentz_factor_upsilon"
+latex = '\gamma = \frac{{1}}{{\sqrt{{1 - \upsilon^2}}}}, \quad \upsilon = {vv}/c'
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ---------------------------------------------------------------------------
+# Appendix: Vector notation with \imath / \jmath (slot-free)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "position_vector_imath_jmath"
+latex = '\mathbf{{r}} = x\,\imath + y\,\jmath + z\,\hat{{k}}'
+
+[[template]]
+name  = "quaternion_units_imath_jmath"
+latex = '\imath^2 = \jmath^2 = -1,\quad \imath\,\jmath = -\jmath\,\imath'
+
+# ---------------------------------------------------------------------------
+# Appendix: Small-angle approximation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "small_angle_approx"
+latex = '\sin {coord} \approx {coord} \quad ({coord} \ll 1)'
+
+[template.slots.coord]
+type = "S"
+pool = "COORD_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: Function-pair templates (classical/SR context)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_lorentz_factor_pair"
+latex = '{fn1}({gm}) = {fn2}\!\left(\frac{{1}}{{\sqrt{{1-{vv}^2/c^2}}}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.gm]
+type = "S"
+pool = "GAMMA_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "VEL_POOL"
+
+# ----
+
+[[template]]
+name  = "fn_heat_equation"
+latex = '\frac{{\partial {fn1}}}{{\partial t}} = {fn2}\,\frac{{\partial^2 {fn1}}}{{\partial {cc}^2}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.cc]
+type = "S"
+pool = "COORD_POOL"

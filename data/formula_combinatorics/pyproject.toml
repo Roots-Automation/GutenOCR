@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "formula-combinatorics"
+version = "0.2.0"
+description = "Synthetic LaTeX mathematical formula generator for OCR training"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Roots Automation"},
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+]
+
+[project.scripts]
+formula-generate = "formula_combinatorics.generate:main"
+
+[project.urls]
+"Homepage" = "https://github.com/Roots-Automation/GutenOCR"
+"Bug Tracker" = "https://github.com/Roots-Automation/GutenOCR/issues"
+
+[tool.setuptools.packages.find]
+include = ["formula_combinatorics*"]
+
+[tool.pytest.ini_options]
+addopts = "-m 'not slow'"
+markers = [
+    "slow: marks tests as slow (skipped in normal CI; run with: pytest -m slow)",
+    "render: marks tests that require node + katex npm package",
+]
+
+[dependency-groups]
+dev = [
+    "pytest-cov>=7.1.0",
+]
+
+[tool.coverage.run]
+source = ["formula_combinatorics"]
+omit = ["*/tests/*", "*/tools/*"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",
+]

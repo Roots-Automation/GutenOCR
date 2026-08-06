@@ -1,0 +1,1789 @@
+[meta]
+domain = "fourier"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "FUNC_POOL"
+values = ["f", "g", "h", "F", "G", '\phi', '\psi', '\varphi', '\chi', '\xi', '\eta']
+
+[[pool]]
+name   = "IDX_POOL"
+values = ["i", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t"]
+
+[[pool]]
+name   = "COEFF_POOL"
+values = ["a", "b", "c", "d", "k", "m", "n", "p", "q", '\alpha', '\beta', '\gamma', '\lambda', '\mu', '\rho', '\kappa', '\theta']
+
+[[pool]]
+name   = "FREQ_POOL"
+values = ['\xi', '\omega', '\nu', "k", '\zeta', '\lambda']
+
+[[pool]]
+name   = "TIME_POOL"
+values = ["t", '\tau', "s", "u", "x"]
+
+[[pool]]
+name   = "PERIOD_POOL"
+values = ["T", '2\pi', "L", "P"]
+
+[[pool]]
+name   = "SIZE_POOL"
+values = ["N", "M", "K"]
+
+[[pool]]
+name   = "SIGNAL_POOL"
+values = ["x", "y", "s", "u", "v", "X", "Y"]
+
+[[pool]]
+name   = "KERNEL_POOL"
+values = ["h", "g", '\phi', '\psi', "w"]
+
+[[pool]]
+name   = "TVAR_POOL"
+values = ['\tau', "s", "u", "v"]
+
+[[pool]]
+name   = "S_POOL"
+values = ["s", 's + j\omega', '\sigma + i\omega', '\lambda']
+
+# ---------------------------------------------------------------------------
+# Part A: reparameterized originals (14)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fourier_transform"
+latex = '\hat{{{ff}}}({xi}) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt})\, e^{{-2\pi i {tt} {xi}}} \, d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "inverse_fourier_transform"
+latex = '{ff}({tt}) = \int{lim_mod}_{{-\infty}}^{{\infty}} \hat{{{ff}}}({xi})\, e^{{2\pi i {tt} {xi}}} \, d{xi}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_series"
+latex = '{ff}({vv}) = \sum{lim_mod}_{{n=-\infty}}^{{\infty}} c_n\, e^{{2\pi i n {vv} / {T}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_coefficients"
+latex = 'c_n = \frac{{1}}{{{T}}} \int_0^{{{T}}} {ff}({vv})\, e^{{-2\pi i n {vv} / {T}}} \, d{vv}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "parseval"
+latex = '\int{lim_mod}_{{-\infty}}^{{\infty}} |{ff}({tt})|^2 \, d{tt} = \int{lim_mod}_{{-\infty}}^{{\infty}} |\hat{{{ff}}}({xi})|^2 \, d{xi}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "convolution"
+latex = '({ff} * {gg})({tt}) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tau})\, {gg}({tt} - {tau}) \, d{tau}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+# ----
+
+[[template]]
+name  = "convolution_theorem"
+latex = '\widehat{{{ff} * {gg}}} = \hat{{{ff}}} \cdot \hat{{{gg}}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+# ----
+
+[[template]]
+name  = "laplace_transform"
+latex = '\mathcal{{L}}\left\{{{ff}(t)\right\}}({ss}) = \int_0^{{\infty}} {ff}(t)\, e^{{-{ss}\, t}} \, dt'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ----
+
+[[template]]
+name  = "z_transform"
+latex = 'X(z) = \sum{lim_mod}_{{{nn}=-\infty}}^{{\infty}} {xx}[{nn}]\, z^{{-{nn}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dft"
+latex = 'X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\, e^{{-2\pi i k {nn} / {N}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dirac_delta_sifting"
+latex = '\int{lim_mod}_{{-\infty}}^{{\infty}} \delta({tt} - {aa})\, {ff}({tt}) \, d{tt} = {ff}({aa})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+# ----
+
+[[template]]
+name  = "time_frequency_uncertainty"
+latex = '\Delta {Dt} \cdot \Delta {Do} \geq \tfrac{{1}}{{2}}'
+
+[template.slots.Dt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.Do]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "poisson_summation"
+latex = '\sum{lim_mod}_{{{nn}=-\infty}}^{{\infty}} {ff}({nn}) = \sum{lim_mod}_{{k=-\infty}}^{{\infty}} \hat{{{ff}}}(k)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "transfer_function"
+latex = 'H({fo}) = \frac{{{yy}({fo})}}{{{xx}({fo})}}'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "SIGNAL_POOL"
+exclude_from = ["xx"]
+
+[template.slots.fo]
+type = "S"
+pool = "FREQ_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_CFT: continuous FT properties (8)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "ft_linearity"
+latex = '\widehat{{a\,{ff}+b\,{gg}}}({xi}) = a\,\hat{{{ff}}}({xi}) + b\,\hat{{{gg}}}({xi})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_time_shift"
+latex = '\widehat{{{ff}(\cdot - {aa})}}({xi}) = e^{{-2\pi i\,{aa}\,{xi}}}\,\hat{{{ff}}}({xi})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_modulation"
+latex = '\widehat{{e^{{2\pi i\,{aa}\,{tt}}}\,{ff}}}({xi}) = \hat{{{ff}}}({xi} - {aa})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_scaling"
+latex = '\widehat{{{ff}({aa}\,{tt})}}({xi}) = \frac{{1}}{{|{aa}|}}\,\hat{{{ff}}}\!\left(\frac{{{xi}}}{{{aa}}}\right)'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_derivative"
+latex = '\widehat{{{ff}^{{({nn})}}}}({xi}) = (2\pi i\,{xi})^{{{nn}}}\,\hat{{{ff}}}({xi})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_duality"
+latex = '\widehat{{\hat{{{ff}}}}}({tt}) = {ff}(-{tt})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "riemann_lebesgue"
+latex = '\lim_{{|{xi}|\to\infty}} \hat{{{ff}}}({xi}) = 0'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "plancherel_theorem"
+latex = '\langle \hat{{{ff}}},\, \hat{{{gg}}} \rangle = \langle {ff},\, {gg} \rangle_{{L^2}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+# ---------------------------------------------------------------------------
+# Part B_FS: Fourier series (8)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "fourier_series_real"
+latex = '{ff}({vv}) = \frac{{a_0}}{{2}} + \sum{lim_mod}_{{n=1}}^\infty \Bigl(a_n\cos\tfrac{{2\pi n\,{vv}}}{{{T}}} + b_n\sin\tfrac{{2\pi n\,{vv}}}{{{T}}}\Bigr)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_coeff_cosine"
+latex = 'a_{{{nn}}} = \frac{{2}}{{{T}}}\int_0^{{{T}}} {ff}({vv})\cos\tfrac{{2\pi\,{nn}\,{vv}}}{{{T}}}\,d{vv}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_coeff_sine"
+latex = 'b_{{{nn}}} = \frac{{2}}{{{T}}}\int_0^{{{T}}} {ff}({vv})\sin\tfrac{{2\pi\,{nn}\,{vv}}}{{{T}}}\,d{vv}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "dirichlet_kernel"
+latex = 'D_{{{nn}}}({vv}) = \sum{lim_mod}_{{k=-{nn}}}^{{{nn}}} e^{{ik{vv}}} = \frac{{\sin\bigl(({nn}+\tfrac{{1}}{{2}}){vv}\bigr)}}{{\sin({vv}/2)}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fejer_kernel"
+latex = 'F_{{{nn}}}({vv}) = \frac{{1}}{{{nn}}}\sum{lim_mod}_{{k=0}}^{{{nn}-1}} D_k({vv})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "parseval_series"
+latex = '\sum{lim_mod}_{{n=-\infty}}^\infty |c_n|^2 = \frac{{1}}{{{T}}}\int_0^{{{T}}} |{ff}({vv})|^2\,d{vv}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "bessel_inequality"
+latex = '\sum{lim_mod}_{{n=0}}^\infty \bigl|\langle {ff},\, e_n\rangle\bigr|^2 \leq \|{ff}\|^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+# ----
+
+[[template]]
+name  = "orthonormality_trig"
+latex = '\frac{{1}}{{{T}}}\int_0^{{{T}}} e^{{2\pi i\,{nn}\,{vv}/{T}}}\,e^{{-2\pi i\,{mm}\,{vv}/{T}}}\,d{vv} = \delta_{{{nn}{mm}}}'
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[template.slots.vv]
+type = "S"
+pool = "TIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_DFT: DFT / FFT (6)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "idft"
+latex = '{xx}[{nn}] = \frac{{1}}{{{N}}}\sum{lim_mod}_{{k=0}}^{{{N}-1}} X[k]\,e^{{2\pi i k\,{nn}/{N}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dft_shift"
+latex = 'X[k]\,e^{{2\pi i k\,{nn}/{N}}} \;\longleftrightarrow\; {xx}[{nn} - n_0]'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dft_parseval"
+latex = '\sum{lim_mod}_{{{nn}=0}}^{{{N}-1}}|{xx}[{nn}]|^2 = \frac{{1}}{{{N}}}\sum{lim_mod}_{{k=0}}^{{{N}-1}}|X[k]|^2'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dft_convolution"
+latex = '{xx}[n] * {hh}[n] \;\longleftrightarrow\; X[k]\,H[k]'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+# ----
+
+[[template]]
+name  = "twiddle_factor"
+latex = 'W_{{{N}}} = e^{{-2\pi i/{N}}},\quad X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\,W_{{{N}}}^{{{nn} k}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "nyquist_sampling"
+latex = '{fs} \geq 2\,{fb}'
+
+[template.slots.fs]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.fb]
+type = "X"
+pool = "FREQ_POOL"
+exclude_from = ["fs"]
+
+# ---------------------------------------------------------------------------
+# Part B_LAP: Laplace transform (6)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "laplace_derivative"
+latex = '''\mathcal{{L}}\left\{{{ff}'(t)\right\}}({ss}) = {ss}\,F({ss}) - {ff}(0)'''
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_convolution"
+latex = '\mathcal{{L}}\left\{{{ff} * {gg}\right\}}({ss}) = F({ss})\cdot G({ss})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_shift"
+latex = '\mathcal{{L}}\left\{{e^{{{aa}\,t}}\,{ff}(t)\right\}}({ss}) = F({ss} - {aa})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_scale"
+latex = '\mathcal{{L}}\left\{{{ff}({aa}\,t)\right\}}({ss}) = \frac{{1}}{{|{aa}|}}\,F\!\left(\frac{{{ss}}}{{{aa}}}\right)'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_initial_value"
+latex = '\lim_{{t\to 0^+}} {ff}(t) = \lim_{{{ss}\to\infty}} {ss}\,F({ss})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_final_value"
+latex = '\lim_{{t\to\infty}} {ff}(t) = \lim_{{{ss}\to 0}} {ss}\,F({ss})'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_ZT: Z-transform (4)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "z_transform_shift"
+latex = '\mathcal{{Z}}\left\{{{xx}[n-{nn}]\right\}}(z) = z^{{-{nn}}}\,X(z)'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "z_transform_convolution"
+latex = '\mathcal{{Z}}\left\{{{xx} * {hh}\right\}}(z) = X(z)\,H(z)'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+# ----
+
+[[template]]
+name  = "z_transform_final_value"
+latex = '\lim_{{n\to\infty}} {xx}[n] = \lim_{{z\to 1}}(z-1)\,X(z)'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+# ----
+
+[[template]]
+name  = "z_transform_poles"
+latex = 'X(z) = \frac{{B(z)}}{{A(z)}},\quad \text{{poles: }} A(z) = 0'
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_HA: Harmonic analysis / functional analysis (6)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "l2_norm_def"
+latex = '\|{ff}\|_{{L^2}} = \left(\int{lim_mod}_{{-\infty}}^{{\infty}} |{ff}({tt})|^2\,d{tt}\right)^{{1/2}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "inner_product_l2"
+latex = '\langle {ff},\, {gg}\rangle = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt})\,\overline{{{gg}({tt})}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "hilbert_transform"
+latex = '\mathcal{{H}}\left\{{{ff}\right\}}({tt}) = \frac{{1}}{{\pi}}\,\mathrm{{p.v.}}\int{lim_mod}_{{-\infty}}^\infty \frac{{{ff}({tau})}}{{{tt} - {tau}}}\,d{tau}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+# ----
+
+[[template]]
+name  = "autocorrelation"
+latex = 'R_{{{ff}{ff}}}({tau}) = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{ff}({tt}-{tau})}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+# ----
+
+[[template]]
+name  = "cross_correlation"
+latex = 'R_{{{ff} {gg}}}({tau}) = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+# ----
+
+[[template]]
+name  = "power_spectral_density"
+latex = 'S_{{{ff}}}({xi}) = \bigl|\hat{{{ff}}}({xi})\bigr|^2'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_WAV: Wavelet / STFT (4)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "stft"
+latex = 'V_{{{ff}}}({xi},\,{tau}) = \int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{{gg}({tt}-{tau})}}\,e^{{-2\pi i\,{xi}\,{tt}}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.gg]
+type = "X"
+pool = "FUNC_POOL"
+exclude_from = ["ff"]
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "cwt"
+latex = 'W_{{{ff}}}(a,b) = \frac{{1}}{{\sqrt{{|a|}}}}\int{lim_mod}_{{-\infty}}^\infty {ff}({tt})\,\overline{{\psi\!\left(\frac{{{tt}-b}}{{a}}\right)}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "admissibility_condition"
+latex = 'C_\psi = \int_0^\infty \frac{{|\hat{{\psi}}({xi})|^2}}{{{xi}}}\,d{xi} < \infty'
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "wavelet_reconstruction"
+latex = '{ff}({tt}) = \frac{{1}}{{C_\psi}}\int_0^\infty\!\int{lim_mod}_{{-\infty}}^\infty W_{{{ff}}}(a,b)\,\psi_{{a,b}}({tt})\,\frac{{db\,da}}{{a^2}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_OTH: Other transforms (4)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "dct_type2"
+latex = 'X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\cos\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "dst_type2"
+latex = 'X[k] = \sum{lim_mod}_{{{nn}=0}}^{{{N}-1}} {xx}[{nn}]\sin\!\left(\frac{{\pi(2{nn}+1)k}}{{2{N}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "hadamard_transform"
+latex = 'H_{{{nn}}} = H_1^{{\otimes {nn}}},\quad H_1 = \tfrac{{1}}{{\sqrt{{2}}}}\begin{{pmatrix}}1&1\\1&-1\end{{pmatrix}}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "mellin_transform"
+latex = '\mathcal{{M}}\left\{{{ff}\right\}}({ss}) = \int_0^\infty {ff}({tt})\,{tt}^{{{ss}-1}}\,d{tt}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B_FILT: Filter theory (4)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "frequency_response"
+latex = 'H({fo}) = \sum{lim_mod}_{{n=-\infty}}^\infty {hh}[n]\,e^{{-i\,{fo}\,n}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+[template.slots.fo]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "impulse_response_convolution"
+latex = '{yy}[n] = \sum{lim_mod}_{{k=-\infty}}^\infty {hh}[k]\,{xx}[n-k]'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "SIGNAL_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "SIGNAL_POOL"
+exclude_from = ["xx"]
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+# ----
+
+[[template]]
+name  = "group_delay"
+latex = '\tau_{{{hh}}}({fo}) = -\frac{{d}}{{d{fo}}}\angle H_{{{hh}}}({fo})'
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+[template.slots.fo]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "bode_magnitude"
+latex = '|H_{{{hh}}}(j{fo})| = \frac{{\prod_k |{fo} - z_k|}}{{\prod_k |{fo} - p_k|}}'
+
+[template.slots.hh]
+type = "S"
+pool = "KERNEL_POOL"
+
+[template.slots.fo]
+type = "S"
+pool = "FREQ_POOL"
+
+# ---------------------------------------------------------------------------
+# Part C: high-n_eff function-pair templates (12)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "plancherel_pair"
+latex = '\langle {fn1},\, {fn2} \rangle_{{L^2}} = \langle \hat{{{fn1}}},\, \hat{{{fn2}}} \rangle_{{L^2}}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "convolution_pair_ft"
+latex = '\widehat{{{fn1} * {fn2}}}({xi}) = \hat{{{fn1}}}({xi})\cdot\hat{{{fn2}}}({xi})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "laplace_superposition"
+latex = '\mathcal{{L}}\left\{{{fn1} + {fn2}\right\}}({ss}) = \mathcal{{L}}\left\{{{fn1}\right\}}({ss}) + \mathcal{{L}}\left\{{{fn2}\right\}}({ss})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_product_convolution"
+latex = '\widehat{{{fn1} \cdot {fn2}}}({xi}) = \hat{{{fn1}}}({xi}) * \hat{{{fn2}}}({xi})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "cross_correlation_ft"
+latex = '\widehat{{R_{{{fn1} {fn2}}}}}({xi}) = \overline{{\hat{{{fn1}}}({xi})}}\,\hat{{{fn2}}}({xi})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "z_superposition"
+latex = '\mathcal{{Z}}\left\{{{fn1}[n] + {fn2}[n]\right\}}(z) = X_1(z) + X_2(z)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "ft_3way_convolution"
+latex = '\widehat{{{fn1} * {fn2} * {fn3}}}({xi}) = \hat{{{fn1}}}({xi})\cdot\hat{{{fn2}}}({xi})\cdot\hat{{{fn3}}}({xi})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn3]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_inversion_pair"
+latex = '\widehat{{\hat{{{fn1}}}}}({tt}) = {fn2}(-{tt})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "autocorrelation_pair"
+latex = 'R_{{{fn1} {fn2}}}({tau}) = \int{lim_mod}_{{-\infty}}^\infty {fn1}({tt})\,\overline{{{fn2}({tt}-{tau})}}\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.tau]
+type = "S"
+pool = "TVAR_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "l2_triangle_pair"
+latex = '\|{fn1} + {fn2}\|_{{L^2}}^2 = \|{fn1}\|^2 + 2\,\mathrm{{Re}}\langle {fn1},{fn2}\rangle + \|{fn2}\|^2'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ----
+
+[[template]]
+name  = "laplace_product_pair"
+latex = '\mathcal{{L}}\left\{{{fn1}(t) \cdot {fn2}(t)\right\}}({ss}) = \frac{{1}}{{2\pi i}}\int{lim_mod}_{{{cc}-i\infty}}^{{{cc}+i\infty}} F_1(\sigma)\,F_2({ss}-\sigma)\,d\sigma'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.ss]
+type = "S"
+pool = "S_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+# ----
+
+[[template]]
+name  = "ft_modulation_pair"
+latex = '\widehat{{e^{{2\pi i\,{aa}\,{tt}}}\,{fn1}}}({xi}) = \hat{{{fn2}}}({xi} - {aa})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ---------------------------------------------------------------------------
+# Part D: orthogonality / approximation (5)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "fourier_basis_orthogonality"
+latex = '\langle e_{{{nn}}}, e_{{{mm}}} \rangle_{{L^2[0,{T}]}} = 0, \quad {nn} \neq {mm}'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+# ----
+
+[[template]]
+name  = "sin_cos_orthogonality"
+latex = '\cos\!\tfrac{{2\pi\,{nn}\,{tt}}}{{{T}}} \perp \sin\!\tfrac{{2\pi\,{mm}\,{tt}}}{{{T}}} \;\text{{in }}\; L^2[0,{T}]'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["nn"]
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "hilbert_basis_perp"
+latex = '\langle {ff}, e_{{{nn}}} \rangle = 0 \;\forall\, {nn} \implies {ff} \perp \overline{{\mathrm{{span}}}}\{{e_n\}}'
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_truncation_approx"
+latex = '{ff}({tt}) \approx \sum{lim_mod}_{{|k| \leq {N}}} \hat{{{ff}}}(k)\, e^{{2\pi i\,k\,{tt}/{T}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "PERIOD_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+# ----
+
+[[template]]
+name  = "dft_cft_approx"
+latex = 'X[{nn}] \approx \hat{{x}}\!\left(\frac{{{nn}}}{{{N}\,\Delta t}}\right), \quad {nn} = 0,\ldots,{N}-1'
+
+[template.slots.nn]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.N]
+type = "S"
+pool = "SIZE_POOL"
+
+# ---------------------------------------------------------------------------
+# Part E: real/imaginary parts (3)
+# ---------------------------------------------------------------------------
+
+# ----
+
+[[template]]
+name  = "fourier_real_part"
+latex = '\Re(\hat{{{ff}}}({xi})) = \int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt}) \cos(2\pi {xi} {tt})\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "fourier_imaginary_part"
+latex = '\Im(\hat{{{ff}}}({xi})) = -\int{lim_mod}_{{-\infty}}^{{\infty}} {ff}({tt}) \sin(2\pi {xi} {tt})\,d{tt}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+# ----
+
+[[template]]
+name  = "power_spectral_density_re"
+latex = 'S_{{{ff}}}({xi}) = \Re\!\left(\int{lim_mod}_{{-\infty}}^{{\infty}} R_{{{ff}}}(\tau)\,e^{{-2\pi i {xi} \tau}}\,d\tau\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ff]
+type = "S"
+pool = "FUNC_POOL"
+
+[template.slots.xi]
+type = "S"
+pool = "FREQ_POOL"
+
+# ── Pools (moved from trigonometry) ──────────────────────────────────────────
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x","y","z","t","u","v","r","s"]
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ["a","b","c","d","k","m","n","p","q"]
+
+# ── fourier_series_trig ───────────────────────────────────────────────────────
+
+[[template]]
+name  = "fourier_series_trig"
+latex = ""
+
+  [[template.variants]]
+  name  = "fourier_series_full"
+  latex = '{fn}({v}) = \frac{{{ca}_0}}{{2}} + \sum{lim_mod}_{{k=1}}^{{\infty}}\!\left({ca}_k \cos\frac{{k\pi {v}}}{{{L}}} + {cb}_k \sin\frac{{k\pi {v}}}{{{L}}}\right)'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ca]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.cb]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca"]
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca","cb"]
+
+  [[template.variants]]
+  name  = "fourier_coeff_an"
+  latex = '{ca}_n = \frac{{2}}{{{L}}} \int_0^{{{L}}} {fn}({v}) \cos\frac{{n\pi {v}}}{{{L}}} \, d{v}'
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ca]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["ca"]
+
+  [[template.variants]]
+  name  = "fourier_coeff_bn"
+  latex = '{cb}_n = \frac{{2}}{{{L}}} \int_0^{{{L}}} {fn}({v}) \sin\frac{{n\pi {v}}}{{{L}}} \, d{v}'
+
+  [template.variants.slots.fn]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.cb]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.L]
+  type         = "X"
+  pool         = "SCALARS_POOL"
+  exclude_from = ["cb"]

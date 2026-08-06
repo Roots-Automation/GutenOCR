@@ -1,0 +1,352 @@
+[meta]
+name        = "math_fonts"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Math fonts domain — coverage for \\mathsf, \\mathtt, \\mathit, \\mathnormal and full-expression font wrapping"
+
+# ---------------------------------------------------------------------------
+# Pool definitions
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "CAT_POOL"
+values = ["Set", "Grp", "Top", "Ab", "Ring", "Vect", "Cat", "Mod", "Mon"]
+
+[[pool]]
+name   = "GRAPH_POOL"
+values = ["G", "H", "K", "C", "P", "W", "T"]
+
+[[pool]]
+name   = "ALG_POOL"
+values = ["ALG", "DFS", "BFS", "MST", "FFT", "GCD", "LCS", "SAT"]
+
+[[pool]]
+name   = "TT_VAR_POOL"
+values = ["x", "y", "w", "u", "v", "s", "t"]
+
+[[pool]]
+name   = "MULTICHAR_IT_POOL"
+values = ["dx", "df", "Re", "Im", "Id", "px", "py", "dt", "dp"]
+
+[[pool]]
+name   = "SMALL_INT_POOL"
+values = ["n", "m", "k", "N", "M", "2", "3", "4", "8"]
+
+[[pool]]
+name   = "FUNCTOR_POOL"
+values = ["F", "G", "H", "T", "U", "I", "J"]
+
+[[pool]]
+name   = "FN_LETTER_POOL"
+values = ["f", "g", "h", "p", "q", "r"]
+
+[[pool]]
+name   = "SET_LETTER_POOL"
+values = ["A", "B", "C", "D", "X", "Y", "Z"]
+
+# _SCALARS from _vocab.py
+[[pool]]
+name   = "SCALARS"
+values = ["a", "b", "c", "d", "k", "m", "n", "p", "q"]
+
+# _VARS from _vocab.py
+[[pool]]
+name   = "VARS"
+values = ["x", "y", "z", "t", "u", "v", "r", "s"]
+
+[[pool]]
+name   = "BOLD_EXPR_POOL"
+values = ['\alpha', '\beta', '\gamma', '\delta', '\lambda', '\mu', '\omega', '\sigma']
+
+# ---------------------------------------------------------------------------
+# Section 1 — \mathsf sans-serif (5 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mathsf_category_single"
+latex = '\mathsf{{{cc}}}'
+[template.slots.cc]
+type = "S"
+pool = "CAT_POOL"
+
+[[template]]
+name  = "mathsf_functor_arrow"
+latex = '{ff} : \mathsf{{{cc}}} \to \mathsf{{{dd}}}'
+[template.slots.ff]
+type = "S"
+pool = "FUNCTOR_POOL"
+[template.slots.cc]
+type = "S"
+pool = "CAT_POOL"
+[template.slots.dd]
+type = "X"
+pool = "CAT_POOL"
+exclude_from = ["cc"]
+
+[[template]]
+name  = "mathsf_hom_between"
+latex = '\mathrm{{Hom}}(\mathsf{{{cc}}}, \mathsf{{{dd}}})'
+[template.slots.cc]
+type = "S"
+pool = "CAT_POOL"
+[template.slots.dd]
+type = "X"
+pool = "CAT_POOL"
+exclude_from = ["cc"]
+
+[[template]]
+name  = "mathsf_graph_chromatic"
+latex = '\chi(\mathsf{{{gg}}}) \leq {kk}'
+[template.slots.gg]
+type = "S"
+pool = "GRAPH_POOL"
+[template.slots.kk]
+type = "S"
+pool = "SCALARS"
+
+[[template]]
+name  = "mathsf_algorithm_complexity"
+latex = '\mathsf{{{alg}}}({nn}) = O({nn}^{{{kk}}})'
+[template.slots.alg]
+type = "S"
+pool = "ALG_POOL"
+[template.slots.nn]
+type = "S"
+pool = "SMALL_INT_POOL"
+[template.slots.kk]
+type = "S"
+pool = ["2", "3", '\log {nn}', "k"]
+
+# ---------------------------------------------------------------------------
+# Section 2 — \mathtt typewriter (4 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mathtt_bit_string"
+latex = '\mathtt{{{xx}}} \in \{{0,1\}}^{{{nn}}}'
+[template.slots.xx]
+type = "S"
+pool = "TT_VAR_POOL"
+[template.slots.nn]
+type = "S"
+pool = "SMALL_INT_POOL"
+
+[[template]]
+name  = "mathtt_xor"
+latex = '\mathtt{{{xx}}} \oplus \mathtt{{{yy}}} = \mathtt{{{zz}}}'
+[template.slots.xx]
+type = "S"
+pool = "TT_VAR_POOL"
+[template.slots.yy]
+type = "X"
+pool = "TT_VAR_POOL"
+exclude_from = ["xx"]
+[template.slots.zz]
+type = "X"
+pool = "TT_VAR_POOL"
+exclude_from = ["xx", "yy"]
+
+[[template]]
+name  = "mathtt_word_length"
+latex = '|\mathtt{{{ww}}}| = {nn}'
+[template.slots.ww]
+type = "S"
+pool = "TT_VAR_POOL"
+[template.slots.nn]
+type = "S"
+pool = "SMALL_INT_POOL"
+
+[[template]]
+name  = "mathtt_assignment"
+latex = '\mathtt{{{xx}}} \leftarrow \mathtt{{{yy}}}'
+[template.slots.xx]
+type = "S"
+pool = "TT_VAR_POOL"
+[template.slots.yy]
+type = "X"
+pool = "TT_VAR_POOL"
+exclude_from = ["xx"]
+
+# ---------------------------------------------------------------------------
+# Section 3 — \mathit math italic (4 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mathit_multichar_var"
+latex = '\mathit{{{mv}}}'
+[template.slots.mv]
+type = "S"
+pool = "MULTICHAR_IT_POOL"
+
+[[template]]
+name  = "mathit_derivative_ratio"
+latex = '\dfrac{{d\mathit{{{ff}}}}}{{d\mathit{{{xx}}}}}'
+[template.slots.ff]
+type = "S"
+pool = "FN_LETTER_POOL"
+[template.slots.xx]
+type = "S"
+pool = "VARS"
+
+[[template]]
+name  = "mathit_composed_map"
+latex = '\mathit{{{ff}}} \circ \mathit{{{gg}}} : {AA} \to {CC}'
+[template.slots.ff]
+type = "S"
+pool = "FN_LETTER_POOL"
+[template.slots.gg]
+type = "X"
+pool = "FN_LETTER_POOL"
+exclude_from = ["ff"]
+[template.slots.AA]
+type = "S"
+pool = "SET_LETTER_POOL"
+[template.slots.CC]
+type = "X"
+pool = "SET_LETTER_POOL"
+exclude_from = ["AA"]
+
+[[template]]
+name  = "mathit_inline_relation"
+latex = '\mathit{{{aa}}} \leq \mathit{{{xx}}} \leq \mathit{{{bb}}}'
+[template.slots.aa]
+type = "S"
+pool = "SCALARS"
+[template.slots.xx]
+type = "S"
+pool = "VARS"
+[template.slots.bb]
+type = "X"
+pool = "SCALARS"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Section 4 — \mathnormal explicit normal (2 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mathnormal_single"
+latex = '\mathnormal{{{ll}}}'
+[template.slots.ll]
+type = "S"
+pool = "VARS"
+
+[[template]]
+name  = "mathnormal_constraint"
+latex = '\mathnormal{{{aa}}} \geq 0, \quad \mathnormal{{{bb}}} \leq 1'
+[template.slots.aa]
+type = "S"
+pool = "SCALARS"
+[template.slots.bb]
+type = "X"
+pool = "SCALARS"
+exclude_from = ["aa"]
+
+# ---------------------------------------------------------------------------
+# Section 5 — Full-expression font wrapping (3 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fontbf_linear_relation"
+latex = '\mathbf{{{AA} {xx} = {bb}}}'
+[template.slots.AA]
+type = "S"
+pool = "SET_LETTER_POOL"
+[template.slots.xx]
+type = "S"
+pool = "VARS"
+[template.slots.bb]
+type = "S"
+pool = "SCALARS"
+
+[[template]]
+name  = "fontsf_category_chain"
+latex = '\mathsf{{{AA} \xrightarrow{{{ff}}} {BB} \xrightarrow{{{gg}}} {CC}}}'
+[template.slots.AA]
+type = "S"
+pool = "SET_LETTER_POOL"
+[template.slots.BB]
+type = "X"
+pool = "SET_LETTER_POOL"
+exclude_from = ["AA"]
+[template.slots.CC]
+type = "X"
+pool = "SET_LETTER_POOL"
+exclude_from = ["AA", "BB"]
+[template.slots.ff]
+type = "S"
+pool = "FN_LETTER_POOL"
+[template.slots.gg]
+type = "X"
+pool = "FN_LETTER_POOL"
+exclude_from = ["ff"]
+
+[[template]]
+name  = "fontit_polynomial_expr"
+latex = '\mathit{{{aa} x^2 + {bb} x + {cc} = 0}}'
+[template.slots.aa]
+type = "S"
+pool = "SCALARS"
+[template.slots.bb]
+type = "X"
+pool = "SCALARS"
+exclude_from = ["aa"]
+[template.slots.cc]
+type = "X"
+pool = "SCALARS"
+exclude_from = ["aa", "bb"]
+
+# ---------------------------------------------------------------------------
+# Section 6 — \pmb (poor man's bold) and \boldsymbol variants (5 templates)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "pmb_single"
+latex = '\pmb{{{v}}}'
+[template.slots.v]
+type = "E"
+gen  = "_atom"
+n    = 150.0
+
+[[template]]
+name  = "pmb_relation"
+latex = '\pmb{{{v}}} = {w}'
+[template.slots.v]
+type = "E"
+gen  = "_atom"
+n    = 150.0
+[template.slots.w]
+type = "E"
+gen  = "_expr"
+n    = 100.0
+
+[[template]]
+name  = "boldsymbol_greek"
+latex = '\boldsymbol{{{g}}}'
+[template.slots.g]
+type = "S"
+pool = "BOLD_EXPR_POOL"
+
+[[template]]
+name  = "boldsymbol_eq"
+latex = '\boldsymbol{{{g}}} = {a} \mathbf{{{v}}}'
+[template.slots.g]
+type = "S"
+pool = "BOLD_EXPR_POOL"
+[template.slots.a]
+type = "S"
+pool = "SCALARS"
+[template.slots.v]
+type = "S"
+pool = "SET_LETTER_POOL"
+
+[[template]]
+name  = "bf_declaration"
+latex = '{{\bf {v}}} = {a}'
+[template.slots.v]
+type = "S"
+pool = "SET_LETTER_POOL"
+[template.slots.a]
+type = "S"
+pool = "SCALARS"

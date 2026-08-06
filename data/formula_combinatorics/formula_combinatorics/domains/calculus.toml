@@ -1,0 +1,2432 @@
+[meta]
+domain = "calculus"
+
+[[pool]]
+name   = "VARS_POOL"
+values = ["x","y","z","t","u","v","r","s"]
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ["a","b","c","d","k","m","n","p","q"]
+
+[[pool]]
+name   = "VEC_FIELD_POOL"
+values = ["F","G","E","B","v","u","w","H"]
+
+[[pool]]
+name   = "VOL_DOMAIN_POOL"
+values = ["V", '\Omega', "D", "U", '\mathcal{V}', "R"]
+
+[[pool]]
+name   = "SURFACE_POOL"
+values = ["S", '\Sigma', '\mathcal{S}', "A"]
+
+[[pool]]
+name   = "CURVE_POOL"
+values = ["C", '\partial S', '\partial \Sigma', '\Gamma', '\partial D']
+
+[[pool]]
+name   = "MFLD_POOL"
+values = ["M", '\Omega', '\Sigma', '\mathcal{M}', "N", "X"]
+
+[[pool]]
+name   = "CF_POOL"
+values = ["f","g","h", '\phi', '\psi']
+
+[[pool]]
+name   = "CV_POOL"
+values = ["x","t","u","s"]
+
+[[pool]]
+name   = "CD_POOL"
+values = ['\mathbb{R}', '[a,b]', '[0,1]', '\mathbb{R}^n']
+
+# ── 1. first_derivative ──────────────────────────────────────────────────────
+[[template]]
+name  = "first_derivative"
+latex = '\frac{{d}}{{d{v}}}\left[{expr}\right]'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ── 2. nth_derivative ────────────────────────────────────────────────────────
+[[template]]
+name  = "nth_derivative"
+latex = '\frac{{d^{{{n}}}}}{{d{v}^{{{n}}}}}\left[{expr}\right]'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.n]
+type = "S"
+pool = ["2","3","4","n","m"]
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ── 3. indef_integral ────────────────────────────────────────────────────────
+[[template]]
+name  = "indef_integral"
+latex = '{result}'
+
+[template.slots.result]
+type = "E"
+gen  = "_indef_integral"
+n    = 5000
+
+# ── 4. def_integral ──────────────────────────────────────────────────────────
+[[template]]
+name  = "def_integral"
+latex = '{result}'
+
+[template.slots.result]
+type = "E"
+gen  = "_def_integral"
+n    = 5000
+
+# ── 5. double_integral_domain ────────────────────────────────────────────────
+[[template]]
+name  = "double_integral_domain"
+latex = '\iint_{{\mathcal{{D}}}} {expr} \, d{v} \, d{v2}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ── 6. limit_simple ──────────────────────────────────────────────────────────
+[[template]]
+name  = "limit_simple"
+latex = '\lim_{{{v} \to {pt}}} {expr}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.pt]
+type = "S"
+pool = ["a","b","c","d","k","m","n","p","q",'\infty',"0"]
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ── 7. limit_ratio ───────────────────────────────────────────────────────────
+[[template]]
+name  = "limit_ratio"
+latex = '\lim_{{{v} \to {pt}}} \frac{{{num}}}{{{den}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.pt]
+type = "S"
+pool = ['\infty',"0","a","b","c","d","k","m","n","p","q"]
+
+[template.slots.num]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.den]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+# ── 8. mixed_partial ─────────────────────────────────────────────────────────
+[[template]]
+name  = "mixed_partial"
+latex = '\frac{{\partial^2 {f}}}{{\partial {v} \, \partial {v2}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 9. taylor_series ─────────────────────────────────────────────────────────
+[[template]]
+name  = "taylor_series"
+latex = '\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}({a})}}{{n!}} \left({v} - {a}\right)^n'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 10. maclaurin_series ─────────────────────────────────────────────────────
+[[template]]
+name  = "maclaurin_series"
+latex = '\sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{{f}^{{(n)}}(0)}}{{n!}} {v}^n'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 11. taylor_polynomial ────────────────────────────────────────────────────
+[[template]]
+name  = "taylor_polynomial"
+latex = '''{f}({a}) + {f}'({a})({v} - {a}) + \frac{{{f}''({a})}}{{2!}}({v} - {a})^2 + \cdots'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 12. ftc ──────────────────────────────────────────────────────────────────
+[[template]]
+name  = "ftc"
+latex = '''\int{lim_mod}_{{{a}}}^{{{b}}} {f}'({v}) \, d{v} = {f}({b}) - {f}({a})'''
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 13. chain_rule ───────────────────────────────────────────────────────────
+[[template]]
+name  = "chain_rule"
+latex = '''\frac{{d}}{{d{v}}}\left[{f}\!\left({g2}({v})\right)\right] = {f}'\!\left({g2}({v})\right) {g2}'({v})'''
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ── 14. chain_rule_leibniz (variant group) ───────────────────────────────────
+[[template]]
+name  = "chain_rule_leibniz"
+latex = ""
+
+[[template.variants]]
+name  = "chain_rule_leibniz_classic"
+latex = '\frac{{d{z}}}{{d{v}}} = \frac{{d{z}}}{{d{u}}} \cdot \frac{{d{u}}}{{d{v}}}'
+
+[template.variants.slots.z]
+type = "S"
+pool = ['\phi','\psi','\eta','\zeta','\rho',"w"]
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.u]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[[template.variants]]
+name  = "chain_rule_leibniz_composed"
+latex = '\frac{{d{f}}}{{d{v}}} = \frac{{d{f}}}{{d{gg}}} \cdot \frac{{d{gg}}}{{d{v}}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 15. gradient_2d ──────────────────────────────────────────────────────────
+[[template]]
+name  = "gradient_2d"
+latex = '\nabla {f} = \frac{{\partial {f}}}{{\partial {v}}} \mathbf{{e}}_1 + \frac{{\partial {f}}}{{\partial {v2}}} \mathbf{{e}}_2'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 16. gradient_2d_ij ───────────────────────────────────────────────────────
+[[template]]
+name  = "gradient_2d_ij"
+latex = '\nabla {f} = \frac{{\partial {f}}}{{\partial {v}}} \hat{{i}} + \frac{{\partial {f}}}{{\partial {v2}}} \hat{{j}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 17. gradient_3d ──────────────────────────────────────────────────────────
+[[template]]
+name  = "gradient_3d"
+latex = '\nabla {f} = \frac{{\partial {f}}}{{\partial {v}}} \mathbf{{e}}_1 + \frac{{\partial {f}}}{{\partial {v2}}} \mathbf{{e}}_2 + \frac{{\partial {f}}}{{\partial {v3}}} \mathbf{{e}}_3'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.v3]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v","v2"]
+
+# ── 18. divergence_theorem (variant group) ───────────────────────────────────
+[[template]]
+name  = "divergence_theorem"
+latex = ""
+
+[[template.variants]]
+name  = "divergence_standard"
+latex = '\iint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot d\mathbf{{S}} = \iiint_{{{vol}}} \nabla \cdot \mathbf{{{fld}}} \, dV'
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.vol]
+type = "S"
+pool = "VOL_DOMAIN_POOL"
+
+[[template.variants]]
+name  = "divergence_hat_normal"
+latex = '\oiint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, dS = \iiint_{{{vol}}} \nabla \cdot \mathbf{{{fld}}} \, dV'
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.vol]
+type = "S"
+pool = "VOL_DOMAIN_POOL"
+
+[[template.variants]]
+name  = "divergence_div_operator"
+latex = '\iint_{{\partial {vol}}} \mathbf{{{fld}}} \cdot d\mathbf{{S}} = \iiint_{{{vol}}} \operatorname{{div}} \mathbf{{{fld}}} \, dV'
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.vol]
+type = "S"
+pool = "VOL_DOMAIN_POOL"
+
+# ── 19. laplacian_2d ─────────────────────────────────────────────────────────
+[[template]]
+name  = "laplacian_2d"
+latex = '\nabla^2 {f} = \frac{{\partial^2 {f}}}{{\partial {v}^2}} + \frac{{\partial^2 {f}}}{{\partial {v2}^2}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 20. laplacian_delta ──────────────────────────────────────────────────────
+[[template]]
+name  = "laplacian_delta"
+latex = '\Delta {f} = \frac{{\partial^2 {f}}}{{\partial {v}^2}} + \frac{{\partial^2 {f}}}{{\partial {v2}^2}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 21. laplacian_3d ─────────────────────────────────────────────────────────
+[[template]]
+name  = "laplacian_3d"
+latex = '\nabla^2 {f} = \frac{{\partial^2 {f}}}{{\partial {v}^2}} + \frac{{\partial^2 {f}}}{{\partial {v2}^2}} + \frac{{\partial^2 {f}}}{{\partial {v3}^2}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.v3]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v","v2"]
+
+# ── 22. stokes_theorem (variant group) ───────────────────────────────────────
+[[template]]
+name  = "stokes_theorem"
+latex = ""
+
+[[template.variants]]
+name  = "stokes_standard"
+latex = '\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = \iint_{{{srf}}} \left(\nabla \times \mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.srf]
+type = "S"
+pool = "SURFACE_POOL"
+
+[template.variants.slots.crv]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template.variants]]
+name  = "stokes_curl_operator"
+latex = '\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = \iint_{{{srf}}} \operatorname{{curl}}\!\left(\mathbf{{{fld}}}\right) \cdot d\mathbf{{S}}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.srf]
+type = "S"
+pool = "SURFACE_POOL"
+
+[template.variants.slots.crv]
+type = "S"
+pool = "CURVE_POOL"
+
+[[template.variants]]
+name  = "stokes_differential_forms"
+latex = '\int{lim_mod}_{{\partial {mfld}}} \omega = \int{lim_mod}_{{{mfld}}} d\omega'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+# ── 23. greens_theorem (variant group) ───────────────────────────────────────
+[[template]]
+name  = "greens_theorem"
+latex = ""
+
+[[template.variants]]
+name  = "greens_theorem_flux"
+latex = '\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot \hat{{n}} \, ds = \iint_{{{dom}}} \nabla \cdot \mathbf{{{fld}}} \, dA'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.crv]
+type = "S"
+pool = ["C", '\partial D', '\partial R']
+
+[template.variants.slots.dom]
+type = "S"
+pool = ["D", '\Omega', "R"]
+
+[[template.variants]]
+name  = "greens_theorem_circulation"
+latex = '\oint{lim_mod}_{{{crv}}} \mathbf{{{fld}}} \cdot d\mathbf{{r}} = \iint_{{{dom}}} \left(\frac{{\partial Q}}{{\partial x}} - \frac{{\partial P}}{{\partial y}}\right) dA'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.fld]
+type = "S"
+pool = "VEC_FIELD_POOL"
+
+[template.variants.slots.crv]
+type = "S"
+pool = ["C", '\partial D', '\partial R']
+
+[template.variants.slots.dom]
+type = "S"
+pool = ["D", '\Omega', "R"]
+
+# ── 24. iterated_integral ────────────────────────────────────────────────────
+[[template]]
+name  = "iterated_integral"
+latex = '\int{lim_mod}_{{{a}}}^{{{b}}} \int{lim_mod}_{{g_1({v})}}^{{g_2({v})}} {f}({v}, {v2}) \, d{v2} \, d{v}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 25. lhopital_rule ────────────────────────────────────────────────────────
+[[template]]
+name  = "lhopital_rule"
+latex = '''\lim_{{{v} \to {a}}} \frac{{{f}({v})}}{{{g2}({v})}} = \lim_{{{v} \to {a}}} \frac{{{f}'({v})}}{{{g2}'({v})}}'''
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 26. integration_by_parts ─────────────────────────────────────────────────
+[[template]]
+name  = "integration_by_parts"
+latex = '\int {f} \, d{g2} = {f} {g2} - \int {g2} \, d{f}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ── 27. integration_by_parts_definite ────────────────────────────────────────
+[[template]]
+name  = "integration_by_parts_definite"
+latex = '\int{lim_mod}_{{{a}}}^{{{b}}} {f} \, d{g2} = \left[{f} \, {g2}\right]_{{{a}}}^{{{b}}} - \int{lim_mod}_{{{a}}}^{{{b}}} {g2} \, d{f}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 28. leibniz_integral_rule ─────────────────────────────────────────────────
+[[template]]
+name  = "leibniz_integral_rule"
+latex = '''\frac{{d}}{{d{v}}} \int{lim_mod}_{{a({v})}}^{{b({v})}} {f}({v}, {it}) \, d{it} = {f}({v}, b({v})) b'({v}) - {f}({v}, a({v})) a'({v}) + \int{lim_mod}_{{a({v})}}^{{b({v})}} \frac{{\partial {f}}}{{\partial {v}}} \, d{it}'''
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.it]
+type = "S"
+pool = ["t","s",'\tau','\sigma']
+
+# ── 29. mean_value_theorem ───────────────────────────────────────────────────
+[[template]]
+name  = "mean_value_theorem"
+latex = '''\exists c \in ({a}, {b}) : {f}'(c) = \frac{{{f}({b}) - {f}({a})}}{{{b} - {a}}}'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 30. mean_value_theorem_integral ─────────────────────────────────────────
+[[template]]
+name  = "mean_value_theorem_integral"
+latex = '\frac{{1}}{{{b} - {a}}} \int{lim_mod}_{{{a}}}^{{{b}}} {f}({v}) \, d{v} = {f}(c)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 31. derivative_rules (variant group) ─────────────────────────────────────
+[[template]]
+name  = "derivative_rules"
+latex = ""
+
+[[template.variants]]
+name  = "product_rule"
+latex = '''\frac{{d}}{{d{v}}}\left[{f}({v}) \cdot {g2}({v})\right] = {f}'({v}) {g2}({v}) + {f}({v}) {g2}'({v})'''
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template.variants]]
+name  = "quotient_rule"
+latex = '''\frac{{d}}{{d{v}}}\left[\frac{{{f}({v})}}{{{g2}({v})}}\right] = \frac{{{f}'({v}) {g2}({v}) - {f}({v}) {g2}'({v})}}{{{g2}({v})^2}}'''
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template.variants]]
+name  = "power_rule"
+latex = '\frac{{d}}{{d{v}}} {v}^{{{n}}} = {n} {v}^{{{n}-1}}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.n]
+type = "S"
+pool = ["n","m","p","k",'\alpha']
+
+[[template.variants]]
+name  = "generalized_power_rule"
+latex = '''\frac{{d}}{{d{v}}} \left[{f}({v})\right]^{{{n}}} = {n} \left[{f}({v})\right]^{{{n}-1}} {f}'({v})'''
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.n]
+type = "S"
+pool = ["n","m","p","k",'\alpha']
+
+# ── 32. geometric_integrals (variant group) ───────────────────────────────────
+[[template]]
+name  = "geometric_integrals"
+latex = ""
+
+[[template.variants]]
+name  = "arc_length"
+latex = '''L = \int{lim_mod}_{{{a}}}^{{{b}}} \sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}'''
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "surface_area_revolution"
+latex = '''S = 2\pi \int{lim_mod}_{{{a}}}^{{{b}}} {f}({v}) \sqrt{{1 + \left[{f}'({v})\right]^2}} \, d{v}'''
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "parametric_arc_length"
+latex = 'L = \int{lim_mod}_{{{a}}}^{{{b}}} \sqrt{{\left(\frac{{d{px}}}{{d{v}}}\right)^2 + \left(\frac{{d{py}}}{{d{v}}}\right)^2}} \, d{v}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.px]
+type = "S"
+pool = ['\phi', '\psi', '\xi', "p", "q"]
+
+[template.variants.slots.py]
+type         = "X"
+pool         = ['\phi', '\psi', '\xi', "p", "q"]
+exclude_from = ["px"]
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 33. directional_derivative (variant group) ───────────────────────────────
+[[template]]
+name  = "directional_derivative"
+latex = ""
+
+[[template.variants]]
+name  = "dir_deriv_dot"
+latex = 'D_{{\mathbf{{{u}}}}} {f} = \nabla {f} \cdot \mathbf{{{u}}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.u]
+type = "S"
+pool = ["u","v","e","n"]
+
+[[template.variants]]
+name  = "dir_deriv_limit"
+latex = 'D_{{\mathbf{{{u}}}}} {f}({x}) = \lim_{{h \to 0}} \frac{{{f}({x} + h\mathbf{{{u}}}) - {f}({x})}}{{h}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.u]
+type = "S"
+pool = ["u","v","e","n"]
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 34. rolles_theorem ───────────────────────────────────────────────────────
+[[template]]
+name  = "rolles_theorem"
+latex = '''{f}({a}) = {f}({b}) \implies \exists c \in ({a}, {b}) : {f}'(c) = 0'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 35. change_of_variables ──────────────────────────────────────────────────
+[[template]]
+name  = "change_of_variables"
+latex = '\iint_{{R}} {f}(x, y) \, dA = \iint_{{S}} {f}\!\left({g2}(u, v), {h}(u, v)\right) \left|\frac{{\partial(x, y)}}{{\partial(u, v)}}\right| \, du \, dv'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.h]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ── 36. implicit_differentiation (variant group) ─────────────────────────────
+[[template]]
+name  = "implicit_differentiation"
+latex = ""
+
+[[template.variants]]
+name  = "implicit_diff_formula"
+latex = '{ff}({v}, {y}) = 0 \implies \frac{{d{y}}}{{d{v}}} = -\frac{{{ff}_{{{v}}}}}{{{ff}_{{{y}}}}}'
+
+[template.variants.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.y]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[[template.variants]]
+name  = "implicit_diff_chain"
+latex = '''\frac{{d}}{{d{v}}} {f}({v}, {g2}({v})) = \frac{{\partial {f}}}{{\partial {v}}} + \frac{{\partial {f}}}{{\partial {y}}} {g2}'({v})'''
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.variants.slots.y]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+# ── 37. deriv_arcsin ─────────────────────────────────────────────────────────
+[[template]]
+name  = "deriv_arcsin"
+latex = '\frac{{d}}{{d{vv}}} \arcsin({vv}) = \frac{{1}}{{\sqrt{{1 - {vv}^2}}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 38. deriv_arccos ─────────────────────────────────────────────────────────
+[[template]]
+name  = "deriv_arccos"
+latex = '\frac{{d}}{{d{vv}}} \arccos({vv}) = -\frac{{1}}{{\sqrt{{1 - {vv}^2}}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 39. deriv_arctan ─────────────────────────────────────────────────────────
+[[template]]
+name  = "deriv_arctan"
+latex = '\frac{{d}}{{d{vv}}} \arctan({vv}) = \frac{{1}}{{1 + {vv}^2}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 40. arctan_complement_identity ───────────────────────────────────────────
+[[template]]
+name  = "arctan_complement_identity"
+latex = '\arctan({vv}) + \arctan\!\left(\frac{{1}}{{{vv}}}\right) = \frac{{\pi}}{{2}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 41. deriv_tanh ───────────────────────────────────────────────────────────
+[[template]]
+name  = "deriv_tanh"
+latex = '\frac{{d}}{{d{vv}}} \tanh({vv}) = \operatorname{{sech}}^2({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 42. deriv_coth ───────────────────────────────────────────────────────────
+[[template]]
+name  = "deriv_coth"
+latex = '\frac{{d}}{{d{vv}}} \coth({vv}) = -\operatorname{{csch}}^2({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 43. csc_pythagorean_identity ─────────────────────────────────────────────
+[[template]]
+name  = "csc_pythagorean_identity"
+latex = '\csc^2({vv}) = 1 + \cot^2({vv})'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 44. csc_reciprocal ───────────────────────────────────────────────────────
+[[template]]
+name  = "csc_reciprocal"
+latex = '\csc({vv}) = \frac{{1}}{{\sin({vv})}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 45. vector_displacement ──────────────────────────────────────────────────
+[[template]]
+name  = "vector_displacement"
+latex = '\overrightarrow{{AB}} = {bb} - {aa}'
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.bb]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["aa"]
+
+# ── 46. vector_displacement_magnitude ────────────────────────────────────────
+[[template]]
+name  = "vector_displacement_magnitude"
+latex = '|\overrightarrow{{AB}}| = \sqrt{{(B_1 - A_1)^2 + (B_2 - A_2)^2}}'
+
+# ── 47. underbrace_polynomial ────────────────────────────────────────────────
+[[template]]
+name  = "underbrace_polynomial"
+latex = '\underbrace{{a_0 + a_1 {vv} + \cdots + a_n {vv}^n}}_{{n+1 \text{{ terms}}}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 48. overbrace_binomial ───────────────────────────────────────────────────
+[[template]]
+name  = "overbrace_binomial"
+latex = '\overbrace{{(1 + {vv})^n}}^{{n \text{{ factors}}}} = \sum{lim_mod}_{{k=0}}^{{n}} \binom{{n}}{{k}} {vv}^k'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 49. iiiint_domain ────────────────────────────────────────────────────────
+[[template]]
+name  = "iiiint_domain"
+latex = '\iiiint_{{\Omega}} f(x,y,z,w)\, dx\, dy\, dz\, dw'
+
+# ── 50. idotsint_k_fold ──────────────────────────────────────────────────────
+[[template]]
+name  = "idotsint_k_fold"
+latex = '\idotsint_{{{dom}}} {ff}({v}_1,\dots,{v}_{{{idx}}}) \, d{v}_1 \dots d{v}_{{{idx}}}'
+
+[template.slots.dom]
+type = "S"
+pool = ["V", '\Omega', "D", '\mathcal{D}']
+
+[template.slots.ff]
+type = "S"
+pool = ["f","g","h", '\mu', '\rho', '\phi']
+
+[template.slots.v]
+type = "S"
+pool = ["u","x","t","s"]
+
+[template.slots.idx]
+type = "S"
+pool = ["k","n","m"]
+
+# ── 51. idotsint_measure ─────────────────────────────────────────────────────
+[[template]]
+name  = "idotsint_measure"
+latex = '\idotsint_{{{dom}}} {ff}({v}_1,\dots,{v}_{{{idx}}}) \, d\mu'
+
+[template.slots.dom]
+type = "S"
+pool = ["V", '\Omega', "D", '\mathbb{R}^n']
+
+[template.slots.ff]
+type = "S"
+pool = ["f","g", '\phi', '\psi']
+
+[template.slots.v]
+type = "S"
+pool = ["x","u","t"]
+
+[template.slots.idx]
+type = "S"
+pool = ["n","k","m"]
+
+# ── 52. line_integral_scalar ─────────────────────────────────────────────────
+[[template]]
+name  = "line_integral_scalar"
+latex = '\oint{lim_mod}_{{{C}}} {ff}({v}) \, d{v}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.C]
+type = "S"
+pool = ["C", '\gamma', '\partial D', "L", '\Gamma']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ── 53. line_integral_scalar_equals ──────────────────────────────────────────
+[[template]]
+name  = "line_integral_scalar_equals"
+latex = '\oint{lim_mod}_{{{C}}} {ff}({v}) \, d{v} = {val}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.C]
+type = "S"
+pool = ["C", '\gamma', '\partial D', "L"]
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.val]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 54. continuous_function_rightarrow ───────────────────────────────────────
+[[template]]
+name  = "continuous_function_rightarrow"
+latex = '{ff}: {dom} \rightarrow \mathbb{{R}} \text{{ continuous}}'
+
+[template.slots.ff]
+type = "S"
+pool = "CF_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "CD_POOL"
+
+# ── 55. integral_operator_mapsto ─────────────────────────────────────────────
+[[template]]
+name  = "integral_operator_mapsto"
+latex = '{ff}: {xx} \mapsto \int_a^{{{xx}}} g(t)\,dt'
+
+[template.slots.ff]
+type = "S"
+pool = "CF_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "CV_POOL"
+
+# ── 56. exponential_longmapsto ───────────────────────────────────────────────
+[[template]]
+name  = "exponential_longmapsto"
+latex = '\exp: {xx} \longmapsto e^{{{xx}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "CV_POOL"
+
+# ── 57. antiderivative_eval_bar ──────────────────────────────────────────────
+[[template]]
+name  = "antiderivative_eval_bar"
+latex = '{f}({v})\Big|_{{{a}}}^{{{b}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 58. ftc_eval_bar ─────────────────────────────────────────────────────────
+[[template]]
+name  = "ftc_eval_bar"
+latex = '\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = \left.{g}({v})\right|_{{{a}}}^{{{b}}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 59. ftc_difference_bar ───────────────────────────────────────────────────
+[[template]]
+name  = "ftc_difference_bar"
+latex = '\int{lim_mod}_{{{a}}}^{{{b}}} {f}({v})\,d{v} = {g}({v})\bigg|_{{{a}}}^{{{b}}} = {g}({b}) - {g}({a})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 60. ibp_eval_bar ─────────────────────────────────────────────────────────
+[[template]]
+name  = "ibp_eval_bar"
+latex = '\int{lim_mod}_{{{a}}}^{{{b}}} {u}\,d{w} = {u}\,{w}\Big|_{{{a}}}^{{{b}}} - \int{lim_mod}_{{{a}}}^{{{b}}} {w}\,d{u}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.u]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.w]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 61. derivative_eval_point ────────────────────────────────────────────────
+[[template]]
+name  = "derivative_eval_point"
+latex = '\left.\frac{{d}}{{d{v}}}\left[{expr}\right]\right|_{{{v}={a}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 62. second_deriv_eval_point ──────────────────────────────────────────────
+[[template]]
+name  = "second_deriv_eval_point"
+latex = '\left.\frac{{d^2}}{{d{v}^2}}\left[{expr}\right]\right|_{{{v}={a}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 63. mixed_partial_eval_point ─────────────────────────────────────────────
+[[template]]
+name  = "mixed_partial_eval_point"
+latex = '\frac{{\partial^2 {f}}}{{\partial {v}\,\partial {w}}}\bigg|_{{({a},{b})}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.w]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 64. gradient_eval_point ──────────────────────────────────────────────────
+[[template]]
+name  = "gradient_eval_point"
+latex = '\nabla {f}\bigg|_{{{v}={a}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 65. partial_eval_surface ─────────────────────────────────────────────────
+[[template]]
+name  = "partial_eval_surface"
+latex = '\left.\frac{{\partial {f}}}{{\partial {v}}}\right|_{{{w}={c}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.w]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v"]
+
+[template.slots.c]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 66. lagrange_remainder ───────────────────────────────────────────────────
+[[template]]
+name  = "lagrange_remainder"
+latex = 'R_{{{n}}}({v}) = \frac{{{f}^{{({n}+1)}}(\xi)}}{{({n}+1)!}}\,({v}-{a})^{{{n}+1}},\quad \xi \in ({a},{v})'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.n]
+type = "S"
+pool = ["n","N","k"]
+
+# ── 67. medspace_double_integral_diffs ───────────────────────────────────────
+[[template]]
+name  = "medspace_double_integral_diffs"
+latex = '\iint_{{{dom}}} {ff}({v1},{v2}) \: d{v1} \: d{v2}'
+
+[template.slots.dom]
+type = "S"
+pool = ["D","R", '\Omega', "S","U"]
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v1]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v1"]
+
+# ── 68. medspace_triple_integral_diffs ───────────────────────────────────────
+[[template]]
+name  = "medspace_triple_integral_diffs"
+latex = '\iiint_{{{dom}}} {ff} \: d{v1} \: d{v2} \: d{v3}'
+
+[template.slots.dom]
+type = "S"
+pool = ["V", '\Omega', "D"]
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v1]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v1"]
+
+[template.slots.v3]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v1","v2"]
+
+# ── 69. medspace_forall_qualifier ────────────────────────────────────────────
+[[template]]
+name  = "medspace_forall_qualifier"
+latex = '{ff}({vv}) = {expr}, \: \forall {vv} \in {dom}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 100
+
+[template.slots.dom]
+type = "S"
+pool = ['\mathbb{R}', '\mathbb{Z}', '[a,b]', '\mathbb{N}', '(0,\infty)']
+
+# ── 70. medspace_subset_qualifier ────────────────────────────────────────────
+[[template]]
+name  = "medspace_subset_qualifier"
+latex = '{aa} \subseteq {bb}, \: {bb} \subseteq {cc} \implies {aa} \subseteq {cc}'
+
+[template.slots.aa]
+type = "S"
+pool = ["A","B","C","S","T"]
+
+[template.slots.bb]
+type         = "X"
+pool         = ["A","B","C","S","T"]
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type         = "X"
+pool         = ["A","B","C","S","T"]
+exclude_from = ["aa","bb"]
+
+# ── 71. medspace_integral_measure ────────────────────────────────────────────
+[[template]]
+name  = "medspace_integral_measure"
+latex = '\int_{{{dom}}} {ff}({vv}) \: d\mu({vv})'
+
+[template.slots.dom]
+type = "S"
+pool = ["E","X", '\Omega', "A"]
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+# ── 72. medspace_differential_form ───────────────────────────────────────────
+[[template]]
+name  = "medspace_differential_form"
+latex = '{ff}({vv}) \: d{v1} \wedge d{v2}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v1]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.v2]
+type         = "X"
+pool         = "VARS_POOL"
+exclude_from = ["v1"]
+
+# ── 73. medspace_lim_qualifier ───────────────────────────────────────────────
+[[template]]
+name  = "medspace_lim_qualifier"
+latex = '\lim_{{{vv} \to \infty}} {ff}({vv}) = {expr}, \: {ff} \text{{ monotone}}'
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.expr]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ── 74. substack_sum ─────────────────────────────────────────────────────────
+[[template]]
+name  = "substack_sum"
+latex = '{s}'
+
+[template.slots.s]
+type = "E"
+gen  = "_substack_sum"
+n    = 5000000
+
+# ── 75. substack_prod ────────────────────────────────────────────────────────
+[[template]]
+name  = "substack_prod"
+latex = '{s}'
+
+[template.slots.s]
+type = "E"
+gen  = "_substack_prod"
+n    = 5000000
+
+# ── 76. interval_notation ────────────────────────────────────────────────────
+[[template]]
+name  = "interval_notation"
+latex = '{v} \in {ivl}'
+
+[template.slots.v]
+type = "S"
+pool = ["x","y","z","t","u"]
+
+[template.slots.ivl]
+type = "E"
+gen  = "_interval"
+n    = 324
+
+# ── 77. interval_bounds ──────────────────────────────────────────────────────
+[[template]]
+name  = "interval_bounds"
+latex = '{f} : {ivl_a} \to {ivl_b}'
+
+[template.slots.f]
+type = "S"
+pool = ["f","g","h","F"]
+
+[template.slots.ivl_a]
+type = "E"
+gen  = "_interval"
+n    = 324
+
+[template.slots.ivl_b]
+type = "E"
+gen  = "_interval"
+n    = 324
+
+# ---------------------------------------------------------------------------
+# Partial fraction decomposition
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "partial_fraction"
+latex = '\frac{{{a}}}{{{v}({v} - {b})}} = \frac{{{s1}}}{{{v}}} + \frac{{{s2}}}{{{v} - {b}}}'
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+
+[template.slots.s1]
+type = "S"
+pool = "SCALARS_POOL"
+
+[template.slots.s2]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Telescoping sum
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "telescoping_sum"
+latex = '\sum{lim_mod}_{{k=1}}^{{{n}}} \left({fn}(k+1) - {fn}(k)\right) = {fn}({n}+1) - {fn}(1)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.n]
+type = "S"
+pool = "SCALARS_POOL"
+
+# ── Trig pools (moved from trigonometry) ─────────────────────────────────────
+
+[[pool]]
+name   = "TRIG_ARG_POOL"
+values = ["a","b","c","d","k","m","n","p","q",'\theta','\phi','\varphi','\psi','\omega','\alpha','\beta','\gamma','\delta']
+
+[[pool]]
+name   = "TRIG_INT_FN_POOL"
+values = ['\sin','\cos','\tan','\sinh','\cosh','\sec','\text{sine}','\text{cosine}','\text{tangent}','\text{sh}','\text{ch}']
+
+[[pool]]
+name   = "SIN_NAMES"
+values = ['\sin','\text{sine}']
+
+[[pool]]
+name   = "COS_NAMES"
+values = ['\cos','\text{cosine}']
+
+[[pool]]
+name   = "TAN_NAMES"
+values = ['\tan','\text{tangent}','\text{tg}']
+
+[[pool]]
+name   = "SEC_NAMES"
+values = ['\sec','\text{secant}']
+
+[[pool]]
+name   = "CSC_NAMES"
+values = ['\csc','\text{cosecant}','\text{cosec}']
+
+[[pool]]
+name   = "COT_NAMES"
+values = ['\cot','\text{cotangent}','\text{ctg}']
+
+[[pool]]
+name   = "ARCSIN_NAMES"
+values = ['\arcsin','\sin^{-1}','\text{asin}','\text{Arcsin}']
+
+[[pool]]
+name   = "ARCCOS_NAMES"
+values = ['\arccos','\cos^{-1}','\text{acos}','\text{Arccos}']
+
+[[pool]]
+name   = "ARCTAN_NAMES"
+values = ['\arctan','\tan^{-1}','\text{atan}','\text{Arctan}']
+
+[[pool]]
+name   = "ARCCOT_NAMES"
+values = ['\text{arccot}','\cot^{-1}','\text{acot}']
+
+[[pool]]
+name   = "ARCSEC_NAMES"
+values = ['\text{arcsec}','\sec^{-1}','\text{asec}']
+
+[[pool]]
+name   = "ARCCSC_NAMES"
+values = ['\text{arccsc}','\csc^{-1}','\text{acsc}']
+
+[[pool]]
+name   = "ARCTANH_NAMES"
+values = ['\text{arctanh}','\tanh^{-1}','\text{atanh}']
+
+[[pool]]
+name   = "ARCSINH_NAMES"
+values = ['\text{arcsinh}','\sinh^{-1}','\text{asinh}']
+
+# ── trig_integral ─────────────────────────────────────────────────────────────
+
+[[template]]
+name  = "trig_integral"
+latex = '\int {fn}\!\left({coeff} {x}\right) \, d{x}'
+
+[template.slots.fn]
+type = "S"
+pool = "TRIG_INT_FN_POOL"
+
+[template.slots.coeff]
+type = "S"
+pool = "TRIG_ARG_POOL"
+idx  = 0.35
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ── inverse_trig_derivative ───────────────────────────────────────────────────
+
+[[template]]
+name  = "inverse_trig_derivative"
+latex = ""
+
+  [[template.variants]]
+  name  = "arcsin_derivative"
+  latex = '\frac{{d}}{{d{x}}}{asn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 - {x}^2}}}}'
+
+  [template.variants.slots.asn]
+  type = "S"
+  pool = "ARCSIN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsin_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{asn}\!\left({c} {x}\right) = \frac{{{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}'
+
+  [template.variants.slots.asn]
+  type = "S"
+  pool = "ARCSIN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccos_derivative"
+  latex = '\frac{{d}}{{d{x}}}{acn}\!\left({x}\right) = \frac{{-1}}{{\sqrt{{1 - {x}^2}}}}'
+
+  [template.variants.slots.acn]
+  type = "S"
+  pool = "ARCCOS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccos_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{acn}\!\left({c} {x}\right) = \frac{{-{c}}}{{\sqrt{{1 - {c}^2{x}^2}}}}'
+
+  [template.variants.slots.acn]
+  type = "S"
+  pool = "ARCCOS_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctan_derivative"
+  latex = '\frac{{d}}{{d{x}}}{atn}\!\left({x}\right) = \frac{{1}}{{1 + {x}^2}}'
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctan_derivative_coeff"
+  latex = '\frac{{d}}{{d{x}}}{atn}\!\left({c} {x}\right) = \frac{{{c}}}{{1 + {c}^2{x}^2}}'
+
+  [template.variants.slots.atn]
+  type = "S"
+  pool = "ARCTAN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccot_derivative"
+  latex = '\frac{{d}}{{d{x}}}{actn}\!\left({x}\right) = \frac{{-1}}{{1 + {x}^2}}'
+
+  [template.variants.slots.actn]
+  type = "S"
+  pool = "ARCCOT_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsec_derivative"
+  latex = '\frac{{d}}{{d{x}}}{asecn}\!\left({x}\right) = \frac{{1}}{{{x}\sqrt{{{x}^2 - 1}}}}'
+
+  [template.variants.slots.asecn]
+  type = "S"
+  pool = "ARCSEC_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arccsc_derivative"
+  latex = '\frac{{d}}{{d{x}}}{acscn}\!\left({x}\right) = \frac{{-1}}{{{x}\sqrt{{{x}^2 - 1}}}}'
+
+  [template.variants.slots.acscn]
+  type = "S"
+  pool = "ARCCSC_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arctanh_derivative"
+  latex = '\frac{{d}}{{d{x}}}{athn}\!\left({x}\right) = \frac{{1}}{{1 - {x}^2}}'
+
+  [template.variants.slots.athn]
+  type = "S"
+  pool = "ARCTANH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "arcsinh_derivative"
+  latex = '\frac{{d}}{{d{x}}}{ashn}\!\left({x}\right) = \frac{{1}}{{\sqrt{{1 + {x}^2}}}}'
+
+  [template.variants.slots.ashn]
+  type = "S"
+  pool = "ARCSINH_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+# ── taylor_series_trig ────────────────────────────────────────────────────────
+
+[[template]]
+name  = "taylor_series_trig"
+latex = ""
+
+  [[template.variants]]
+  name  = "taylor_sin"
+  latex = '{sn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n+1}}}}{{(2n+1)!}}'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_taylor_arg_sub"
+  n    = 450
+
+  [[template.variants]]
+  name  = "taylor_cos"
+  latex = '{cn}({arg}) = \sum{lim_mod}_{{n=0}}^{{\infty}} \frac{{(-1)^n ({arg})^{{2n}}}}{{(2n)!}}'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.arg]
+  type = "E"
+  gen  = "_taylor_arg_sub"
+  n    = 450
+
+  [[template.variants]]
+  name  = "taylor_tan_approx"
+  latex = '{tn} {x} \approx {x} + \frac{{{x}^3}}{{3}} + \frac{{2{x}^5}}{{15}} + \cdots'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "taylor_tan_approx_coeff"
+  latex = '{tn}({c} {x}) \approx {c} {x} + \frac{{({c} {x})^3}}{{3}} + \frac{{2({c} {x})^5}}{{15}} + \cdots'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.c]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+# ── weierstrass_substitution ──────────────────────────────────────────────────
+
+[[template]]
+name  = "weierstrass_substitution"
+latex = ""
+
+  [[template.variants]]
+  name  = "weierstrass_def"
+  latex = '{t} = {tn}\!\frac{{{x}}}{{2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_sin"
+  latex = '{sn} {x} = \frac{{2{t}}}{{1 + {t}^2}}'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_cos"
+  latex = '{cn} {x} = \frac{{1 - {t}^2}}{{1 + {t}^2}}'
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_tan"
+  latex = '{tn} {x} = \frac{{2{t}}}{{1 - {t}^2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_dx"
+  latex = 'd{x} = \frac{{2}}{{1 + {t}^2}} \, d{t}'
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+  [[template.variants]]
+  name  = "weierstrass_combined"
+  latex = '{t} = {tn}\!\frac{{{x}}}{{2}}, \quad {sn} {x} = \frac{{2{t}}}{{1 + {t}^2}}, \quad {cn} {x} = \frac{{1 - {t}^2}}{{1 + {t}^2}}'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.t]
+  type         = "X"
+  pool         = "VARS_POOL"
+  exclude_from = ["x"]
+  idx          = 0.35
+
+# ── trig_antiderivative ───────────────────────────────────────────────────────
+
+[[template]]
+name  = "trig_antiderivative"
+latex = ""
+
+  [[template.variants]]
+  name  = "antideriv_sin_bare"
+  latex = '\int {sn} {x}\,d{x} = -{cn} {x} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_cos_bare"
+  latex = '\int {cn} {x}\,d{x} = {sn} {x} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sin_coeff"
+  latex = '\int {sn}({a} {x})\,d{x} = -\frac{{{cn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_cos_coeff"
+  latex = '\int {cn}({a} {x})\,d{x} = \frac{{{sn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.sn]
+  type = "S"
+  pool = "SIN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_tan_cos"
+  latex = '\int {tn}({a} {x})\,d{x} = -\frac{{\ln\left|{cn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.cn]
+  type = "S"
+  pool = "COS_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_tan_sec"
+  latex = '\int {tn}({a} {x})\,d{x} = \frac{{\ln\left|{secn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sec2_coeff"
+  latex = '\int {secn}^2({a} {x})\,d{x} = \frac{{{tn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_csc2_coeff"
+  latex = '\int {cscn}^2({a} {x})\,d{x} = -\frac{{{ctn}({a} {x})}}{{{a}}} + C'
+
+  [template.variants.slots.cscn]
+  type = "S"
+  pool = "CSC_NAMES"
+
+  [template.variants.slots.ctn]
+  type = "S"
+  pool = "COT_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "antideriv_sec_coeff"
+  latex = '\int {secn}({a} {x})\,d{x} = \frac{{\ln\left|{secn}({a} {x}) + {tn}({a} {x})\right|}}{{{a}}} + C'
+
+  [template.variants.slots.secn]
+  type = "S"
+  pool = "SEC_NAMES"
+
+  [template.variants.slots.tn]
+  type = "S"
+  pool = "TAN_NAMES"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "TRIG_ARG_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "VARS_POOL"
+  idx  = 0.35

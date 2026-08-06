@@ -1,0 +1,1265 @@
+domain = "probability"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name = "PROB_OP"
+values = ["P",'\mathbb{P}','\Pr','\mathbf{P}','\hat{P}','\tilde{P}']
+
+[[pool]]
+name = "EXP_OP"
+values = ["E",'\mathbb{E}','\mathrm{E}','\mathbf{E}','\hat{E}','\mathbb{E}_\theta']
+
+[[pool]]
+name = "RV_POOL"
+values = ["X","Y","Z","W","U","V"]
+
+[[pool]]
+name = "N_POOL"
+values = ["n","m","N","M"]
+
+[[pool]]
+name = "LAM_POOL"
+values = ['\lambda','\mu','\nu','\alpha','\beta']
+
+[[pool]]
+name = "MU_POOL"
+values = ['\mu','\mu_0','\nu',"m"]
+
+[[pool]]
+name = "SIG_POOL"
+values = ['\sigma','\sigma_0','\tau','\eta']
+
+[[pool]]
+name = "IDX_POOL"
+values = ["i","j","k","l","m","n","p","q","r","s","t"]
+
+[[pool]]
+name = "EVENT_POOL"
+values = ["A","B","C","D","E","F","A_1","B_1"]
+
+[[pool]]
+name = "K_POOL"
+values = ["k",'\ell',"j","r"]
+
+[[pool]]
+name = "P_POOL"
+values = ["p","q",'\theta','\pi','\rho']
+
+[[pool]]
+name = "A_POOL"
+values = ["a","b","c",'\varepsilon']
+
+[[pool]]
+name = "AB_POOL"
+values = ["a","b",'\alpha','\beta']
+
+[[pool]]
+name = "BERN_K"
+values = ["0","1","2","3"]
+
+# ---------------------------------------------------------------------------
+# Part A: Reparameterized originals (18)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "binomial_pmf"
+latex = '{op}({rv} = {kk}) = \binom{{{nn}}}{{{kk}}} {pp}^{{{kk}}} (1-{pp})^{{{nn}-{kk}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "poisson_pmf"
+latex = '{op}({rv} = {kk}) = \frac{{{lam}^{{{kk}}} e^{{-{lam}}}}}{{{kk}!}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "normal_pdf"
+latex = 'f(x) = \frac{{1}}{{\sqrt{{2\pi}}\,{sig}}} \exp\!\left(-\frac{{(x-{mu})^2}}{{2\,{sig}^2}}\right)'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "expected_value_discrete"
+latex = '{op}[{rv}] = \sum{lim_mod}_{{k}} k \cdot P({rv} = k)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "expected_value_continuous"
+latex = '{op}[{rv}] = \int{lim_mod}_{{-\infty}}^{{\infty}} x\, f_{{{rv}}}(x)\, dx'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "variance"
+latex = '\operatorname{{Var}}({rv}) = {op}\!\left[{rv}^2\right] - \bigl({op}[{rv}]\bigr)^2'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "bayes_theorem"
+latex = '{op}({ev1} \mid {ev2}) = \frac{{{op}({ev2} \mid {ev1})\,{op}({ev1})}}{{{op}({ev2})}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev1]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.ev2]
+type = "X"
+pool = "EVENT_POOL"
+exclude_from = ["ev1"]
+
+[[template]]
+name = "law_of_total_probability"
+latex = '{op}({ev}) = \sum{lim_mod}_{{i=1}}^{{{nn}}} {op}({ev} \mid B_i)\,{op}(B_i)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "mgf"
+latex = 'M_{{{rv}}}(t) = {op}\!\left[e^{{t\,{rv}}}\right] = \sum{lim_mod}_{{k=0}}^{{\infty}} \frac{{{op}[{rv}^k]}}{{k!}}\,t^k'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "covariance"
+latex = '\operatorname{{Cov}}({rv1},{rv2}) = {op}[{rv1}\,{rv2}] - {op}[{rv1}]\,{op}[{rv2}]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "cdf"
+latex = 'F_{{{rv}}}(x) = {op}({rv} \leq x) = \int{lim_mod}_{{-\infty}}^{{x}} f_{{{rv}}}(t)\, dt'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "geometric_pmf"
+latex = '{op}({rv} = {kk}) = (1-{pp})^{{{kk}-1}}\,{pp}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "jensens_inequality"
+latex = '{fn}\!\bigl({op}[{rv}]\bigr) \leq {op}\!\bigl[{fn}({rv})\bigr]'
+
+[template.slots.fn]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "correlation"
+latex = '\rho_{{{rv1}{rv2}}} = \frac{{\operatorname{{Cov}}({rv1},{rv2})}}{{\sqrt{{\operatorname{{Var}}({rv1})\,\operatorname{{Var}}({rv2})}}}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "central_limit_theorem"
+latex = '\frac{{\bar{{{rv}}}_n - {mu}}}{{{sig}/\sqrt{{{nn}}}}} \xrightarrow{{d}} \mathcal{{N}}(0,1)'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "law_of_large_numbers"
+latex = '\bar{{{rv}}}_n \xrightarrow{{p}} \mu \text{{ as }} n \to \infty'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "characteristic_function"
+latex = '\varphi_{{{rv}}}(t) = {op}\!\left[e^{{it\,{rv}}}\right]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "tower_property"
+latex = '{op}\!\Bigl[{op}[{rv} \mid \mathcal{{F}}]\Bigr] = {op}[{rv}]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+# ---------------------------------------------------------------------------
+# Part B: New standalone templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "complement_rule"
+latex = '{op}({ev}^c) = 1 - {op}({ev})'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev]
+type = "S"
+pool = "EVENT_POOL"
+
+[[template]]
+name = "addition_rule"
+latex = '{op}({ev1} \cup {ev2}) = {op}({ev1}) + {op}({ev2}) - {op}({ev1} \cap {ev2})'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev1]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.ev2]
+type = "X"
+pool = "EVENT_POOL"
+exclude_from = ["ev1"]
+
+[[template]]
+name = "conditional_prob"
+latex = '{op}({ev1} \mid {ev2}) = \dfrac{{{op}({ev1} \cap {ev2})}}{{{op}({ev2})}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev1]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.ev2]
+type = "X"
+pool = "EVENT_POOL"
+exclude_from = ["ev1"]
+
+[[template]]
+name = "multiplication_rule"
+latex = '{op}({ev1} \cap {ev2}) = {op}({ev1} \mid {ev2})\,{op}({ev2})'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev1]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.ev2]
+type = "X"
+pool = "EVENT_POOL"
+exclude_from = ["ev1"]
+
+[[template]]
+name = "independence_events"
+latex = '{op}({ev1} \cap {ev2}) = {op}({ev1})\,{op}({ev2})'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.ev1]
+type = "S"
+pool = "EVENT_POOL"
+
+[template.slots.ev2]
+type = "X"
+pool = "EVENT_POOL"
+exclude_from = ["ev1"]
+
+[[template]]
+name = "union_bound"
+latex = '{op}\!\Bigl(\bigcup_{{i=1}}^{{{nn}}} A_i\Bigr) \leq \sum{lim_mod}_{{i=1}}^{{{nn}}} {op}(A_i)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "exponential_pdf"
+latex = 'f(x;\,{lam}) = {lam}\,e^{{-{lam}\,x}},\quad x \geq 0'
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "exponential_mean"
+latex = '{op}[{rv}] = \tfrac{{1}}{{{lam}}} \quad \bigl(\mathrm{{Exp}}({lam})\bigr)'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "exponential_memoryless"
+latex = '{op}({rv} > s + t \mid {rv} > s) = {op}({rv} > t)'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "gamma_pdf"
+latex = 'f(x;\,{al},{bt}) = \dfrac{{x^{{{al}-1}}\,e^{{-x/{bt}}}}}{{{bt}^{{{al}}}\,\Gamma({al})}}'
+
+[template.slots.al]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "gamma_mean"
+latex = '{op}[{rv}] = {al}\,{bt} \quad \bigl(\mathrm{{Gamma}}({al},{bt})\bigr)'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.al]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.bt]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "beta_pdf"
+latex = 'f(x;\,{al},{bt}) = \dfrac{{x^{{{al}-1}}(1-x)^{{{bt}-1}}}}{{B({al},{bt})}}'
+
+[template.slots.al]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.bt]
+type = "X"
+pool = "LAM_POOL"
+exclude_from = ["al"]
+
+[[template]]
+name = "beta_mean"
+latex = '{op}[{rv}] = \dfrac{{{al}}}{{{al}+{bt}}} \quad \bigl(\mathrm{{Beta}}({al},{bt})\bigr)'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.al]
+type = "S"
+pool = "LAM_POOL"
+
+[template.slots.bt]
+type = "X"
+pool = "LAM_POOL"
+exclude_from = ["al"]
+
+[[template]]
+name = "uniform_pdf"
+latex = 'f(x;\,{aa},{bb}) = \dfrac{{1}}{{{bb}-{aa}}},\quad {aa} \leq x \leq {bb}'
+
+[template.slots.aa]
+type = "S"
+pool = "AB_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "AB_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "uniform_mean"
+latex = '{op}[{rv}] = \dfrac{{{aa}+{bb}}}{{2}}'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "AB_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "AB_POOL"
+exclude_from = ["aa"]
+
+[[template]]
+name = "lognormal_pdf"
+latex = 'f(x;\,{mu},{sig}) = \dfrac{{1}}{{x\,{sig}\sqrt{{2\pi}}}} \exp\!\left(-\dfrac{{(\ln x - {mu})^2}}{{2\,{sig}^2}}\right)'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "cauchy_pdf"
+latex = 'f(x;\,{mu},{sig}) = \dfrac{{1}}{{\pi\,{sig}\!\left[1+\!\left(\dfrac{{x-{mu}}}{{{sig}}}\right)^{{\!2}}\right]}}'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[[template]]
+name = "negative_binomial_pmf"
+latex = '{op}({rv} = {kk}) = \binom{{{kk}+{rr}-1}}{{{kk}}} {pp}^{{{rr}}} (1-{pp})^{{{kk}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.rr]
+type = "X"
+pool = "K_POOL"
+exclude_from = ["kk"]
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "hypergeometric_pmf"
+latex = '{op}({rv} = {kk}) = \dfrac{{\dbinom{{K}}{{{kk}}}\dbinom{{N-K}}{{{nn}-{kk}}}}}{{\dbinom{{N}}{{{nn}}}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "bernoulli_pmf"
+latex = '{op}({rv} = {kk}) = {pp}^{{{kk}}}(1-{pp})^{{1-{kk}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "BERN_K"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "uniform_discrete_pmf"
+latex = '{op}({rv} = {kk}) = \dfrac{{1}}{{{nn}}},\quad {kk} \in \{{1,2,\ldots,{nn}\}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "linearity_expectation"
+latex = '{op}[a\,{rv1} + b\,{rv2}] = a\,{op}[{rv1}] + b\,{op}[{rv2}]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "variance_linear"
+latex = '\operatorname{{Var}}(a\,{rv} + b) = a^2\,\operatorname{{Var}}({rv})'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "variance_sum"
+latex = '\operatorname{{Var}}({rv1} + {rv2}) = \operatorname{{Var}}({rv1}) + \operatorname{{Var}}({rv2}) + 2\operatorname{{Cov}}({rv1},{rv2})'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "second_moment_relation"
+latex = '{op}[{rv}^2] = \operatorname{{Var}}({rv}) + \bigl({op}[{rv}]\bigr)^2'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "skewness_def"
+latex = '\gamma_1({rv}) = \dfrac{{{op}\!\left[({rv}-\mu)^3\right]}}{{\sigma^3}}'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "kurtosis_def"
+latex = '\kappa({rv}) = \dfrac{{{op}\!\left[({rv}-\mu)^4\right]}}{{\sigma^4}} - 3'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "variance_independence"
+latex = '\operatorname{{Var}}({rv1} + {rv2}) = \operatorname{{Var}}({rv1}) + \operatorname{{Var}}({rv2}) \quad ({rv1} \perp {rv2})'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "expectation_product_indep"
+latex = '{op}[{rv1}\,{rv2}] = {op}[{rv1}]\,{op}[{rv2}] \quad ({rv1} \perp {rv2})'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "markov_inequality"
+latex = '{op}({rv} \geq {aa}) \leq \dfrac{{{op}[{rv}]}}{{{aa}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"
+
+[[template]]
+name = "chebyshev_inequality"
+latex = '{op}\!\left(|{rv} - {mu}| \geq {aa}\right) \leq \dfrac{{\operatorname{{Var}}({rv})}}{{{aa}^2}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"
+
+[[template]]
+name = "cauchy_schwarz_expectation"
+latex = '\bigl({op}[{rv1}\,{rv2}]\bigr)^2 \leq {op}[{rv1}^2]\,{op}[{rv2}^2]'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "chernoff_bound"
+latex = '{op}({rv} \geq {aa}) \leq \dfrac{{M_{{{rv}}}({lam})}}{{e^{{{lam}\,{aa}}}}}'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"
+
+[template.slots.lam]
+type = "S"
+pool = "LAM_POOL"
+
+[[template]]
+name = "marginal_pdf_cont"
+latex = 'f_{{{rv1}}}(x) = \int{lim_mod}_{{-\infty}}^{{\infty}} f_{{{rv1},{rv2}}}(x,y)\, dy'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "conditional_pdf_def"
+latex = 'f_{{{rv2} \mid {rv1}}}(y \mid x) = \dfrac{{f_{{{rv1},{rv2}}}(x,y)}}{{f_{{{rv1}}}(x)}}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "joint_independence_pdf"
+latex = 'f_{{{rv1},{rv2}}}(x,y) = f_{{{rv1}}}(x)\,f_{{{rv2}}}(y)'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "covariance_matrix_entry"
+latex = '\Sigma_{{{ii}{jj}}} = \operatorname{{Cov}}({rv}_{{{ii}}},{rv}_{{{jj}}})'
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name = "multivariate_normal"
+latex = 'f(\mathbf{{x}}) = \frac{{1}}{{(2\pi)^{{d/2}}|\Sigma|^{{1/2}}}} \exp\!\left(-\tfrac{{1}}{{2}}(\mathbf{{x}}-{mu})^\top \Sigma^{{-1}}(\mathbf{{x}}-{mu})\right)'
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[[template]]
+name = "pgf_def"
+latex = 'G_{{{rv}}}(z) = {op}\!\left[z^{{{rv}}}\right] = \sum{lim_mod}_{{k=0}}^{{\infty}} {op}({rv} = k)\,z^k'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "pgf_mean"
+latex = "{op}[{rv}] = G'_{{{rv}}}(1)"
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "mgf_derivative_moment"
+latex = '{op}[{rv}^{{{nn}}}] = M^{{({nn})}}_{{{rv}}}(0)'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "mgf_sum_independent"
+latex = 'M_{{{rv1}+{rv2}}}(t) = M_{{{rv1}}}(t)\,M_{{{rv2}}}(t) \quad ({rv1} \perp {rv2})'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "characteristic_fn_inversion"
+latex = 'f_{{{rv}}}(x) = \frac{{1}}{{2\pi}} \int{lim_mod}_{{-\infty}}^{{\infty}} e^{{-itx}}\,\varphi_{{{rv}}}(t)\, dt'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "convergence_in_probability"
+latex = '{rv1}_n \xrightarrow{{p}} {rv2}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "convergence_in_distribution"
+latex = '{rv1}_n \xrightarrow{{d}} {rv2}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "almost_sure_convergence"
+latex = '{rv1}_n \xrightarrow{{\text{{a.s.}}}} {rv2}'
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+# ---------------------------------------------------------------------------
+# Part C: High-n_eff function-pair templates (7)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "expectation_composition"
+latex = '{op}[{fn1}({rv})] = \int{lim_mod}_{{-\infty}}^{{\infty}} {fn1}(x)\, f_{{{rv}}}(x)\, dx'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "conditional_expectation_product"
+latex = '{op}[{fn1}({rv1})\,{fn2}({rv2})] = {op}[{fn1}({rv1})]\,{op}[{fn2}({rv2})] \quad ({rv1} \perp {rv2})'
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "mgf_composition"
+latex = 'M_{{{fn1}({rv})}}(t) = {op}\!\left[e^{{t\,{fn1}({rv})}}\right]'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.op]
+type = "S"
+pool = "EXP_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[[template]]
+name = "jacobian_change_of_variables"
+latex = 'f_{{{rv2}}}(y) = f_{{{rv1}}}\!\left({fn1}(y)\right)\,\bigl|{fn2}(y)\bigr|'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv1]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.rv2]
+type = "X"
+pool = "RV_POOL"
+exclude_from = ["rv1"]
+
+[[template]]
+name = "fn_cdf_pair"
+latex = '{fn1}(F_{{{rv}}}({aa})) = {fn2}({op}({rv} \leq {aa}))'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[[template]]
+name = "fn_moment_pair"
+latex = '{fn1}(\mathbb{{E}}[{rv}^{{{kk}}}]) = {fn2}\!\left(\int {aa}^{{{kk}}} f_{{{rv}}}({aa})\,d{aa}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "K_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"
+
+[[template]]
+name = "fn_characteristic_fn_pair"
+latex = '{fn1}(\varphi_{{{rv}}}({tt})) = {fn2}\!\left(\mathbb{{E}}[e^{{i{tt} {rv}}}]\right)'
+
+[template.slots.fn1]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.fn2]
+type = "E"
+gen = "_fn_rich_nosub"
+n = 5
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.tt]
+type = "S"
+pool = "A_POOL"
+
+# ---------------------------------------------------------------------------
+# Sampling weight extras (3)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name = "poisson_binomial_approx"
+latex = '\operatorname{{Bin}}({nn},\,{pp}) \approx \operatorname{{Poisson}}({nn}\,{pp}) \quad ({nn}\text{{ large, }}{pp}\text{{ small}})'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.pp]
+type = "S"
+pool = "P_POOL"
+
+[[template]]
+name = "stirling_approx"
+latex = '{nn}!\approx\sqrt{{2\pi\,{nn}}}\left(\frac{{{nn}}}{{e}}\right)^{{{nn}}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name = "normal_cdf_approx"
+latex = '{op}\!\left(\frac{{{rv}-{mu}}}{{{sig}}} \leq {aa}\right) \approx \Phi({aa})'
+
+[template.slots.op]
+type = "S"
+pool = "PROB_OP"
+
+[template.slots.rv]
+type = "S"
+pool = "RV_POOL"
+
+[template.slots.mu]
+type = "S"
+pool = "MU_POOL"
+
+[template.slots.sig]
+type = "S"
+pool = "SIG_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "A_POOL"

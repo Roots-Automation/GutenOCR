@@ -1,0 +1,1046 @@
+[meta]
+name        = "asymptotics"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Asymptotics, algorithm complexity, and numerical analysis"
+
+# ---------------------------------------------------------------------------
+# Slot pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "GEO_N_POOL"
+values = ['n', 'm', 'N', 'M', 'K', 'k', 'p', 'r']
+
+[[pool]]
+name   = "BVAR_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
+# ---------------------------------------------------------------------------
+# Templates
+# ---------------------------------------------------------------------------
+
+# --- Big-O / little-o / Theta at v → ∞ ---
+[[template]]
+name  = "big_o_asymptotic"
+latex = ""
+
+  [[template.variants]]
+  name  = "big_o"
+  latex = '{f}({v}) = O\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "little_o"
+  latex = '{f}({v}) = o\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "big_theta"
+  latex = '{f}({v}) = \Theta\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "big_omega"
+  latex = '{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "little_omega"
+  latex = '{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "asymptotic_equiv"
+  latex = '{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "soft_o"
+  latex = '{f}({v}) = \tilde{{O}}\!\left({g}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+# --- Landau notation at finite / one-sided limit points ---
+[[template]]
+name  = "asymptotic_directional"
+latex = ""
+
+  [[template.variants]]
+  name  = "big_o_at"
+  latex = '{f}({v}) = O\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+  [[template.variants]]
+  name  = "little_o_at"
+  latex = '{f}({v}) = o\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+  [[template.variants]]
+  name  = "big_theta_at"
+  latex = '{f}({v}) = \Theta\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+  [[template.variants]]
+  name  = "big_omega_at"
+  latex = '{f}({v}) = \Omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+  [[template.variants]]
+  name  = "little_omega_at"
+  latex = '{f}({v}) = \omega\!\left({g}({v})\right) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+  [[template.variants]]
+  name  = "asymptotic_equiv_at"
+  latex = '{f}({v}) \sim {g}({v}) \text{{ as }} {v} \to {lp}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.lp]
+  type = "S"
+  pool = ["0", '0^+', '0^-', "1", "a", "b"]
+
+# --- Asymptotic error-term / remainder form ---
+[[template]]
+name  = "asymptotic_error_term"
+latex = ""
+
+  [[template.variants]]
+  name  = "error_big_o"
+  latex = '{f}({v}) = {g}({v}) + O\!\left({h}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.h]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "error_little_o"
+  latex = '{f}({v}) = {g}({v}) + o\!\left({h}({v})\right) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.h]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "error_little_o_one"
+  latex = '{f}({v}) = {g}({v}) + o(1) \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+# --- Formal definitions of Landau notation ---
+[[template]]
+name  = "asymptotic_definition"
+latex = ""
+
+  [[template.variants]]
+  name  = "big_o_existential"
+  latex = '\exists\, C > 0,\; {v}_0 :\;|{f}({v})| \leq C\,|{g}({v})|\;\text{{ for all }} {v} \geq {v}_0'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "little_o_limit"
+  latex = '\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 0'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "asymptotic_equiv_limit"
+  latex = '\lim_{{{v} \to \infty}} \frac{{{f}({v})}}{{{g}({v})}} = 1'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [[template.variants]]
+  name  = "big_theta_sandwich"
+  latex = 'c_1\,{g}({v}) \leq {f}({v}) \leq c_2\,{g}({v})\text{{ for all large }} {v}'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.g]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+# --- Poincaré asymptotic expansions ---
+[[template]]
+name  = "asymptotic_expansion"
+latex = ""
+
+  [[template.variants]]
+  name  = "poincare_series"
+  latex = '{f}({v}) \sim \sum{lim_mod}_{{{k}=0}}^{{\infty}} {a}_{{{k}}}\,{v}^{{-{k}}} \text{{ as }} {v} \to \infty'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = ["k", "j", "m"]
+
+  [[template.variants]]
+  name  = "poincare_partial"
+  latex = '{f}({v}) = \sum{lim_mod}_{{{k}=0}}^{{{N}}} {a}_{{{k}}}\,{v}^{{-{k}}} + O\!\left({v}^{{-{N}-1}}\right)'
+
+  [template.variants.slots.lim_mod]
+  type = "S"
+  pool = ["", '\limits']
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.v]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "BVAR_POOL"
+
+  [template.variants.slots.k]
+  type = "S"
+  pool = ["k", "j", "m"]
+
+  [template.variants.slots.N]
+  type = "S"
+  pool = ["N", "n", "M", "K"]
+
+# --- Algorithm time complexity ---
+[[template]]
+name  = "algorithm_complexity"
+latex = ""
+
+  [[template.variants]]
+  name  = "time_polynomial"
+  latex = 'T({nn}) = O\!\left({nn}^{{{kk}}}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.kk]
+  type = "S"
+  pool = ["2", "3", "k", "d", "p", "4"]
+
+  [[template.variants]]
+  name  = "time_log"
+  latex = 'T({nn}) = O\!\left(\log {nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N", "k"]
+
+  [[template.variants]]
+  name  = "time_linearithmic"
+  latex = 'T({nn}) = O\!\left({nn} \log {nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [[template.variants]]
+  name  = "time_exponential"
+  latex = 'T({nn}) = O\!\left({bb}^{{{nn}}}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["2", "3", "c", "k"]
+
+  [[template.variants]]
+  name  = "time_linear"
+  latex = 'T({nn}) = O\!\left({nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [[template.variants]]
+  name  = "time_omega_lower"
+  latex = 'T({nn}) = \Omega\!\left({nn} \log {nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+# --- Master theorem (divide-and-conquer recurrences) ---
+[[template]]
+name  = "master_theorem"
+latex = ""
+
+  [[template.variants]]
+  name  = "master_log_b_a"
+  latex = 'T({nn}) = {aa}\,T\!\left(\tfrac{{{nn}}}{{{bb}}}\right) + O(1) \implies T({nn}) = O\!\left({nn}^{{\log_{{{bb}}} {aa}}}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "2", "3", "4"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "2", "3", "4"]
+
+  [[template.variants]]
+  name  = "master_nlogn"
+  latex = 'T({nn}) = {aa}\,T\!\left(\tfrac{{{nn}}}{{{bb}}}\right) + \Theta\!\left({nn}^{{{cc}}}\right) \implies T({nn}) = \Theta\!\left({nn}^{{{cc}}} \log {nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "2", "3", "4"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "2", "3", "4"]
+
+  [template.variants.slots.cc]
+  type = "S"
+  pool = ["c", "1", "2", "p"]
+
+  [[template.variants]]
+  name  = "master_dominant"
+  latex = 'T({nn}) = {aa}\,T\!\left(\tfrac{{{nn}}}{{{bb}}}\right) + \Omega\!\left({nn}^{{{cc}}}\right) \implies T({nn}) = \Theta\!\left({nn}^{{{cc}}}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "2", "3", "4"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "2", "3", "4"]
+
+  [template.variants.slots.cc]
+  type = "S"
+  pool = ["c", "2", "3", "p"]
+
+# --- Space complexity ---
+[[template]]
+name  = "space_complexity"
+latex = ""
+
+  [[template.variants]]
+  name  = "space_polynomial"
+  latex = 'S({nn}) = O\!\left({nn}^{{{kk}}}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [template.variants.slots.kk]
+  type = "S"
+  pool = ["2", "k", "1", "d"]
+
+  [[template.variants]]
+  name  = "space_log"
+  latex = 'S({nn}) = O\!\left(\log {nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [[template.variants]]
+  name  = "space_linear"
+  latex = 'S({nn}) = O\!\left({nn}\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+# --- Numerical convergence rates ---
+[[template]]
+name  = "numerical_convergence"
+latex = ""
+
+  [[template.variants]]
+  name  = "quadratic_convergence"
+  latex = '|{ee}_{{n+1}}| \leq C\,|{ee}_n|^2'
+
+  [template.variants.slots.ee]
+  type = "S"
+  pool = ["e", '\varepsilon', "r"]
+
+  [[template.variants]]
+  name  = "linear_convergence"
+  latex = '|{ee}_{{n+1}}| \leq {qq}\,|{ee}_n|, \quad 0 < {qq} < 1'
+
+  [template.variants.slots.ee]
+  type = "S"
+  pool = ["e", '\varepsilon', "r"]
+
+  [template.variants.slots.qq]
+  type = "S"
+  pool = ["q", '\rho', '\lambda', "c", "L"]
+
+  [[template.variants]]
+  name  = "superlinear_convergence"
+  latex = '|{ee}_{{n+1}}| \leq C\,|{ee}_n|^{{{pp}}}'
+
+  [template.variants.slots.ee]
+  type = "S"
+  pool = ["e", '\varepsilon', "r"]
+
+  [template.variants.slots.pp]
+  type = "S"
+  pool = ['\frac{3}{2}', '\frac{5}{3}', "p"]
+
+  [[template.variants]]
+  name  = "contraction_iterate"
+  latex = '|x_{{n+1}} - x^*| \leq {qq}\,|x_n - x^*|'
+
+  [template.variants.slots.qq]
+  type = "S"
+  pool = ["q", '\rho', '\lambda', '\alpha']
+
+# --- Order of convergence ---
+[[template]]
+name  = "order_of_convergence"
+latex = '\lim_{{n \to \infty}} \frac{{|{ee}_{{n+1}}|}}{{|{ee}_n|^{{{pp}}}}} = {LL}'
+
+[template.slots.ee]
+type = "S"
+pool = ["e", '\varepsilon', "r"]
+
+[template.slots.pp]
+type = "S"
+pool = ["1", "2", "p", '\frac{3}{2}']
+
+[template.slots.LL]
+type = "S"
+pool = ["L", "C", '\mu', '\lambda']
+
+# --- Finite-difference approximations ---
+[[template]]
+name  = "finite_diff_forward"
+latex = '''{f}'({x}) = \frac{{{f}({x}+h) - {f}({x})}}{{h}} + O(h)'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "BVAR_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "finite_diff_central"
+latex = '''{f}'({x}) = \frac{{{f}({x}+h) - {f}({x}-h)}}{{2h}} + O(h^2)'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "BVAR_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "finite_diff_second"
+latex = '''{f}''({x}) = \frac{{{f}({x}+h) - 2{f}({x}) + {f}({x}-h)}}{{h^2}} + O(h^2)'''
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "BVAR_POOL"
+idx  = 0.35
+
+# --- Quadrature error bounds ---
+[[template]]
+name  = "quadrature_error"
+latex = ""
+
+  [[template.variants]]
+  name  = "trapezoid_error"
+  latex = '''|E_n| \leq \frac{{({bb}-{aa})^3}}{{12 n^2}} \max_{{{x} \in [{aa},{bb}]}} |{f}''({x})|'''
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "0", '\alpha']
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "1", '\beta', "T"]
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "BVAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "simpson_error"
+  latex = '|E_n| \leq \frac{{({bb}-{aa})^5}}{{180 n^4}} \max_{{{x} \in [{aa},{bb}]}} |{f}^{{(4)}}({x})|'
+
+  [template.variants.slots.f]
+  type = "E"
+  gen  = "_fn_rich_nosub"
+  n    = 5
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "0", '\alpha']
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "1", '\beta', "T"]
+
+  [template.variants.slots.x]
+  type = "S"
+  pool = "BVAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "generic_quadrature_error"
+  latex = '|E_n| = O\!\left(h^{{{pp}}}\right),\quad h = \frac{{{bb}-{aa}}}{{{nn}}}'
+
+  [template.variants.slots.pp]
+  type = "S"
+  pool = ["2", "4", "p", "6"]
+
+  [template.variants.slots.aa]
+  type = "S"
+  pool = ["a", "0"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "1", "T"]
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "N", "m"]
+
+# --- Stirling's approximation ---
+[[template]]
+name  = "stirling_approx"
+latex = ""
+
+  [[template.variants]]
+  name  = "stirling_product"
+  latex = '{nn}! \sim \sqrt{{2\pi {nn}}} \left(\frac{{{nn}}}{{e}}\right)^{{{nn}}}'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N", "k"]
+
+  [[template.variants]]
+  name  = "stirling_log"
+  latex = '\ln({nn}!) = {nn} \ln {nn} - {nn} + O(\ln {nn})'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+  [[template.variants]]
+  name  = "stirling_refined"
+  latex = '{nn}! = \sqrt{{2\pi {nn}}} \left(\frac{{{nn}}}{{e}}\right)^{{{nn}}} \left(1 + O\!\left(\tfrac{{1}}{{{nn}}}\right)\right)'
+
+  [template.variants.slots.nn]
+  type = "S"
+  pool = ["n", "m", "N"]
+
+# --- Prime number theorem ---
+[[template]]
+name  = "prime_number_theorem"
+latex = ""
+
+  [[template.variants]]
+  name  = "pnt_simple"
+  latex = '\pi({xx}) \sim \frac{{{xx}}}{{\ln {xx}}} \text{{ as }} {xx} \to \infty'
+
+  [template.variants.slots.xx]
+  type = "S"
+  pool = ["x", "n", "N", "X"]
+
+  [[template.variants]]
+  name  = "pnt_li"
+  latex = '\pi({xx}) = \operatorname{{Li}}({xx}) + O\!\left({xx}^{{{rr}}} \ln {xx}\right)'
+
+  [template.variants.slots.xx]
+  type = "S"
+  pool = ["x", "X"]
+
+  [template.variants.slots.rr]
+  type = "S"
+  pool = ['\frac{1}{2}', '\theta', '\frac{3}{4}']
+
+# --- Harmonic number asymptotics ---
+[[template]]
+name  = "harmonic_asymptotic"
+latex = 'H_{{{nn}}} = \ln {nn} + \gamma + O\!\left(\tfrac{{1}}{{{nn}}}\right)'
+
+[template.slots.nn]
+type = "S"
+pool = ["n", "m", "N", "k"]
+
+# --- Condition number ---
+[[template]]
+name  = "condition_number"
+latex = ""
+
+  [[template.variants]]
+  name  = "condition_number_2norm"
+  latex = '\kappa_2({AA}) = \|{AA}\|_2 \|{AA}^{{-1}}\|_2'
+
+  [template.variants.slots.AA]
+  type = "S"
+  pool = ["A", "B", "M", '\Sigma']
+
+  [[template.variants]]
+  name  = "condition_number_pnorm"
+  latex = '\kappa_{{{pp}}}({AA}) = \|{AA}\|_{{{pp}}} \|{AA}^{{-1}}\|_{{{pp}}}'
+
+  [template.variants.slots.AA]
+  type = "S"
+  pool = ["A", "B", "M"]
+
+  [template.variants.slots.pp]
+  type = "S"
+  pool = ["p", "1", "2", '\infty']
+
+  [[template.variants]]
+  name  = "condition_singular_ratio"
+  latex = '\kappa_2({AA}) = \frac{{{ss}_{{\max}}}}{{{ss}_{{\min}}}}'
+
+  [template.variants.slots.AA]
+  type = "S"
+  pool = ["A", "M", "B"]
+
+  [template.variants.slots.ss]
+  type = "S"
+  pool = ["s", '\sigma']
+
+# --- Relative error / perturbation bounds ---
+[[template]]
+name  = "relative_error_bound"
+latex = ""
+
+  [[template.variants]]
+  name  = "relative_error_rhs"
+  latex = '\frac{{\|\delta {xx}\|}}{{\|{xx}\|}} \leq \kappa({AA}) \frac{{\|\delta {bb}\|}}{{\|{bb}\|}}'
+
+  [template.variants.slots.AA]
+  type = "S"
+  pool = ["A", "B", "M"]
+
+  [template.variants.slots.xx]
+  type = "S"
+  pool = ["x", "u", "v", "y"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "f", "g"]
+
+  [[template.variants]]
+  name  = "residual_bound"
+  latex = '\frac{{\|{xx} - \hat{{{xx}}}\|}}{{\|{xx}\|}} \leq \kappa({AA}) \frac{{\|{rr}\|}}{{\|{bb}\|}}'
+
+  [template.variants.slots.AA]
+  type = "S"
+  pool = ["A", "B", "M"]
+
+  [template.variants.slots.xx]
+  type = "S"
+  pool = ["x", "u", "v"]
+
+  [template.variants.slots.bb]
+  type = "S"
+  pool = ["b", "f", "g"]
+
+  [template.variants.slots.rr]
+  type = "S"
+  pool = ["r", "e", '\varepsilon']
+
+[[template]]
+name  = "norm_lesssim_power"
+latex = '\|{ff}({xx})\| \lesssim \|{xx}\|^{{{nn}}}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "BVAR_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = ['2', '3', '4', 'm', 'n', 'p', 'q']
+
+# ---------------------------------------------------------------------------
+# Asymptotic inequality symbols (\lesssim, \gtrsim)
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VARS_SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'x', 'y', 'z']
+
+[[template]]
+name     = "lesssim_scalars"
+latex    = '{aa} \lesssim {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "gtrsim_scalars"
+latex    = '{aa} \gtrsim {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+# ---------------------------------------------------------------------------
+# Much-less-than / much-greater-than order-of-magnitude symbols
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "much_less_than"
+latex    = '{aa} \lll {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[[template]]
+name     = "much_greater_than"
+latex    = '{aa} \ggg {bb}'
+distinct = [["aa", "bb"]]
+
+[template.slots.aa]
+type = "S"
+pool = "VARS_SCALARS_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "VARS_SCALARS_POOL"

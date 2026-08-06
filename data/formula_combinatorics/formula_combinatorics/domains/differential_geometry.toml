@@ -1,0 +1,2208 @@
+[meta]
+name        = "differential_geometry"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Differential geometry — Riemannian metrics, curvature tensors, differential forms, Stokes theorem, geodesics, Lie theory, fiber bundles"
+
+# ---------------------------------------------------------------------------
+# Slot pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "IDX_POOL"
+values = ['i', 'j', 'k', 'l', 'm', 'n']
+
+[[pool]]
+name   = "VF_POOL"
+values = ['X', 'Y', 'Z', 'V', 'W', 'U', 'T', 'S', '\xi', '\eta']
+
+[[pool]]
+name   = "FORM_POOL"
+values = ['\omega', '\alpha', '\beta', '\eta', '\theta', '\phi', '\psi', '\chi', '\rho', '\sigma']
+
+[[pool]]
+name   = "MFLD_POOL"
+values = ['M', 'N', '\Sigma', '\mathcal{M}', '\mathcal{N}', 'P', '\mathcal{P}', '\mathcal{S}', '\Gamma', '\Lambda']
+
+[[pool]]
+name   = "METRIC_POOL"
+values = ['g', 'h', 'k', '\gamma', '\hat{g}', '\tilde{g}', '\bar{g}', '\mathring{g}']
+
+[[pool]]
+name   = "PARAM_POOL"
+values = ['\tau', '\lambda', 's', 't', '\sigma', 'u', '\mu', '\rho']
+
+[[pool]]
+name   = "BUNDLE_POOL"
+values = ['E', 'L', '\mathcal{E}', '\mathcal{L}', '\mathcal{F}', 'F', '\mathcal{G}', '\mathcal{H}', '\mathcal{V}', 'S']
+
+[[pool]]
+name   = "NVEC_POOL"
+values = ['N', '\nu', '\mathbf{n}', '\hat{N}', '\hat{n}', '\mathbf{e}_n', 'n', '\bar{N}']
+
+[[pool]]
+name   = "KAPPA_POOL"
+values = ['\kappa', '0', '1', '-1']
+
+# ---------------------------------------------------------------------------
+# A1: metric tensor
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "metric_einstein_sum"
+latex = 'ds^2 = {met}_{{{ii}{jj}}} \, dx^{{{ii}}} dx^{{{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "metric_inner_product"
+latex = '\langle u, v \rangle_p = {met}_p(u, v)'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[[template]]
+name  = "metric_positive_definite"
+latex = '[{met}_{{{ii}{jj}}}] \text{{ is symmetric positive-definite}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ---------------------------------------------------------------------------
+# A2: Christoffel symbols
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "christoffel_def"
+latex = '\Gamma^{{{kk}}}_{{{ii}{jj}}} = \tfrac{{1}}{{2}} {met}^{{{kk}{ll}}} \!\left(\partial_{{{ii}}} {met}_{{{jj}{ll}}} + \partial_{{{jj}}} {met}_{{{ii}{ll}}} - \partial_{{{ll}}} {met}_{{{ii}{jj}}}\right)'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii", "jj"]
+
+[[template]]
+name  = "christoffel_symmetry"
+latex = '\Gamma^{{{kk}}}_{{{ii}{jj}}} = \Gamma^{{{kk}}}_{{{jj}{ii}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii"]
+
+# ---------------------------------------------------------------------------
+# A3: geodesic equation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "geodesic_affine"
+latex = '\frac{{d^2 x^{{{kk}}}}}{{d{par}^2}} + \Gamma^{{{kk}}}_{{{ii}{jj}}} \frac{{dx^{{{ii}}}}}{{d{par}}} \frac{{dx^{{{jj}}}}}{{d{par}}} = 0'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii"]
+
+[[template]]
+name  = "geodesic_abstract"
+latex = '\nabla_{{\dot{{\gamma}}}} \dot{{\gamma}} = 0'
+
+# ---------------------------------------------------------------------------
+# A4: Riemann curvature
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "riemann_component"
+latex = 'R^{{{ll}}}_{{{kk}{ii}{jj}}} = \partial_{{{ii}}} \Gamma^{{{ll}}}_{{{jj}{kk}}} - \partial_{{{jj}}} \Gamma^{{{ll}}}_{{{ii}{kk}}} + \Gamma^{{{ll}}}_{{{ii}{mm}}} \Gamma^{{{mm}}}_{{{jj}{kk}}} - \Gamma^{{{ll}}}_{{{jj}{mm}}} \Gamma^{{{mm}}}_{{{ii}{kk}}}'
+
+[template.slots.ll]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll"]
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk", "ii"]
+
+[template.slots.mm]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk", "ii", "jj"]
+
+[[template]]
+name  = "riemann_operator"
+latex = 'R({xx}, {yy}){zz} = \nabla_{{{xx}}} \nabla_{{{yy}}} {zz} - \nabla_{{{yy}}} \nabla_{{{xx}}} {zz} - \nabla_{{[{xx},{yy}]}} {zz}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy"]
+
+[[template]]
+name  = "riemann_antisymmetry"
+latex = 'R_{{{ii}{jj}{kk}{ll}}} = -R_{{{jj}{ii}{kk}{ll}}} = -R_{{{ii}{jj}{ll}{kk}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+# ---------------------------------------------------------------------------
+# A5: torsion-free (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "torsion_free"
+latex = ""
+
+[[template.variants]]
+name  = "torsion_zero"
+latex = 'T({xx}, {yy}) = \nabla_{{{xx}}} {yy} - \nabla_{{{yy}}} {xx} - [{xx}, {yy}] = 0'
+
+[template.variants.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.variants.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template.variants]]
+name  = "torsion_free_lc"
+latex = '\nabla_{{{xx}}} {yy} - \nabla_{{{yy}}} {xx} = [{xx}, {yy}]'
+
+[template.variants.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.variants.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+# ---------------------------------------------------------------------------
+# A6: exterior derivative squared
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "d_squared_zero"
+latex = 'd(d{om}) = 0'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "d_squared_operator"
+latex = 'd^2 = 0'
+
+# ---------------------------------------------------------------------------
+# A7: Stokes theorem (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "stokes_theorem"
+latex = ""
+
+[[template.variants]]
+name  = "stokes_general"
+latex = '\int{lim_mod}_{{{mfld}}} d{om} = \int{lim_mod}_{{\partial {mfld}}} {om}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.variants.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template.variants]]
+name  = "stokes_oint"
+latex = '\int{lim_mod}_{{{mfld}}} d{om} = \oint{lim_mod}_{{\partial {mfld}}} {om}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.variants.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template.variants]]
+name  = "stokes_no_boundary"
+latex = '\partial {mfld} = \emptyset \implies \int{lim_mod}_{{{mfld}}} d{om} = 0'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.variants.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+# ---------------------------------------------------------------------------
+# A8: Cartan magic formula
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cartan_lie_deriv"
+latex = '\mathcal{{L}}_{{{xx}}} {om} = d(\iota_{{{xx}}} {om}) + \iota_{{{xx}}} d{om}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "cartan_commutator"
+latex = '[\mathcal{{L}}_{{{xx}}}, d] = 0'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+# ---------------------------------------------------------------------------
+# A9: Gaussian curvature
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gaussian_component"
+latex = 'K = \frac{{R_{{1212}}}}{{{{{met}}}_{{11}} {met}_{{22}} - {met}_{{12}}^2}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[[template]]
+name  = "gaussian_principal"
+latex = 'K = \kappa_1 \kappa_2'
+
+[[template]]
+name  = "gaussian_ricci_surface"
+latex = 'K = \tfrac{{1}}{{2}} R'
+
+# ---------------------------------------------------------------------------
+# A10: Ricci tensor
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ricci_contraction"
+latex = 'R_{{{ii}{jj}}} = R^{{{kk}}}_{{{ii}{kk}{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[[template]]
+name  = "ricci_symmetric"
+latex = 'R_{{{ii}{jj}}} = R_{{{jj}{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "ricci_abstract"
+latex = '\operatorname{{Ric}}({xx}, {yy}) = \operatorname{{tr}}\!\bigl(Z \mapsto R(Z, {xx})\,{yy}\bigr)'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+# ---------------------------------------------------------------------------
+# A11: Einstein field equations
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "einstein_index"
+latex = 'G_{{{ii}{jj}}} = R_{{{ii}{jj}}} - \tfrac{{1}}{{2}} {met}_{{{ii}{jj}}} R = \frac{{8\pi G}}{{c^4}} T_{{{ii}{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "einstein_tensor_form"
+latex = '\mathbf{{G}} = \mathbf{{R}} - \tfrac{{1}}{{2}} R\,\mathbf{{g}} = \frac{{8\pi G}}{{c^4}} \mathbf{{T}}'
+
+[[template]]
+name  = "einstein_trace_reversed"
+latex = 'R_{{{ii}{jj}}} = \frac{{8\pi G}}{{c^4}}\!\left(T_{{{ii}{jj}}} - \tfrac{{1}}{{2}} {met}_{{{ii}{jj}}} T\right)'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ---------------------------------------------------------------------------
+# A12: covariant derivative of tensor
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cov_deriv_contravariant"
+latex = '\nabla_{{{kk}}} T^{{{ii}{jj}}} = \partial_{{{kk}}} T^{{{ii}{jj}}} + \Gamma^{{{ii}}}_{{{kk}{ll}}} T^{{{ll}{jj}}} + \Gamma^{{{jj}}}_{{{kk}{ll}}} T^{{{ii}{ll}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "cov_deriv_covariant"
+latex = '\nabla_{{{kk}}} T_{{{ii}{jj}}} = \partial_{{{kk}}} T_{{{ii}{jj}}} - \Gamma^{{{ll}}}_{{{kk}{ii}}} T_{{{ll}{jj}}} - \Gamma^{{{ll}}}_{{{kk}{jj}}} T_{{{ii}{ll}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "cov_deriv_vector"
+latex = '\nabla_{{{kk}}} V^{{{ii}}} = \partial_{{{kk}}} V^{{{ii}}} + \Gamma^{{{ii}}}_{{{kk}{jj}}} V^{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+# ---------------------------------------------------------------------------
+# A13: Lie bracket
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lie_bracket_component"
+latex = '[{xx}, {yy}]^{{{ii}}} = {xx}^{{{jj}}} \partial_{{{jj}}} {yy}^{{{ii}}} - {yy}^{{{jj}}} \partial_{{{jj}}} {xx}^{{{ii}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "lie_bracket_functional"
+latex = '[{xx}, {yy}] f = {xx}({yy} f) - {yy}({xx} f)'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+# ---------------------------------------------------------------------------
+# A14: Gauss-Bonnet (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gauss_bonnet"
+latex = ""
+
+[[template.variants]]
+name  = "gauss_bonnet_boundary"
+latex = '\int{lim_mod}_{{{mfld}}} K \, dA + \int{lim_mod}_{{\partial {mfld}}} \kappa_g \, ds = 2\pi \chi({mfld})'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[[template.variants]]
+name  = "gauss_bonnet_closed"
+latex = '\int{lim_mod}_{{{mfld}}} K \, dA = 2\pi \chi({mfld})'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+# ---------------------------------------------------------------------------
+# B1: differential forms algebra
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "wedge_anticommutativity"
+latex = '{om} \wedge {al} = (-1)^{{pq}} {al} \wedge {om}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "wedge_associativity"
+latex = '({om} \wedge {al}) \wedge {bt} = {om} \wedge ({al} \wedge {bt})'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[template.slots.bt]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om", "al"]
+
+[[template]]
+name  = "wedge_distributivity"
+latex = '({om} + {al}) \wedge {bt} = {om} \wedge {bt} + {al} \wedge {bt}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[template.slots.bt]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om", "al"]
+
+[[template]]
+name  = "exterior_derivative_product"
+latex = 'd({om} \wedge {al}) = d{om} \wedge {al} + (-1)^k {om} \wedge d{al}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+# ---------------------------------------------------------------------------
+# B2: pullback / pushforward
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "pullback_product"
+latex = '{fn1}^*({om} \wedge {al}) = {fn1}^* {om} \wedge {fn1}^* {al}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "pullback_form"
+latex = '({fn1}^* {om})_p(v) = {om}_{{{fn1}(p)}}(d{fn1}_p \cdot v)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "pushforward_vector"
+latex = '({fn1}_* {xx})_q = d{fn1}_p \cdot {xx}_p'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+# ---------------------------------------------------------------------------
+# B3: covariant derivative identities
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cov_deriv_product_rule"
+latex = '\nabla_{{{xx}}} ({fn1} {yy}) = ({xx}\,{fn1})\,{yy} + {fn1}\,\nabla_{{{xx}}} {yy}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "metric_compatibility"
+latex = '\nabla_{{{zz}}} \langle {xx}, {yy} \rangle = \langle \nabla_{{{zz}}} {xx}, {yy} \rangle + \langle {xx}, \nabla_{{{zz}}} {yy} \rangle'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy"]
+
+[[template]]
+name  = "curvature_operator_defn"
+latex = 'R({xx}, {yy}){zz} = \nabla_{{{xx}}} \nabla_{{{yy}}} {zz} - \nabla_{{{yy}}} \nabla_{{{xx}}} {zz} - \nabla_{{[{xx},{yy}]}} {zz}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy"]
+
+# ---------------------------------------------------------------------------
+# B4: parallel transport
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "parallel_abstract"
+latex = '\frac{{D{vv}}}{{d{par}}} = 0'
+
+[template.slots.vv]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name  = "parallel_component"
+latex = '\frac{{dV^{{{kk}}}}}{{d{par}}} + \Gamma^{{{kk}}}_{{{ii}{jj}}} \frac{{dx^{{{ii}}}}}{{d{par}}} V^{{{jj}}} = 0'
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii"]
+
+# ---------------------------------------------------------------------------
+# B5: sectional curvature
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sectional_ratio"
+latex = 'K(\sigma) = \frac{{R({xx}, {yy}, {yy}, {xx})}}{{|{xx}|^2 |{yy}|^2 - \langle {xx},{yy} \rangle^2}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "sectional_constant"
+latex = 'K \equiv {kap}'
+
+[template.slots.kap]
+type = "S"
+pool = "KAPPA_POOL"
+
+[[template]]
+name  = "sectional_model_spaces"
+latex = 'K_{{S^n}} = +1, \quad K_{{\mathbb{{R}}^n}} = 0, \quad K_{{\mathbb{{H}}^n}} = -1'
+
+# ---------------------------------------------------------------------------
+# B6: Ricci scalar
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ricci_scalar_trace"
+latex = 'R = {met}^{{{ii}{jj}}} R_{{{ii}{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "ricci_scalar_sectional"
+latex = 'R = \sum{lim_mod}_{{{ii} < {jj}}} 2\, K(e_{{{ii}}}, e_{{{jj}}})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ---------------------------------------------------------------------------
+# B7: Hodge star
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "hodge_pairing"
+latex = '{om} \wedge \star {al} = \langle {om}, {al} \rangle \, \operatorname{{vol}}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "hodge_involution"
+latex = '\star \star {om} = (-1)^{{k(n-k)}} {om}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "codifferential_def"
+latex = '\delta {om} = (-1)^{{n(k+1)+1}} \star d \star {om}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+# ---------------------------------------------------------------------------
+# B8: Hodge decomposition / Laplace-Beltrami
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "hodge_decomposition"
+latex = '{om} = d{al} + \delta {bt} + {et}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[template.slots.bt]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om", "al"]
+
+[template.slots.et]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om", "al", "bt"]
+
+[[template]]
+name  = "laplace_beltrami_def"
+latex = '\Delta {om} = (d\delta + \delta d){om}'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+# ---------------------------------------------------------------------------
+# B9: exponential map
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "exp_map_def"
+latex = '\exp_p \colon T_p M \to M, \quad {vv} \mapsto \gamma_{{{vv}}}(1)'
+
+[template.slots.vv]
+type = "S"
+pool = "VF_POOL"
+
+[[template]]
+name  = "exp_map_geodesic"
+latex = '''\exp_p({par}\,{vv}) = \gamma({par}), \quad \gamma'(0) = {vv}'''
+
+[template.slots.vv]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+# ---------------------------------------------------------------------------
+# B10b: high-n_eff function-pair templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "green_second_identity"
+latex = '\int{lim_mod}_{{{mfld}}} ({fn1} \Delta {fn2} - {fn2} \Delta {fn1}) \, \operatorname{{vol}} = 0'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "laplacian_leibniz"
+latex = '\Delta({fn1} {fn2}) = {fn1} \Delta {fn2} + {fn2} \Delta {fn1} + 2 \langle \nabla {fn1}, \nabla {fn2} \rangle_{{{met}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "integration_by_parts_manifold"
+latex = '\int{lim_mod}_{{{mfld}}} {fn1}\, \operatorname{{div}}({xx})\, \operatorname{{vol}} = -\int{lim_mod}_{{{mfld}}} {met}(\operatorname{{grad}} {fn1}, {xx})\, \operatorname{{vol}} + \int{lim_mod}_{{\partial {mfld}}} {fn1} \langle {xx}, \nu \rangle \, dA'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[[template]]
+name  = "composition_pullback"
+latex = '({fn1} \circ {fn2})^* {om} = {fn2}^*\!\left({fn1}^* {om}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "green_formula_closed"
+latex = '\int{lim_mod}_{{{mfld}}} {fn1} \Delta {fn2} \, \operatorname{{vol}} = -\int{lim_mod}_{{{mfld}}} \langle \nabla {fn1}, \nabla {fn2} \rangle_{{{met}}} \, \operatorname{{vol}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[[template]]
+name  = "exterior_deriv_product_fn"
+latex = 'd({fn1} \cdot {fn2}) = {fn2} \, d{fn1} + {fn1} \, d{fn2}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "gradient_product_rule"
+latex = '\operatorname{{grad}}_{{{met}}}({fn1} {fn2}) = {fn1}\, \operatorname{{grad}}_{{{met}}} {fn2} + {fn2}\, \operatorname{{grad}}_{{{met}}} {fn1}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ---------------------------------------------------------------------------
+# B10: Lie derivative
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lie_deriv_function"
+latex = '\mathcal{{L}}_{{{xx}}} ({fn1} \cdot {fn2}) = (\mathcal{{L}}_{{{xx}}} {fn1})\,{fn2} + {fn1}\,(\mathcal{{L}}_{{{xx}}} {fn2})'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "lie_deriv_bracket"
+latex = '\mathcal{{L}}_{{{xx}}} {yy} = [{xx}, {yy}]'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "lie_deriv_form"
+latex = '\mathcal{{L}}_{{{xx}}} {om} = d(\iota_{{{xx}}} {om}) + \iota_{{{xx}}} d{om}'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+# ---------------------------------------------------------------------------
+# B11: symplectic form
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "symplectic_closed"
+latex = 'd{om} = 0'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "symplectic_nondegenerate"
+latex = '{om}({xx}, {yy}) = 0 \;\forall {yy} \implies {xx} = 0'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "darboux_theorem"
+latex = '{om} = \sum{lim_mod}_{{i=1}}^n dp_i \wedge dq_i'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+# ---------------------------------------------------------------------------
+# B12: de Rham cohomology
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "closed_form_defn"
+latex = 'd{om} = 0 \quad ({om} \text{{ is closed}})'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[[template]]
+name  = "exact_form_defn"
+latex = '{om} = d{al} \quad ({om} \text{{ is exact}})'
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "poincare_lemma"
+latex = 'H^k_{{\mathrm{{dR}}}}(\mathbb{{R}}^n) = 0 \text{{ for }} k > 0'
+
+# ---------------------------------------------------------------------------
+# B13: second fundamental form
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "second_ff_def"
+latex = 'II({xx}, {yy}) = -\langle \nabla_{{{xx}}} {yy}, {nvec} \rangle'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.nvec]
+type = "S"
+pool = "NVEC_POOL"
+
+[[template]]
+name  = "shape_operator"
+latex = 'II({xx}, {yy}) = \langle S({xx}), {yy} \rangle'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "weingarten_map"
+latex = '\nabla_{{{xx}}} {nvec} = -S({xx})'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.nvec]
+type = "S"
+pool = "NVEC_POOL"
+
+# ---------------------------------------------------------------------------
+# B14: mean / Gaussian curvature (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "mean_and_principal_curvature"
+latex = ""
+
+[[template.variants]]
+name  = "mean_curvature"
+latex = 'H = \tfrac{{1}}{{2}}(\kappa_1 + \kappa_2) = \tfrac{{1}}{{2}} \operatorname{{tr}}(S)'
+
+[[template.variants]]
+name  = "gaussian_via_shape"
+latex = 'K = \kappa_1 \kappa_2 = \det(S)'
+
+# ---------------------------------------------------------------------------
+# B15: Bianchi identities (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bianchi_identities"
+latex = ""
+
+[[template.variants]]
+name  = "first_bianchi"
+latex = 'R^{{{ll}}}_{{{kk}{ii}{jj}}} + R^{{{ll}}}_{{{jj}{kk}{ii}}} + R^{{{ll}}}_{{{ii}{jj}{kk}}} = 0'
+
+[template.variants.slots.ll]
+type = "S"
+pool = "IDX_POOL"
+
+[template.variants.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll"]
+
+[template.variants.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk"]
+
+[template.variants.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk", "ii"]
+
+[[template.variants]]
+name  = "second_bianchi"
+latex = '\nabla_{{{ll}}} R_{{{kk}{ii}{jj}}} + \nabla_{{{ii}}} R_{{{kk}{jj}{ll}}} + \nabla_{{{jj}}} R_{{{kk}{ll}{ii}}} = 0'
+
+[template.variants.slots.ll]
+type = "S"
+pool = "IDX_POOL"
+
+[template.variants.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll"]
+
+[template.variants.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk"]
+
+[template.variants.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ll", "kk", "ii"]
+
+# ---------------------------------------------------------------------------
+# B16: Ricci flow (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ricci_flow"
+latex = ""
+
+[[template.variants]]
+name  = "ricci_flow_eq"
+latex = '\frac{{\partial {met}_{{{ii}{jj}}}}}{{\partial t}} = -2 R_{{{ii}{jj}}}'
+
+[template.variants.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.variants.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.variants.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template.variants]]
+name  = "ricci_flow_normalized"
+latex = '\frac{{\partial {met}_{{{ii}{jj}}}}}{{\partial t}} = -2 R_{{{ii}{jj}}} + \frac{{2}}{{n}} R\,{met}_{{{ii}{jj}}}'
+
+[template.variants.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.variants.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.variants.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ---------------------------------------------------------------------------
+# B17: volume form
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "volume_riemannian"
+latex = '\operatorname{{vol}}_{{{met}}} = \sqrt{{\lvert \det [{met}_{{{ii}{jj}}}] \rvert}} \, dx^1 \wedge \cdots \wedge dx^n'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "volume_abstract"
+latex = '\omega_{{{mfld}}} \in \Omega^n({mfld}) \text{{ is a nowhere-vanishing top form}}'
+
+[template.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+# ---------------------------------------------------------------------------
+# B18: fiber bundle curvature (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fiber_bundle_curvature"
+latex = ""
+
+[[template.variants]]
+name  = "curvature_2form"
+latex = 'F_\nabla = d{om} + {om} \wedge {om} \in \Omega^2(\operatorname{{End}}({bun}))'
+
+[template.variants.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.variants.slots.bun]
+type = "S"
+pool = "BUNDLE_POOL"
+
+[[template.variants]]
+name  = "chern_weil"
+latex = 'c_1({bun}) = \left[\frac{{i}}{{2\pi}} F_\nabla\right] \in H^2({mfld};\, \mathbb{{Z}})'
+
+[template.variants.slots.bun]
+type = "S"
+pool = "BUNDLE_POOL"
+
+[template.variants.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+# ---------------------------------------------------------------------------
+# B19: Gauss-Codazzi
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gauss_equation"
+latex = 'R({xx},{yy},{zz},{ww}) = \bar{{R}}({xx},{yy},{zz},{ww}) + II({xx},{ww})\,II({yy},{zz}) - II({xx},{zz})\,II({yy},{ww})'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy"]
+
+[template.slots.ww]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy", "zz"]
+
+[[template]]
+name  = "codazzi_mainardi"
+latex = '(\nabla_{{{xx}}} II)({yy},{zz}) = (\nabla_{{{yy}}} II)({xx},{zz})'
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[template.slots.zz]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx", "yy"]
+
+# ---------------------------------------------------------------------------
+# B20: connection forms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cartan_structure_eq"
+latex = 'd\omega^{{{ii}}} = -\omega^{{{ii}}}{{}}_{{{jj}}} \wedge \omega^{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "curvature_form_eq"
+latex = '\Omega^{{{ii}}}{{}}_{{{jj}}} = d\omega^{{{ii}}}{{}}_{{{jj}}} + \omega^{{{ii}}}{{}}_{{{kk}}} \wedge \omega^{{{kk}}}{{}}_{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+# ---------------------------------------------------------------------------
+# Part C: fn-pair templates (8)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_metric_contraction"
+latex = '{fn1}\!\left({met}^{{{ii}{jj}}} T_{{{ii}{jj}}}\right) = {fn2}\!\left(\operatorname{{tr}}_{{{met}}} T\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "fn_curvature_trace"
+latex = '{fn1}(R_{{{ii}{jj}}}) = {fn2}\!\left({met}^{{{kk}{ll}}} R_{{{kk}{ii}{ll}{jj}}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "fn_lie_bracket"
+latex = '{fn1}([{xx},{yy}]) = {fn2}({xx} {yy} - {yy} {xx})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "fn_exterior_product"
+latex = '{fn1}({om} \wedge {al}) = {fn2}((-1)^{{pq}}\,{al} \wedge {om})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "fn_hodge_dual"
+latex = '{fn1}(\star {om}) = {fn2}\!\left(\langle {om}, {al} \rangle\,\mathrm{{vol}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.om]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.al]
+type = "X"
+pool = "FORM_POOL"
+exclude_from = ["om"]
+
+[[template]]
+name  = "fn_geodesic_deviation"
+latex = '{fn1}\!\left(\frac{{D^2 {xx}}}{{d{par}^2}}\right) = {fn2}(R({xx}, \dot{{\gamma}})\dot{{\gamma}})'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.par]
+type = "S"
+pool = "PARAM_POOL"
+
+[[template]]
+name  = "fn_connection_form"
+latex = '{fn1}(\nabla_{{{xx}}} {yy}) = {fn2}\!\left({xx}({yy}) + \omega({xx})\,{yy}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.xx]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.yy]
+type = "X"
+pool = "VF_POOL"
+exclude_from = ["xx"]
+
+[[template]]
+name  = "fn_holonomy"
+latex = '{fn1}(\operatorname{{Hol}}_p(\nabla)) = {fn2}\!\left(\bigl\{{P_\gamma : \gamma \in \Omega_p({mfld})\bigr\}}\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.mfld]
+type = "S"
+pool = "MFLD_POOL"
+
+# ---------------------------------------------------------------------------
+# Geodesic curvature templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "geodesic_curvature_def"
+latex = '\varkappa_g(\gamma) = \left\langle \nabla_{{\dot{{\gamma}}}} \dot{{\gamma}},\, \mathbf{{n}} \right\rangle'
+
+[[template]]
+name  = "gauss_bonnet_boundary_iint"
+latex = '\iint_{{{mm}}} K \, dA + \int{lim_mod}_{{\partial {mm}}} \varkappa_g \, ds = 2\pi \chi({mm})'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.mm]
+type = "S"
+pool = "MFLD_POOL"
+
+[[template]]
+name  = "geodesic_curvature_signed"
+latex = '\varkappa_g = \frac{{d\theta}}{{ds}} + \frac{{d\phi}}{{ds}}'
+
+[[template]]
+name  = "geodesic_curvature_covariant"
+latex = '\varkappa_g = {met}_{{{ii}{jj}}}\,\dot{{\gamma}}^{{{ii}}} \nabla_{{\dot{{\gamma}}}} \dot{{\gamma}}^{{{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+# ---------------------------------------------------------------------------
+# Transversality and musical isomorphisms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "transversality_notation"
+latex    = '{mm} \pitchfork {nn}'
+distinct = [["mm", "nn"]]
+
+[template.slots.mm]
+type = "S"
+pool = "MFLD_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "MFLD_POOL"
+
+[[template]]
+name  = "transversality_preimage"
+latex = 'f \pitchfork {nn} \Rightarrow f^{{-1}}({nn}) \text{{ is a submanifold}}'
+
+[template.slots.nn]
+type = "S"
+pool = "MFLD_POOL"
+
+[[template]]
+name  = "sharp_index_raising"
+latex = '{al}^{{\sharp}} = {met}^{{{ii}{jj}}} {al}_{{{jj}}} \partial_{{{ii}}}'
+
+[template.slots.al]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "flat_index_lowering"
+latex = '{vf}^{{\flat}} = {met}_{{{ii}{jj}}} {vf}^{{{ii}}} dx^{{{jj}}}'
+
+[template.slots.vf]
+type = "S"
+pool = "VF_POOL"
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "sharp_flat_inverse"
+latex = '({al}^{{\sharp}})^{{\flat}} = {al},\quad ({vf}^{{\flat}})^{{\sharp}} = {vf}'
+
+[template.slots.al]
+type = "S"
+pool = "FORM_POOL"
+
+[template.slots.vf]
+type = "S"
+pool = "VF_POOL"
+
+[[template]]
+name  = "natural_map_projection"
+latex = '\pi^{{\natural}} : T^*{mm} \to {mm}'
+
+[template.slots.mm]
+type = "S"
+pool = "MFLD_POOL"
+
+# ---------------------------------------------------------------------------
+# Tensor/index notation completeness additions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cov_deriv_covector"
+latex = '\nabla_{{{kk}}} V_{{{ii}}} = \partial_{{{kk}}} V_{{{ii}}} - \Gamma^{{{ll}}}_{{{kk}{ii}}} V_{{{ll}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "kk"]
+
+[[template]]
+name  = "cov_deriv_mixed"
+latex = '\nabla_{{{kk}}} T^{{{ii}}}{{}}_{{{jj}}} = \partial_{{{kk}}} T^{{{ii}}}{{}}_{{{jj}}} + \Gamma^{{{ii}}}_{{{kk}{ll}}} T^{{{ll}}}{{}}_{{{jj}}} - \Gamma^{{{ll}}}_{{{kk}{jj}}} T^{{{ii}}}{{}}_{{{ll}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "index_raising_vector"
+latex = 'V^{{{ii}}} = {met}^{{{ii}{jj}}} V_{{{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "index_lowering_vector"
+latex = 'V_{{{ii}}} = {met}_{{{ii}{jj}}} V^{{{jj}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "index_raising_tensor"
+latex = 'T^{{{ii}{jj}}} = {met}^{{{ii}{kk}}} {met}^{{{jj}{ll}}} T_{{{kk}{ll}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "index_lowering_tensor"
+latex = 'T_{{{ii}{jj}}} = {met}_{{{ii}{kk}}} {met}_{{{jj}{ll}}} T^{{{kk}{ll}}}'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "einstein_convention_def"
+latex = 'A^{{{ii}}} B_{{{ii}}} \equiv \sum_{{{ii}}} A^{{{ii}}} B_{{{ii}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "einstein_trace_def"
+latex = 'T^{{{ii}}}{{}}_{{{ii}}} \equiv \sum_{{{ii}}} T^{{{ii}}}{{}}_{{{ii}}} = \operatorname{{tr}} T'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[[template]]
+name  = "tensor_symmetrization"
+latex = 'T_{{({ii}{jj})}} = \tfrac{{1}}{{2}}\!\left(T_{{{ii}{jj}}} + T_{{{jj}{ii}}}\right)'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "tensor_antisymmetrization"
+latex = 'T_{{[{ii}{jj}]}} = \tfrac{{1}}{{2}}\!\left(T_{{{ii}{jj}}} - T_{{{jj}{ii}}}\right)'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "tensor_sym_decomp"
+latex = 'T_{{{ii}{jj}}} = T_{{({ii}{jj})}} + T_{{[{ii}{jj}]}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "torsion_components"
+latex = 'T^{{{kk}}}{{}}_{{{ii}{jj}}} = \Gamma^{{{kk}}}_{{{ii}{jj}}} - \Gamma^{{{kk}}}_{{{jj}{ii}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.ii]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk"]
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["kk", "ii"]
+
+[[template]]
+name  = "riemann_pair_symmetry"
+latex = 'R_{{{ii}{jj}{kk}{ll}}} = R_{{{kk}{ll}{ii}{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "weyl_def"
+latex = 'C_{{{ii}{jj}{kk}{ll}}} = R_{{{ii}{jj}{kk}{ll}}} - \tfrac{{1}}{{n-2}}\!\left({met}_{{{ii}{kk}}} R_{{{jj}{ll}}} - {met}_{{{ii}{ll}}} R_{{{jj}{kk}}} - {met}_{{{jj}{kk}}} R_{{{ii}{ll}}} + {met}_{{{jj}{ll}}} R_{{{ii}{kk}}}\right) + \tfrac{{R}}{{(n-1)(n-2)}}\!\left({met}_{{{ii}{kk}}} {met}_{{{jj}{ll}}} - {met}_{{{ii}{ll}}} {met}_{{{jj}{kk}}}\right)'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "weyl_traceless"
+latex = '{met}^{{{ii}{kk}}} C_{{{ii}{jj}{kk}{ll}}} = 0'
+
+[template.slots.met]
+type = "S"
+pool = "METRIC_POOL"
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "weyl_antisymmetry"
+latex = 'C_{{{ii}{jj}{kk}{ll}}} = -C_{{{jj}{ii}{kk}{ll}}} = -C_{{{ii}{jj}{ll}{kk}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[template.slots.kk]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj"]
+
+[template.slots.ll]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii", "jj", "kk"]
+
+[[template]]
+name  = "kronecker_mixed_geom"
+latex = '\delta^{{{ii}}}_{{{jj}}}'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"
+
+[template.slots.jj]
+type = "X"
+pool = "IDX_POOL"
+exclude_from = ["ii"]
+
+[[template]]
+name  = "kronecker_flat_trace"
+latex = '\delta^{{{ii}}}_{{{ii}}} = \dim M'
+
+[template.slots.ii]
+type = "S"
+pool = "IDX_POOL"

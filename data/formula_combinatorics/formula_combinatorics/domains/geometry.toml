@@ -1,0 +1,2190 @@
+[meta]
+domain = "geometry"
+
+# ---------------------------------------------------------------------------
+# Pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "PTS_POOL"
+values = ["A", "B", "C", "D", "E", "F", "P", "Q", "R"]
+
+[[pool]]
+name   = "TRI_VERTS_POOL"
+values = ["A", "B", "C", "D", "E", "F", "X", "Y", "Z"]
+
+[[pool]]
+name   = "ANGLE_POOL"
+values = ["A", "B", "C", "D", "E", "F", "P", "Q", "R", '\alpha', '\beta', '\gamma', '\theta', '\vartheta', '\phi', '\varphi']
+
+[[pool]]
+name   = "DEG_POOL"
+values = ["15", "20", "25", "30", "36", "40", "45", "50", "54", "60", "72", "75", "90", "100", "108", "120", "135", "144", "150", "160", "170", "180"]
+
+[[pool]]
+name   = "SCALAR_POOL"
+values = ["a", "b", "c", "d", "k", "m", "n", "r"]
+
+[[pool]]
+name   = "CIRCLE_POOL"
+values = ["1", "2", "3", "4", "5", "6"]
+
+[[pool]]
+name   = "SIN_NAMES"
+values = ['\sin', '\text{sin}']
+
+[[pool]]
+name   = "COS_NAMES"
+values = ['\cos', '\text{cos}']
+
+[[pool]]
+name   = "AREA_LABEL_POOL"
+values = ["S", "A", "T"]
+
+[[pool]]
+name   = "REL_INEQ_POOL"
+values = ["<", ">", "\\leq", "\\geq"]
+
+[[pool]]
+name   = "DOT_OP_POOL"
+values = ["\\cdot", "\\bullet"]
+
+[[pool]]
+name   = "EQ_REL_POOL"
+values = ["=", "\\approx"]
+
+[[pool]]
+name   = "DEG_SUFFIX_POOL"
+values = ['^{{\circ}}', '\,^{{\circ}}', '^{{o}}', '\,\mathrm{{deg}}', '\,\text{{deg}}', '^\prime', '^{{\prime\prime}}', '\,\text{rad}', '\,\text{grad}']
+
+[[pool]]
+name   = "ANGLE_CMD_POOL"
+values = ['\angle', '\measuredangle', '\sphericalangle']
+
+[[pool]]
+name   = "RADIUS_POOL"
+values = ["r", "R", "\\rho", "\\varrho"]
+
+[[pool]]
+name   = "CIRC_LABEL_POOL"
+values = ["C", "L", "P"]
+
+[[pool]]
+name   = "DIST_VAR_POOL"
+values = ["d", "D", "\\ell", "s"]
+
+[[pool]]
+name   = "SLOPE_VAR_POOL"
+values = ["m", "k", "\\lambda", "a", "\\mu"]
+
+[[pool]]
+name   = "HEIGHT_POOL"
+values = ["h", "H", "\\ell", "d"]
+
+[[pool]]
+name   = "INTERCEPT_POOL"
+values = ["b", "c", "d", "n", "q"]
+
+# ---------------------------------------------------------------------------
+# Angles
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "angle_eq_angle"
+latex = '{ac} {A}{B}{C} = {ac} {D}{E}{F}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "angle_eq_deg"
+latex = ""
+
+  [[template.variants]]
+  name  = "angle_eq_deg_fixed"
+  latex = '{ac} {A}{B}{C} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "DEG_POOL"
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+  [[template.variants]]
+  name  = "angle_eq_deg_alg"
+  latex = '{ac} {A}{B}{C} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "angle_sum_180"
+latex = '{ac} {A} + {ac} {B} + {ac} {C} = 180{sfx}'
+
+[template.slots.A]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "angle_sum_90"
+latex = '{ac} {A} + {ac} {B} = 90{sfx}'
+
+[template.slots.A]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "angle_letter_eq_val"
+latex = ""
+
+  [[template.variants]]
+  name  = "angle_letter_eq_val_fixed"
+  latex = '{ac} {A} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "DEG_POOL"
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+  [[template.variants]]
+  name  = "angle_letter_eq_val_alg"
+  latex = '{ac} {A} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "angle_ineq"
+latex = '{ac} {A}{B}{C} {rel} {ac} {D}{E}{F}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.rel]
+type = "S"
+pool = "REL_INEQ_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Triangles
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "triangle_congruent"
+latex = '\triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+# ----
+
+[[template]]
+name  = "triangle_similar"
+latex = '\triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+# ----
+
+[[template]]
+name  = "triangle_area"
+latex = '{al}_{{\triangle {P}{Q}{R}}} = \frac{{1}}{{2}} {a} {b} {sn} {ac} {P}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.sn]
+type = "S"
+pool = "SIN_NAMES"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "triangle_angle_sum"
+latex = '{ac} {P} + {ac} {Q} + {ac} {R} = 180{sfx}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "similar_ratio"
+latex = '\frac{{\overline{{{P}{Q}}}}}{{\overline{{{P2}{Q2}}}}} = \frac{{\overline{{{Q}{R}}}}}{{\overline{{{Q2}{R2}}}}} = {k}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ----
+
+[[template]]
+name  = "pythagorean"
+latex = '{a}^2 + {b}^2 = {c}^2'
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.c]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ----
+
+[[template]]
+name  = "law_of_cosines"
+latex = '{c}^2 = {a}^2 + {b}^2 - 2{a}{b} {cn} {ac} {C}'
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.c]
+type = "S"
+pool = "SCALAR_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.cn]
+type = "S"
+pool = "COS_NAMES"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Parallel and perpendicular
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "parallel_lines"
+latex = ""
+
+  [[template.variants]]
+  name  = "parallel_bare"
+  latex = '{A}{B} \parallel {C}{D}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "parallel_overline"
+  latex = '\overline{{{A}{B}}} \parallel \overline{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "perp_lines"
+latex = ""
+
+  [[template.variants]]
+  name  = "perp_bare"
+  latex = '{A}{B} \perp {C}{D}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "perp_overline"
+  latex = '\overline{{{A}{B}}} \perp \overline{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "perp_vec"
+  latex = '\overrightarrow{{{A}{B}}} \perp \overrightarrow{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "parallel_angle_eq"
+latex = '\because {A}{B} \parallel {C}{D}, \quad \therefore {ac} {E} = {ac} {F}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "perp_angle_90"
+latex = '{A}{B} \perp {C}{D}, \quad {ac} {E}{O}{F} = 90{sfx}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.O]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Proof notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "therefore_angle_eq"
+latex = '\therefore {ac} {A} = {ac} {B}'
+
+[template.slots.A]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "because_therefore"
+latex = ""
+
+  [[template.variants]]
+  name  = "because_therefore_similar"
+  latex = '\because {ac} {A} = {ac} {B}, \quad \therefore \triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+  [[template.variants]]
+  name  = "because_therefore_congruent"
+  latex = '\because {ac} {A} = {ac} {B}, \quad \therefore \triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "ANGLE_POOL"
+
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "because_parallel_therefore_angle"
+latex = '\because \overline{{{A}{B}}} \parallel \overline{{{C}{D}}}, \quad \therefore {ac} {E} = {ac} {F}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "therefore_congruent"
+latex = '\therefore \triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+# ----
+
+[[template]]
+name  = "because_perp_therefore"
+latex = '\because {A}{B} \perp {C}{D}, \quad \therefore {ac} {E} = 90{sfx}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# More proof notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "therefore_parallel"
+latex = ""
+
+  [[template.variants]]
+  name  = "therefore_parallel_bare"
+  latex = '\therefore {A}{B} \parallel {C}{D}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [[template.variants]]
+  name  = "therefore_parallel_overline"
+  latex = '\therefore \overline{{{A}{B}}} \parallel \overline{{{C}{D}}}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.D]
+  type = "S"
+  pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "because_angle_sum"
+latex = '\because {ac} {ang1} + {ac} {ang2} = 180{sfx}, \quad \therefore {P1}{P2} \parallel {P3}{P4}'
+
+[template.slots.ang1]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.ang2]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.P1]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P3]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P4]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "therefore_angle_eq_2"
+latex = '\therefore {ac} {A}{B}{C} = {ac} {D}{E}{F}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "because_congruent"
+latex = '\because \triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}, \quad \therefore {ac} {P} = {ac} {P2}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R2]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "therefore_segment_eq"
+latex = '\therefore \overline{{{A}{B}}} = \overline{{{C}{D}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+# ---------------------------------------------------------------------------
+# Rich proof (E → S conversions)
+# ---------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------
+# Vectors
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vec_addition"
+latex = '\overrightarrow{{{A}{B}}} + \overrightarrow{{{B}{C}}} = \overrightarrow{{{A}{C}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "vec_zero"
+latex = '\overrightarrow{{{A}{B}}} + \overrightarrow{{{B}{A}}} = \vec{{0}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "vec_scalar"
+latex = '\overrightarrow{{{A}{B}}} = {k} \overrightarrow{{{C}{D}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.k]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ----
+
+[[template]]
+name  = "vec_midpoint"
+latex = '\overrightarrow{{{O}{M}}} = \frac{{1}}{{2}} \left( \overrightarrow{{{O}{A}}} + \overrightarrow{{{O}{B}}} \right)'
+
+[template.slots.O]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.M]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+# ---------------------------------------------------------------------------
+# More vectors (rich: E→S)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "vec_dot_product"
+latex = '\overrightarrow{{{A}{B}}} {op} \overrightarrow{{{C}{D}}} = {a}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.op]
+type = "S"
+pool = "DOT_OP_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "vec_parallel"
+latex = '\overrightarrow{{{A}{B}}} \parallel \overrightarrow{{{C}{D}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "vec_magnitude"
+latex = ""
+
+  [[template.variants]]
+  name  = "vec_magnitude_single"
+  latex = '\left| \overrightarrow{{{A}{B}}} \right| = {a}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "vec_magnitude_double"
+  latex = '\left\| \overrightarrow{{{A}{B}}} \right\| = {a}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "vec_magnitude_lvert"
+  latex = '\lVert \overrightarrow{{{A}{B}}} \rVert = {a}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "vec_magnitude_bare"
+  latex = '| \overrightarrow{{{A}{B}}} | = {a}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+# ----
+
+# ---------------------------------------------------------------------------
+# Annotation (circled numbers)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "circled_num_eq"
+latex = '\textcircled{{{n}}} \quad {A}{B} = {a}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_angle"
+latex = '{n} \quad{ac} {A} {rel} {d}{sfx}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.rel]
+type = "S"
+pool = "EQ_REL_POOL"
+
+[template.slots.d]
+type = "S"
+pool = "DEG_POOL"
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_parallel"
+latex = '\textcircled{{{n}}} \quad {A}{B} \parallel {C}{D}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_triangle_rel"
+latex = ""
+
+  [[template.variants]]
+  name  = "circled_num_triangle_congruent"
+  latex = '{n} \quad\triangle {P}{Q}{R} \cong \triangle {P2}{Q2}{R2}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "CIRCLE_POOL"
+
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [[template.variants]]
+  name  = "circled_num_triangle_similar"
+  latex = '{n} \quad\triangle {P}{Q}{R} \sim \triangle {P2}{Q2}{R2}'
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "CIRCLE_POOL"
+
+  [template.variants.slots.P]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.P2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.Q2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+  [template.variants.slots.R2]
+  type = "S"
+  pool = "TRI_VERTS_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_perp"
+latex = '\textcircled{{{n}}} \quad {A}{B} \perp {C}{D}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_because"
+latex = '{n} \quad\because {ac} {A} = {ac} {B}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "ANGLE_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_parallel_rich"
+latex = '{n} \quad\overline{{{P1}{P2}}} \parallel \overline{{{P3}{P4}}}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.P1]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P3]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P4]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_vec_rich"
+latex = '{n} \quad\overrightarrow{{{P1}{P2}}} = \overrightarrow{{{P3}{P4}}}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.P1]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P3]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P4]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "circled_num_angle_rich"
+latex = '{n} \quad{ac} {P1}{P2}{P3} {rel} {a}{sfx}'
+
+[template.slots.n]
+type = "S"
+pool = "CIRCLE_POOL"
+
+[template.slots.P1]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P2]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.P3]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.rel]
+type = "S"
+pool = "EQ_REL_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.sfx]
+type = "S"
+pool = "DEG_SUFFIX_POOL"
+
+[template.slots.ac]
+type = "S"
+pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Miscellaneous
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "segment_eq"
+latex = '\overline{{{A}{B}}} = \overline{{{C}{D}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "segment_sum"
+latex = '\overline{{{A}{B}}} + \overline{{{B}{C}}} = \overline{{{A}{C}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "bigtriangleup"
+latex = '\bigtriangleup {P}{Q}{R}'
+
+[template.slots.P]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.Q]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "TRI_VERTS_POOL"
+
+# ----
+
+[[template]]
+name  = "inscribed_angle"
+latex = ""
+
+  [[template.variants]]
+  name  = "inscribed_angle_double"
+  latex = '{ac} {A}{O}{B} = 2 {ac} {A}{C}{B}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.O]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+  [[template.variants]]
+  name  = "inscribed_angle_half"
+  latex = '{ac} {A}{C}{B} = \frac{{1}}{{2}} {ac} {A}{O}{B}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.O]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.ac]
+  type = "S"
+  pool = "ANGLE_CMD_POOL"
+
+# ---------------------------------------------------------------------------
+# Circles
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "circle_area"
+latex = ""
+
+  [[template.variants]]
+  name  = "circle_area_standard"
+  latex = '{al} = \pi {r}^2'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_area_rearranged"
+  latex = '\pi {r}^2 = {al}'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_area_radius"
+  latex = '{r} = \sqrt{{\frac{{{al}}}{{\pi}}}}'
+
+  [template.variants.slots.al]
+  type = "S"
+  pool = "AREA_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "circle_circumference"
+latex = ""
+
+  [[template.variants]]
+  name  = "circle_circumference_radius"
+  latex = '{cl} = 2\pi {r}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_diameter"
+  latex = '{cl} = \pi {d}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_radius_solved"
+  latex = '{r} = \frac{{{cl}}}{{2\pi}}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.r]
+  type = "S"
+  pool = "RADIUS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "circle_circumference_diameter_solved"
+  latex = '{d} = \frac{{{cl}}}{{\pi}}'
+
+  [template.variants.slots.cl]
+  type = "S"
+  pool = "CIRC_LABEL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "arc_length"
+latex = '{s} = {r} {ang}'
+
+[template.slots.s]
+type = "S"
+pool = "DIST_VAR_POOL"
+
+[template.slots.r]
+type = "S"
+pool = "RADIUS_POOL"
+idx  = 0.35
+
+[template.slots.ang]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "sector_area"
+latex = '{al} = \frac{{1}}{{2}} {r}^2 {ang}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.r]
+type = "S"
+pool = "RADIUS_POOL"
+idx  = 0.35
+
+[template.slots.ang]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Areas
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "rectangle_area"
+latex = '{al} = {a} {b}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "parallelogram_area"
+latex = '{al} = {b} {h}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.h]
+type = "S"
+pool = "HEIGHT_POOL"
+idx  = 0.2
+
+# ----
+
+[[template]]
+name  = "trapezoid_area"
+latex = '{al} = \frac{{1}}{{2}} ({a} + {b}) {h}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.a]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.b]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.h]
+type = "S"
+pool = "HEIGHT_POOL"
+idx  = 0.2
+
+# ----
+
+[[template]]
+name  = "rhombus_area"
+latex = '{al} = \frac{{{d1} {d2}}}{{2}}'
+
+[template.slots.al]
+type = "S"
+pool = "AREA_LABEL_POOL"
+
+[template.slots.d1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.d2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Coordinate geometry
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "distance_formula"
+latex = '{dv} = \sqrt{{({x2}-{x1})^2 + ({y2}-{y1})^2}}'
+
+[template.slots.dv]
+type = "S"
+pool = "DIST_VAR_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "midpoint_formula"
+latex = '{M} = \left(\frac{{{x1}+{x2}}}{{2}},\, \frac{{{y1}+{y2}}}{{2}}\right)'
+
+[template.slots.M]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "slope_formula"
+latex = '{mv} = \frac{{{y2}-{y1}}}{{{x2}-{x1}}}'
+
+[template.slots.mv]
+type = "S"
+pool = "SLOPE_VAR_POOL"
+
+[template.slots.x1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.x2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y1]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+[template.slots.y2]
+type = "S"
+pool = "SCALAR_POOL"
+idx  = 0.35
+
+# ----
+
+[[template]]
+name  = "line_equation"
+latex = ""
+
+  [[template.variants]]
+  name  = "line_equation_slope_intercept"
+  latex = 'y = {mv} x + {ic}'
+
+  [template.variants.slots.mv]
+  type = "S"
+  pool = "SLOPE_VAR_POOL"
+
+  [template.variants.slots.ic]
+  type = "S"
+  pool = "INTERCEPT_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "line_equation_general"
+  latex = '{mv} x + {a} y + {ic} = 0'
+
+  [template.variants.slots.mv]
+  type = "S"
+  pool = "SLOPE_VAR_POOL"
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.ic]
+  type = "S"
+  pool = "INTERCEPT_POOL"
+  idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Widehat angle notation
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "widehat_angle_eq_angle"
+latex = '\widehat{{{A}{B}{C}}} = \widehat{{{D}{E}{F}}}'
+
+[template.slots.A]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "PTS_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "PTS_POOL"
+
+# ----
+
+[[template]]
+name  = "widehat_angle_eq_deg"
+latex = ""
+
+  [[template.variants]]
+  name  = "widehat_angle_eq_deg_fixed"
+  latex = '\widehat{{{A}{B}{C}}} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "DEG_POOL"
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"
+
+  [[template.variants]]
+  name  = "widehat_angle_eq_deg_alg"
+  latex = '\widehat{{{A}{B}{C}}} {rel} {d}{sfx}'
+
+  [template.variants.slots.A]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.B]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.C]
+  type = "S"
+  pool = "PTS_POOL"
+
+  [template.variants.slots.rel]
+  type = "S"
+  pool = "EQ_REL_POOL"
+
+  [template.variants.slots.d]
+  type = "S"
+  pool = "SCALAR_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.sfx]
+  type = "S"
+  pool = "DEG_SUFFIX_POOL"

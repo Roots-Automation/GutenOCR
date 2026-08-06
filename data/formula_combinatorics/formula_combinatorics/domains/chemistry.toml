@@ -1,0 +1,1412 @@
+[meta]
+domain = "chemistry"
+
+# ---------------------------------------------------------------------------
+# Named pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "COEFF_POOL"
+values = ["1", "2", "3", "4"]
+
+[[pool]]
+name   = "SPECIES_POOL"
+values = [
+  '\text{H}_2',
+  '\text{O}_2',
+  '\text{N}_2',
+  '\text{CO}_2',
+  '\text{H}_2\text{O}',
+  '\text{NH}_3',
+  '\text{CH}_4',
+  '\text{HCl}',
+  '\text{NaOH}',
+  '\text{SO}_2',
+  '\text{NO}',
+  '\text{Cl}_2',
+  '\text{Fe}_2\text{O}_3',
+  '\text{CaCO}_3',
+  '\text{C}_6\text{H}_{12}\text{O}_6',
+]
+
+[[pool]]
+name   = "CE_SPECIES_POOL"
+values = [
+  "H2", "O2", "N2", "CO2", "H2O", "NH3", "CH4",
+  "HCl", "NaOH", "SO2", "NO", "Cl2", "Fe2O3", "CaCO3",
+]
+
+[[pool]]
+name   = "ION_POOL"
+values = [
+  '\text{Na}^+',
+  '\text{K}^+',
+  '\text{Ca}^{2+}',
+  '\text{Mg}^{2+}',
+  '\text{Fe}^{2+}',
+  '\text{Fe}^{3+}',
+  '\text{Al}^{3+}',
+  '\text{Cl}^-',
+  '\text{OH}^-',
+  '\text{SO}_4^{2-}',
+  '\text{NO}_3^-',
+  '\text{CO}_3^{2-}',
+  '\text{PO}_4^{3-}',
+  '\text{NH}_4^+',
+  '\text{H}^+',
+]
+
+[[pool]]
+name   = "STATE_POOL"
+values = ['(s)', '(l)', '(g)', '(aq)']
+
+[[pool]]
+name   = "KEQV_POOL"
+values = ["K_{eq}", "K_c", "K_p", "K_a", "K_b", "K_w", "K_{sp}", "K_f"]
+
+[[pool]]
+name   = "KRATE_POOL"
+values = ["k", "k_1", "k_{-1}", "k_f", "k_r", "k_2"]
+
+[[pool]]
+name   = "ORDER_POOL"
+values = ["m", "n", "1", "2", '\alpha', '\beta']
+
+[[pool]]
+name   = "TEMP_POOL"
+values = ["T", "T_0", "T_1", "T_2", '\theta']
+
+[[pool]]
+name   = "EA_POOL"
+values = ["E_a", "E_A", '\Delta E^\ddagger', 'E^\ddagger']
+
+[[pool]]
+name   = "AFREQ_POOL"
+values = ["A", "A_0", '\nu_0', "Z_{AB}"]
+
+[[pool]]
+name   = "DH_POOL"
+values = [
+  '\Delta H',
+  '\Delta H^\circ',
+  '\Delta H_{rxn}',
+  '\Delta H_f^\circ',
+  '\Delta H_{comb}',
+]
+
+[[pool]]
+name   = "DG_POOL"
+values = [
+  '\Delta G',
+  '\Delta G^\circ',
+  '\Delta G_{rxn}',
+  '\Delta G_f^\circ',
+]
+
+[[pool]]
+name   = "DS_POOL"
+values = [
+  '\Delta S',
+  '\Delta S^\circ',
+  '\Delta S_{rxn}',
+  '\Delta S_{mix}',
+]
+
+[[pool]]
+name   = "R_POOL"
+values = ["R", "R_0", "R_u", '\mathcal{R}']
+
+[[pool]]
+name   = "PH_POOL"
+values = ['\text{pH}', '\text{pOH}', '\text{p}K_a', '\text{p}K_b']
+
+[[pool]]
+name   = "CONC_SPECIES_POOL"
+values = [
+  '\text{H}^+',
+  '\text{OH}^-',
+  '\text{HA}',
+  '\text{A}^-',
+  '\text{B}',
+  '\text{BH}^+',
+  '\text{H}_3\text{O}^+',
+]
+
+[[pool]]
+name   = "EPOT_POOL"
+values = ["E", 'E^\circ', "E_{cell}", 'E^\circ_{cell}']
+
+[[pool]]
+name   = "FARAD_POOL"
+values = ["F", '\mathcal{F}', "F_0"]
+
+[[pool]]
+name   = "NELECTRON_POOL"
+values = ["n", "n_e", "z", "n_{el}"]
+
+[[pool]]
+name   = "Q_POOL"
+values = ["Q", "Q_c", "Q_p", "Q_{rxn}"]
+
+[[pool]]
+name   = "N_POOL"
+values = ["n", "n_A", "n_B", "m", '\nu']
+
+[[pool]]
+name   = "TIME_POOL"
+values = ["t", 't_{1/2}', '\tau', "t_0", "t_r"]
+
+[[pool]]
+name   = "CEQ_POOL"
+values = ["A", "B", "C", "D", "P", "Q", "X", "Y"]
+
+[[pool]]
+name   = "STOICH_EXP_POOL"
+values = ["a", "b", "c", "d", "m", "n", "p", "q"]
+
+[[pool]]
+name   = "KA_KB_POOL"
+values = ["K_a", "K_b", "K_c"]
+
+# ---------------------------------------------------------------------------
+# Section A — Chemical Reaction Equations (15)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "rxn_irreversible_simple"
+latex = '{ca}\,{A} \rightarrow {cb}\,{B}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "rxn_irreversible_two_plus_one"
+latex = '{ca}\,{A} + {cb}\,{B} \rightarrow {cc}\,{C}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "rxn_irreversible_two_to_two"
+latex = '{ca}\,{A} + {cb}\,{B} \rightarrow {cc}\,{C} + {cd}\,{D}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cd]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "rxn_reversible_simple"
+latex = '{ca}\,{A} \rightleftharpoons {cb}\,{B}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "rxn_reversible_two_to_two"
+latex = '{ca}\,{A} + {cb}\,{B} \rightleftharpoons {cc}\,{C} + {cd}\,{D}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.cd]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.D]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "rxn_with_states"
+latex = '{A}{sA} + {B}{sB} \rightarrow {C}{sC}'
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sA]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sB]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sC]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "rxn_ionic_simple"
+latex = '{I1} + {I2} \rightarrow {P}{sp}'
+
+[template.slots.I1]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.I2]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.P]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "rxn_net_ionic"
+latex = '{I1} + {I2} \rightarrow {I3}(aq)'
+
+[template.slots.I1]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.I2]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.I3]
+type = "S"
+pool = "ION_POOL"
+
+[[template]]
+name  = "half_rxn_oxidation"
+latex = '{Ia} \rightarrow {Ib} + {ne}\,e^{{-}}'
+
+[template.slots.Ia]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.Ib]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.ne]
+type = "S"
+pool = "COEFF_POOL"
+
+[[template]]
+name  = "half_rxn_reduction"
+latex = '{Ia} + {ne}\,e^{{-}} \rightarrow {Ib}'
+
+[template.slots.Ia]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.ne]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.Ib]
+type = "S"
+pool = "ION_POOL"
+
+[[template]]
+name  = "rxn_combustion_hydrocarbon"
+latex = '\text{{CH}}_4 + 2\,\text{{O}}_2 \rightarrow \text{{CO}}_2{sC} + 2\,\text{{H}}_2\text{{O}}{sW}'
+
+[template.slots.sC]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.sW]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "rxn_decomposition"
+latex = '{ca}\,{A}{sA} \rightarrow {cb}\,{B}{sB} + {cc}\,{C}{sC}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sA]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sB]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sC]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "rxn_synthesis"
+latex = '{ca}\,{A}{sA} + {cb}\,{B}{sB} \rightarrow {cc}\,{C}{sC}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sA]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sB]
+type = "S"
+pool = "STATE_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.sC]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "rxn_precipitation"
+latex = '{I1} + {I2} \rightarrow {P}(s) + {I3}(aq)'
+
+[template.slots.I1]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.I2]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.P]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.I3]
+type = "S"
+pool = "ION_POOL"
+
+[[template]]
+name  = "rxn_ce_simple"
+latex = '\ce{{{ca} {A} -> {cb} {B}}}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CE_SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
+
+# ---------------------------------------------------------------------------
+# Section B — Equilibrium and Kinetics (16)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "equilibrium_constant_def"
+latex = '{Keq} = \frac{{[\text{{C}}]^{{{cc}}}[\text{{D}}]^{{{dd}}}}}{{[\text{{A}}]^{{{aa}}}[\text{{B}}]^{{{bb}}}}}'
+
+[template.slots.Keq]
+type = "S"
+pool = "KEQV_POOL"
+
+[template.slots.aa]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.bb]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.cc]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.dd]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[[template]]
+name  = "equilibrium_constant_two_two"
+latex = '{Keq} = \frac{{[{C}]^{{{ce}}}[{D}]^{{{de}}}}}{{[{A}]^{{{ae}}}[{B}]^{{{be}}}}}'
+
+[template.slots.Keq]
+type = "S"
+pool = "KEQV_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A"]
+
+[template.slots.C]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B"]
+
+[template.slots.D]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B", "C"]
+
+[template.slots.ae]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.be]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.ce]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.de]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[[template]]
+name  = "keq_two_one"
+latex = '{Keq} = \frac{{[{C}]^{{{ce}}}}}{{[{A}]^{{{ae}}}[{B}]^{{{be}}}}}'
+
+[template.slots.Keq]
+type = "S"
+pool = "KEQV_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A"]
+
+[template.slots.C]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B"]
+
+[template.slots.ae]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.be]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.ce]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[[template]]
+name  = "keq_one_two"
+latex = '{Keq} = \frac{{[{A}]^{{{ae}}}[{B}]^{{{be}}}}}{{[{C}]^{{{ce}}}}}'
+
+[template.slots.Keq]
+type = "S"
+pool = "KEQV_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A"]
+
+[template.slots.C]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B"]
+
+[template.slots.ae]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.be]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.ce]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[[template]]
+name  = "kp_from_kc"
+latex = 'K_p = K_c\,({R}\,{T})^{{\Delta n}}'
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[[template]]
+name  = "rate_law_two_species"
+latex = 'r = {kk}\,[{Ab}]^{{{m}}}\,[{Bb}]^{{{n}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.Bb]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["Ab"]
+
+[template.slots.m]
+type = "S"
+pool = "ORDER_POOL"
+
+[template.slots.n]
+type = "S"
+pool = "ORDER_POOL"
+
+[[template]]
+name  = "rate_law_one_species"
+latex = 'r = {kk}\,[{Ab}]^{{{m}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.m]
+type = "S"
+pool = "ORDER_POOL"
+
+[[template]]
+name  = "arrhenius_equation"
+latex = '{kk} = {Af}\,e^{{-{Ea}/({R}\,{T})}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[template.slots.Af]
+type = "S"
+pool = "AFREQ_POOL"
+
+[template.slots.Ea]
+type = "S"
+pool = "EA_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[[template]]
+name  = "arrhenius_ln_form"
+latex = '\ln {kk} = \ln {Af} - \frac{{{Ea}}}{{{R}\,{T}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[template.slots.Af]
+type = "S"
+pool = "AFREQ_POOL"
+
+[template.slots.Ea]
+type = "S"
+pool = "EA_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[[template]]
+name  = "integrated_rate_zero_order"
+latex = '[{Ab}]_t = [{Ab}]_0 - {kk}\,t'
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[[template]]
+name  = "integrated_rate_first_order"
+latex = '\ln\frac{{[{Ab}]_t}}{{[{Ab}]_0}} = -{kk}\,t'
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[[template]]
+name  = "integrated_rate_first_order_alt"
+latex = '[{Ab}]_t = [{Ab}]_0\,e^{{-{kk}\,t}}'
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[[template]]
+name  = "integrated_rate_second_order"
+latex = '\frac{{1}}{{[{Ab}]_t}} - \frac{{1}}{{[{Ab}]_0}} = {kk}\,t'
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[[template]]
+name  = "half_life_first_order"
+latex = 't_{{1/2}} = \frac{{\ln 2}}{{{kk}}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[[template]]
+name  = "half_life_second_order"
+latex = 't_{{1/2}} = \frac{{1}}{{{kk}\,[{Ab}]_0}}'
+
+[template.slots.kk]
+type = "S"
+pool = "KRATE_POOL"
+
+[template.slots.Ab]
+type = "S"
+pool = "CEQ_POOL"
+
+[[template]]
+name  = "reaction_quotient_def"
+latex = '{QQ} = \frac{{[{C}]^{{{ce}}}[{D}]^{{{de}}}}}{{[{A}]^{{{ae}}}[{B}]^{{{be}}}}}'
+
+[template.slots.QQ]
+type = "S"
+pool = "Q_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CEQ_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A"]
+
+[template.slots.C]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B"]
+
+[template.slots.D]
+type         = "X"
+pool         = "CEQ_POOL"
+exclude_from = ["A", "B", "C"]
+
+[template.slots.ae]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.be]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.ce]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[template.slots.de]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+# ---------------------------------------------------------------------------
+# Section C — Thermochemistry (12)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "gibbs_chemistry"
+latex = '{DG} = {DH} - {T}\,{DS}'
+
+[template.slots.DG]
+type = "S"
+pool = "DG_POOL"
+
+[template.slots.DH]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.DS]
+type = "S"
+pool = "DS_POOL"
+
+[[template]]
+name  = "gibbs_standard_lnk"
+latex = '{DG} = -{R}\,{T}\,\ln {Keq}'
+
+[template.slots.DG]
+type = "S"
+pool = "DG_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.Keq]
+type = "S"
+pool = "KEQV_POOL"
+
+[[template]]
+name  = "gibbs_from_q"
+latex = '{DG} = {DG0} + {R}\,{T}\,\ln {QQ}'
+
+[template.slots.DG]
+type = "S"
+pool = "DG_POOL"
+
+[template.slots.DG0]
+type         = "X"
+pool         = "DG_POOL"
+exclude_from = ["DG"]
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.QQ]
+type = "S"
+pool = "Q_POOL"
+
+[[template]]
+name  = "hess_law"
+latex = '{dh} = \sum \Delta H_f^\circ(\text{{products}}) - \sum \Delta H_f^\circ(\text{{reactants}})'
+
+[template.slots.dh]
+type = "S"
+pool = "DH_POOL"
+
+[[template]]
+name  = "enthalpy_of_formation"
+latex = '{dh} = \Delta H_f^\circ\!\bigl({sp}\bigr)'
+
+[template.slots.dh]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "entropy_change_rxn"
+latex = '{ds} = \sum S^\circ(\text{{products}}) - \sum S^\circ(\text{{reactants}})'
+
+[template.slots.ds]
+type = "S"
+pool = "DS_POOL"
+
+[[template]]
+name  = "entropy_of_mixing"
+latex = '\Delta S_{{mix}} = -{R}\,\sum{lm} x_i \ln x_i'
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.lm]
+type = "S"
+pool = ["", '\limits']
+
+[[template]]
+name  = "clausius_clapeyron"
+latex = '\frac{{d\ln P}}{{dT}} = \frac{{{DH}}}{{{R}\,{T}^2}}'
+
+[template.slots.DH]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[[template]]
+name  = "clausius_clapeyron_two_point"
+latex = '\ln\frac{{P_2}}{{P_1}} = -\frac{{{DH}}}{{{R}}}\!\left(\frac{{1}}{{{T2}}} - \frac{{1}}{{{T1}}}\right)'
+
+[template.slots.DH]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T1]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.T2]
+type         = "X"
+pool         = "TEMP_POOL"
+exclude_from = ["T1"]
+
+[[template]]
+name  = "kirchhoff_law"
+latex = '{dh2} = {dh1} + \int_{{{T1}}}^{{{T2}}} \Delta C_p\,dT'
+
+[template.slots.dh1]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.dh2]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.T1]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.T2]
+type         = "X"
+pool         = "TEMP_POOL"
+exclude_from = ["T1"]
+
+[[template]]
+name  = "gibbs_helmholtz"
+latex = '\left(\frac{{\partial ({DG}/T)}}{{\partial T}}\right)_P = -\frac{{{DH}}}{{T^2}}'
+
+[template.slots.DG]
+type = "S"
+pool = "DG_POOL"
+
+[template.slots.DH]
+type = "S"
+pool = "DH_POOL"
+
+[[template]]
+name  = "enthalpy_heat_capacity"
+latex = '{DH} = {nn}\,C_p\,\Delta {T}'
+
+[template.slots.DH]
+type = "S"
+pool = "DH_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+# ---------------------------------------------------------------------------
+# Section D — Acid/Base and Electrochemistry (12)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ph_definition"
+latex = '\text{{pH}} = -\log\!\bigl[{sp}\bigr]'
+
+[template.slots.sp]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[[template]]
+name  = "poh_definition"
+latex = '{phx} = -\log\!\bigl[{sp}\bigr]'
+
+[template.slots.phx]
+type = "S"
+pool = "PH_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[[template]]
+name  = "ph_poh_relation"
+latex = '\text{pH} + \text{pOH} = 14'
+
+[[template]]
+name  = "ka_definition"
+latex = 'K_a = \frac{{[{Ab}][\text{{H}}^+]}}{{[{HA}]}}'
+
+[template.slots.Ab]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[template.slots.HA]
+type         = "X"
+pool         = "CONC_SPECIES_POOL"
+exclude_from = ["Ab"]
+
+[[template]]
+name  = "henderson_hasselbalch"
+latex = '\text{{pH}} = \text{{p}}K_a + \log\frac{{[{Ab}]}}{{[{HA}]}}'
+
+[template.slots.Ab]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[template.slots.HA]
+type         = "X"
+pool         = "CONC_SPECIES_POOL"
+exclude_from = ["Ab"]
+
+[[template]]
+name  = "henderson_hasselbalch_general"
+latex = '{phx} = \text{{p}}{Keq} + \log\frac{{[{Ab}]}}{{[{HA}]}}'
+
+[template.slots.phx]
+type = "S"
+pool = "PH_POOL"
+
+[template.slots.Keq]
+type = "S"
+pool = "KA_KB_POOL"
+
+[template.slots.Ab]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[template.slots.HA]
+type         = "X"
+pool         = "CONC_SPECIES_POOL"
+exclude_from = ["Ab"]
+
+[[template]]
+name  = "nernst_equation"
+latex = '{E} = {E0} - \frac{{{R}\,{T}}}{{{ne}\,{F}}}\ln {QQ}'
+
+[template.slots.E]
+type = "S"
+pool = "EPOT_POOL"
+
+[template.slots.E0]
+type         = "X"
+pool         = "EPOT_POOL"
+exclude_from = ["E"]
+
+[template.slots.R]
+type = "S"
+pool = "R_POOL"
+
+[template.slots.T]
+type = "S"
+pool = "TEMP_POOL"
+
+[template.slots.ne]
+type = "S"
+pool = "NELECTRON_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "FARAD_POOL"
+
+[template.slots.QQ]
+type = "S"
+pool = "Q_POOL"
+
+[[template]]
+name  = "nernst_at_298"
+latex = '{E} = {E0} - \frac{{0.0592\,\text{{V}}}}{{{ne}}}\log {QQ}'
+
+[template.slots.E]
+type = "S"
+pool = "EPOT_POOL"
+
+[template.slots.E0]
+type         = "X"
+pool         = "EPOT_POOL"
+exclude_from = ["E"]
+
+[template.slots.ne]
+type = "S"
+pool = "NELECTRON_POOL"
+
+[template.slots.QQ]
+type = "S"
+pool = "Q_POOL"
+
+[[template]]
+name  = "cell_potential"
+latex = '{Ecell} = E^\circ_{{\text{{cathode}}}} - E^\circ_{{\text{{anode}}}}'
+
+[template.slots.Ecell]
+type = "S"
+pool = "EPOT_POOL"
+
+[[template]]
+name  = "gibbs_from_cell_potential"
+latex = '{DG} = -{ne}\,{F}\,{E}'
+
+[template.slots.DG]
+type = "S"
+pool = "DG_POOL"
+
+[template.slots.ne]
+type = "S"
+pool = "NELECTRON_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "FARAD_POOL"
+
+[template.slots.E]
+type = "S"
+pool = "EPOT_POOL"
+
+[[template]]
+name  = "faraday_electrolysis_mass"
+latex = 'm = \frac{{M\,I\,{tt}}}{{{F}\,{ne}}}'
+
+[template.slots.tt]
+type = "S"
+pool = "TIME_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "FARAD_POOL"
+
+[template.slots.ne]
+type = "S"
+pool = "NELECTRON_POOL"
+
+[[template]]
+name  = "faraday_charge"
+latex = 'Q = {ne}\,{F}\,{nn}'
+
+[template.slots.ne]
+type = "S"
+pool = "NELECTRON_POOL"
+
+[template.slots.F]
+type = "S"
+pool = "FARAD_POOL"
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+# ---------------------------------------------------------------------------
+# Section E — Chemistry-Specific Notation (10)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ce_arrow_reaction"
+latex = '\ce{{{ca} {A} + {cb} {B} -> {cc} {C}}}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "CE_SPECIES_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
+
+[template.slots.cc]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.C]
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A", "B"]
+
+[[template]]
+name  = "ce_equilibrium_arrow"
+latex = '\ce{{{A} <=> {B}}}'
+
+[template.slots.A]
+type = "S"
+pool = "CE_SPECIES_POOL"
+
+[template.slots.B]
+type         = "X"
+pool         = "CE_SPECIES_POOL"
+exclude_from = ["A"]
+
+[[template]]
+name  = "concentration_bracket"
+latex = '[{sp}] = {ee}'
+
+[template.slots.sp]
+type = "S"
+pool = "CONC_SPECIES_POOL"
+
+[template.slots.ee]
+type = "S"
+pool = "STOICH_EXP_POOL"
+
+[[template]]
+name  = "ion_charge_notation"
+latex = '{ion} + {sp}{state} \rightarrow \text{{precipitate}}'
+
+[template.slots.ion]
+type = "S"
+pool = "ION_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.state]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "species_with_state"
+latex = '{sp}{st}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.st]
+type = "S"
+pool = "STATE_POOL"
+
+[[template]]
+name  = "stoich_ratio"
+latex = '\frac{{{ca}\,\text{{mol}}\,{A}}}{{{cb}\,\text{{mol}}\,{B}}}'
+
+[template.slots.ca]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.cb]
+type = "S"
+pool = "COEFF_POOL"
+
+[template.slots.A]
+type = "S"
+pool = "SPECIES_POOL"
+
+[template.slots.B]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "molar_mass_fraction"
+latex = 'n = \frac{{m}}{{M_{{{sp}}}}}'
+
+[template.slots.sp]
+type = "S"
+pool = "SPECIES_POOL"
+
+[[template]]
+name  = "concentration_molarity"
+latex = 'c = \frac{{{nn}}}{{V}}'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"
+
+[[template]]
+name  = "dilution_equation"
+latex = 'c_1 V_1 = c_2 V_2'
+
+[[template]]
+name  = "colligative_boiling_point"
+latex = '\Delta T_b = K_b\,{nn}\,m'
+
+[template.slots.nn]
+type = "S"
+pool = "N_POOL"

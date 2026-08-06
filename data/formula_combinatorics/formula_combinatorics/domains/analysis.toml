@@ -1,0 +1,1837 @@
+[meta]
+name        = "analysis"
+version     = "1.0.0"
+author      = "GutenOCR"
+license     = "MIT"
+description = "Real analysis and functional analysis"
+
+# ---------------------------------------------------------------------------
+# Slot pools
+# ---------------------------------------------------------------------------
+
+[[pool]]
+name   = "VARS_POOL"
+values = ['x', 'y', 'z', 't', 'u', 'v', 'r', 's']
+
+[[pool]]
+name   = "GEO_N_POOL"
+values = ['n', 'm', 'N', 'M', 'K', 'k', 'p', 'r']
+
+[[pool]]
+name   = "SEQ_POOL"
+values = ['a', 'b', 'c', 'f', 'g', 'h']
+
+[[pool]]
+name   = "SP_POOL"
+values = ['L^2(\Omega)', 'L^p(\Omega)', 'H^1(\Omega)', 'H']
+
+[[pool]]
+name   = "NN_POOL"
+values = ['n', 'k', 'm']
+
+[[pool]]
+name   = "DOM_POOL_SMALL"
+values = ['\Omega', '[0,1]', '\mathbb{R}^n']
+
+[[pool]]
+name   = "DOM_POOL"
+values = ['\mathbb{R}', '\mathbb{R}^n', '[a,b]', '\mathbb{C}', '\mathbb{Z}']
+
+[[pool]]
+name   = "BSLVAR_POOL"
+values = ['A', 'B', 'C', 'S', 'T']
+
+[[pool]]
+name   = "SPACE_POOL"
+values = ['L^p', 'L^2', 'L^\infty', '\mathcal{H}', 'C([a,b])']
+
+[[pool]]
+name   = "SCALARS_POOL"
+values = ['a', 'b', 'c', 'd', 'k', 'm', 'n', 'p', 'q']
+
+# ---------------------------------------------------------------------------
+# Epsilon-delta definitions (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "epsilon_delta_limit"
+latex = ""
+
+[[template.variants]]
+name  = "limit_def"
+latex = '\forall {eps} > 0 \; \exists {tol} > 0 : |{x} - {a}| < {tol} \Rightarrow |{f}({x}) - {L}| < {eps}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+[[template.variants]]
+name  = "continuity_def"
+latex = '\forall {eps} > 0 \; \exists {tol} > 0 : |{x} - {c}| < {tol} \Rightarrow |{f}({x}) - {f}({c})| < {eps}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.c]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+[[template.variants]]
+name  = "uniform_continuity_def"
+latex = '\forall {eps} > 0 \; \exists {tol} > 0 \; \forall {x}, {y} : |{x} - {y}| < {tol} \Rightarrow |{f}({x}) - {f}({y})| < {eps}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.y]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+# ---------------------------------------------------------------------------
+# L^p norm
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "lp_norm"
+latex = '\|{f}\|_{{{p}}} = \left(\int \left|{f}({t})\right|^{{{p}}} d{t}\right)^{{1/{p}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.p]
+type = "S"
+pool = ['p', '2', 'q', 'r']
+
+[template.slots.t]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Cauchy sequence criterion
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_criterion"
+latex = '|{seq}_m - {seq}_n| < {eps} \quad \forall m, n \geq {N}'
+
+[template.slots.seq]
+type = "S"
+pool = ['x', 'a', 'y', 'z', 'u', 'v']
+
+[template.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[template.slots.N]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz for sums
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "cauchy_schwarz_sums"
+latex    = '\left|\sum{lim_mod}_{{i=1}}^{{{n}}} {a}_i {b}_i\right|^2 \leq \sum{lim_mod}_{{i=1}}^{{{n}}} {a}_i^2 \cdot \sum{lim_mod}_{{i=1}}^{{{n}}} {b}_i^2'
+distinct = [["a", "b"]]
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'N', 'm', 'M', 'K', 'L', 'P']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'u', 'p', 'x', 'c']
+
+[template.slots.b]
+type = "S"
+pool = ['b', 'v', 'q', 'y', 'd']
+
+# ---------------------------------------------------------------------------
+# Triangle inequality in normed spaces (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "triangle_inequality_normed"
+latex = ""
+
+[[template.variants]]
+name  = "triangle_scalar"
+latex = '\left\|{u} + {v}\right\| \leq \left\|{u}\right\| + \left\|{v}\right\|'
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template.variants]]
+name  = "triangle_reverse"
+latex = '\left| \left\|{u}\right\| - \left\|{v}\right\| \right| \leq \left\|{u} - {v}\right\|'
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.v]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template.variants]]
+name  = "triangle_sum_n"
+latex = '\left\|\sum{lim_mod}_{{k=1}}^{{{n}}} {u}_k\right\| \leq \sum{lim_mod}_{{k=1}}^{{{n}}} \left\|{u}_k\right\|'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.u]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+
+[[template.variants]]
+name  = "minkowski_integral"
+latex = '\left(\int \left|{f}({t}) + {g}({t})\right|^{{{p}}} d{t}\right)^{{1/{p}}} \leq \left(\int |{f}({t})|^{{{p}}} d{t}\right)^{{1/{p}}} + \left(\int |{g}({t})|^{{{p}}} d{t}\right)^{{1/{p}}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.t]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.p]
+type = "S"
+pool = ['p', '2', 'q', 'r']
+
+# ---------------------------------------------------------------------------
+# p-series convergence
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "p_series_convergence"
+latex = '\sum{lim_mod}_{{k=1}}^{{\infty}} \frac{{1}}{{k^{{{s}}}}} < \infty \iff {s} > 1'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.s]
+type = "S"
+pool = ['p', '2', '3', 'q', 'r', '4', '5', '\alpha', '\beta']
+
+# ---------------------------------------------------------------------------
+# Hölder's inequality
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "holder_inequality"
+latex = '\int |{f}({t}) \cdot {g}({t})| \, d{t} \leq \left(\int |{f}({t})|^{{{p}}}\, d{t}\right)^{{1/{p}}} \left(\int |{g}({t})|^{{{q}}}\, d{t}\right)^{{1/{q}}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.t]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.p]
+type = "S"
+pool = ['p', '2', 'r', 's', '3']
+
+[template.slots.q]
+type = "S"
+pool = ['q', '2', 't', 'r', '4']
+
+# ---------------------------------------------------------------------------
+# Banach contraction mapping
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "banach_contraction"
+latex    = '\|T({x}) - T({y})\| \leq {c_sym} \|{x} - {y}\|'
+distinct = [["x", "y"]]
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.y]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.c_sym]
+type = "S"
+pool = ['\lambda', 'k', 'c', '\kappa', '\rho', '\alpha', 'L']
+
+# ---------------------------------------------------------------------------
+# Uniform supremum bound
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "uniform_bound"
+latex = '\sup_{{{x} \in {D}}} |{f}({x})| < \infty'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.D]
+type = "S"
+pool = ['X', 'D', 'A', '\Omega', 'K', 'U']
+
+# ---------------------------------------------------------------------------
+# Limsup / liminf / squeeze theorem (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "limsup_definition"
+latex = ""
+
+[[template.variants]]
+name  = "limsup_def"
+latex = '\limsup_{{{idx} \to {inf}}} {seq}_{{{idx}}} = \inf_{{{idx} \geq 1}} \sup_{{k \geq {idx}}} {seq}_k'
+
+[template.variants.slots.seq]
+type = "S"
+pool = ['a', 'b', 'x', 'y', 'u', 'c', 'z', 'v']
+
+[template.variants.slots.idx]
+type = "S"
+pool = ['n', 'm', 'j', 'r']
+idx  = 0.25
+
+[template.variants.slots.inf]
+type = "S"
+pool = ['\infty', '+\infty']
+
+[[template.variants]]
+name  = "liminf_def"
+latex = '\liminf_{{{idx} \to {inf}}} {seq}_{{{idx}}} = \sup_{{{idx} \geq 1}} \inf_{{k \geq {idx}}} {seq}_k'
+
+[template.variants.slots.seq]
+type = "S"
+pool = ['a', 'b', 'x', 'y', 'u', 'c', 'z', 'v']
+
+[template.variants.slots.idx]
+type = "S"
+pool = ['n', 'm', 'j', 'r']
+idx  = 0.25
+
+[template.variants.slots.inf]
+type = "S"
+pool = ['\infty', '+\infty']
+
+[[template.variants]]
+name     = "squeeze_theorem"
+latex    = '{a}_{{{idx}}} \leq {b}_{{{idx}}} \leq {c}_{{{idx}}}, \quad \lim_{{{idx} \to \infty}} {a}_{{{idx}}} = \lim_{{{idx} \to \infty}} {c}_{{{idx}}} = L \implies \lim_{{{idx} \to \infty}} {b}_{{{idx}}} = L'
+distinct = [["a", "b", "c"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = ['a', 'x', 'u']
+
+[template.variants.slots.b]
+type = "S"
+pool = ['b', 'y', 'v']
+
+[template.variants.slots.c]
+type = "S"
+pool = ['c', 'z', 'w']
+
+[template.variants.slots.idx]
+type = "S"
+pool = ['n', 'm', 'j', 'k']
+
+# ---------------------------------------------------------------------------
+# Limit notation (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "limit_notation"
+latex = ""
+
+[[template.variants]]
+name  = "limit_at_point"
+latex = '\lim_{{{x} \to {a}}} {f}({x}) = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_right_sided"
+latex = '\lim_{{{x} \to {a}^+}} {f}({x}) = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_left_sided"
+latex = '\lim_{{{x} \to {a}^-}} {f}({x}) = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_pos_infinity"
+latex = '\lim_{{{x} \to +\infty}} {f}({x}) = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_neg_infinity"
+latex = '\lim_{{{x} \to -\infty}} {f}({x}) = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_sequence"
+latex = '\lim_{{{idx} \to \infty}} {seq}_{{{idx}}} = {L}'
+
+[template.variants.slots.seq]
+type = "S"
+pool = ['a', 'b', 'x', 'y', 'u', 'c', 'z', 'v']
+
+[template.variants.slots.idx]
+type = "S"
+pool = ['n', 'm', 'j', 'k']
+idx  = 0.25
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_newton_quotient"
+latex = '\lim_{{{x} \to {a}}} \frac{{{f}({x}) - {f}({a})}}{{{x} - {a}}} = {L}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_sum_rule"
+latex = '\lim_{{{x} \to {a}}} \bigl({f}({x}) + {g}({x})\bigr) = \lim_{{{x} \to {a}}} {f}({x}) + \lim_{{{x} \to {a}}} {g}({x})'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_product_rule"
+latex = '\lim_{{{x} \to {a}}} {f}({x}) {g}({x}) = \lim_{{{x} \to {a}}} {f}({x}) \cdot \lim_{{{x} \to {a}}} {g}({x})'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "limit_diverges_inf"
+latex = '\lim_{{{x} \to {a}}} {f}({x}) = {inf_sym}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.inf_sym]
+type = "S"
+pool = ['\infty', '+\infty', '-\infty']
+
+# ---------------------------------------------------------------------------
+# Weierstrass M-test
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "weierstrass_m_test"
+latex = '\sum{lim_mod}_{{n=1}}^\infty \left|{f}_n({x})\right| \leq {M}_n, \; \sum{lim_mod}_{{n=1}}^\infty {M}_n < \infty \implies \sum{lim_mod}_{{n=1}}^\infty {f}_n \text{{ converges uniformly}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.M]
+type = "S"
+pool = ['M', 'C', 'K', 'B', 'A', 'L']
+
+# ---------------------------------------------------------------------------
+# Arzelà-Ascoli theorem
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "arzela_ascoli"
+latex = '\left\{{{f}_n({x})\right\}} \text{{ equicontinuous and uniformly bounded}} \implies \text{{has uniformly convergent subsequence}}'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Banach fixed-point theorem
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "banach_fixed_point"
+latex = '\exists!\, x^* : {T}(x^*) = x^*, \quad x_{{n+1}} = {T}(x_n) \to x^*'
+
+[template.slots.T]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+# ---------------------------------------------------------------------------
+# Series convergence tests (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "convergence_tests"
+latex = ""
+
+[[template.variants]]
+name     = "comparison_test"
+latex    = '0 \leq {a}_n \leq {b}_n, \; \sum {b}_n < \infty \implies \sum {a}_n < \infty'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = ['a', 'x', 'u', 'p', 'c']
+
+[template.variants.slots.b]
+type = "S"
+pool = ['b', 'y', 'v', 'q', 'd']
+
+[[template.variants]]
+name  = "integral_test"
+latex = '\sum{lim_mod}_{{n=1}}^\infty {f}(n) \text{{ converges}} \iff \int_1^\infty {f}({t})\,d{t} < \infty'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.t]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name     = "limit_comparison_test"
+latex    = '\lim_{{{v} \to \infty}} \frac{{{a}_{{{v}}}}}{{{b}_{{{v}}}}} = {L} \in (0, \infty) \implies \sum {a}_n \text{{ and }} \sum {b}_n \text{{ same convergence}}'
+distinct = [["a", "b"]]
+
+[template.variants.slots.a]
+type = "S"
+pool = ['a', 'x', 'u', 'p']
+
+[template.variants.slots.b]
+type = "S"
+pool = ['b', 'y', 'v', 'q']
+
+[template.variants.slots.v]
+type = "S"
+pool = ['n', 'm', 'k', 'j']
+
+[template.variants.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Ratio test
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "ratio_test"
+latex = '\lim_{{{v} \to \infty}} \left|\frac{{{seq}_{{{v}+1}}}}{{{seq}_{{{v}}}}}\right| = {L} < 1 \implies \sum {seq}_n \text{{ converges absolutely}}'
+
+[template.slots.seq]
+type = "S"
+pool = ['a', 'b', 'c', 'x', 'y', 'u', 'v', 'p']
+
+[template.slots.v]
+type = "S"
+pool = ['n', 'm', 'k', 'j']
+
+[template.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Root test
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "root_test"
+latex = '\limsup_{{{v} \to \infty}} \left|{seq}_{{{v}}}\right|^{{1/{v}}} = {L} < 1 \implies \sum {seq}_n \text{{ converges absolutely}}'
+
+[template.slots.seq]
+type = "S"
+pool = ['a', 'b', 'c', 'x', 'y', 'u', 'v', 'p']
+
+[template.slots.v]
+type = "S"
+pool = ['n', 'm', 'k', 'j']
+
+[template.slots.L]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Alternating series
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "alternating_series"
+latex = '{a}_{{{v}}} \searrow 0 \implies \sum{lim_mod}_{{{v}={v0}}}^\infty (-1)^{{{v}}} {a}_{{{v}}} \text{{ converges}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = ['a', 'b', 'c', 'x', 'y', 'u', 'v', 'p']
+
+[template.slots.v]
+type = "S"
+pool = ['n', 'm', 'k', 'j']
+
+[template.slots.v0]
+type = "S"
+pool = ['0', '1', '2', '3', 'n_0', 'N']
+
+# ---------------------------------------------------------------------------
+# Uniform / pointwise convergence (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "uniform_convergence"
+latex = ""
+
+[[template.variants]]
+name  = "pointwise_conv"
+latex = '{f}_n({x}) \to {f}({x}) \quad \text{{for all }} {x} \in D'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "uniform_conv_def"
+latex = '\sup_{{{x} \in D}} \left|{f}_n({x}) - {f}({x})\right| \to 0'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template.variants]]
+name  = "uniform_implies_continuous"
+latex = '{f}_n \rightrightarrows {f} \text{{ on }} {D}, \; {f}_n \text{{ continuous}} \implies {f} \text{{ continuous}}'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.D]
+type = "S"
+pool = ['D', 'X', 'K', '\Omega', 'A', 'U']
+
+[[template.variants]]
+name  = "uniform_implies_integrable"
+latex = '{f}_n \rightrightarrows {f} \text{{ on }} [{a}, {b}] \implies \int{lim_mod}_{{{a}}}^{{{b}}} {f}_n \to \int{lim_mod}_{{{a}}}^{{{b}}} {f}'
+
+[template.variants.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Fundamental theorems (IVT, MVT, EVT) (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fundamental_theorems"
+latex = ""
+
+[[template.variants]]
+name  = "ivt"
+latex = '{f} \in C([{a}, {b}]), \; {f}({a}) {f}({b}) < 0 \implies \exists\, c \in ({a}, {b}) : {f}(c) = 0'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "mvt"
+latex = '''\exists\, c \in ({a}, {b}) : {f}'(c) = \dfrac{{{f}({b}) - {f}({a})}}{{{b} - {a}}}'''
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template.variants]]
+name  = "extreme_value"
+latex = '{f} \in C([{a}, {b}]) \implies {f} \text{{ attains its maximum and minimum on }} [{a}, {b}]'
+
+[template.variants.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.variants.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.variants.slots.b]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+# ---------------------------------------------------------------------------
+# Bolzano-Weierstrass
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bolzano_weierstrass"
+latex = '\text{{Every bounded sequence }} \left\{{{seq}_k\right\}} \text{{ in }} \mathbb{{R}}^{{{d}}} \text{{ has a convergent subsequence}}'
+
+[template.slots.seq]
+type = "S"
+pool = ['x', 'a', 'y', 'z', 'u', 'v', 's', 'b', 'c', 'w']
+
+[template.slots.d]
+type = "S"
+pool = ['1', '2', '3', 'n', 'd', 'm', 'N', 'k']
+
+# ---------------------------------------------------------------------------
+# Taylor remainder bound
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "taylor_remainder"
+latex = '\left|{f}({x}) - \sum{lim_mod}_{{k=0}}^{{{n}}} \frac{{{f}^{{(k)}}({a})}}{{k!}}({x}-{a})^k\right| \leq \frac{{M}}{{({n}+1)!}} \left|{x} - {a}\right|^{{{n}+1}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.n]
+type = "S"
+pool = ['n', 'm', 'N', 'p']
+
+# ---------------------------------------------------------------------------
+# Completeness (variant group)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "completeness"
+latex = ""
+
+[[template.variants]]
+name  = "metric_completeness"
+latex = '({spc}, d) \text{{ is complete}} \iff \text{{every Cauchy sequence in }} {spc} \text{{ converges in }} {spc}'
+
+[template.variants.slots.spc]
+type = "S"
+pool = ['X', 'M', 'Y', 'Z', '\mathcal{X}', '\mathcal{M}', '\mathcal{Y}']
+
+[[template.variants]]
+name  = "nested_intervals"
+latex = '''[{seq}_n, {seq}_n'] \supseteq [{seq}_{{n+1}}, {seq}_{{n+1}}'], \;\; {seq}_n' - {seq}_n \to 0 \implies \bigcap_n [{seq}_n, {seq}_n'] \neq \emptyset'''
+
+[template.variants.slots.seq]
+type = "S"
+pool = ['a', 'x', 'u', 'b', 'c', 'y', 'z']
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# High-n_eff fn-pair templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "fn_limit_composition"
+latex = '{fn1}\!\left(\lim_{{{x} \to {a}}} {fn2}({x})\right) = \lim_{{{x} \to {a}}} {fn1}\!\left({fn2}({x})\right)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template]]
+name  = "fn_continuity_bound"
+latex = '|{fn1}({x}) - {fn1}({y})| \leq {fn2}(|{x} - {y}|)'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.y]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "fn_uniform_convergence"
+latex = '\sup_{{{x} \in D}} |{fn1}_n({x}) - {fn2}({x})| \to 0 \text{{ as }} n \to \infty'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "fn_integral_bound"
+latex = '\left|\int {fn1}({x})\,d{x}\right| \leq \int |{fn2}({x})|\,d{x}'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "fn_derivative_chain"
+latex = '''({fn1} \circ {fn2})'({x}) = {fn1}'({fn2}({x})) \cdot {fn2}'({x})'''
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[[template]]
+name  = "fn_sequence_bound"
+latex = '|{fn1}(a_n) - {fn1}(L)| \leq {fn2}(|a_n - L|) \to 0'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "fn_series_tail"
+latex = '\sum{lim_mod}_{{n={v}}}^{{\infty}} {fn1}(a_n) \leq {fn2}\!\left(\sum{lim_mod}_{{n={v}}}^{{\infty}} |a_n|\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = ['n', 'm', 'k', 'j', 'N', 'M']
+
+[[template]]
+name  = "fn_metric_bound"
+latex = '{fn1}(d({x},{y})) \leq {fn2}(d({x},z) + d(z,{y}))'
+
+[template.slots.fn1]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.fn2]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.x]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.y]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+# ---------------------------------------------------------------------------
+# Greek symbol coverage: \varsigma, \digamma, \Digamma
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "stieltjes_transform_def"
+latex = '\mathcal{{S}}[f](\varsigma) = \int_0^{{\infty}} \frac{{f(t)}}{{t + \varsigma}} \, dt,\quad \varsigma \notin (-\infty, 0]'
+
+[[template]]
+name  = "stieltjes_inversion"
+latex = 'f(t) = -\frac{{1}}{{\pi}} \lim_{{\varepsilon \to 0^+}} \operatorname{{Im}} \mathcal{{S}}[f](-t + i\varepsilon)'
+
+[[template]]
+name  = "dirichlet_series_varsigma"
+latex = 'F(\varsigma) = \sum{lim_mod}_{{n=1}}^{{\infty}} \frac{{a_n}}{{n^\varsigma}},\quad \operatorname{{Re}}(\varsigma) > {cc}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.cc]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_log_gamma"
+latex = '''\digamma({xx}) = \frac{{d}}{{d{xx}}} \ln \Gamma({xx}) = \frac{{\Gamma'({xx})}}{{\Gamma({xx})}}'''
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_recurrence"
+latex = '\digamma({xx} + 1) = \digamma({xx}) + \frac{{1}}{{{xx}}}'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_series_rep"
+latex = '\digamma({xx}) = -\gamma + \sum{lim_mod}_{{n=0}}^{{\infty}}\left(\frac{{1}}{{n+1}} - \frac{{1}}{{n+{xx}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_integral_rep"
+latex = '\digamma({xx}) = \int_0^{{\infty}}\left(\frac{{e^{{-t}}}}{{t}} - \frac{{e^{{-{xx} t}}}}{{1-e^{{-t}}}}\right)dt'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_euler_mascheroni"
+latex = '\digamma(1) = -\gamma \approx -0.5772'
+
+[[template]]
+name  = "digamma_reflection"
+latex = '\digamma(1-{xx}) - \digamma({xx}) = \pi \cot(\pi {xx})'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_antiderivative"
+latex = '\Digamma({xx}) = \int_1^{{{xx}}} \digamma(t)\, dt = \ln \Gamma({xx}) - \ln \Gamma(1)'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "digamma_partial_sum"
+latex = '\Digamma_n = \sum{lim_mod}_{{k=1}}^{{n}} \digamma(k) = -n\gamma + \sum{lim_mod}_{{k=1}}^{{n}} H_{{k-1}}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+# ---------------------------------------------------------------------------
+# Partial arrow templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "sequence_limit_rightarrow"
+latex = '{aa}_n \rightarrow {ll} \quad \text{{as }} n \rightarrow \infty'
+
+[template.slots.aa]
+type = "S"
+pool = "SEQ_POOL"
+
+[template.slots.ll]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "function_measurable_rightarrow"
+latex = 'f: {dom} \rightarrow \mathbb{{R}} \text{{ is measurable}}'
+
+[template.slots.dom]
+type = "S"
+pool = "DOM_POOL_SMALL"
+
+[[template]]
+name  = "weak_convergence_lp"
+latex = 'f_{{{nn}}} \rightharpoonup f \text{{ in }} {sp}'
+
+[template.slots.nn]
+type = "S"
+pool = "NN_POOL"
+
+[template.slots.sp]
+type = "S"
+pool = "SP_POOL"
+
+[[template]]
+name  = "weak_convergence_hilbert"
+latex = '\langle x_{{{nn}}}, y \rangle \rightarrow \langle x, y \rangle \;\forall\, y \implies x_{{{nn}}} \rightharpoonup x'
+
+[template.slots.nn]
+type = "S"
+pool = "NN_POOL"
+
+# ---------------------------------------------------------------------------
+# Evaluation-bar and large-bracket templates
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "limit_eval_bar"
+latex = '\left.{f}({v})\right|_{{{v}={a}}} = \lim_{{{v} \to {a}}} {f}({v})'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.a]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[[template]]
+name  = "norm_frac_biggl"
+latex = '\biggl\| \frac{{{f}({v})}}{{{g}({v})}} \biggr\|'
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.g]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+
+[[template]]
+name  = "inner_product_biggl"
+latex = '\Biggl\langle \frac{{{expr1}}}{{{expr2}}},\; {f} \Biggr\rangle'
+
+[template.slots.expr1]
+type = "E"
+gen  = "_expr"
+n    = 3000
+
+[template.slots.expr2]
+type = "E"
+gen  = "_expr"
+n    = 3000
+
+[template.slots.f]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[[template]]
+name  = "abs_frac_biggl"
+latex = '\biggl| \frac{{{expr1}}}{{{expr2}}} \biggr|'
+
+[template.slots.expr1]
+type = "E"
+gen  = "_expr"
+n    = 3000
+
+[template.slots.expr2]
+type = "E"
+gen  = "_expr"
+n    = 3000
+
+# ---------------------------------------------------------------------------
+# Backslash-space (\ ) qualifier patterns
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "bslspace_forall_explicit"
+latex = '{ff}({vv}) = {expr}, \ \forall {vv} \in {dom}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.expr]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.dom]
+type = "S"
+pool = "DOM_POOL"
+
+[[template]]
+name  = "bslspace_exists_explicit"
+latex = '{ff}({vv}) \leq {cc}, \ \exists {vv} \in {dom}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.cc]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.dom]
+type = "S"
+pool = ['\mathbb{R}', '\mathbb{Z}', '[0,\infty)']
+
+[[template]]
+name  = "bslspace_chain_implication"
+latex = '{aa} \subseteq {bb}, \ {bb} \subseteq {cc} \implies {aa} \subseteq {cc}'
+
+[template.slots.aa]
+type = "S"
+pool = "BSLVAR_POOL"
+
+[template.slots.bb]
+type = "X"
+pool = "BSLVAR_POOL"
+exclude_from = ["aa"]
+
+[template.slots.cc]
+type = "X"
+pool = "BSLVAR_POOL"
+exclude_from = ["aa", "bb"]
+
+[[template]]
+name  = "bslspace_inequality_chain"
+latex = '\|{ff}({vv})\| \leq {c}_1, \ \|{gg}({vv})\| \leq {c}_2'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.gg]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.c]
+type = "S"
+pool = ['C', 'M', 'K', 'L']
+
+[[template]]
+name  = "bslspace_condition_separation"
+latex = '{lhs} = {rhs} \ \Rightarrow \ {consequence}'
+
+[template.slots.lhs]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.rhs]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[template.slots.consequence]
+type = "E"
+gen  = "_expr"
+n    = 5000
+
+[[template]]
+name  = "bslspace_bound_qualifier"
+latex = '\|{ff}\|_{{{pp}}} \leq {cc}, \ \forall {ff} \in {space}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.pp]
+type = "S"
+pool = ['p', '2', 'q', '1', '\infty']
+
+[template.slots.cc]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.space]
+type = "S"
+pool = "SPACE_POOL"
+
+[[template]]
+name  = "bslspace_forall_solution"
+latex = '{ff}({vv}) = 0, \ {vv} \in {dom}'
+
+[template.slots.ff]
+type = "E"
+gen  = "_fn_rich_nosub"
+n    = 5
+
+[template.slots.vv]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.dom]
+type = "S"
+pool = "DOM_POOL"
+
+# ---------------------------------------------------------------------------
+# Epsilon-delta sub-expressions
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "epsilon_delta_subexpr"
+latex = ""
+
+[[template.variants]]
+name  = "epsilon_delta_nearness"
+latex = '\left|{v} - {pt}\right| < {tol}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.tol]
+type = "E"
+gen  = "_tol_sub"
+n    = 3
+
+[[template.variants]]
+name  = "epsilon_delta_full"
+latex = '0 < \left|{v} - {pt}\right| < \delta \implies \left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_fn_nearness"
+latex = '\left|{fn}({v}) - {b}\right| < {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.fn]
+type = "E"
+gen  = "_fn_rich"
+n    = 272
+
+[template.variants.slots.b]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+[[template.variants]]
+name  = "epsilon_delta_interval"
+latex = '{pt} - {eps} < {v} < {pt} + {eps}'
+
+[template.variants.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.variants.slots.pt]
+type = "E"
+gen  = "_idx_atom"
+n    = 200
+
+[template.variants.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+# ---------------------------------------------------------------------------
+# Cauchy-Schwarz integral inequality
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "cauchy_schwarz_integral"
+latex = '\left(\int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v}) \, {f2}({v}) \, d{v}\right)^2 \leq \int{lim_mod}_{{{lo}}}^{{{hi}}} {f1}({v})^2 \, d{v} \cdot \int{lim_mod}_{{{lo}}}^{{{hi}}} {f2}({v})^2 \, d{v}'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.lo]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.hi]
+type = "E"
+gen  = "_atom"
+n    = 150
+
+[template.slots.f1]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
+
+[template.slots.f2]
+type = "E"
+gen  = "_fn_rich"
+n    = 30
+
+# ---------------------------------------------------------------------------
+# Infinite product formula (Weierstrass/Pochhammer style)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "product_formula"
+latex = '\prod{lim_mod}_{{k={start}}}^{{{n}}} \left(1 + \frac{{{a11}}}{{k + {v}}}\right)'
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.v]
+type = "S"
+pool = "VARS_POOL"
+idx  = 0.35
+
+[template.slots.n]
+type = "S"
+pool = "GEO_N_POOL"
+idx  = 0.35
+
+[template.slots.a11]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.start]
+type = "S"
+pool = ['1', '0', '2']
+
+# ---------------------------------------------------------------------------
+# Absolute value lower-bound (epsilon notation)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "abs_geqslant_eps"
+latex = '|{xx}| \geqslant {eps}'
+
+[template.slots.xx]
+type = "S"
+pool = "VARS_POOL"
+
+[template.slots.eps]
+type = "E"
+gen  = "_eps_sub"
+n    = 2
+
+# ---------------------------------------------------------------------------
+# Triangle inequality — reverse and n-term forms
+# ---------------------------------------------------------------------------
+
+[[template]]
+name  = "triangle_inequality_advanced"
+latex = ""
+
+  [[template.variants]]
+  name     = "triangle_inequality_reverse"
+  latex    = '\left|\left|{a}\right| - \left|{b}\right|\right| \leq \left|{a} - {b}\right|'
+  distinct = [["a", "b"]]
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [template.variants.slots.b]
+  type = "S"
+  pool = "SCALARS_POOL"
+  idx  = 0.35
+
+  [[template.variants]]
+  name  = "triangle_inequality_nterms"
+  latex = '\left|{a}_1 + {a}_2 + \cdots + {a}_{{{n}}}\right| \leq \left|{a}_1\right| + \left|{a}_2\right| + \cdots + \left|{a}_{{{n}}}\right|'
+
+  [template.variants.slots.a]
+  type = "S"
+  pool = "SCALARS_POOL"
+
+  [template.variants.slots.n]
+  type = "S"
+  pool = "GEO_N_POOL"
+
+# ---------------------------------------------------------------------------
+# Geometric series — infinite convergent form (from algebra)
+# ---------------------------------------------------------------------------
+
+[[template]]
+name     = "geometric_series_infinite"
+latex    = '\sum{lim_mod}_{{k=0}}^{{\infty}} {a} {r}^k = \frac{{{a}}}{{1 - {r}}}'
+distinct = [["a", "r"]]
+
+[template.slots.lim_mod]
+type = "S"
+pool = ["", '\limits']
+
+[template.slots.a]
+type = "S"
+pool = "SCALARS_POOL"
+idx  = 0.35
+
+[template.slots.r]
+type = "X"
+pool = "SCALARS_POOL"
+exclude_from = ["a"]
+idx  = 0.35
