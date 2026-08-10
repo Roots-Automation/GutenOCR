@@ -18,7 +18,7 @@ SPLITS = ["train", "validation", "test"]
 # import from here so tuning one place propagates everywhere.
 QUALITY_FILTER_DEFAULTS: list[tuple[str, str, float]] = [
     ("word_count", "<", 5.0),
-    ("textbox_null_frac", ">", 0.95),
+    ("textbox_null_frac", ">=", 0.90),
     ("min_line_height_px", "<", 15.0),
     ("sharpness", "<", 10.0),
     ("max_intra_block_line_overlap", ">", 0.95),

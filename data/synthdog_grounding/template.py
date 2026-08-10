@@ -500,12 +500,14 @@ class SynthDoG(templates.Template):
         merged_effects = {**doc_provenance.get("effects", {}), **render_provenance.get("effects", {})}
         doc_provenance_rest = {k: v for k, v in doc_provenance.items() if k != "effects"}
 
+        surviving_zones = sorted({b.region_type for b in blocks if b.region_type != "body"})
         generation_params = {
             "landscape": bool(landscape),
             "canvas_size": list(size),
             "jpeg_quality": int(quality),
             "skew_angle": round(skew_angle, 3),
             **doc_provenance_rest,
+            "zones_rendered": surviving_zones,
             "effects": merged_effects,
         }
 
@@ -538,8 +540,8 @@ class SynthDoG(templates.Template):
         if words < self.min_word_count:
             return f"words {words} < {self.min_word_count}"
         null_frac = qm.get("textbox_null_frac", 0.0) or 0.0
-        if null_frac > self.max_textbox_null_frac:
-            return f"null_frac {null_frac:.3f} > {self.max_textbox_null_frac}"
+        if null_frac >= self.max_textbox_null_frac:
+            return f"null_frac {null_frac:.3f} >= {self.max_textbox_null_frac}"
         min_h = qm.get("min_line_height_px")
         if min_h is not None and min_h < self.min_line_height_px:
             return f"min_line_height {min_h:.1f} < {self.min_line_height_px}"
