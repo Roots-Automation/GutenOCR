@@ -93,7 +93,7 @@ class TextReader:
 
         self.cache.move_to_end(key)
         char = text[self.idx % self.block_size]
-        return char
+        return " " if char == "\\" else char
 
 
 class HuggingFaceTextReader:
@@ -225,7 +225,8 @@ class HuggingFaceTextReader:
         current_text = self._get_current_text()
         if not current_text:
             return " "
-        return current_text[self.idx]
+        char = current_text[self.idx]
+        return " " if char == "\\" else char
 
     def _refresh_buffer(self):
         """Refresh the buffer with new text."""
