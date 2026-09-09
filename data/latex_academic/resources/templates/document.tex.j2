@@ -1,0 +1,154 @@
+\documentclass[<< font_size_pt >>pt]{article}
+\usepackage[<< page_size >>, top=<< margins_mm >>mm, bottom=<< margins_mm >>mm, left=<< margins_mm >>mm, right=<< margins_mm >>mm]{geometry}
+<< font_package >>
+\usepackage{amsmath,amssymb,booktabs,microtype}
+\usepackage{amsthm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+<<% if n_cols == 2 %>>
+\usepackage{multicol}
+<<% endif %>>
+<<% if has_page_numbers %>>
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+<<% endif %>>
+\usepackage{setspace}
+\setstretch{<< line_spread >>}
+\usepackage{parskip}
+\setlength{\parskip}{4pt}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem*{remark}{Remark}
+
+\begin{document}
+
+\begin{center}
+{\large\bfseries << title >>}\\[6pt]
+<<% for author in authors %>>
+<< author >><<% if not loop.last %>>,\;<<%  endif %>>
+<<% endfor %>>\\[4pt]
+{\small << year >>}
+\end{center}
+\vspace{4pt}
+
+<<% if has_abstract %>>
+\begin{quote}
+\small\textbf{Abstract.}~<< abstract >>
+\end{quote}
+\vspace{4pt}
+<<% endif %>>
+
+<<% if n_cols == 2 %>>
+\begin{multicols}{2}
+<<% endif %>>
+
+<<% for section in sections %>>
+\section*{<< section.heading >>}
+
+<< section.body >>
+
+<<% if section.theorem %>>
+\begin{<< section.theorem.env_type >>}
+<< section.theorem.body >>
+\end{<< section.theorem.env_type >>}
+\vspace{2pt}
+<<% endif %>>
+
+<<% if section.list_content %>>
+<<% if section.list_content.ordered %>>
+\begin{enumerate}
+<<% else %>>
+\begin{itemize}
+<<% endif %>>
+<<% for item in section.list_content.entries %>>
+  \item << item >>
+<<% endfor %>>
+<<% if section.list_content.ordered %>>
+\end{enumerate}
+<<% else %>>
+\end{itemize}
+<<% endif %>>
+\vspace{2pt}
+<<% endif %>>
+
+<<% if section.display_equation %>>
+\[
+<< section.display_equation >>
+\]
+<<% endif %>>
+
+<<% if section.align_block %>>
+<< section.align_block >>
+<<% endif %>>
+
+<<% if section.table_rows %>>
+\begin{center}
+\begin{tabular}{<< section.table_spec >>}
+\toprule
+<< section.table_header >>\\
+\midrule
+<<% for row in section.table_rows %>>
+<< row >>\\
+<<% endfor %>>
+\bottomrule
+\end{tabular}
+\smallskip
+
+\captionof{table}{<< section.table_caption >>}
+\end{center}
+\vspace{4pt}
+<<% endif %>>
+
+<<% if section.algorithm %>>
+\vspace{6pt}
+\begin{center}
+\fbox{%
+\begin{minipage}{0.92\linewidth}
+\vspace{2pt}
+\textbf{Algorithm << section.algorithm.idx + 1 >>:} \textit{<< section.algorithm.caption >>}
+\vspace{4pt}
+\begin{algorithmic}[1]
+<<% for line in section.algorithm.lines %>>
+<< line >>
+<<% endfor %>>
+\end{algorithmic}
+\vspace{2pt}
+\end{minipage}%
+}
+\end{center}
+\vspace{6pt}
+<<% endif %>>
+
+<<% if section.figure %>>
+\begin{center}
+\fbox{\rule{0pt}{<< section.figure.height_cm >>cm}\hspace{0.85\linewidth}}
+\smallskip
+
+\captionof{figure}{<< section.figure.caption >>}
+\end{center}
+\vspace{4pt}
+<<% endif %>>
+
+<<% endfor %>>
+
+<<% if n_cols == 2 %>>
+\end{multicols}
+<<% endif %>>
+
+<<% if references %>>
+\begin{thebibliography}{99}
+\small
+<<% for ref in references %>>
+\bibitem{<< ref.key >>} << ref.text >>
+<<% endfor %>>
+\end{thebibliography}
+<<% endif %>>
+
+\end{document}

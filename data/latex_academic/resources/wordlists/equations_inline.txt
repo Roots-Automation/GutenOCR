@@ -1,0 +1,48 @@
+a^2 + b^2 = c^2
+f(x) = ax + b
+\mathbf{w}^\top \mathbf{x} + b
+\sum_{i=1}^{n} x_i
+\prod_{k=0}^{n} (1 - p_k)
+\frac{\partial L}{\partial \theta}
+\nabla_\theta \mathcal{L}(\theta)
+\mathbb{E}[X] = \mu
+\text{Var}(X) = \sigma^2
+p(y \mid x) = \frac{p(x \mid y) p(y)}{p(x)}
+\mathbf{A} \mathbf{x} = \mathbf{b}
+\|\mathbf{x}\|_2 = \sqrt{\sum_i x_i^2}
+\|\mathbf{x}\|_1 = \sum_i |x_i|
+\lambda_{\max}(\mathbf{A})
+\text{rank}(\mathbf{A}) = r
+\mathbf{U} \mathbf{\Sigma} \mathbf{V}^\top
+\sigma(z) = \frac{1}{1 + e^{-z}}
+\text{ReLU}(x) = \max(0, x)
+\text{softmax}(z)_i = \frac{e^{z_i}}{\sum_j e^{z_j}}
+\text{KL}(p \| q) = \sum_x p(x) \log \frac{p(x)}{q(x)}
+H(p) = -\sum_x p(x) \log p(x)
+\mathcal{O}(n \log n)
+\mathcal{O}(n^2)
+\epsilon > 0
+\delta < \epsilon
+x \sim \mathcal{N}(\mu, \sigma^2)
+x \sim \text{Uniform}(a, b)
+\Pr[|X - \mu| \geq t] \leq \frac{\sigma^2}{t^2}
+\lim_{n \to \infty} \frac{1}{n} \sum_{i=1}^n X_i = \mu
+\int_{-\infty}^{\infty} f(x)\,dx = 1
+f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
+\frac{d}{dt} \mathbf{x}(t) = \mathbf{A} \mathbf{x}(t)
+z = \mathbf{W}_2 \text{ReLU}(\mathbf{W}_1 x + b_1) + b_2
+\hat{y} = \text{argmax}_c \, p(y = c \mid x)
+\text{acc} = \frac{|\{i : \hat{y}_i = y_i\}|}{n}
+\text{F}_1 = \frac{2 \cdot \text{precision} \cdot \text{recall}}{\text{precision} + \text{recall}}
+\mathcal{L} = -\sum_{i} y_i \log \hat{y}_i
+\theta \leftarrow \theta - \eta \nabla_\theta \mathcal{L}
+\alpha \in (0, 1)
+n \geq \frac{\log(1/\delta)}{2\epsilon^2}
+d(\mathbf{x}, \mathbf{y}) = \sqrt{(\mathbf{x} - \mathbf{y})^\top (\mathbf{x} - \mathbf{y})}
+\cos(\theta) = \frac{\mathbf{a} \cdot \mathbf{b}}{\|\mathbf{a}\| \|\mathbf{b}\|}
+\text{tr}(\mathbf{A}) = \sum_i a_{ii}
+\det(\mathbf{A}) \neq 0
+p \wedge q \Rightarrow r
+\forall x \in \mathcal{X},\; f(x) \geq 0
+\exists \delta > 0 \text{ s.t. } |x - x_0| < \delta
+r = 1 - \frac{6 \sum d_i^2}{n(n^2-1)}

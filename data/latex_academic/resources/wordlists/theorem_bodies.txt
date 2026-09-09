@@ -1,0 +1,20 @@
+For any $\epsilon > 0$, there exists $\delta > 0$ such that $|f(x) - L| < \epsilon$ whenever $0 < |x - a| < \delta$.
+Let $\mathcal{H}$ be a hypothesis class with VC dimension $d$. For any $\epsilon, \delta > 0$, a sample of size $m = O\bigl(\frac{d + \log(1/\delta)}{\epsilon^2}\bigr)$ suffices for PAC learning.
+If $f\colon \mathbb{R}^n \to \mathbb{R}$ is convex and $L$-smooth, then gradient descent with step size $\eta \leq 1/L$ satisfies $f(\mathbf{x}_T) - f^* \leq \frac{L\|\mathbf{x}_0 - \mathbf{x}^*\|^2}{2T}$.
+For any random variable $X$ with mean $\mu$ and variance $\sigma^2$, we have $\Pr[|X - \mu| \geq t] \leq \sigma^2/t^2$ for all $t > 0$.
+Let $\mathbf{A} \in \mathbb{R}^{m \times n}$. Then $\|\mathbf{A}\|_2 = \sigma_{\max}(\mathbf{A})$ and $\|\mathbf{A}\|_F^2 = \sum_i \sigma_i(\mathbf{A})^2$.
+For any probability distributions $P$ and $Q$, the KL divergence satisfies $\mathrm{KL}(P \| Q) \geq 0$ with equality if and only if $P = Q$ almost everywhere.
+Let $\{X_i\}_{i=1}^n$ be i.i.d.\ with $\mathbb{E}[X_i] = \mu < \infty$. Then $\frac{1}{n}\sum_{i=1}^n X_i \to \mu$ almost surely as $n \to \infty$.
+For any $\alpha$-strongly convex function $f$, gradient descent with step size $\eta \leq 1/L$ satisfies $\|\mathbf{x}_T - \mathbf{x}^*\|^2 \leq (1 - \alpha\eta)^T\|\mathbf{x}_0 - \mathbf{x}^*\|^2$.
+The Frobenius norm satisfies $\|\mathbf{A}\|_F^2 = \operatorname{tr}(\mathbf{A}^\top \mathbf{A}) = \sum_{i,j} a_{ij}^2$ for any real matrix $\mathbf{A}$.
+Let $\phi\colon \mathcal{X} \to \mathbb{R}^d$ be a feature map with induced kernel $k(x,x') = \langle\phi(x),\phi(x')\rangle$. Then $k$ is symmetric and positive semi-definite.
+If the Markov chain with transition matrix $P$ is irreducible and aperiodic, it admits a unique stationary distribution $\pi$ satisfying $\pi^\top P = \pi^\top$.
+For any $n \times n$ real symmetric matrix $\mathbf{A}$, all eigenvalues are real and eigenvectors for distinct eigenvalues are orthogonal.
+The entropy $H(X) = -\sum_x p(x)\log p(x)$ satisfies $0 \leq H(X) \leq \log|\mathcal{X}|$, with the upper bound achieved by the uniform distribution.
+For any compact convex set $\mathcal{C}$ and $\mathbf{x} \notin \mathcal{C}$, the projection $\Pi_\mathcal{C}(\mathbf{x})$ is unique and satisfies $\langle \mathbf{x} - \Pi_\mathcal{C}(\mathbf{x}),\,\mathbf{y} - \Pi_\mathcal{C}(\mathbf{x})\rangle \leq 0$ for all $\mathbf{y} \in \mathcal{C}$.
+The mutual information satisfies $I(X;Y) = H(X) - H(X \mid Y) = H(Y) - H(Y \mid X) \geq 0$.
+For any $\epsilon$-net $\mathcal{N}$ of the unit ball in $\mathbb{R}^d$, one can construct $\mathcal{N}$ with $|\mathcal{N}| \leq (1 + 2/\epsilon)^d$ points.
+If $f$ and $g$ are integrable on $\mathbb{R}$, then $\|f * g\|_1 \leq \|f\|_1\|g\|_1$, where $*$ denotes convolution.
+Let $G = (V, E)$ be a connected undirected graph. Then $|E| \geq |V| - 1$, with equality holding if and only if $G$ is a tree.
+For every connected graph $G$, the number of spanning trees equals $\frac{1}{n}\prod_{i=1}^{n-1}\lambda_i$, where $\lambda_1 \leq \cdots \leq \lambda_{n-1}$ are the nonzero Laplacian eigenvalues.
+For any matrices $\mathbf{A}$, $\mathbf{B}$ of compatible dimensions, $\operatorname{rank}(\mathbf{A}\mathbf{B}) \leq \min\!\bigl(\operatorname{rank}(\mathbf{A}),\operatorname{rank}(\mathbf{B})\bigr)$.
