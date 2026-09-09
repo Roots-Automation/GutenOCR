@@ -300,11 +300,75 @@ class SynthDoG(templates.Template):
         if hasattr(self, "document"):
             self.document.close()
 
+    @staticmethod
+    def _summarize_shadow_effect(meta: dict) -> dict:
+        """Flatten a single-Switch(Shadow) Iterator's meta into JSON-safe provenance."""
+        switch_meta = meta["metas"][0]
+        entry: dict = {"applied": bool(switch_meta["state"])}
+        sub = switch_meta.get("meta")
+        if entry["applied"] and sub is not None:
+            entry["intensity"] = int(sub["intensity"])
+            entry["amount"] = round(float(sub["amount"]), 3)
+            entry["smoothing"] = round(float(sub["smoothing"]), 3)
+        return entry
+
+    @staticmethod
+    def _summarize_background_blur(meta: dict) -> dict:
+        """Flatten Background's single-Switch(GaussianBlur) Iterator meta."""
+        switch_meta = meta["metas"][0]
+        entry: dict = {"applied": bool(switch_meta["state"])}
+        sub = switch_meta.get("meta")
+        if entry["applied"] and sub is not None:
+            entry["sigma"] = round(float(sub["sigma"]), 3)
+        return entry
+
+    @staticmethod
+    def _summarize_pixel_effects(meta: dict) -> dict:
+        """Flatten ``self.effect``'s 8-component Iterator/Switch meta tree into
+        JSON-safe per-effect provenance, keyed by effect name in application order.
+        """
+        names = [
+            "rgb_tint",
+            "grayscale",
+            "contrast",
+            "brightness",
+            "motion_blur",
+            "gaussian_blur",
+            "resample",
+            "jpeg_compression",
+        ]
+        summary: dict = {}
+        for name, switch_meta in zip(names, meta["metas"]):
+            entry: dict = {"applied": bool(switch_meta["state"])}
+            sub = switch_meta.get("meta")
+            if entry["applied"] and sub is not None:
+                if name == "rgb_tint":
+                    entry["rgb"] = [int(c) for c in sub["rgb"]]
+                    entry["alpha"] = round(float(sub["alpha"]), 3)
+                    entry["grayscale_tint"] = bool(sub["grayscale"])
+                elif name == "contrast":
+                    entry["alpha"] = round(float(sub["alpha"]), 3)
+                elif name == "brightness":
+                    entry["beta"] = int(sub["beta"])
+                elif name == "motion_blur":
+                    entry["k"] = int(sub["k"])
+                    entry["angle"] = round(float(sub["angle"]), 1)
+                elif name == "gaussian_blur":
+                    entry["sigma"] = round(float(sub["sigma"]), 3)
+                elif name == "resample":
+                    entry["size"] = round(float(sub["size"]), 3)
+                elif name == "jpeg_compression":
+                    entry["compression"] = int(sub["compression"])
+                # grayscale has no extra params
+            summary[name] = entry
+        return summary
+
     def _render(
         self,
         document_group,
         bg_layer,
         size: tuple[int, int],
+        bg_blur_meta: dict,
     ) -> tuple[np.ndarray, dict]:
         """Merge layers, apply effects, and rasterize to a numpy array.
 
@@ -316,12 +380,12 @@ class SynthDoG(templates.Template):
         each pixel-level effect fired this sample, for error-analysis metadata.
         """
         # float32 compositing phase ──────────────────────────────────────────
-        self.bg_effect.apply([bg_layer])
+        bg_effect_meta = self.bg_effect.apply([bg_layer])
         doc_layer = document_group.merge()
-        self.doc_effect.apply([doc_layer])
+        doc_effect_meta = self.doc_effect.apply([doc_layer])
         layer = layers.Group([doc_layer, bg_layer]).merge()
         elastic_meta = self.document.elastic_distortion.apply([layer])
-        self.effect.apply([layer])
+        pixel_effect_meta = self.effect.apply([layer])
 
         # Single float32 → uint8 conversion ──────────────────────────────────
         result = np.clip(layer.output(bbox=[0, 0, *size]), 0, 255).astype(np.uint8)
@@ -349,6 +413,10 @@ class SynthDoG(templates.Template):
                 "low_toner_streaks": {"applied": bool(low_toner_applied)},
                 "watermark": {"applied": bool(watermark_applied)},
                 "vignetting": {"applied": bool(vignetting_applied)},
+                "background_blur": self._summarize_background_blur(bg_blur_meta),
+                "bg_shadow": self._summarize_shadow_effect(bg_effect_meta),
+                "doc_shadow": self._summarize_shadow_effect(doc_effect_meta),
+                **self._summarize_pixel_effects(pixel_effect_meta),
             }
         }
         return result, render_provenance
@@ -364,7 +432,7 @@ class SynthDoG(templates.Template):
         long_size = int(short_size * aspect_ratio)
         size = (long_size, short_size) if landscape else (short_size, long_size)
 
-        bg_layer = self.background.generate(size)
+        bg_layer, bg_blur_meta = self.background.generate(size)
         (
             paper_layer,
             text_layers,
@@ -409,7 +477,7 @@ class SynthDoG(templates.Template):
             line_colors=line_colors,
         )
 
-        image, render_provenance = self._render(document_group, bg_layer, size)
+        image, render_provenance = self._render(document_group, bg_layer, size, bg_blur_meta)
 
         quality_metrics = compute_quality_metrics(
             image,
@@ -432,12 +500,14 @@ class SynthDoG(templates.Template):
         merged_effects = {**doc_provenance.get("effects", {}), **render_provenance.get("effects", {})}
         doc_provenance_rest = {k: v for k, v in doc_provenance.items() if k != "effects"}
 
+        surviving_zones = sorted({b.region_type for b in blocks if b.region_type != "body"})
         generation_params = {
             "landscape": bool(landscape),
             "canvas_size": list(size),
             "jpeg_quality": int(quality),
             "skew_angle": round(skew_angle, 3),
             **doc_provenance_rest,
+            "zones_rendered": surviving_zones,
             "effects": merged_effects,
         }
 
@@ -470,8 +540,8 @@ class SynthDoG(templates.Template):
         if words < self.min_word_count:
             return f"words {words} < {self.min_word_count}"
         null_frac = qm.get("textbox_null_frac", 0.0) or 0.0
-        if null_frac > self.max_textbox_null_frac:
-            return f"null_frac {null_frac:.3f} > {self.max_textbox_null_frac}"
+        if null_frac >= self.max_textbox_null_frac:
+            return f"null_frac {null_frac:.3f} >= {self.max_textbox_null_frac}"
         min_h = qm.get("min_line_height_px")
         if min_h is not None and min_h < self.min_line_height_px:
             return f"min_line_height {min_h:.1f} < {self.min_line_height_px}"

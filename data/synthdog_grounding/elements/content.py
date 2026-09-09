@@ -250,8 +250,8 @@ class Content:
             h_frac = np.random.uniform(*self.page_header_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
-                zones_rendered.append("header")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
+                block_id_before = next_block_id
                 next_block_id, znull, ztot = self._render_zone(
                     self.page_header_cfg,
                     zone_bbox,
@@ -265,6 +265,8 @@ class Content:
                     h_wpl,
                     h_fi,
                 )
+                if next_block_id > block_id_before:
+                    zones_rendered.append("header")
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[1] += zone_h
@@ -277,11 +279,11 @@ class Content:
             h_frac = np.random.uniform(*self.page_footer_cfg.get("height", [0.04, 0.08]))
             zone_h = min(height * h_frac, layout_bbox[3])
             if zone_h > 0:
-                zones_rendered.append("footer")
                 footer_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footer_top, layout_bbox[2], zone_h]
                 pn_cfg = self.page_footer_cfg.get("page_number", {})
                 use_pn = np.random.rand() < pn_cfg.get("prob", 0.0)
+                block_id_before = next_block_id
                 next_block_id, znull, ztot = self._render_zone(
                     self.page_footer_cfg,
                     zone_bbox,
@@ -296,6 +298,8 @@ class Content:
                     ft_fi,
                     use_page_number=use_pn,
                 )
+                if next_block_id > block_id_before:
+                    zones_rendered.append("footer")
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
@@ -306,9 +310,9 @@ class Content:
             h_frac = np.random.uniform(*self.footnote_cfg.get("height", [0.05, 0.12]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
-                zones_rendered.append("footnote")
                 footnote_top = layout_bbox[1] + layout_bbox[3] - zone_h
                 zone_bbox = [layout_bbox[0], footnote_top, layout_bbox[2], zone_h]
+                block_id_before = next_block_id
                 next_block_id, znull, ztot = self._render_zone(
                     self.footnote_cfg,
                     zone_bbox,
@@ -322,6 +326,8 @@ class Content:
                     fn_wpl,
                     fn_fi,
                 )
+                if next_block_id > block_id_before:
+                    zones_rendered.append("footnote")
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[3] = max(layout_bbox[3] - zone_h, 0)
@@ -331,8 +337,8 @@ class Content:
             h_frac = np.random.uniform(*self.section_heading_cfg.get("height", [0.06, 0.14]))
             zone_h = min(layout_bbox[3] * h_frac, layout_bbox[3])
             if zone_h > 0:
-                zones_rendered.append("heading")
                 zone_bbox = [layout_bbox[0], layout_bbox[1], layout_bbox[2], zone_h]
+                block_id_before = next_block_id
                 next_block_id, znull, ztot = self._render_zone(
                     self.section_heading_cfg,
                     zone_bbox,
@@ -347,6 +353,8 @@ class Content:
                     hd_fi,
                     font_override=self.heading_font,
                 )
+                if next_block_id > block_id_before:
+                    zones_rendered.append("heading")
                 textbox_null_count += znull
                 textbox_total_count += ztot
                 layout_bbox[1] += zone_h
@@ -400,7 +408,7 @@ class Content:
             text_color_mode = "uniform"
             content_color.apply(text_layers, meta=content_meta)
             try:
-                c = content_meta["args"]["color"]
+                c = content_meta["meta"]["rgb"]
                 text_color_rgbs = [[int(c[0]), int(c[1]), int(c[2])]] * len(text_layers)
             except Exception:
                 pass
@@ -410,7 +418,7 @@ class Content:
                 layer_meta = textbox_color.sample()
                 textbox_color.apply([text_layer], meta=layer_meta)
                 try:
-                    c = layer_meta["args"]["color"]
+                    c = layer_meta["meta"]["rgb"]
                     text_color_rgbs.append([int(c[0]), int(c[1]), int(c[2])])
                 except Exception:
                     pass

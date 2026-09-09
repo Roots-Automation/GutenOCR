@@ -12,7 +12,7 @@ min_contrast_ratio: 1.2
 # Per-sample save filters — permissive defaults preserve current behaviour.
 # Tighten to discard low-quality samples at generation time.
 min_word_count: 5                    # minimum words required to save a sample
-max_textbox_null_frac: 0.95          # discard if >X fraction of textbox slots were empty
+max_textbox_null_frac: 0.90          # discard if >=X fraction of textbox slots were empty
 min_line_height_px: 22.0             # discard if any line renders below X pixels tall
 min_sharpness: 10.0                  # discard if Laplacian variance < X (blur detection)
 max_intra_block_line_overlap: 0.95   # discard if within-column row bleeding exceeds X

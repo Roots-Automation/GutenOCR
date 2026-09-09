@@ -106,7 +106,12 @@ class Document:
                 elif name in ("erode", "dilate"):
                     entry["k"] = int(sub["k"])
                 elif name == "coarse_dropout":
-                    entry["p"] = round(float(sub["p"]), 3)
+                    # p's configured range is only ~0.012 wide (e.g. [0.003, 0.015]) --
+                    # round(..., 3) would leave just ~13 distinguishable values (0.001
+                    # granularity is ~8% of the range), visibly discretizing what's
+                    # actually a continuous draw. 5dp keeps the same relative precision
+                    # the other small-range params here get.
+                    entry["p"] = round(float(sub["p"]), 5)
                 elif name == "perspective":
                     persp = sub["meta"]
                     entry["variant_idx"] = int(sub["idx"])
