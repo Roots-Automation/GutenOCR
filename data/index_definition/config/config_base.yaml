@@ -1,0 +1,169 @@
+# index_definition generator — base configuration
+
+# ── Mode ──────────────────────────────────────────────────────────────────────
+mode:
+  choices: ["definition", "index"]
+  weights: [7, 3]
+
+# ── Corpus ────────────────────────────────────────────────────────────────────
+corpus:
+  min_definition_length: 10
+
+# ── Page ──────────────────────────────────────────────────────────────────────
+page:
+  short_size: [400, 700]
+  aspect_ratio: [1.0, 1.8]
+  landscape: 0.10
+
+# ── Font ──────────────────────────────────────────────────────────────────────
+font:
+  # Reuse synthdog font directories (relative to this package root)
+  paths:
+    - "../synthdog_grounding/resources/font/en"
+  base_size: [11, 18]
+  headword_scale: [1.2, 1.6]
+
+# ── Headword style ────────────────────────────────────────────────────────────
+headword_style:
+  choices: ["bold", "large", "small_caps"]
+  weights: [4, 3, 3]
+
+# ── Entry separator ───────────────────────────────────────────────────────────
+entry_separator:
+  choices: ["rule", "gap", "dot_leader"]
+  weights: [3, 4, 3]
+  rule_width_px: [1, 2]
+  rule_color: [100, 200]
+
+# ── Layout ────────────────────────────────────────────────────────────────────
+layout:
+  margin: [0.02, 0.08]
+  num_cols_choices: [1, 2, 3, 4, 5, 6]
+  num_cols_weights: [3, 8, 10, 5, 2, 1]
+  gutter_frac: [0.01, 0.04]
+  min_col_width_px: 80
+  entry_gap: [2, 8]
+  line_spacing_extra: [0, 2]
+
+# ── Index mode ────────────────────────────────────────────────────────────────
+index:
+  page_refs_count: [2, 6]
+  page_number_range: [1, 500]
+
+# ── Paper / background ────────────────────────────────────────────────────────
+paper:
+  texture_paths:
+    - "../synthdog_grounding/resources/paper"
+  texture_alpha: [0.0, 0.15]
+  color:
+    prob: 0.5
+    rgb:
+      - [230, 255]   # R: near-white only
+      - [225, 255]   # G: near-white only
+      - [210, 255]   # B: slight warm/cool bias allowed, but still pale
+
+background:
+  paths:
+    - "../synthdog_grounding/resources/background"
+  prob: 0.25        # only 25% of pages get any background image at all
+  opacity: [0.03, 0.08]  # when used, blend at 3–8% so it barely tints the paper
+
+# ── Quality ───────────────────────────────────────────────────────────────────
+quality:
+  min_word_count: 20
+  min_line_height_px: 12.0
+  min_sharpness: 5.0
+  max_cross_block_line_overlap: 0.50
+  max_retries: 10
+
+quality_jpeg: [50, 95]
+min_bbox_area: 16.0
+
+# ── Split ratio ───────────────────────────────────────────────────────────────
+split_ratio: [0.8, 0.1, 0.1]
+
+# ── Pixel effects ─────────────────────────────────────────────────────────────
+effects:
+  noise:
+    prob: 1.0
+    args: {scale: [0, 6]}
+
+  erode:
+    prob: 0.15
+    args: {k: [1, 2]}
+
+  dilate:
+    prob: 0.15
+    args: {k: [1, 2]}
+
+  coarse_dropout:
+    prob: 0.08
+    args:
+      p: [0.001, 0.005]
+      size_percent: [0.01, 0.04]   # was 0.05–0.15; 15% of image = giant white box
+
+  elastic_distortion:
+    prob: 0.10
+    args:
+      alpha: [0, 0.008]  # ±4px max on 500px page — subtle paper warp only
+      sigma: [0, 0.02]
+
+  rgb_tint:
+    prob: 0.20
+    args:
+      rgb: [[180, 230], [175, 225], [155, 215]]  # near-neutral warm/cool shifts only
+      alpha: [0, 0.08]
+
+  grayscale:
+    prob: 0.05
+
+  contrast:
+    prob: 1.0
+    args: {alpha: [1.0, 1.4]}
+
+  brightness:
+    prob: 1.0
+    args: {beta: [-20, 12]}  # asymmetric: darkening fine, brightening capped to avoid washing out light text
+
+  motion_blur:
+    prob: 0.15
+    args:
+      k: [3, 5]
+      angle: [0, 360]
+
+  gaussian_blur:
+    prob: 0.25
+    args: {sigma: [0, 0.4]}
+
+  resample:
+    prob: 0.10
+    args: {size: [0.85, 0.95]}   # was 0.65–0.85; bilinear at 65% is visibly blurry
+
+  jpeg_compression:
+    prob: 0.25
+    args: {compression: [40, 80]}
+
+# ── Physical effects ──────────────────────────────────────────────────────────
+book_spine_shadow:
+  enabled: true
+  prob: 0.10
+
+fold_crease:
+  enabled: true
+  prob: 0.10
+
+moire:
+  enabled: true
+  prob: 0.08
+
+low_toner_streaks:
+  enabled: true
+  prob: 0.12
+
+watermark:
+  enabled: false
+  prob: 0.05
+
+vignetting:
+  enabled: true
+  prob: 0.25
