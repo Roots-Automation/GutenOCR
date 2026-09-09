@@ -1,0 +1,33 @@
+generation:
+  dpi: 150
+  split_ratio: [0.8, 0.1, 0.1]
+
+quality:
+  min_word_count: 20
+  min_sharpness: 10.0
+  max_retries: 10
+
+layout:
+  n_cols_weights: [0.4, 0.6]       # probability of 1-col vs 2-col
+  font_families:
+    - lmodern
+    - tgpagella
+    - tgtermes
+    - tgbonum
+    - stix2
+  font_sizes: [10, 11, 12]         # point sizes
+  line_spread_range: [1.0, 1.3]
+  margins_mm_range: [15, 30]
+  page_sizes: [a4paper, letterpaper]
+  abstract_prob: 0.75
+  n_sections_range: [2, 8]
+  references_prob: 0.70
+  page_numbers_prob: 0.80
+  equations_per_section_range: [0, 3]
+  tables_per_doc_range: [0, 2]
+
+augmentation:
+  enabled: true
+  blur_sigma_max: 1.5
+  brightness_jitter: 0.15
+  contrast_jitter: 0.15

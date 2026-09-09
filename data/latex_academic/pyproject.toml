@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "latex-academic"
+version = "0.1.0"
+description = "Synthetic dense academic-layout document generator with bounding-box annotations"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Roots Automation"},
+]
+requires-python = ">=3.10"
+dependencies = [
+    "jinja2>=3.0",
+    "pdfplumber>=0.10",
+    "pdf2image>=1.16",
+    "faker>=20.0",
+    "pillow>=10.0",
+    "numpy>=1.24",
+    "pyyaml>=6.0",
+    "tqdm>=4.65",
+    "datasets>=2.14",
+    "huggingface-hub>=0.20",
+]
+
+[project.scripts]
+latex-generate = "generate:main"
+latex-package = "sharding:main"
+
+[project.urls]
+"Homepage" = "https://github.com/Roots-Automation/GutenOCR"
+"Bug Tracker" = "https://github.com/Roots-Automation/GutenOCR/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["latex_academic*"]
+
+[tool.setuptools.package-data]
+"*" = [
+    "resources/templates/*.j2",
+    "resources/wordlists/*.txt",
+    "resources/*.txt",
+    "config/*.yaml",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.1",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "--import-mode=importlib"
+markers = [
+    "slow: marks tests that require lualatex/poppler (deselect with -m 'not slow')",
+]

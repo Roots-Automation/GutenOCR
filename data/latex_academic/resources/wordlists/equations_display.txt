@@ -1,0 +1,20 @@
+\int_0^\infty e^{-x}\,dx = 1
+\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
+e^{i\pi} + 1 = 0
+\frac{\partial^2 u}{\partial t^2} = c^2 \nabla^2 u
+\nabla \cdot \mathbf{E} = \frac{\rho}{\varepsilon_0}
+\hat{\theta}_{\text{MLE}} = \operatorname*{arg\,max}_\theta \sum_{i=1}^n \log p(x_i \mid \theta)
+\mathbf{x}^* = \operatorname*{arg\,min}_{\mathbf{x}} \frac{1}{2}\|\mathbf{A}\mathbf{x} - \mathbf{b}\|^2 + \lambda \|\mathbf{x}\|_1
+p(\theta \mid \mathcal{D}) = \frac{p(\mathcal{D} \mid \theta)\, p(\theta)}{p(\mathcal{D})}
+\mathcal{L}(\theta) = \mathbb{E}_{(x,y) \sim \mathcal{D}}\bigl[\ell(f_\theta(x),\, y)\bigr]
+f(\mathbf{x}) = \mathbf{W}_L \sigma(\mathbf{W}_{L-1} \cdots \sigma(\mathbf{W}_1 \mathbf{x} + \mathbf{b}_1) \cdots + \mathbf{b}_{L-1}) + \mathbf{b}_L
+\min_{\mathbf{w}, b}\; \frac{1}{n}\sum_{i=1}^n \max(0,\, 1 - y_i(\mathbf{w}^\top \mathbf{x}_i + b)) + \frac{\lambda}{2}\|\mathbf{w}\|^2
+\mathbf{A} = \mathbf{U} \boldsymbol{\Sigma} \mathbf{V}^\top, \quad \sigma_1 \geq \sigma_2 \geq \cdots \geq 0
+\text{Attention}(\mathbf{Q}, \mathbf{K}, \mathbf{V}) = \text{softmax}\!\left(\frac{\mathbf{Q}\mathbf{K}^\top}{\sqrt{d_k}}\right)\mathbf{V}
+\frac{d}{dx}\int_a^{g(x)} f(t)\,dt = f(g(x))\cdot g'(x)
+\Pr\!\left[\left|\frac{1}{n}\sum_{i=1}^n X_i - \mu\right| \geq \epsilon\right] \leq 2\exp\!\left(-\frac{2n\epsilon^2}{(b-a)^2}\right)
+\mathcal{F}\{f\}(\xi) = \int_{-\infty}^{\infty} f(t)\,e^{-2\pi i \xi t}\,dt
+\frac{\partial \mathcal{L}}{\partial \mathbf{W}} = \frac{1}{n}\mathbf{X}^\top (\hat{\mathbf{Y}} - \mathbf{Y})
+\mathbf{x}_{t+1} = \mathbf{x}_t - \eta_t \nabla f(\mathbf{x}_t) + \sqrt{2\eta_t \tau}\, \boldsymbol{\xi}_t
+\mathbb{E}\!\left[\sup_{f \in \mathcal{F}} \frac{1}{n}\sum_{i=1}^n \sigma_i f(\mathbf{x}_i)\right] \leq \frac{B}{\sqrt{n}}
+R(h) \leq \hat{R}_n(h) + \mathfrak{R}_n(\mathcal{H}) + \sqrt{\frac{\log(1/\delta)}{2n}}
