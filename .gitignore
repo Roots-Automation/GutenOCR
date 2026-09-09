@@ -217,3 +217,11 @@ logs/
 
 google-serviceauth.json
 oa_non_comm_use_pdf.csv
+
+# Claude Code local config (settings.local.json has machine-specific paths)
+.claude/
+
+# Node / npm (katex local install)
+node_modules/
+package.json
+package-lock.json

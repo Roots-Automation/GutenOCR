@@ -53,3 +53,9 @@ markers = ["slow: wall-clock timing tests; skip in CI with -m 'not slow'"]
 dev = [
     "pytest>=9.1.1",
 ]
+analysis = [
+    "pandas",
+    "matplotlib",
+    "jupyter",
+    "ipykernel",
+]
